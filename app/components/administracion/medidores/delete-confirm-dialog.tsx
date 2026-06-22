@@ -1,5 +1,6 @@
 import { Gauge } from 'lucide-react';
 
+import type { MedidorListItem } from '~/components/administracion/medidores/medidores-types';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -10,13 +11,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from '~/components/ui/alert-dialog';
-import type { GetMedidores } from '~/types/administracion';
 
 interface DeleteConfirmationDialogProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
-  medidor: GetMedidores | null;
+  medidor: MedidorListItem | null;
 }
 
 export function DeleteConfirmationDialog({
@@ -64,7 +64,7 @@ export function DeleteConfirmationDialog({
                       Código:
                     </span>
                     <span className="ml-2 font-mono text-red-900 dark:text-red-100">
-                      {medidor.codigo}
+                      {medidor.idMedidor}
                     </span>
                   </div>
                   <div>

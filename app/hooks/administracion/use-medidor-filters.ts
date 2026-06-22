@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 
 import type { MedidorFilters } from '~/components/administracion/medidores/medidor-filters';
-import type { GetMedidores } from '~/types/administracion';
+import type { MedidorListItem } from '~/components/administracion/medidores/medidores-types';
 import {
   extractUniqueOptions,
   filterByDateRange,
@@ -21,7 +21,7 @@ export interface MedidorFilterOptions {
 export type FilterOptions = MedidorFilterOptions;
 
 export function useMedidorFilters(
-  medidores: GetMedidores[],
+  medidores: MedidorListItem[],
   filters: MedidorFilters
 ) {
   const filterOptions = useMemo((): MedidorFilterOptions => {
@@ -35,24 +35,11 @@ export function useMedidorFilters(
 
   const filteredMedidores = useMemo(() => {
     return medidores.filter(medidor => {
-      // Filtros de string simple
-      if (!filterByString(medidor.marca, filters.marca)) {
-        return false;
-      }
+      if (!filterByString(medidor.marca, filters.marca)) return false;
+      if (!filterByString(medidor.tipo, filters.tipo)) return false;
+      if (!filterByString(medidor.modelo, filters.modelo)) return false;
+      if (!filterByString(medidor.estado, filters.estado)) return false;
 
-      if (!filterByString(medidor.tipo, filters.tipo)) {
-        return false;
-      }
-
-      if (!filterByString(medidor.modelo, filters.modelo)) {
-        return false;
-      }
-
-      if (!filterByString(medidor.estado, filters.estado)) {
-        return false;
-      }
-
-      // Filtros de rango numérico
       if (
         !filterByNumberRange(
           medidor.digitos,
@@ -65,7 +52,7 @@ export function useMedidorFilters(
 
       if (
         !filterByNumberRange(
-          medidor.multiplicar,
+          medidor.multiplicador,
           filters.multiplicarMin,
           filters.multiplicarMax
         )
@@ -73,7 +60,6 @@ export function useMedidorFilters(
         return false;
       }
 
-      // Filtros de presencia
       if (
         !filterByPresence(
           Boolean(medidor.ubicacion?.trim()),
@@ -92,7 +78,6 @@ export function useMedidorFilters(
         return false;
       }
 
-      // Filtro de rango de fechas
       if (
         !filterByDateRange(
           medidor.fechaInicio,

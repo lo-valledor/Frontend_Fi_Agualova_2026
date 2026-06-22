@@ -7,6 +7,7 @@ import {
   History,
   MapPin
 } from 'lucide-react';
+import type { ReactElement } from 'react';
 
 export type MeterStatus =
   | 'SINLEC' // Sin Lectura
@@ -24,7 +25,7 @@ export interface MeterStatusInfo {
   borderColor: string;
   textColor: string;
   label: string;
-  icon: React.ReactElement;
+  icon: ReactElement;
   severity: 0 | 1 | 2 | 3 | 4;
 }
 

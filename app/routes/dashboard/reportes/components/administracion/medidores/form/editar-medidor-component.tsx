@@ -1,4 +1,4 @@
-import { zodResolver } from '@hookform/resolvers/zod';
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Calendar,
   Clock,
@@ -9,49 +9,49 @@ import {
   Save,
   Tag,
   Type,
-  X
-} from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
-import Select from 'react-select';
-import { toast } from 'sonner';
-import { z } from 'zod';
-import { getReactSelectStyles } from '~/components/shared/react-select-styles';
-import { useTheme } from '~/components/theme-provider';
-import { Button } from '~/components/ui/button';
+  X,
+} from "lucide-react";
+import { useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import Select from "react-select";
+import { toast } from "sonner";
+import { z } from "zod";
+import { getReactSelectStyles } from "~/components/shared/react-select-styles";
+import { useTheme } from "~/components/theme-provider";
+import { Button } from "~/components/ui/button";
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage
-} from '~/components/ui/form';
-import { Input } from '~/components/ui/input';
-import { administracionService } from '~/services/administracionService';
+  FormMessage,
+} from "~/components/ui/form";
+import { Input } from "~/components/ui/input";
+import { administracionService } from "~/services/administracionService";
 import type {
   ActualizarMedidorProps,
   GetCombosTiposMedidor,
   GetMedidorByCodigo,
-  GetMedidores
-} from '~/types/administracion';
-import type { Marca } from '~/types/mantencion';
-import { AsociarSubempalmeModal } from '../asociar-subempalme-modal';
+  GetMedidores,
+} from "~/types/administracion";
+import type { Marca } from "~/types/mantencion";
+import { AsociarSubempalmeModal } from "../asociar-subempalme-modal";
 
 // Zod schema for form validation
 const medidorSchema = z.object({
-  marcaCodigo: z.string().min(1, 'La marca es requerida'),
-  tipoId: z.coerce.number().min(1, 'El tipo es requerido'),
-  modelo: z.string().min(1, 'El modelo es requerido'),
-  serie: z.string().min(1, 'El número de serie es requerido'),
-  estadoId: z.coerce.number().min(1, 'El estado es requerido'),
-  fechaInicio: z.string().min(1, 'La fecha de inicio es requerida'),
-  digitos: z.coerce.number().min(1, 'Los dígitos son requeridos'),
-  multiplicar: z.coerce.number().min(1, 'El multiplicador es requerido'),
+  marcaCodigo: z.string().min(1, "La marca es requerida"),
+  tipoId: z.coerce.number().min(1, "El tipo es requerido"),
+  modelo: z.string().min(1, "El modelo es requerido"),
+  serie: z.string().min(1, "El número de serie es requerido"),
+  estadoId: z.coerce.number().min(1, "El estado es requerido"),
+  fechaInicio: z.string().min(1, "La fecha de inicio es requerida"),
+  digitos: z.coerce.number().min(1, "Los dígitos son requeridos"),
+  multiplicar: z.coerce.number().min(1, "El multiplicador es requerido"),
   primeraLectura: z.string().optional(),
   fechaPrimeraLectura: z.string().optional(),
   horaPrimeraLectura: z.string().optional(),
-  subempalmeCodigo: z.string().optional()
+  subempalmeCodigo: z.string().optional(),
 });
 
 type MedidorFormData = z.infer<typeof medidorSchema>;
@@ -73,7 +73,7 @@ export default function EditarMedidorComponent({
   tipoMedidor,
   cantidadLecturas,
   codigoMedidor,
-  onSuccess
+  onSuccess,
 }: EditarMedidorComponentProps) {
   const { theme } = useTheme();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -82,19 +82,19 @@ export default function EditarMedidorComponent({
   const form = useForm<MedidorFormData>({
     resolver: zodResolver(medidorSchema),
     defaultValues: {
-      marcaCodigo: '',
+      marcaCodigo: "",
       tipoId: 0,
-      modelo: '',
-      serie: '',
+      modelo: "",
+      serie: "",
       estadoId: 1,
-      fechaInicio: '',
+      fechaInicio: "",
       digitos: 0,
       multiplicar: 1,
-      primeraLectura: '',
-      fechaPrimeraLectura: '',
-      horaPrimeraLectura: '',
-      subempalmeCodigo: ''
-    }
+      primeraLectura: "",
+      fechaPrimeraLectura: "",
+      horaPrimeraLectura: "",
+      subempalmeCodigo: "",
+    },
   });
 
   // Usar estilos compartidos para react-select
@@ -108,7 +108,7 @@ export default function EditarMedidorComponent({
 
   // Función para convertir fecha de dd-MM-yyyy a yyyy-MM-dd
   const convertirFechaDDMMAAAAToAAAAMMDD = (fecha: string): string => {
-    if (!fecha) return '';
+    if (!fecha) return "";
 
     // Si ya está en formato yyyy-MM-dd, devolverla como está
     if (new RegExp(/^\d{4}-\d{2}-\d{2}$/).exec(fecha)) {
@@ -117,11 +117,11 @@ export default function EditarMedidorComponent({
 
     // Si está en formato dd-MM-yyyy, convertir a yyyy-MM-dd
     if (new RegExp(/^\d{2}-\d{2}-\d{4}$/).exec(fecha)) {
-      const [dia, mes, ano] = fecha.split('-');
+      const [dia, mes, ano] = fecha.split("-");
       return `${ano}-${mes}-${dia}`;
     }
 
-    return '';
+    return "";
   };
 
   // Inicializar el formulario con los datos del medidor
@@ -129,95 +129,90 @@ export default function EditarMedidorComponent({
     if (medidor && marca && tipoMedidor) {
       // Encontrar la marca por código
       const marcaSeleccionada = marca.find(
-        m => m.id?.toString() === medidor.mM_ID
+        (m) => m.id?.toString() === medidor.mM_ID,
       );
 
       // Búsqueda más flexible del tipo
-      const tipoSeleccionado = tipoMedidor.find(t => t.id === medidor.tM_ID);
+      const tipoSeleccionado = tipoMedidor.find((t) => t.id === medidor.tM_ID);
 
       // Reset del formulario con los datos actuales
       setTimeout(() => {
         form.reset({
-          marcaCodigo: (marcaSeleccionada?.codigo ?? medidor.mM_ID) || '',
+          marcaCodigo: (marcaSeleccionada?.codigo ?? medidor.mM_ID) || "",
           tipoId: tipoSeleccionado?.id ?? medidor.tM_ID,
-          modelo: medidor.modelo || '',
-          serie: medidor.numeroSerie || '',
+          modelo: medidor.modelo || "",
+          serie: medidor.numeroSerie || "",
           estadoId: medidor.estadoId || 2,
           fechaInicio: convertirFechaDDMMAAAAToAAAAMMDD(
-            medidor.fechaInicio || ''
+            medidor.fechaInicio || "",
           ),
           digitos: medidor.digitos || 0,
           multiplicar: medidor.constanteMultiplicar || 1,
-          subempalmeCodigo: medidor.codigoSubEmpalme || '',
-          primeraLectura: '',
-          fechaPrimeraLectura: '',
-          horaPrimeraLectura: ''
+          subempalmeCodigo: medidor.codigoSubEmpalme || "",
+          primeraLectura: "",
+          fechaPrimeraLectura: "",
+          horaPrimeraLectura: "",
         });
       }, 100);
     }
   }, [medidor, marca, tipoMedidor, form]);
 
   const handleFormSubmit = async (data: MedidorFormData) => {
-    console.log('🔍 DEBUG: Iniciando handleFormSubmit');
-    console.log('📝 DEBUG: Datos del formulario recibidos:', data);
-
     // Validaciones de campos requeridos
     if (!data.marcaCodigo) {
-      console.log('❌ DEBUG: Validación fallida - marca vacía');
-      toast.error('La marca es obligatoria');
+      toast.error("La marca es obligatoria");
       return;
     }
 
     if (!data.tipoId) {
-      toast.error('El tipo es obligatorio');
+      toast.error("El tipo es obligatorio");
       return;
     }
 
     if (!data.modelo) {
-      toast.error('El modelo es obligatorio');
+      toast.error("El modelo es obligatorio");
       return;
     }
 
     if (!data.serie) {
-      toast.error('El número de serie es obligatorio');
+      toast.error("El número de serie es obligatorio");
       return;
     }
 
     if (!data.fechaInicio) {
-      toast.error('La fecha de inicio es obligatoria');
+      toast.error("La fecha de inicio es obligatoria");
       return;
     }
 
     if (!data.digitos || data.digitos <= 0) {
-      toast.error('Los dígitos deben ser mayor a 0');
+      toast.error("Los dígitos deben ser mayor a 0");
       return;
     }
 
     if (!data.multiplicar || data.multiplicar <= 0) {
-      toast.error('El multiplicador debe ser mayor a 0');
+      toast.error("El multiplicador debe ser mayor a 0");
       return;
     }
 
-    console.log('✅ DEBUG: Validaciones pasadas, preparando envío');
     setIsSubmitting(true);
     try {
       // Intentar diferentes campos para encontrar la marca
       const marcaEncontrada = marca.find(
-        m => m.codigo === data.marcaCodigo || m.nombre === data.marcaCodigo
+        (m) => m.codigo === data.marcaCodigo || m.nombre === data.marcaCodigo,
       );
-      console.log('🏷️ DEBUG: Marca encontrada:', marcaEncontrada);
-      console.log('🏷️ DEBUG: data.marcaCodigo:', data.marcaCodigo);
+      console.log("🏷️ DEBUG: Marca encontrada:", marcaEncontrada);
+      console.log("🏷️ DEBUG: data.marcaCodigo:", data.marcaCodigo);
       // El backend espera el código de la marca, no el ID
       const marcaId = marcaEncontrada?.codigo ?? data.marcaCodigo;
-      console.log('🏷️ DEBUG: marcaId final:', marcaId);
+      console.log("🏷️ DEBUG: marcaId final:", marcaId);
 
       // Función para convertir fecha de yyyy-MM-dd a dd-MM-yyyy
       const convertirFechaAAAAMMDDToDDMMAA = (fecha: string): string => {
-        if (!fecha) return '';
+        if (!fecha) return "";
 
         // Si está en formato yyyy-MM-dd, convertir a dd-MM-yyyy
         if (new RegExp(/^\d{4}-\d{2}-\d{2}$/).exec(fecha)) {
-          const [ano, mes, dia] = fecha.split('-');
+          const [ano, mes, dia] = fecha.split("-");
           return `${dia}-${mes}-${ano}`;
         }
 
@@ -236,12 +231,12 @@ export default function EditarMedidorComponent({
         multiplicar: data.multiplicar,
         tipoId: data.tipoId,
         subempalmeCodigo: data.subempalmeCodigo || null,
-        primeraLectura: data.primeraLectura || '0',
+        primeraLectura: data.primeraLectura || "0",
         fechaPrimeraLectura: data.fechaPrimeraLectura
           ? convertirFechaAAAAMMDDToDDMMAA(data.fechaPrimeraLectura)
-          : ''
+          : "",
       };
-      console.log('📦 DEBUG: submitData preparado:', submitData);
+      console.log("📦 DEBUG: submitData preparado:", submitData);
       // ADICIÓN: Debug del JSON enviado a la API (en el mismo orden solicitado)
       const payloadForLog = {
         codigoMedidor: submitData.codigoMedidor,
@@ -255,46 +250,46 @@ export default function EditarMedidorComponent({
         tipoId: submitData.tipoId,
         subempalmeCodigo: submitData.subempalmeCodigo,
         primeraLectura: submitData.primeraLectura,
-        fechaPrimeraLectura: submitData.fechaPrimeraLectura
+        fechaPrimeraLectura: submitData.fechaPrimeraLectura,
       };
       console.log(
-        '📤 DEBUG: Payload que se enviará a la API:',
-        JSON.stringify(payloadForLog, null, 2)
+        "📤 DEBUG: Payload que se enviará a la API:",
+        JSON.stringify(payloadForLog, null, 2),
       );
       console.log(
-        '🌐 DEBUG: Llamando a administracionService.modificarMedidor...'
+        "🌐 DEBUG: Llamando a administracionService.modificarMedidor...",
       );
       const result = await administracionService.modificarMedidor(submitData);
-      console.log('📥 DEBUG: Respuesta recibida del backend:', result);
+      console.log("📥 DEBUG: Respuesta recibida del backend:", result);
 
       // Debug: log para verificar qué se está recibiendo del backend
       if (result.error) {
-        console.log('❌ DEBUG: Error retornado por el backend:', result.error);
-        toast.error(result.error || 'Error al modificar el medidor');
+        console.log("❌ DEBUG: Error retornado por el backend:", result.error);
+        toast.error(result.error || "Error al modificar el medidor");
         return;
       }
 
-      console.log('✅ DEBUG: Modificación exitosa');
+      console.log("✅ DEBUG: Modificación exitosa");
       // Notificar éxito al componente padre
-      toast.success('Medidor modificado exitosamente');
+      toast.success("Medidor modificado exitosamente");
       if (onSuccess) {
         const medidorId = Number.parseInt(medidor.mM_ID) || 0;
         onSuccess(medidorId);
       }
     } catch (error: any) {
-      console.log('💥 DEBUG: Error capturado en catch:', error);
-      console.log('💥 DEBUG: error.response:', error?.response);
-      console.log('💥 DEBUG: error.response.data:', error?.response?.data);
-      console.log('💥 DEBUG: error.message:', error?.message);
+      console.log("💥 DEBUG: Error capturado en catch:", error);
+      console.log("💥 DEBUG: error.response:", error?.response);
+      console.log("💥 DEBUG: error.response.data:", error?.response?.data);
+      console.log("💥 DEBUG: error.message:", error?.message);
 
       // Determinar el mensaje de error apropiado
       const errorMessage =
         error?.response?.data?.message ||
         error?.response?.data ||
         error?.message ||
-        'Error inesperado al modificar el medidor';
+        "Error inesperado al modificar el medidor";
 
-      console.log('💥 DEBUG: Mensaje de error final:', errorMessage);
+      console.log("💥 DEBUG: Mensaje de error final:", errorMessage);
       toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
@@ -395,15 +390,15 @@ export default function EditarMedidorComponent({
                         <Select
                           {...field}
                           instanceId="marca-select"
-                          options={marca.map(m => ({
+                          options={marca.map((m) => ({
                             value: m.codigo,
-                            label: m.nombre
+                            label: m.nombre,
                           }))}
                           value={marca
-                            .map(m => ({ value: m.codigo, label: m.nombre }))
-                            .find(m => m.value === field.value)}
-                          onChange={option =>
-                            field.onChange(option ? option.value : '')
+                            .map((m) => ({ value: m.codigo, label: m.nombre }))
+                            .find((m) => m.value === field.value)}
+                          onChange={(option) =>
+                            field.onChange(option ? option.value : "")
                           }
                           placeholder="Seleccione una marca"
                           styles={selectStyles}
@@ -427,15 +422,15 @@ export default function EditarMedidorComponent({
                           {...field}
                           value={
                             tipoMedidor
-                              .map(t => ({ value: t.id, label: t.nombre }))
-                              .find(t => t.value === field.value) || null
+                              .map((t) => ({ value: t.id, label: t.nombre }))
+                              .find((t) => t.value === field.value) || null
                           }
                           onChange={(option: any) => {
                             field.onChange(option?.value || 0);
                           }}
-                          options={tipoMedidor.map(t => ({
+                          options={tipoMedidor.map((t) => ({
                             value: t.id,
-                            label: t.nombre
+                            label: t.nombre,
                           }))}
                           placeholder="Selecciona el tipo"
                           isClearable={false}
@@ -461,20 +456,20 @@ export default function EditarMedidorComponent({
                           {...field}
                           value={
                             [
-                              { value: 1, label: 'En Bodega' },
-                              { value: 2, label: 'Inactivo' },
-                              { value: 3, label: 'Activo' },
-                              { value: 4, label: 'En reparación' }
-                            ].find(t => t.value === field.value) || null
+                              { value: 1, label: "En Bodega" },
+                              { value: 2, label: "Inactivo" },
+                              { value: 3, label: "Activo" },
+                              { value: 4, label: "En reparación" },
+                            ].find((t) => t.value === field.value) || null
                           }
                           onChange={(option: any) => {
                             field.onChange(option?.value || 1);
                           }}
                           options={[
-                            { value: 1, label: 'En Bodega' },
-                            { value: 2, label: 'Inactivo' },
-                            { value: 3, label: 'Activo' },
-                            { value: 4, label: 'En reparación' }
+                            { value: 1, label: "En Bodega" },
+                            { value: 2, label: "Inactivo" },
+                            { value: 3, label: "Activo" },
+                            { value: 4, label: "En reparación" },
                           ]}
                           placeholder="Selecciona el estado"
                           isClearable={false}
@@ -570,7 +565,7 @@ export default function EditarMedidorComponent({
                         <FormControl>
                           <Input
                             placeholder="Sin subempalme asociado"
-                            value={field.value || ''}
+                            value={field.value || ""}
                             readOnly
                             disabled
                             className="h-11"
@@ -591,9 +586,9 @@ export default function EditarMedidorComponent({
                             variant="outline"
                             className="gap-2"
                             onClick={() => {
-                              field.onChange('');
+                              field.onChange("");
                               toast.success(
-                                'Acometida removida del medidor. Para guardar el cambio debe hacer clic en Guardar Cambios '
+                                "Acometida removida del medidor. Para guardar el cambio debe hacer clic en Guardar Cambios ",
                               );
                             }}
                           >
@@ -608,7 +603,7 @@ export default function EditarMedidorComponent({
                 />
 
                 {/* Campos de primera lectura - solo visibles cuando el estado es "Activo" */}
-                {isEstadoActivo(form.watch('estadoId')) && (
+                {isEstadoActivo(form.watch("estadoId")) && (
                   <>
                     <FormField
                       control={form.control}
@@ -678,7 +673,7 @@ export default function EditarMedidorComponent({
                 variant="default"
               >
                 <Save className="h-4 w-4" />
-                {isSubmitting ? 'Guardando...' : 'Guardar Cambios'}
+                {isSubmitting ? "Guardando..." : "Guardar Cambios"}
               </Button>
             </div>
           </form>
@@ -690,39 +685,39 @@ export default function EditarMedidorComponent({
             medidor={
               {
                 codigo: Number(codigoMedidor),
-                marca: '',
-                tipo: '',
-                modelo: medidor.modelo || '',
-                serie: medidor.numeroSerie || '',
-                fechaInicio: medidor.fechaInicio || '',
+                marca: "",
+                tipo: "",
+                modelo: medidor.modelo || "",
+                serie: medidor.numeroSerie || "",
+                fechaInicio: medidor.fechaInicio || "",
                 digitos: medidor.digitos || 0,
                 multiplicar: medidor.constanteMultiplicar || 1,
-                ubicacion: '',
-                estado: medidor.estadoNombre || '',
-                codigoAcometida: medidor.codigoSubEmpalme || ''
+                ubicacion: "",
+                estado: medidor.estadoNombre || "",
+                codigoAcometida: medidor.codigoSubEmpalme || "",
               } as GetMedidores
             }
-            onSuccess={async codigo => {
+            onSuccess={async (codigo) => {
               if (codigo) {
-                form.setValue('subempalmeCodigo', codigo, {
+                form.setValue("subempalmeCodigo", codigo, {
                   shouldDirty: true,
-                  shouldValidate: true
+                  shouldValidate: true,
                 });
-                await form.trigger('subempalmeCodigo');
-                toast.success('Acometida asociada al medidor');
+                await form.trigger("subempalmeCodigo");
+                toast.success("Acometida asociada al medidor");
                 setIsAsociarModalOpen(false);
                 return;
               }
               const res = await administracionService.getMedidoresByCodigo({
-                codigo: String(codigoMedidor)
+                codigo: String(codigoMedidor),
               });
-              const nuevoCodigo = res.data?.medidor?.[0]?.codigoAcometida || '';
-              form.setValue('subempalmeCodigo', nuevoCodigo, {
+              const nuevoCodigo = res.data?.medidor?.[0]?.codigoAcometida || "";
+              form.setValue("subempalmeCodigo", nuevoCodigo, {
                 shouldDirty: true,
-                shouldValidate: true
+                shouldValidate: true,
               });
-              await form.trigger('subempalmeCodigo');
-              toast.success('Acometida asociada al medidor');
+              await form.trigger("subempalmeCodigo");
+              toast.success("Acometida asociada al medidor");
               setIsAsociarModalOpen(false);
             }}
           />

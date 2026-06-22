@@ -1,4 +1,4 @@
-import { driver } from 'driver.js';
+import { driver } from "driver.js";
 import {
   AlertCircle,
   Calendar,
@@ -12,44 +12,54 @@ import {
   ListFilter,
   MapPin,
   Search,
-  Settings2
-} from 'lucide-react';
-import { motion } from 'motion/react';
+  Settings2,
+} from "lucide-react";
+import { motion } from "motion/react";
 
-import { Suspense, useEffect, useState } from 'react';
-import { toast } from 'sonner';
-import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
-import { LoadingSpinner } from '~/components/loading-spinner';
-import ResultadosBusqueda from '~/components/monitor/monitor-lecturas/resultados-busqueda';
-import { ModernHeader } from '~/components/shared/modern-header';
-import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert';
-import { Button } from '~/components/ui/button';
-import { Card, CardContent } from '~/components/ui/card';
-import { Collapsible, CollapsibleContent } from '~/components/ui/collapsible';
-import { Input } from '~/components/ui/input';
-import { Label } from '~/components/ui/label';
+import { Suspense, useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
+import { BreadcrumbSetter } from "~/components/breadcrumb-setter";
+import ResultadosBusqueda from "~/components/monitor/monitor-lecturas/resultados-busqueda";
+import { LoadingSpinner } from "~/components/loading-spinner";
+import { ModernHeader } from "~/components/shared/modern-header";
+import { Alert, AlertDescription, AlertTitle } from "~/components/ui/alert";
+import { Button } from "~/components/ui/button";
+import { Card, CardContent } from "~/components/ui/card";
+import {
+  Collapsible,
+  CollapsibleContent
+} from "~/components/ui/collapsible";
+import { Input } from "~/components/ui/input";
+import { Label } from "~/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
-} from '~/components/ui/select';
-import { useMonitorKeyboardShortcuts } from '~/hooks/use-keyboard-shortcuts';
+  SelectValue,
+} from "~/components/ui/select";
+import { useMonitorKeyboardShortcuts } from "~/hooks/use-keyboard-shortcuts";
 import {
   findActivePeriod,
+  formatDateDDMMYYYY,
   getDefaultDates,
-  validateSearchParams
-} from '~/hooks/use-monitor';
-import { cn } from '~/lib/utils';
-import { type Clave, type Periodo, type Sector } from '~/types/monitor';
-import 'driver.js/dist/driver.css';
+  getLastNPeriods,
+  validateSearchParams,
+} from "~/hooks/use-monitor";
+import { cn } from "~/lib/utils";
+import {
+  type MonitorClaves,
+  type MonitorGrillaProps,
+  type MonitorPeriodos,
+  type MonitorSectores,
+} from "~/types/monitor";
+import "driver.js/dist/driver.css";
 
 interface MonitorLecturasComponentProps {
-  periodos: Periodo[];
-  sectores: Sector[];
-  claves: Clave[];
-  activePeriodoId: number | null;
+  periodos: MonitorPeriodos[];
+  sectores: MonitorSectores[];
+  claves: MonitorClaves[];
+  activePeriodoId: string | null;
   error: Error | null;
 }
 
@@ -57,25 +67,32 @@ const MonitorLecturasComponent = ({
   periodos,
   sectores,
   claves,
-  error
+  error,
 }: MonitorLecturasComponentProps) => {
   const pageBreadcrumbs = [
-    { label: 'Monitor' },
-    { label: 'Monitor de Lecturas' }
+    { label: "Monitor" },
+    { label: "Monitor de Lecturas" },
   ];
 
   // Form filter states with descriptive names
-  const [selectedSector, setSelectedSector] = useState<Sector | null>(null);
-  const [selectedPeriodo, setSelectedPeriodo] = useState<Periodo | null>(null);
-  const [selectedClave, setSelectedClave] = useState<Clave | null>(null);
-  const [meterSerial, setMeterSerial] = useState<string>('');
-  const [selectedStatusFilter, setSelectedStatusFilter] = useState<number>(0);
-  const [fechaInicio, setFechaInicio] = useState<string>('');
-  const [fechaFin, setFechaFin] = useState<string>('');
+  const [selectedSector, setSelectedSector] = useState<MonitorSectores | null>(
+    null,
+  );
+  const [selectedPeriodo, setSelectedPeriodo] =
+    useState<MonitorPeriodos | null>(null);
+  const [selectedClave, setSelectedClave] = useState<MonitorClaves | null>(
+    null,
+  );
+  const [meterSerial, setMeterSerial] = useState<string>("");
+  const [selectedStatusFilter, setSelectedStatusFilter] = useState<string>("");
+  const [fechaInicio, setFechaInicio] = useState<string>("");
+  const [fechaFin, setFechaFin] = useState<string>("");
 
-  // UI states
+  // Modal state
   const [isSearchActive, setIsSearchActive] = useState(false);
   const [searchTrigger, setSearchTrigger] = useState(0);
+
+  // UI states
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
   // Initialize default period and dates with early returns
@@ -101,22 +118,23 @@ const MonitorLecturasComponent = ({
   }, [periodos, selectedPeriodo, fechaFin]);
 
   // Actualizar fechaInicio cuando cambia el período seleccionado
+  // Usa getDefaultDates para que, si periodo.fechaInicio es null,
+  // derive el primer día del mes a partir de periodo.value (MMYYYY).
   useEffect(() => {
     if (selectedPeriodo) {
-      setFechaInicio(selectedPeriodo.FechaInicio);
+      const defaultDates = getDefaultDates(selectedPeriodo);
+      setFechaInicio(defaultDates.fechaInicio);
     }
   }, [selectedPeriodo]);
 
   const handleLimpiezaFiltros = () => {
-    setIsSearchActive(false);
-    setSearchTrigger(0);
     setSelectedSector(null);
 
     const periodoActivo = findActivePeriod(periodos);
     setSelectedPeriodo(periodoActivo);
     setSelectedClave(null);
-    setMeterSerial('');
-    setSelectedStatusFilter(0);
+    setMeterSerial("");
+    setSelectedStatusFilter("");
 
     const defaultDates = getDefaultDates(periodoActivo);
     setFechaInicio(defaultDates.fechaInicio);
@@ -124,18 +142,15 @@ const MonitorLecturasComponent = ({
     setIsFiltersOpen(true);
   };
 
-  const handleSearch = () => {
+  const handleOpenMedidor = () => {
     const validation = validateSearchParams(selectedSector, selectedPeriodo);
-
-    // Early return if validation fails
     if (!validation.isValid) {
       toast.error(validation.error);
       return;
     }
-
     setIsSearchActive(true);
     setSearchTrigger(prev => prev + 1);
-    setIsFiltersOpen(false); // Collapse filters after search
+    setIsFiltersOpen(false);
   };
 
   // Keyboard shortcuts for accessibility (after function declarations)
@@ -148,12 +163,12 @@ const MonitorLecturasComponent = ({
 
       // Focus input after React renders
       setTimeout(() => {
-        const input = document.getElementById('meter-serial-input');
+        const input = document.getElementById("meter-serial-input");
         input?.focus();
       }, 100);
     },
-    onRefresh: handleSearch,
-    onEscape: () => setIsFiltersOpen(false)
+    onRefresh: handleOpenMedidor,
+    onEscape: () => setIsFiltersOpen(false),
   });
 
   // Early return for error state
@@ -165,7 +180,7 @@ const MonitorLecturasComponent = ({
           <AlertTitle>Error de Carga</AlertTitle>
           <AlertDescription>
             {error.message ||
-              'Ocurrió un error al cargar los datos iniciales. Por favor, intente recargar la página.'}
+              "Ocurrió un error al cargar los datos iniciales. Por favor, intente recargar la página."}
           </AlertDescription>
         </Alert>
       </div>
@@ -175,77 +190,98 @@ const MonitorLecturasComponent = ({
   const startTour = () => {
     const driverjs = driver({
       showProgress: true,
-      progressText: 'Paso {{current}} de {{total}}',
+      progressText: "Paso {{current}} de {{total}}",
       smoothScroll: true,
       stagePadding: 4,
       stageRadius: 6,
       animate: true,
       allowClose: true,
-      nextBtnText: 'Siguiente',
-      prevBtnText: 'Anterior',
-      doneBtnText: 'Finalizar',
-      onHighlightStarted: element => {
+      nextBtnText: "Siguiente",
+      prevBtnText: "Anterior",
+      doneBtnText: "Finalizar",
+      onHighlightStarted: (element) => {
         if (element) {
-          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          element.scrollIntoView({ behavior: "smooth", block: "center" });
         }
-      }
+      },
     });
 
     driverjs.setSteps(tourSteps);
     driverjs.drive();
   };
 
+  const grillaParams = useMemo<MonitorGrillaProps>(
+    () => ({
+      periodo: selectedPeriodo?.value ?? "",
+      sector: selectedSector?.secId.toString() ?? "",
+      medidor: meterSerial,
+      fechaIni: fechaInicio,
+      fechaFin: formatDateDDMMYYYY(fechaFin),
+      clave: selectedClave?.value ?? "",
+      criterio: selectedStatusFilter
+    }),
+    [
+      selectedPeriodo,
+      selectedSector,
+      meterSerial,
+      fechaInicio,
+      fechaFin,
+      selectedClave,
+      selectedStatusFilter
+    ]
+  );
+
   const tourSteps = [
     {
-      element: '#sector-selector',
+      element: "#sector-selector",
       popover: {
-        title: '📍 Sector de Monitoreo (Obligatorio)',
+        title: "📍 Sector de Monitoreo (Obligatorio)",
         description:
-          'Debes seleccionar el <strong>área a monitorear</strong> para poder buscar lecturas. Este es un campo requerido.',
-        side: 'bottom' as const,
-        align: 'start' as const
-      }
+          "Debes seleccionar el <strong>área a monitorear</strong> para poder buscar lecturas. Este es un campo requerido.",
+        side: "bottom" as const,
+        align: "start" as const,
+      },
     },
     {
-      element: '#periodo-selector',
+      element: "#periodo-selector",
       popover: {
-        title: '📅 Periodo (Obligatorio)',
+        title: "📅 Periodo (Obligatorio)",
         description:
-          'Selecciona el <strong>periodo de monitoreo</strong>. Es necesario para realizar la búsqueda.',
-        side: 'bottom' as const,
-        align: 'start' as const
-      }
+          "Selecciona el <strong>periodo de monitoreo</strong>. Es necesario para realizar la búsqueda.",
+        side: "bottom" as const,
+        align: "start" as const,
+      },
     },
     {
-      element: '#fecha-fin-selector',
+      element: "#fecha-fin-selector",
       popover: {
-        title: '📆 Fecha Fin',
+        title: "📆 Fecha Fin",
         description:
-          'Puedes ajustar la <strong>fecha final</strong> del monitoreo si lo requieres para acotar el rango de búsqueda.',
-        side: 'bottom' as const,
-        align: 'start' as const
-      }
+          "Puedes ajustar la <strong>fecha final</strong> del monitoreo si lo requieres para acotar el rango de búsqueda.",
+        side: "bottom" as const,
+        align: "start" as const,
+      },
     },
     {
-      element: '#filtros-avanzados',
+      element: "#filtros-avanzados",
       popover: {
-        title: '🔧 Filtros Opcionales',
+        title: "🔧 Filtros Opcionales",
         description:
-          'Puedes filtrar por <strong>clave, estado o número de serie</strong> para refinar tu búsqueda y obtener resultados más específicos.',
-        side: 'bottom' as const,
-        align: 'start' as const
-      }
+          "Puedes filtrar por <strong>clave, estado o número de serie</strong> para refinar tu búsqueda y obtener resultados más específicos.",
+        side: "bottom" as const,
+        align: "start" as const,
+      },
     },
     {
-      element: '#search-button',
+      element: "#search-button",
       popover: {
-        title: '🔍 Buscar',
+        title: "🔍 Buscar",
         description:
-          'Haz clic aquí para <strong>iniciar la búsqueda</strong> una vez que hayas completado los filtros obligatorios (Sector y Periodo).',
-        side: 'bottom' as const,
-        align: 'center' as const
-      }
-    }
+          "Haz clic aquí para <strong>iniciar la búsqueda</strong> una vez que hayas completado los filtros obligatorios (Sector y Periodo).",
+        side: "bottom" as const,
+        align: "center" as const,
+      },
+    },
   ];
 
   return (
@@ -298,23 +334,23 @@ const MonitorLecturasComponent = ({
                   <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2">
                     {sectores.map((sector, index) => (
                       <motion.div
-                        key={sector.sectorId}
+                        key={sector.secId}
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ duration: 0.2, delay: index * 0.03 }}
                       >
                         <Button
                           variant={
-                            selectedSector?.sectorId === sector.sectorId
-                              ? 'default'
-                              : 'outline'
+                            selectedSector?.secId === sector.secId
+                              ? "default"
+                              : "outline"
                           }
                           onClick={() => setSelectedSector(sector)}
                           className={cn(
-                            'h-auto p-3 transition-all duration-200 text-center w-full',
-                            selectedSector?.sectorId === sector.sectorId
-                              ? 'bg-primary hover:bg-primary-700 shadow-md border-0'
-                              : 'hover:border'
+                            "h-auto p-3 transition-all duration-200 text-center w-full",
+                            selectedSector?.secId === sector.secId
+                              ? "bg-primary hover:bg-primary-700 shadow-md border-0"
+                              : "hover:border",
                           )}
                         >
                           <div className="text-center w-full">
@@ -346,34 +382,37 @@ const MonitorLecturasComponent = ({
                     <Calendar className="w-3 h-3 text-primary shrink-0" />
                     Periodo
                   </Label>
-                  {periodos && periodos.length > 0 ? (
-                    <Select
-                      value={selectedPeriodo?.IdPeriodo || ''}
-                      onValueChange={value => {
-                        const periodo = periodos.find(
-                          p => p.IdPeriodo === value
-                        );
-                        setSelectedPeriodo(periodo || null);
-                      }}
-                    >
-                      <SelectTrigger className="w-full bg-background border-border">
-                        <SelectValue placeholder="Seleccionar periodo..." />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {periodos?.map(periodo => (
-                          <SelectItem
-                            key={periodo.IdPeriodo}
-                            value={String(periodo.IdPeriodo)}
-                            className="truncate"
-                          >
-                            {periodo.DescripcionPeriodo}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  ) : (
-                    <div className="h-10 w-full bg-muted rounded-md animate-pulse"></div>
-                  )}
+                  {(() => {
+                    const periodosParaSelect = getLastNPeriods(periodos, 12);
+                    return periodosParaSelect.length > 0 ? (
+                      <Select
+                        value={selectedPeriodo?.value || ""}
+                        onValueChange={(value) => {
+                          const periodo = periodosParaSelect.find(
+                            (p) => p.value === value,
+                          );
+                          setSelectedPeriodo(periodo || null);
+                        }}
+                      >
+                        <SelectTrigger className="w-full bg-background border-border">
+                          <SelectValue placeholder="Seleccionar periodo..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {periodosParaSelect.map((periodo) => (
+                            <SelectItem
+                              key={periodo.value}
+                              value={periodo.value}
+                              className="truncate"
+                            >
+                              {periodo.text}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    ) : (
+                      <div className="h-10 w-full bg-muted rounded-md animate-pulse"></div>
+                    );
+                  })()}
                 </div>
 
                 {/* Fecha Inicio */}
@@ -384,7 +423,7 @@ const MonitorLecturasComponent = ({
                   </Label>
                   <Input
                     type="text"
-                    value={fechaInicio || 'Definida por período'}
+                    value={fechaInicio || "Definida por período"}
                     readOnly
                     className="w-full bg-muted text-muted-foreground cursor-not-allowed truncate"
                   />
@@ -402,7 +441,7 @@ const MonitorLecturasComponent = ({
                   <Input
                     type="date"
                     value={fechaFin}
-                    onChange={e => setFechaFin(e.target.value)}
+                    onChange={(e) => setFechaFin(e.target.value)}
                     className="w-full bg-background border-border"
                   />
                 </div>
@@ -431,7 +470,7 @@ const MonitorLecturasComponent = ({
 
                   {(selectedClave ||
                     meterSerial ||
-                    selectedStatusFilter > 0) && (
+                    selectedStatusFilter !== "") && (
                     <Button
                       variant="ghost"
                       size="sm"
@@ -445,14 +484,14 @@ const MonitorLecturasComponent = ({
                 </div>
 
                 <Button
-                  id="search-button"
-                  onClick={handleSearch}
+                  id="open-medidor-button"
+                  onClick={handleOpenMedidor}
                   disabled={!selectedSector || !selectedPeriodo}
                   className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-3 sm:py-2 shadow-md hover:shadow-lg transition-all duration-200 order-1 sm:order-2"
                 >
                   <Search className="w-4 h-4 mr-2" />
                   <span className="text-sm sm:text-base">
-                    {isSearchActive ? 'Buscar Nuevamente' : 'Iniciar Monitoreo'}
+                    Iniciar Monitoreo
                   </span>
                 </Button>
               </div>
@@ -470,13 +509,13 @@ const MonitorLecturasComponent = ({
                         </Label>
                         {claves && claves.length > 0 ? (
                           <Select
-                            value={selectedClave?.IdClave.toString() || 'ALL'}
-                            onValueChange={value => {
-                              if (value === 'ALL') {
+                            value={selectedClave?.value || "ALL"}
+                            onValueChange={(value) => {
+                              if (value === "ALL") {
                                 setSelectedClave(null);
                               } else {
                                 const clave = claves?.find(
-                                  c => c.IdClave === Number.parseInt(value)
+                                  (c) => c.value === value,
                                 );
                                 setSelectedClave(clave || null);
                               }
@@ -489,13 +528,13 @@ const MonitorLecturasComponent = ({
                               <SelectItem value="ALL" className="truncate">
                                 Todas las claves
                               </SelectItem>
-                              {claves?.map(clave => (
+                              {claves?.map((clave) => (
                                 <SelectItem
-                                  key={clave.IdClave}
-                                  value={String(clave.IdClave)}
+                                  key={clave.value}
+                                  value={clave.value}
                                   className="truncate"
                                 >
-                                  {clave.DescripcionClave}
+                                  {clave.text}
                                 </SelectItem>
                               ))}
                             </SelectContent>
@@ -512,9 +551,9 @@ const MonitorLecturasComponent = ({
                           Estado
                         </Label>
                         <Select
-                          value={selectedStatusFilter?.toString()}
-                          onValueChange={value =>
-                            setSelectedStatusFilter(Number(value))
+                          value={selectedStatusFilter}
+                          onValueChange={(value) =>
+                            setSelectedStatusFilter(value === "0" ? "" : value)
                           }
                         >
                           <SelectTrigger className="w-full bg-background border-border">
@@ -554,7 +593,7 @@ const MonitorLecturasComponent = ({
                           type="text"
                           placeholder="Buscar medidor específico..."
                           value={meterSerial}
-                          onChange={e => setMeterSerial(e.target.value)}
+                          onChange={(e) => setMeterSerial(e.target.value)}
                           className="w-full bg-background border-border"
                           aria-label="Número de serie del medidor"
                         />
@@ -567,25 +606,19 @@ const MonitorLecturasComponent = ({
           </Card>
         </motion.div>
 
-        {/* Results Section */}
+        {/* Grilla de resultados */}
         {isSearchActive && (
           <Suspense
             fallback={
               <Card className="border-0 shadow-lg bg-card/80 backdrop-blur-sm">
                 <CardContent className="p-6">
-                  <LoadingSpinner message="Cargando resultados del monitoreo..." />
+                  <LoadingSpinner message="Cargando grilla de medidores..." />
                 </CardContent>
               </Card>
             }
           >
             <ResultadosBusqueda
-              sector={selectedSector?.sectorId || ''}
-              periodo={selectedPeriodo?.IdPeriodo || ''}
-              stfechaini={fechaInicio}
-              stfechafin={fechaFin}
-              tipoclave={selectedStatusFilter.toString()}
-              medidor={meterSerial}
-              clave={selectedClave?.IdClave.toString() || ''}
+              {...grillaParams}
               triggerSearch={searchTrigger}
             />
           </Suspense>

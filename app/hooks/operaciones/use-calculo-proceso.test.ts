@@ -4,11 +4,11 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { operacionesService } from '~/services/operacionesService';
 import { useCalculoProceso } from './use-calculo-proceso';
 
-vi.mock('sonner', () => ({
+vi.mock("sonner", () => ({
   toast: {
     error: vi.fn(),
-    success: vi.fn()
-  }
+    success: vi.fn(),
+  },
 }));
 
 vi.mock('~/services/operacionesService', () => ({
@@ -18,20 +18,20 @@ vi.mock('~/services/operacionesService', () => ({
   }
 }));
 
-describe('useCalculoProceso', () => {
+describe("useCalculoProceso", () => {
   const mockOnCalculoAceptado = vi.fn();
 
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it('debería inicializar con valores por defecto', () => {
+  it("debería inicializar con valores por defecto", () => {
     const { result } = renderHook(() =>
       useCalculoProceso({
-        periodoFormateado: '202401',
-        cicloId: '1',
-        onCalculoAceptado: mockOnCalculoAceptado
-      })
+        periodoFormateado: "202401",
+        cicloId: "1",
+        onCalculoAceptado: mockOnCalculoAceptado,
+      }),
     );
 
     expect(result.current.isLaunching).toBe(false);
@@ -39,13 +39,13 @@ describe('useCalculoProceso', () => {
     expect(result.current.selectedContratos).toEqual([]);
   });
 
-  it('debería mostrar error si falta periodoFormateado en handleLanzarCalculo', async () => {
+  it("debería mostrar error si falta periodoFormateado en handleLanzarCalculo", async () => {
     const { result } = renderHook(() =>
       useCalculoProceso({
-        periodoFormateado: '',
-        cicloId: '1',
-        onCalculoAceptado: mockOnCalculoAceptado
-      })
+        periodoFormateado: "",
+        cicloId: "1",
+        onCalculoAceptado: mockOnCalculoAceptado,
+      }),
     );
 
     await result.current.handleLanzarCalculo();
@@ -55,13 +55,13 @@ describe('useCalculoProceso', () => {
     );
   });
 
-  it('debería mostrar error si falta cicloId en handleLanzarCalculo', async () => {
+  it("debería mostrar error si falta cicloId en handleLanzarCalculo", async () => {
     const { result } = renderHook(() =>
       useCalculoProceso({
-        periodoFormateado: '202401',
-        cicloId: '',
-        onCalculoAceptado: mockOnCalculoAceptado
-      })
+        periodoFormateado: "202401",
+        cicloId: "",
+        onCalculoAceptado: mockOnCalculoAceptado,
+      }),
     );
 
     await result.current.handleLanzarCalculo();
@@ -71,29 +71,29 @@ describe('useCalculoProceso', () => {
     );
   });
 
-  it('debería mostrar error si no hay contratos seleccionados en handleAceptarCalculo', async () => {
+  it("debería mostrar error si no hay contratos seleccionados en handleAceptarCalculo", async () => {
     const { result } = renderHook(() =>
       useCalculoProceso({
-        periodoFormateado: '202401',
-        cicloId: '1',
-        onCalculoAceptado: mockOnCalculoAceptado
-      })
+        periodoFormateado: "202401",
+        cicloId: "1",
+        onCalculoAceptado: mockOnCalculoAceptado,
+      }),
     );
 
     await result.current.handleAceptarCalculo();
 
     expect(toast.error).toHaveBeenCalledWith(
-      'Debe seleccionar al menos un contrato.'
+      "Debe seleccionar al menos un contrato.",
     );
   });
 
   it('debería permitir establecer contratos seleccionados', async () => {
     const { result } = renderHook(() =>
       useCalculoProceso({
-        periodoFormateado: '202401',
-        cicloId: '1',
-        onCalculoAceptado: mockOnCalculoAceptado
-      })
+        periodoFormateado: "202401",
+        cicloId: "1",
+        onCalculoAceptado: mockOnCalculoAceptado,
+      }),
     );
 
     act(() => {
@@ -105,18 +105,18 @@ describe('useCalculoProceso', () => {
     });
   });
 
-  it('debería retornar funciones requeridas', () => {
+  it("debería retornar funciones requeridas", () => {
     const { result } = renderHook(() =>
       useCalculoProceso({
-        periodoFormateado: '202401',
-        cicloId: '1',
-        onCalculoAceptado: mockOnCalculoAceptado
-      })
+        periodoFormateado: "202401",
+        cicloId: "1",
+        onCalculoAceptado: mockOnCalculoAceptado,
+      }),
     );
 
-    expect(typeof result.current.handleLanzarCalculo).toBe('function');
-    expect(typeof result.current.handleAceptarCalculo).toBe('function');
-    expect(typeof result.current.setSelectedContratos).toBe('function');
+    expect(typeof result.current.handleLanzarCalculo).toBe("function");
+    expect(typeof result.current.handleAceptarCalculo).toBe("function");
+    expect(typeof result.current.setSelectedContratos).toBe("function");
   });
 
   it('debería ejecutar lanzar correctamente', async () => {
@@ -147,10 +147,10 @@ describe('useCalculoProceso', () => {
 
     const { result } = renderHook(() =>
       useCalculoProceso({
-        periodoFormateado: '202401',
-        cicloId: '1',
-        onCalculoAceptado: mockOnCalculoAceptado
-      })
+        periodoFormateado: "202401",
+        cicloId: "1",
+        onCalculoAceptado: mockOnCalculoAceptado,
+      }),
     );
 
     act(() => {
@@ -175,10 +175,10 @@ describe('useCalculoProceso', () => {
 
     const { result } = renderHook(() =>
       useCalculoProceso({
-        periodoFormateado: '202401',
-        cicloId: '1',
-        onCalculoAceptado: mockOnCalculoAceptado
-      })
+        periodoFormateado: "202401",
+        cicloId: "1",
+        onCalculoAceptado: mockOnCalculoAceptado,
+      }),
     );
 
     await result.current.handleLanzarCalculo();

@@ -1,9 +1,10 @@
 import type { AxiosError } from 'axios';
+
 import type {
-  GetMedidores,
   MedidorErrorInfo,
+  MedidorListItem,
   MedidorModalState
-} from '~/types/administracion';
+} from '~/components/administracion/medidores/medidores-types';
 
 export const MEDIDORES_ROUTE = '/dashboard/administracion/medidores';
 export const MEDIDORES_CREAR_ROUTE =
@@ -22,7 +23,6 @@ export const extractMedidorErrorMessage = (
   error: unknown,
   defaultMessage: string
 ): MedidorErrorInfo => {
-  // Early return para errores de red
   if (isNetworkError(error)) {
     return {
       message: 'Error de conexión. Por favor, intenta nuevamente.',
@@ -30,7 +30,6 @@ export const extractMedidorErrorMessage = (
     };
   }
 
-  // Intentar extraer mensaje del servidor
   const serverMessage = extractServerMessage(error);
   if (serverMessage) {
     return {
@@ -39,7 +38,6 @@ export const extractMedidorErrorMessage = (
     };
   }
 
-  // Fallback
   return {
     message: defaultMessage,
     isNetworkError: false
@@ -57,21 +55,21 @@ const extractServerMessage = (error: unknown): string | null => {
 };
 
 export const isValidMedidorForOperation = (
-  medidor: GetMedidores | null | undefined
-): medidor is GetMedidores => {
-  return medidor !== null && medidor !== undefined && medidor.codigo > 0;
+  medidor: MedidorListItem | null | undefined
+): medidor is MedidorListItem => {
+  return medidor !== null && medidor !== undefined && medidor.idMedidor > 0;
 };
 
-export const getMedidorEditUrl = (codigoMedidor: number): string => {
+export const getMedidorEditUrl = (codigoMedidor: string | number): string => {
   return `${MEDIDORES_ROUTE}/${codigoMedidor}`;
 };
 
-export const isMedidoresListEmpty = (medidores: GetMedidores[]): boolean => {
+export const isMedidoresListEmpty = (medidores: MedidorListItem[]): boolean => {
   return !Array.isArray(medidores) || medidores.length === 0;
 };
 
 export const getMedidorStatusSummary = (
-  medidores: GetMedidores[]
+  medidores: MedidorListItem[]
 ): {
   total: number;
   conUbicacion: number;

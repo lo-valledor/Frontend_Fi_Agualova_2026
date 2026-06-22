@@ -1,4 +1,4 @@
-import type { Periodo, Sector } from '~/types/monitor';
+import type { MonitorPeriodos, MonitorSectores } from '~/types/monitor';
 
 export interface ValidationResult {
   isValid: boolean;
@@ -6,8 +6,8 @@ export interface ValidationResult {
 }
 
 export function validateSearchParams(
-  sector: Sector | null,
-  periodo: Periodo | null
+  sector: MonitorSectores | null,
+  periodo: MonitorPeriodos | null
 ): ValidationResult {
   if (!sector) {
     return {
