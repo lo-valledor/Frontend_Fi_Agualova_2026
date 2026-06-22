@@ -28,291 +28,126 @@ import {
   TooltipProvider,
   TooltipTrigger
 } from '~/components/ui/tooltip';
-import api from '~/lib/api';
-import {
-  type ConsultarAsignacionSectores,
-  type ConsultarSectores,
-  type TablaAsignacionSectoresProps
-} from '~/types/operaciones';
+import { operacionesService } from '~/services/operacionesService';
+import type { PrepararLecturasBuscarNichosRequest } from '~/types/operaciones';
 
-interface TablaAsignacionSectoresWithDescriptionProps
-  extends TablaAsignacionSectoresProps {
-  sectores: ConsultarSectores[];
-  periodo?: string;
-  cicloFacturable?: string;
-  onRecargarDatos?: () => Promise<void>;
+interface TablaAsignacionSectoresProps {
+  data: PrepararLecturasBuscarNichosRequest[];
+  isLoading: boolean;
+  cicloId: number;
+  periodoId: string;
+  onSuccess?: () => Promise<void> | void;
 }
 
-// Interfaz para el objeto de solicitud
-interface PrepararLecturasRequest {
-  nichoId: number;
-  cantLecturas: number;
-  cicloFact: string;
-  periodo: string;
-}
+type ResultadoProceso = {
+  exitosos: number;
+  fallidos: number;
+  mensaje?: string;
+};
 
-// Interfaz para gestionar los items seleccionados
-interface NichoSeleccionado {
-  nichoId: number;
-  sectorId: number;
-  cantidad: number;
-  descripcion: string;
-}
+const generarResumenProceso = (
+  resultado: ResultadoProceso
+): { tipo: 'success' | 'warning' | 'error'; mensaje: string } => {
+  if (resultado.fallidos === 0 && resultado.exitosos > 0) {
+    return { tipo: 'success', mensaje: `${resultado.exitosos} nichos generados correctamente` };
+  }
+  if (resultado.exitosos === 0 && resultado.fallidos > 0) {
+    return {
+      tipo: 'error',
+      mensaje: resultado.mensaje ?? `No se pudo procesar ningún nicho (${resultado.fallidos} errores)`
+    };
+  }
+  return {
+    tipo: 'warning',
+    mensaje: `${resultado.exitosos} exitosos, ${resultado.fallidos} con error`
+  };
+};
 
 export default function TablaAsignacionSectores({
   data,
   isLoading,
-  periodo = '',
-  cicloFacturable = '',
-  onRecargarDatos
-}: Readonly<TablaAsignacionSectoresWithDescriptionProps>) {
-  // Estados
-  const [selectedNichos, setSelectedNichos] = useState<NichoSeleccionado[]>([]);
-  const [selectAll, setSelectAll] = useState(false);
+  cicloId,
+  periodoId,
+  onSuccess
+}: Readonly<TablaAsignacionSectoresProps>) {
+  const [selectedIdsNichos, setSelectedIdsNichos] = useState<number[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [resultado, setResultado] = useState<ResultadoProceso | null>(null);
 
-  const [submitResults, setSubmitResults] = useState<{
-    success: number;
-    errors: number;
-    messages: string[];
-  }>({ success: 0, errors: 0, messages: [] });
-
-  // Función para manejar la selección de un nicho
-  const handleSelectNicho = (item: ConsultarAsignacionSectores) => {
-    setSelectedNichos(prev => {
-      const existingIndex = prev.findIndex(
-        nicho => nicho.nichoId === item.nichoId
-      );
-
-      if (existingIndex >= 0) {
-        return prev.filter(nicho => nicho.nichoId !== item.nichoId);
-      } else {
-        return [
-          ...prev,
-          {
-            nichoId: item.nichoId,
-            sectorId: item.sectorId,
-            cantidad: item.cantidadMedidores,
-            descripcion: item.descripcionNicho
-          }
-        ];
-      }
-    });
+  const toggleNicho = (idNicho: number): void => {
+    setSelectedIdsNichos(prev =>
+      prev.includes(idNicho)
+        ? prev.filter(id => id !== idNicho)
+        : [...prev, idNicho]
+    );
   };
 
-  // Función para verificar si un nicho está seleccionado
-  const isNichoSelected = (nichoId: number): boolean => {
-    return selectedNichos.some(nicho => nicho.nichoId === nichoId);
-  };
-
-  // Función para seleccionar o deseleccionar todos
-  const handleSelectAll = () => {
-    if (selectAll) {
-      setSelectedNichos([]);
+  const toggleSeleccionarTodo = (): void => {
+    if (selectedIdsNichos.length === data.length) {
+      setSelectedIdsNichos([]);
     } else {
-      const allNichos = data.map(item => ({
-        nichoId: item.nichoId,
-        sectorId: item.sectorId,
-        cantidad: item.cantidadMedidores,
-        descripcion: item.descripcionNicho
-      }));
-      setSelectedNichos(allNichos);
-    }
-    setSelectAll(!selectAll);
-  };
-
-  // Helper function to extract error message
-  const extractErrorMessage = (error: any): string => {
-    if (error.response?.data?.mensaje) {
-      return error.response.data.mensaje;
-    }
-    if (error.response?.data) {
-      return 'Sin detalles en la respuesta';
-    }
-    return error.message || 'Error desconocido';
-  };
-
-  // Helper function to process a single nicho
-  const procesarNicho = async (
-    nicho: NichoSeleccionado
-  ): Promise<{ success: boolean; message: string }> => {
-    const requestData: PrepararLecturasRequest = {
-      nichoId: nicho.nichoId,
-      cantLecturas: nicho.cantidad,
-      cicloFact: cicloFacturable,
-      periodo: periodo
-    };
-
-    try {
-      const response = await api.post('/generar-proceso-lecturas', requestData);
-
-      if (response.status >= 200 && response.status < 300) {
-        return {
-          success: true,
-          message: `Nicho ${nicho.nichoId} (${nicho.descripcion}) procesado correctamente`
-        };
-      }
-
-      const errorMessage =
-        (response.data &&
-        typeof response.data === 'object' &&
-        'mensaje' in response.data
-          ? (response.data as { mensaje?: string }).mensaje
-          : undefined) || 'Sin detalles en la respuesta';
-      return {
-        success: false,
-        message: `Error al procesar nicho ${nicho.nichoId}: ${errorMessage}`
-      };
-    } catch (error: any) {
-      return {
-        success: false,
-        message: `Error al procesar nicho ${nicho.nichoId}: ${extractErrorMessage(error)}`
-      };
+      setSelectedIdsNichos(data.map(d => d.idNicho));
     }
   };
 
-  // Helper function to show results toast
-  const mostrarResultados = (results: { success: number; errors: number }) => {
-    if (results.errors === 0) {
-      toast.success(`${results.success} nichos procesados correctamente`);
-    } else if (results.success === 0) {
-      toast.error(
-        `No se pudo procesar ningún nicho. ${results.errors} errores.`
-      );
-    } else {
-      toast.warning(
-        `${results.success} nichos procesados. ${results.errors} con errores.`
-      );
-    }
-  };
-
-  // Función para preparar lecturas de los nichos seleccionados
-  const prepararLecturas = async () => {
-    if (selectedNichos.length === 0) {
-      toast.error('Debe seleccionar al menos un nicho');
+  const prepararLecturas = async (): Promise<void> => {
+    if (selectedIdsNichos.length === 0) {
+      toast.error('Selecciona al menos un nicho para preparar');
       return;
     }
 
-    if (!periodo || !cicloFacturable) {
-      toast.error('Faltan datos de periodo o ciclo');
+    if (!cicloId || !periodoId) {
+      toast.error('Faltan datos de ciclo o período');
       return;
     }
 
+    setIsSubmitting(true);
     try {
-      setIsSubmitting(true);
-      setSubmitResults({ success: 0, errors: 0, messages: [] });
+      const result = await operacionesService.postGenerarLecturas({
+        idsNichos: selectedIdsNichos,
+        cicloId,
+        periodoId
+      });
 
-      const results = { success: 0, errors: 0, messages: [] as string[] };
-
-      for (const nicho of selectedNichos) {
-        const resultado = await procesarNicho(nicho);
-
-        if (resultado.success) {
-          results.success++;
-        } else {
-          results.errors++;
-        }
-        results.messages.push(resultado.message);
+      if (result.error) {
+        const resumen = generarResumenProceso({
+          exitosos: 0,
+          fallidos: selectedIdsNichos.length,
+          mensaje: result.error
+        });
+        setResultado({ exitosos: 0, fallidos: selectedIdsNichos.length, mensaje: result.error });
+        toast.error(resumen.mensaje);
+        return;
       }
 
-      setSubmitResults(results);
-      mostrarResultados(results);
-
-      if (results.errors === 0) {
-        setSelectedNichos([]);
-        setSelectAll(false);
-      }
-
-      if (onRecargarDatos) {
-        await onRecargarDatos();
-      }
-    } catch (error: any) {
-      toast.error(
-        `Error al preparar lecturas: ${error.message || 'Error desconocido'}`
+      setResultado({
+        exitosos: selectedIdsNichos.length,
+        fallidos: 0
+      });
+      toast.success(
+        `${selectedIdsNichos.length} nichos preparados correctamente`
       );
+      setSelectedIdsNichos([]);
+      await onSuccess?.();
+    } catch (err) {
+      const mensaje =
+        err instanceof Error ? err.message : 'Error al preparar lecturas';
+      setResultado({ exitosos: 0, fallidos: selectedIdsNichos.length, mensaje });
+      toast.error(mensaje);
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  // Helper function to get result type
-  const getResultType = () => {
-    if (submitResults.errors === 0) return 'success';
-    if (submitResults.success === 0) return 'error';
-    return 'warning';
-  };
-
-  // Helper function to get CSS classes based on result type
-  const getResultClasses = () => {
-    const resultType = getResultType();
-
-    const classes = {
-      container: {
-        success:
-          'bg-linear-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-green-200 dark:border-green-800',
-        error:
-          'bg-linear-to-r from-red-50 to-rose-50 dark:from-red-900/20 dark:to-rose-900/20 border-red-200 dark:border-red-800',
-        warning:
-          'bg-linear-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 border-amber-200 dark:border-amber-800'
-      },
-      iconWrapper: {
-        success: 'bg-green-100 dark:bg-green-800/50',
-        error: 'bg-red-100 dark:bg-red-800/50',
-        warning: 'bg-amber-100 dark:bg-amber-800/50'
-      },
-      text: {
-        success: 'text-green-700 dark:text-green-300',
-        error: 'text-red-700 dark:text-red-300',
-        warning: 'text-amber-700 dark:text-amber-300'
-      }
-    };
-
-    return {
-      container: classes.container[resultType],
-      iconWrapper: classes.iconWrapper[resultType],
-      text: classes.text[resultType]
-    };
-  };
-
-  // Helper function to get the appropriate icon
-  const getResultIcon = () => {
-    const resultType = getResultType();
-    const iconProps = 'h-5 w-5';
-
-    if (resultType === 'success') {
-      return (
-        <CheckCircle2
-          className={`${iconProps} text-green-600 dark:text-green-400`}
-        />
-      );
-    }
-    if (resultType === 'error') {
-      return (
-        <AlertCircle
-          className={`${iconProps} text-red-600 dark:text-red-400`}
-        />
-      );
-    }
-    return (
-      <Info className={`${iconProps} text-amber-600 dark:text-amber-400`} />
-    );
-  };
-
-  const resultClasses = getResultClasses();
-
-  // REFACTOR: Extraer renderizado de filas de tabla
-  const renderTableRows = () => {
+  const renderFilas = () => {
     if (isLoading) {
       return (
         <TableRow>
-          <TableCell colSpan={6} className="text-center h-32">
+          <TableCell colSpan={5} className="text-center h-32">
             <div className="flex justify-center items-center flex-col gap-3">
-              <div className="relative">
-                <div className="w-12 h-12 rounded-full border-4 border-border"></div>
-                <div className="absolute top-0 left-0 w-12 h-12 rounded-full border-4 border-border border-t-transparent animate-spin"></div>
-              </div>
-              <span className="text-emerald-700 dark:text-emerald-300 font-medium">
-                Cargando sectores...
+              <div className="w-8 h-8 animate-spin rounded-full border-2 border-border border-t-primary" />
+              <span className="text-muted-foreground text-sm font-medium">
+                Cargando nichos...
               </span>
             </div>
           </TableCell>
@@ -323,25 +158,13 @@ export default function TablaAsignacionSectores({
     if (data.length === 0) {
       return (
         <TableRow>
-          <TableCell colSpan={6} className="text-center h-32 px-4">
-            <div className="flex justify-center items-center flex-col gap-2 sm:gap-3">
-              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-background rounded-xl flex items-center justify-center">
-                <Info className="h-6 w-6 sm:h-8 sm:w-8 text-slate-400" />
-              </div>
-              <div className="text-center space-y-1">
-                <p className="font-medium text-sm sm:text-base">
-                  <span className="hidden sm:inline">
-                    No hay sectores disponibles
-                  </span>
-                  <span className="sm:hidden">Sin sectores</span>
-                </p>
-                <p className="text-xs sm:text-sm text-muted-foreground">
-                  <span className="hidden sm:inline">
-                    Selecciona un ciclo y realiza una búsqueda
-                  </span>
-                  <span className="sm:hidden">Realiza una búsqueda</span>
-                </p>
-              </div>
+          <TableCell colSpan={5} className="text-center h-32 px-4">
+            <div className="flex flex-col items-center gap-2">
+              <Info className="h-6 w-6 text-muted-foreground" />
+              <p className="font-medium text-sm">No hay nichos pendientes</p>
+              <p className="text-xs text-muted-foreground">
+                Selecciona un ciclo y período, luego haz clic en Buscar.
+              </p>
             </div>
           </TableCell>
         </TableRow>
@@ -350,56 +173,50 @@ export default function TablaAsignacionSectores({
 
     return data.map(item => (
       <TableRow
-        key={item.nichoId}
+        key={item.idNicho}
         className={
-          isNichoSelected(item.nichoId)
-            ? ' hover:from-emerald-50 hover:to-teal-50 dark:hover:from-emerald-900/20 dark:hover:to-teal-900/20 border-l-4 border-border'
-            : 'hover:bg-muted'
+          selectedIdsNichos.includes(item.idNicho)
+            ? 'bg-emerald-50/40 dark:bg-emerald-900/10'
+            : 'hover:bg-muted/40'
         }
       >
-        <TableCell className="text-center px-2 sm:px-4 py-2 sm:py-3">
+        <TableCell className="text-center px-2 sm:px-4">
           <Checkbox
-            checked={isNichoSelected(item.nichoId)}
-            onCheckedChange={() => handleSelectNicho(item)}
-            aria-label={`Seleccionar nicho ${item.nichoId}`}
+            checked={selectedIdsNichos.includes(item.idNicho)}
+            onCheckedChange={() => toggleNicho(item.idNicho)}
+            aria-label={`Seleccionar nicho ${item.idNicho}`}
           />
         </TableCell>
-        <TableCell className="text-center px-2 sm:px-4 py-2 sm:py-3">
-          {item.descripcionSector}
+        <TableCell className="text-center px-2 sm:px-4 text-sm">
+          {item.nombreSector}
         </TableCell>
-
-        <TableCell className="px-2 sm:px-4 py-2 sm:py-3 hidden sm:table-cell">
+        <TableCell className="px-2 sm:px-4 hidden sm:table-cell">
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
                 <div className="max-w-[250px] truncate text-sm">
-                  {item.descripcionNicho}
+                  {item.nombreNicho}
                 </div>
               </TooltipTrigger>
               <TooltipContent>
-                <p className="max-w-xs">{item.descripcionNicho}</p>
+                <p className="max-w-xs">{item.nombreNicho}</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
         </TableCell>
-        <TableCell className="text-center px-2 sm:px-4 py-2 sm:py-3">
-          <div className="font-medium bg-background px-2 sm:px-3 py-1 rounded-full inline-block text-xs sm:text-sm">
+        <TableCell className="text-center px-2 sm:px-4">
+          <span className="font-medium bg-muted px-2 sm:px-3 py-1 rounded-full inline-block text-xs sm:text-sm">
             {item.cantidadMedidores}
-          </div>
+          </span>
         </TableCell>
-        <TableCell className="text-center px-2 sm:px-4 py-2 sm:py-3">
-          {isNichoSelected(item.nichoId) ? (
-            <Badge className="bg-linear-to-r from-emerald-500 to-teal-600 border-0 text-xs px-1 sm:px-2">
-              <span className="hidden sm:inline">Seleccionado</span>
-              <span className="sm:hidden">Sel</span>
+        <TableCell className="text-center px-2 sm:px-4">
+          {selectedIdsNichos.includes(item.idNicho) ? (
+            <Badge className="bg-emerald-600 text-white border-0 text-xs">
+              Seleccionado
             </Badge>
           ) : (
-            <Badge
-              variant="outline"
-              className="bg-background border-border text-xs px-1 sm:px-2"
-            >
-              <span className="hidden sm:inline">Pendiente</span>
-              <span className="sm:hidden">Pend</span>
+            <Badge variant="outline" className="text-xs">
+              Pendiente
             </Badge>
           )}
         </TableCell>
@@ -409,19 +226,18 @@ export default function TablaAsignacionSectores({
 
   return (
     <div className="space-y-4">
-      {/* Barra de acciones (no flotante) */}
       <div className="rounded-xl border border-border bg-card p-3 shadow-sm">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-2 text-sm">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-background border border-border">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted">
               <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
             </div>
-            <div className="min-w-0">
+            <div>
               <div className="font-medium">
-                {selectedNichos.length === 0
+                {selectedIdsNichos.length === 0
                   ? 'Sin selección'
-                  : `${selectedNichos.length} ${
-                      selectedNichos.length === 1 ? 'nicho' : 'nichos'
+                  : `${selectedIdsNichos.length} nicho${
+                      selectedIdsNichos.length === 1 ? '' : 's'
                     } seleccionado(s)`}
               </div>
               <div className="text-xs text-muted-foreground">
@@ -434,18 +250,12 @@ export default function TablaAsignacionSectores({
             onClick={prepararLecturas}
             disabled={
               isSubmitting ||
-              selectedNichos.length === 0 ||
-              !periodo ||
-              !cicloFacturable
+              selectedIdsNichos.length === 0 ||
+              !cicloId ||
+              !periodoId
             }
-            variant="default"
             size="sm"
-            className="gap-2 bg-linear-to-br from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white w-full sm:w-auto"
-            title={
-              selectedNichos.length === 0
-                ? 'Seleccione al menos un nicho'
-                : `Preparar lecturas para ${selectedNichos.length} nicho(s)`
-            }
+            className="gap-2 bg-emerald-600 hover:bg-emerald-700 text-white w-full sm:w-auto"
           >
             {isSubmitting ? (
               <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
@@ -457,83 +267,83 @@ export default function TablaAsignacionSectores({
         </div>
       </div>
 
-      {/* Resultados del envío */}
-      {submitResults.messages.length > 0 && (
-        <div className={`rounded-xl p-4 border ${resultClasses.container}`}>
-          <div className="flex gap-3 items-start mb-3">
-            <div
-              className={`w-10 h-10 rounded-xl flex items-center justify-center ${resultClasses.iconWrapper}`}
-            >
-              {getResultIcon()}
-            </div>
-            <div className="flex-1">
-              <p className={`font-medium ${resultClasses.text}`}>
-                Resultados del proceso
-              </p>
-              <div className="max-h-32 overflow-y-auto mt-2 space-y-1">
-                {submitResults.messages.map(message => (
-                  <p key={message} className="text-sm text-muted-foreground">
-                    • {message}
-                  </p>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          <div className="flex gap-4 text-sm">
-            <span className="flex items-center gap-1 text-green-600 dark:text-green-400 font-medium">
-              <CheckCircle2 className="w-4 h-4" />
-              {submitResults.success} correctos
-            </span>
-            {submitResults.errors > 0 && (
-              <span className="flex items-center gap-1 text-red-600 dark:text-red-400 font-medium">
-                <AlertCircle className="w-4 h-4" />
-                {submitResults.errors} errores
-              </span>
+      {resultado && (
+        <div
+          className={`rounded-xl p-4 border ${
+            resultado.fallidos === 0
+              ? 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800'
+              : resultado.exitosos === 0
+                ? 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800'
+                : 'bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800'
+          }`}
+        >
+          <div className="flex gap-3 items-start">
+            {resultado.fallidos === 0 ? (
+              <CheckCircle2 className="h-5 w-5 text-emerald-600 dark:text-emerald-400 mt-0.5" />
+            ) : resultado.exitosos === 0 ? (
+              <AlertCircle className="h-5 w-5 text-red-600 dark:text-red-400 mt-0.5" />
+            ) : (
+              <Info className="h-5 w-5 text-amber-600 dark:text-amber-400 mt-0.5" />
             )}
+            <div className="flex-1">
+              <p
+                className={`font-medium ${
+                  resultado.fallidos === 0
+                    ? 'text-emerald-700 dark:text-emerald-300'
+                    : resultado.exitosos === 0
+                      ? 'text-red-700 dark:text-red-300'
+                      : 'text-amber-700 dark:text-amber-300'
+                }`}
+              >
+                {resultado.mensaje ??
+                  generarResumenProceso(resultado).mensaje}
+              </p>
+            </div>
           </div>
         </div>
       )}
 
-      {/* Tabla modernizada */}
-      <div className="rounded-xl border-border overflow-hidden bg-background shadow-sm">
+      <div className="rounded-xl border border-border overflow-hidden bg-background shadow-sm">
         <ScrollArea className="h-[calc(100vh-500px)]">
           <Table>
             <TableHeader>
-              <TableRow className="hover:from-slate-100 hover:to-emerald-100 dark:hover:from-slate-800 dark:hover:to-emerald-900/30">
+              <TableRow className="bg-muted/40 hover:bg-muted/60">
                 <TableHead className="w-[50px] text-center">
                   <Checkbox
-                    checked={selectAll}
-                    onCheckedChange={handleSelectAll}
+                    checked={
+                      data.length > 0 &&
+                      selectedIdsNichos.length === data.length
+                    }
+                    onCheckedChange={toggleSeleccionarTodo}
                     aria-label="Seleccionar todos"
                   />
                 </TableHead>
-                <TableHead className="text-center font-semibold text-xs sm:text-sm px-2 sm:px-4">
+                <TableHead className="text-center font-semibold text-xs sm:text-sm">
                   <div className="flex items-center justify-center gap-1 sm:gap-2">
-                    <ServerIcon className="w-3 h-3 sm:w-4 sm:h-4 text-slate-500" />
+                    <ServerIcon className="w-3 h-3 sm:w-4 sm:w-4 text-muted-foreground" />
                     <span className="hidden sm:inline">Sector</span>
                     <span className="sm:hidden">Sect</span>
                   </div>
                 </TableHead>
-                <TableHead className="font-semibold text-xs sm:text-sm px-2 sm:px-4 hidden sm:table-cell">
+                <TableHead className="font-semibold text-xs sm:text-sm hidden sm:table-cell">
                   <div className="flex items-center gap-2">
-                    <FileTextIcon className="w-4 h-4 text-teal-500" />
-                    Descripción Nicho
+                    <FileTextIcon className="w-4 h-4 text-muted-foreground" />
+                    Nicho
                   </div>
                 </TableHead>
-                <TableHead className="text-center font-semibold text-xs sm:text-sm px-2 sm:px-4">
+                <TableHead className="text-center font-semibold text-xs sm:text-sm">
                   <div className="flex items-center justify-center gap-1 sm:gap-2">
-                    <UsersIcon className="w-3 h-3 sm:w-4 sm:h-4 text-blue-500" />
+                    <UsersIcon className="w-3 h-3 sm:w-4 sm:w-4 text-muted-foreground" />
                     <span className="hidden sm:inline">Medidores</span>
                     <span className="sm:hidden">Med</span>
                   </div>
                 </TableHead>
-                <TableHead className="text-center font-semibold text-xs sm:text-sm px-2 sm:px-4 w-20 sm:w-[120px]">
+                <TableHead className="text-center font-semibold text-xs sm:text-sm w-20 sm:w-[120px]">
                   Estado
                 </TableHead>
               </TableRow>
             </TableHeader>
-            <TableBody>{renderTableRows()}</TableBody>
+            <TableBody>{renderFilas()}</TableBody>
           </Table>
         </ScrollArea>
       </div>

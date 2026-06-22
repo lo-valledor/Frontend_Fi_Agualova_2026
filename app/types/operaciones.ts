@@ -114,6 +114,8 @@ export type PeriodosAniosDisponiblesResponse = {
   anio: number;
 };
 
+export type Anio = PeriodosAniosDisponiblesResponse;
+
 // GET /agualova/periodos/buscar
 export type PeriodosBuscarRequest = {
   codigo: string;
@@ -123,6 +125,8 @@ export type PeriodosBuscarRequest = {
   estado: string;
   puedeCerrar: boolean;
 };
+
+export type Periodos = PeriodosBuscarRequest;
 
 // POST /agualova/periodos/crear
 export type PeriodosCrearRequest = {

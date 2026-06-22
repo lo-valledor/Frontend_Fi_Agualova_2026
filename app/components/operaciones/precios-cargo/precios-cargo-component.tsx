@@ -1,6 +1,6 @@
-import { driver } from 'driver.js';
+import { driver } from "driver.js";
+import "driver.js/dist/driver.css";
 import {
-  BarChart,
   Building2,
   Calendar,
   ChevronDown,
@@ -8,100 +8,75 @@ import {
   HelpCircle,
   Info,
   Search,
-  TrendingUp
-} from 'lucide-react';
-import { toast } from 'sonner';
-import 'driver.js/dist/driver.css';
+  TrendingUp,
+} from "lucide-react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
-import { useEffect, useState } from 'react';
-
-import { ModernHeader } from '~/components/shared/modern-header';
-import { Badge } from '~/components/ui/badge';
-import { Button } from '~/components/ui/button';
-import { Card, CardContent } from '~/components/ui/card';
-import { Collapsible, CollapsibleContent } from '~/components/ui/collapsible';
-import { Label } from '~/components/ui/label';
+import { ModernHeader } from "~/components/shared/modern-header";
+import { Badge } from "~/components/ui/badge";
+import { Button } from "~/components/ui/button";
+import { Card, CardContent } from "~/components/ui/card";
+import { Collapsible, CollapsibleContent } from "~/components/ui/collapsible";
+import { Label } from "~/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
-} from '~/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
-import api from '~/lib/api';
+  SelectValue,
+} from "~/components/ui/select";
+import { operacionesService } from "~/services/operacionesService";
 import type {
-  PreciosCargoAgualova,
-  PreciosCargoEnel
-} from '~/types/operaciones';
+  PreciosConsultarRequest,
+  PrepararLecturasFiltrosPeriodosResponse,
+} from "~/types/operaciones";
 import {
   getCurrentMonth,
   getCurrentYear,
   getMonthLabel,
   getYearsRange,
   MONTHS,
-  validatePeriod
-} from '~/utils/operaciones';
-import { columns } from './columns-agualova';
-import { columns as columnsEnel } from './columns-enel';
-import { DataTablePreciosVirtualized } from './data-table-precios-virtualized';
+  validatePeriod,
+} from "~/utils/operaciones";
+
+import { columns as columnsEnel } from "./columns-enel";
+import { DataTablePreciosVirtualized } from "./data-table-precios-virtualized";
 
 interface PreciosCargoComponentProps {
-  tablaEnel: PreciosCargoEnel[];
-  tablaAgualova: PreciosCargoAgualova[];
+  precios: PreciosConsultarRequest[];
   initialMes: string;
   initialAnio: string;
   error: string | null;
 }
 
 export default function PreciosCargoComponent({
-  tablaEnel: initialTablaEnel,
-  tablaAgualova: initialTablaAgualova,
+  precios: initialPrecios,
   initialMes,
   initialAnio,
-  error
+  error,
 }: Readonly<PreciosCargoComponentProps>) {
-  // Estados para filtros y datos
   const [mes, setMes] = useState(initialMes);
   const [anio, setAnio] = useState(initialAnio);
-  const [tablaEnel, setTablaEnel] = useState(initialTablaEnel);
-  const [tablaAgualova, setTablaAgualova] = useState(initialTablaAgualova);
+  const [precios, setPrecios] =
+    useState<PreciosConsultarRequest[]>(initialPrecios);
   const [isLoading, setIsLoading] = useState(false);
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
-  const [periodoAbierto, setPeriodoAbierto] = useState<{
-    descripcion: string;
-    mes: number;
-    anio: number;
-  } | null>(null);
+  const [periodoAbierto, setPeriodoAbierto] =
+    useState<PrepararLecturasFiltrosPeriodosResponse | null>(null);
 
-  // Consultar periodo abierto al montar el componente
   useEffect(() => {
-    async function fetchPeriodoAbierto() {
-      try {
-        const response = await api.get('/ConsultarPeriodoAbierto');
-
-        // Early return si no hay datos
-        if (!Array.isArray(response.data) || response.data.length === 0) {
-          return;
-        }
-
-        const periodo = response.data[0];
-        setPeriodoAbierto(periodo);
-
-        // Actualizar filtros al periodo abierto
-        setMes(periodo.mes.toString().padStart(2, '0'));
-        setAnio(periodo.anio.toString());
-      } catch (error) {
-        console.error('Error al obtener el periodo abierto:', error);
+    async function fetchPeriodoAbierto(): Promise<void> {
+      const response = await operacionesService.getPeriodoAbierto();
+      if (response.error || !response.data || response.data.length === 0) {
+        return;
       }
+      setPeriodoAbierto(response.data[0] ?? null);
     }
-
     fetchPeriodoAbierto();
   }, []);
 
-  // Manejo de búsqueda con validación
-  const handleSearch = async () => {
-    // Validar período antes de buscar
+  const handleSearch = async (): Promise<void> => {
     const validation = validatePeriod(mes, anio);
     if (!validation.isValid) {
       toast.error(validation.error);
@@ -111,147 +86,109 @@ export default function PreciosCargoComponent({
     try {
       setIsLoading(true);
       setIsFiltersOpen(false);
+      const response = await operacionesService.getPreciosCargoData(mes, anio);
 
-      const params = new URLSearchParams({
-        mes,
-        año: anio
+      if (response.error || !response.data) {
+        toast.error(response.error || "Error al buscar precios de cargo");
+        return;
+      }
+
+      setPrecios(response.data);
+      toast.success("Búsqueda completada exitosamente");
+    } catch (err) {
+      toast.error("Error al buscar precios de cargo", {
+        description: String(err),
       });
-
-      const response = await api.get('/consulta-precio-pago', { params });
-      setTablaEnel(response.data as PreciosCargoEnel[]);
-      toast.success('Búsqueda completada exitosamente');
-    } catch (_error) {
-      toast.error('Error al buscar precios de cargo', _error as any);
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Limpiar filtros
-  const handleClearFilters = () => {
+  const handleClearFilters = (): void => {
     setMes(getCurrentMonth());
     setAnio(getCurrentYear());
-    toast.success('Filtros reiniciados');
+    toast.success("Filtros reiniciados");
   };
 
-  // Actualizar datos después de modificaciones (ENEL)
-  const handleDataUpdate = async () => {
+  const handleDataUpdate = async (): Promise<void> => {
     await handleSearch();
   };
 
-  // Actualizar datos de Agualova
-  const handleAgualovaDataUpdate = async () => {
-    try {
-      setIsLoading(true);
-      const response = await api.get('/consulta-precio-pago-tabla');
-      setTablaAgualova(response.data as PreciosCargoAgualova[]);
-      toast.success('Datos actualizados correctamente');
-    } catch (error) {
-      toast.error('Error al actualizar los datos', error as any);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Pasos del tour interactivo con driver.js
   const tourSteps = [
     {
-      element: '#filtros-periodo',
+      element: "#filtros-periodo",
       popover: {
-        title: '📅 Filtros de Período',
+        title: "📅 Filtros de Período",
         description:
-          'Este panel te permite <strong>seleccionar el período</strong> (mes y año) para consultar los precios de cargo históricos o actuales.',
-        side: 'bottom' as const,
-        align: 'start' as const
-      }
+          "Este panel te permite <strong>seleccionar el período</strong> (mes y año) para consultar los precios de cargo históricos o actuales.",
+        side: "bottom" as const,
+        align: "start" as const,
+      },
     },
     {
-      element: '#periodo-actual',
+      element: "#periodo-actual",
       popover: {
-        title: '📌 Período Activo',
+        title: "📌 Período Activo",
         description:
-          'Aquí se muestra el <strong>período abierto actualmente</strong> en el sistema. Los filtros se inicializan automáticamente con este período.',
-        side: 'bottom' as const,
-        align: 'start' as const
-      }
+          "Aquí se muestra el <strong>período abierto actualmente</strong> en el sistema.",
+        side: "bottom" as const,
+        align: "start" as const,
+      },
     },
     {
-      element: '#buscar-btn',
+      element: "#buscar-btn",
       popover: {
-        title: '🔍 Buscar Precios',
+        title: "🔍 Buscar Precios",
         description:
-          'Una vez seleccionado el período deseado, haz clic en <strong>Buscar</strong> para cargar los precios de cargo correspondientes a ese mes y año.',
-        side: 'bottom' as const,
-        align: 'center' as const
-      }
+          "Una vez seleccionado el período deseado, haz clic en <strong>Buscar</strong> para cargar los precios de cargo.",
+        side: "bottom" as const,
+        align: "center" as const,
+      },
     },
     {
-      element: '#limpiar-btn',
+      element: "#limpiar-btn",
       popover: {
-        title: '🧹 Limpiar Filtros',
+        title: "🧹 Limpiar Filtros",
         description:
-          'Este botón <strong>restablece los filtros</strong> al mes y año actual del sistema.',
-        side: 'bottom' as const,
-        align: 'center' as const
-      }
+          "Este botón <strong>restablece los filtros</strong> al mes y año actual del sistema.",
+        side: "bottom" as const,
+        align: "center" as const,
+      },
     },
     {
-      element: '#tabs-precios',
+      element: "#tabla-precios",
       popover: {
-        title: '🔄 Pestañas de Precios',
+        title: "💰 Tabla de Precios",
         description:
-          'Usa estas pestañas para alternar entre <strong>Precios ENEL</strong> (distribuidora) y <strong>Precios Agualova</strong> (propios de la empresa).',
-        side: 'top' as const,
-        align: 'start' as const
-      }
+          "Aquí se muestran los <strong>precios de cargo publicados por la distribuidora</strong>.",
+        side: "top" as const,
+        align: "start" as const,
+      },
     },
-    {
-      element: '#tabla-enel',
-      popover: {
-        title: '💰 Tabla de Precios ENEL',
-        description:
-          'Aquí se muestran los <strong>precios de cargo publicados por ENEL</strong>. Puedes ver valores anteriores y actuales para comparación histórica.',
-        side: 'top' as const,
-        align: 'start' as const
-      }
-    },
-    {
-      element: '#tabla-agualova',
-      popover: {
-        title: '💼 Tabla de Precios Agualova',
-        description:
-          'Esta tabla muestra los <strong>precios propios de Agualova</strong>, fijados internamente para el período actual.',
-        side: 'top' as const,
-        align: 'start' as const
-      }
-    }
   ];
 
-  // Función para iniciar el tour
-  const startTour = () => {
+  const startTour = (): void => {
     const driverjs = driver({
       showProgress: true,
-      progressText: 'Paso {{current}} de {{total}}',
+      progressText: "Paso {{current}} de {{total}}",
       smoothScroll: true,
       stagePadding: 4,
       stageRadius: 6,
       animate: true,
       allowClose: true,
-      nextBtnText: 'Siguiente',
-      prevBtnText: 'Anterior',
-      doneBtnText: 'Finalizar',
-      onHighlightStarted: element => {
+      nextBtnText: "Siguiente",
+      prevBtnText: "Anterior",
+      doneBtnText: "Finalizar",
+      onHighlightStarted: (element) => {
         if (element) {
-          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          element.scrollIntoView({ behavior: "smooth", block: "center" });
         }
-      }
+      },
     });
-
     driverjs.setSteps(tourSteps);
     driverjs.drive();
   };
 
-  // Mostrar error si existe
   if (error) {
     return (
       <div className="min-h-screen bg-background">
@@ -274,13 +211,10 @@ export default function PreciosCargoComponent({
     <div className="min-h-screen bg-background">
       <div className="container mx-auto p-3 space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          {/* Header */}
           <ModernHeader
             title="Precios Cargo"
             description="Gestión de precios de cargo para facturación"
           />
-
-          {/* Botón de Guía Interactiva */}
           <Button
             variant="outline"
             size="sm"
@@ -290,7 +224,7 @@ export default function PreciosCargoComponent({
             <HelpCircle className="h-4 w-4" />
           </Button>
         </div>
-        {/* Filtros */}
+
         <Card id="filtros-periodo" className="border border-border shadow-sm">
           <Collapsible open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
             <div
@@ -313,13 +247,12 @@ export default function PreciosCargoComponent({
                 </div>
                 <ChevronDown
                   className={`h-4 w-4 transition-transform duration-200 ${
-                    isFiltersOpen ? 'rotate-180' : ''
+                    isFiltersOpen ? "rotate-180" : ""
                   }`}
                 />
               </div>
             </div>
 
-            {/* Período seleccionado */}
             <div id="periodo-actual" className="px-4 pb-4">
               <div className="flex items-center gap-3 p-3 bg-muted/30 rounded-xl border border-border">
                 <div className="flex items-center gap-2">
@@ -337,7 +270,6 @@ export default function PreciosCargoComponent({
             <CollapsibleContent>
               <CardContent className="px-4 pb-4 space-y-3">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {/* Mes */}
                   <div className="space-y-2">
                     <Label className="text-sm font-medium">Mes</Label>
                     <Select value={mes} onValueChange={setMes}>
@@ -345,7 +277,7 @@ export default function PreciosCargoComponent({
                         <SelectValue placeholder="Selecciona un mes" />
                       </SelectTrigger>
                       <SelectContent className="w-full">
-                        {MONTHS.map(month => (
+                        {MONTHS.map((month) => (
                           <SelectItem key={month.value} value={month.value}>
                             {month.label}
                           </SelectItem>
@@ -354,7 +286,6 @@ export default function PreciosCargoComponent({
                     </Select>
                   </div>
 
-                  {/* Año */}
                   <div className="space-y-2">
                     <Label className="text-sm font-medium">Año</Label>
                     <Select value={anio} onValueChange={setAnio}>
@@ -362,7 +293,7 @@ export default function PreciosCargoComponent({
                         <SelectValue placeholder="Selecciona un año" />
                       </SelectTrigger>
                       <SelectContent className="w-full">
-                        {getYearsRange().map(year => (
+                        {getYearsRange().map((year) => (
                           <SelectItem key={year.value} value={year.value}>
                             {year.label}
                           </SelectItem>
@@ -372,7 +303,6 @@ export default function PreciosCargoComponent({
                   </div>
                 </div>
 
-                {/* Acciones */}
                 <div className="flex gap-2 justify-end pt-3 border-t border-border">
                   <Button
                     id="limpiar-btn"
@@ -408,150 +338,32 @@ export default function PreciosCargoComponent({
               </CardContent>
             </CollapsibleContent>
           </Collapsible>
-        </Card>{' '}
-        {/* Tablas de Precios */}
+        </Card>
+
         <Card className="border border-border shadow-sm">
-          <CardContent className="p-4">
-            <Tabs id="tabs-precios" defaultValue="enel" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 bg-muted h-10">
-                <TabsTrigger
-                  value="enel"
-                  className="data-[state=active]:bg-background"
-                >
-                  <Building2 className="mr-2 h-4 w-4" />
-                  Precios Enel
-                </TabsTrigger>
-                <TabsTrigger
-                  value="agualova"
-                  className="data-[state=active]:bg-background"
-                >
-                  <BarChart className="mr-2 h-4 w-4" />
-                  Precios Agualova
-                </TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="enel" className="space-y-3 pt-4">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                  <div className="flex-1">
-                    <h3 className="text-base font-medium">
-                      Precios de Cargo - Enel
-                    </h3>
-                    <div className="text-xs text-muted-foreground flex items-center gap-2 mt-1">
-                      <Info className="w-4 h-4 text-primary" />
-                      <span>Valores vigentes publicados por Enel</span>
-                      <span>-</span>
-                      <a
-                        href="https://www.enel.cl/es/clientes/tarifas-y-regulacion/tarifas.html"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="underline text-primary hover:text-primary/80"
-                      >
-                        enel.cl - Tarifas
-                      </a>
-                    </div>
-                  </div>
-                  <Badge variant="outline" className="text-sm">
-                    {getMonthLabel(mes)} {anio}
-                  </Badge>
-                </div>
-                <div
-                  id="tabla-enel"
-                  className="rounded-xl border border-border overflow-hidden"
-                >
-                  <DataTablePreciosVirtualized
-                    columns={columnsEnel(mes, anio, handleDataUpdate)}
-                    data={tablaEnel}
-                    searchPlaceholder="Buscar por descripción o código..."
-                    showSearch={true}
-                    columnGroups={[
-                      {
-                        id: 'identificacion',
-                        title: 'Identificación',
-                        columns: ['codigo', 'codigoener', 'descripcion'],
-                        className: 'bg-primary text-primary-foreground'
-                      },
-                      {
-                        id: 'valores',
-                        title: 'Valores Anteriores',
-                        columns: ['valor', 'valor2', 'valor3'],
-                        className: 'bg-warning text-warning-foreground'
-                      },
-                      {
-                        id: 'valoresActuales',
-                        title: 'Valores Actuales',
-                        columns: [
-                          'valoractual',
-                          'valoractual2',
-                          'valoractual3'
-                        ],
-                        className: 'bg-success text-success-foreground'
-                      },
-                      {
-                        id: 'acciones',
-                        title: 'Estado',
-                        columns: ['actions'],
-                        className: 'bg-accent text-accent-foreground'
-                      }
-                    ]}
-                  />
-                </div>
-              </TabsContent>
-
-              <TabsContent value="agualova" className="space-y-3 pt-4">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                  <div className="flex-1">
-                    <h3 className="text-base font-medium">
-                      Precios de Cargo - Agualova
-                    </h3>
-                    <p className="text-xs text-muted-foreground flex items-center gap-2 mt-1">
-                      <Info className="w-4 h-4 text-success" />
-                      <span>
-                        Precios fijados directamente por Agualova para el mes
-                        actual
-                      </span>
-                    </p>
-                  </div>
-                  <Badge variant="outline" className="text-sm">
-                    Precios actuales
-                  </Badge>
-                </div>
-                <div
-                  id="tabla-agualova"
-                  className="rounded-xl border border-border overflow-hidden"
-                >
-                  <DataTablePreciosVirtualized
-                    columns={columns(handleAgualovaDataUpdate)}
-                    data={tablaAgualova}
-                    searchPlaceholder="Buscar por descripción o código..."
-                    showSearch={true}
-                    columnGroups={[
-                      {
-                        id: 'informacion',
-                        title: 'Información',
-                        columns: [
-                          'CD_ID',
-                          'cd_codigoagualova',
-                          'CD_Descripcion'
-                        ],
-                        className: 'bg-primary text-primary-foreground'
-                      },
-                      {
-                        id: 'valores',
-                        title: 'Valores',
-                        columns: ['valor', 'dias'],
-                        className: 'bg-success text-success-foreground'
-                      },
-                      {
-                        id: 'acciones',
-                        title: 'Detalles',
-                        columns: ['actions'],
-                        className: 'bg-accent text-accent-foreground'
-                      }
-                    ]}
-                  />
-                </div>
-              </TabsContent>
-            </Tabs>
+          <CardContent className="p-4 space-y-3">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <div className="flex-1">
+                <h3 className="text-base font-medium flex items-center gap-2">
+                  <Building2 className="w-4 h-4 text-muted-foreground" />
+                  Precios de Cargo
+                </h3>
+              </div>
+              <Badge variant="outline" className="text-sm">
+                {getMonthLabel(mes)} {anio}
+              </Badge>
+            </div>
+            <div
+              id="tabla-precios"
+              className="rounded-xl border border-border overflow-hidden"
+            >
+              <DataTablePreciosVirtualized
+                columns={columnsEnel(mes, anio, handleDataUpdate)}
+                data={precios}
+                searchPlaceholder="Buscar por descripción o código..."
+                showSearch
+              />
+            </div>
           </CardContent>
         </Card>
       </div>

@@ -130,8 +130,8 @@ export default function DialogNuevoPeriodo({
                 </SelectTrigger>
                 <SelectContent>
                   {years.map(year => (
-                    <SelectItem key={year.idaño} value={year.año.toString()}>
-                      {year.año}
+                    <SelectItem key={year.idAnio} value={year.anio.toString()}>
+                      {year.anio}
                     </SelectItem>
                   ))}
                 </SelectContent>

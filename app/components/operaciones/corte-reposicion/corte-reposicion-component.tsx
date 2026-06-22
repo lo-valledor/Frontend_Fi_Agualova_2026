@@ -1,10 +1,10 @@
 import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
 import {
   AlertTriangle,
   ArrowUpToLine,
   CheckCircle2,
   ChevronDown,
-  Download,
   FileSpreadsheet,
   FileText,
   HelpCircle,
@@ -12,10 +12,8 @@ import {
   Play,
   Search
 } from 'lucide-react';
+import { useState } from 'react';
 import { toast } from 'sonner';
-import 'driver.js/dist/driver.css';
-
-import { useEffect, useState } from 'react';
 
 import { DataTable } from '~/components/data-table/data-table';
 import { ModernHeader } from '~/components/shared/modern-header';
@@ -37,223 +35,123 @@ import {
   CollapsibleTrigger
 } from '~/components/ui/collapsible';
 import { Spinner } from '~/components/ui/spinner';
-import api from '~/lib/api';
-import type { ConsultarMantenedorRevisionCorte } from '~/types/operaciones';
+import { operacionesService } from '~/services/operacionesService';
+import type {
+  CorteReposicionBuscarRequest,
+  CorteReposicionResumenResponse
+} from '~/types/operaciones';
 
 import { columns } from './columns';
 
-interface RevisionStats {
-  codigo: string;
-  cantidad: number;
-}
 interface CorteReposicionComponentProps {
-  mantenedorCorteData: ConsultarMantenedorRevisionCorte[];
+  readonly resumen: CorteReposicionResumenResponse | null;
+  readonly mantenedorCorteData: CorteReposicionBuscarRequest[];
+  readonly error: string | null;
 }
 
 export default function CorteReposicionComponent({
-  mantenedorCorteData: initialMantenedorCorteData
+  resumen: initialResumen,
+  mantenedorCorteData: initialMantenedorCorteData,
+  error
 }: Readonly<CorteReposicionComponentProps>) {
   const [isRevisionOpen, setIsRevisionOpen] = useState(true);
+  const [resumen, setResumen] = useState<CorteReposicionResumenResponse | null>(
+    initialResumen
+  );
   const [mantenedorCorteData, setMantenedorCorteData] = useState<
-    ConsultarMantenedorRevisionCorte[]
+    CorteReposicionBuscarRequest[]
   >(initialMantenedorCorteData);
-  const [revisionStats, setRevisionStats] = useState<RevisionStats[]>([]);
   const [isSearching, setIsSearching] = useState(false);
-
-  // Estados de loading para cada botón
-  const [isExportingExcel, setIsExportingExcel] = useState(false);
-  const [isExportingCorte, setIsExportingCorte] = useState(false);
-  const [isExportingFacturas, setIsExportingFacturas] = useState(false);
   const [isActivating, setIsActivating] = useState(false);
   const [isStarting, setIsStarting] = useState(false);
   const [isFinalizing, setIsFinalizing] = useState(false);
-
-  // Estado para el AlertDialog de confirmación
   const [showFinalizarDialog, setShowFinalizarDialog] = useState(false);
 
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const statsRes = await api.get<RevisionStats[]>(
-          'consulta-registros-revision'
-        );
-        if (Array.isArray(statsRes.data)) {
-          setRevisionStats(statsRes.data);
-        }
-      } catch (error) {
-        console.error('Error fetching revision stats', error);
-      }
-    };
-    void fetchStats();
-  }, []);
-
-  // Obtener cantidad por código - calculado dinámicamente desde los datos actuales
-  const getCantidadPorCodigo = (codigo: string): number => {
-    const stat = revisionStats.find(
-      item => String(item.codigo) === String(codigo)
-    );
-    return stat ? stat.cantidad : 0;
-  };
-
-  const handleExportarExcel = async () => {
-    setIsExportingExcel(true);
-    try {
-      const res = await api.get('exportar-mantenedor-revision', {
-        responseType: 'blob'
-      });
-
-      const url = globalThis.URL.createObjectURL(new Blob([res.data as Blob]));
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'mantenedor_revision.xlsx';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      toast.success('Archivo exportado correctamente');
-    } catch (error) {
-      toast.error('Error al exportar el archivo', error as any);
-    } finally {
-      setIsExportingExcel(false);
-    }
-  };
-
-  const handleExportarExcelCorte = async () => {
-    setIsExportingCorte(true);
-    try {
-      const res = await api.get('exportar-revision-corte', {
-        responseType: 'blob'
-      });
-
-      const url = globalThis.URL.createObjectURL(new Blob([res.data as Blob]));
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'revision_corte.xlsx';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      toast.success('Archivo exportado correctamente');
-    } catch (error) {
-      toast.error('Error al exportar el archivo', error as any);
-    } finally {
-      setIsExportingCorte(false);
-    }
-  };
-
-  const handleExportarFacturasImpagas = async () => {
-    setIsExportingFacturas(true);
-    try {
-      const res = await api.get('exportar-facturas-impagas', {
-        responseType: 'blob'
-      });
-
-      // El tipado de axios con responseType: 'blob' retorna response.data como "unknown"
-      // así que lo forzamos a Blob de manera segura para su uso en el objeto URL.
-      const blob =
-        res.data instanceof Blob ? res.data : new Blob([res.data as BlobPart]);
-      const url = globalThis.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'facturas-impagas-completo.xlsx';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      globalThis.URL.revokeObjectURL(url);
-      toast.success('Facturas impagas exportadas correctamente');
-    } catch (error) {
-      toast.error('Error al exportar las facturas impagas', error as any);
-    } finally {
-      setIsExportingFacturas(false);
-    }
-  };
-
-  const handleBuscar = async () => {
+  const handleBuscar = async (): Promise<void> => {
     setIsSearching(true);
     try {
-      const [mantenedorRes, statsRes] = await Promise.all([
-        api.get<ConsultarMantenedorRevisionCorte[]>(
-          'consulta-mantenedor-revision-corte'
-        ),
-        api.get<RevisionStats[]>('consulta-registros-revision')
-      ]);
-
-      if (Array.isArray(mantenedorRes.data)) {
-        setMantenedorCorteData(mantenedorRes.data);
-        toast.success(`Se encontraron ${mantenedorRes.data.length} registros`);
+      const result = await operacionesService.getCorteReposicionData();
+      if (result.error || !result.data) {
+        toast.error('Error al buscar datos de corte y reposición');
+        return;
       }
-
-      if (Array.isArray(statsRes.data)) {
-        setRevisionStats(statsRes.data);
-      }
-    } catch (error) {
-      toast.error(
-        'Error al buscar los datos de corte y reposición.',
-        error as any
+      setResumen(result.data.resumen);
+      setMantenedorCorteData(result.data.mantenedorCorteData);
+      toast.success(
+        `Se encontraron ${result.data.mantenedorCorteData.length} registros`
       );
+    } catch (err) {
+      toast.error('Error al buscar datos', { description: String(err) });
     } finally {
       setIsSearching(false);
     }
   };
 
-  const handleActivarActualizacion = async () => {
+  const handleActualizar = async (): Promise<void> => {
     setIsActivating(true);
     try {
-      const res = await api.post('modificar-revision');
-      if (res.status === 200) {
-        toast.success('Proceso de revisión modificado correctamente.');
-        void handleBuscar();
-      } else {
-        toast.error('Error al activar la actualización.');
+      const result = await operacionesService.postActualizarProcesoCorteReposicion();
+      if (result.error) {
+        toast.error(result.error);
+        return;
       }
-    } catch (error) {
-      toast.error('Error al activar la actualización.', error as any);
+      toast.success('Proceso de revisión actualizado correctamente');
+      await handleBuscar();
+    } catch (err) {
+      toast.error('Error al actualizar el proceso', {
+        description: String(err)
+      });
     } finally {
       setIsActivating(false);
     }
   };
 
-  const handleIniciar = async () => {
+  const handleIniciar = async (): Promise<void> => {
     setIsStarting(true);
     try {
-      const res = await api.post('ingresar-revision');
-      if (res.status === 200) {
-        toast.success('Proceso de revisión iniciado correctamente.');
-        void handleBuscar();
-      } else {
-        toast.error('Error al iniciar el proceso de revisión.');
+      const result = await operacionesService.postIniciarProcesoCorteReposicion();
+      if (result.error) {
+        toast.error(result.error);
+        return;
       }
-    } catch (error) {
-      toast.error('Error al iniciar el proceso de revisión.', error as any);
+      toast.success('Proceso de revisión iniciado correctamente');
+      await handleBuscar();
+    } catch (err) {
+      toast.error('Error al iniciar el proceso', {
+        description: String(err)
+      });
     } finally {
       setIsStarting(false);
     }
   };
 
-  const handleConfirmarFinalizar = async () => {
+  const handleConfirmarFinalizar = async (): Promise<void> => {
     setIsFinalizing(true);
     setShowFinalizarDialog(false);
     try {
-      const res = await api.delete('eliminar-revision');
-      if (res.status === 200) {
-        toast.success('Proceso de revisión finalizado correctamente.');
-        void handleBuscar();
-      } else {
-        toast.error('Error al finalizar el proceso de revisión.');
+      const result = await operacionesService.postFinalizarProcesoCorteReposicion();
+      if (result.error) {
+        toast.error(result.error);
+        return;
       }
-    } catch (error) {
-      toast.error('Error al finalizar el proceso.', error as any);
+      toast.success('Proceso de revisión finalizado correctamente');
+      await handleBuscar();
+    } catch (err) {
+      toast.error('Error al finalizar el proceso', {
+        description: String(err)
+      });
     } finally {
       setIsFinalizing(false);
     }
   };
 
-  // Pasos del tour interactivo con driver.js
   const tourSteps = [
     {
       element: '#panel-revision',
       popover: {
         title: '🔧 Panel de Revisión',
         description:
-          'Este es el <strong>panel principal</strong> donde encontrarás todas las herramientas de gestión y control para el proceso de corte y reposición.',
+          'Panel principal con las herramientas de gestión y control para el proceso de corte y reposición.',
         side: 'bottom' as const,
         align: 'start' as const
       }
@@ -263,17 +161,7 @@ export default function CorteReposicionComponent({
       popover: {
         title: '🔍 Buscar Datos',
         description:
-          '¡Empezar aquí! Este botón <strong>actualiza y carga</strong> los datos más recientes del mantenedor de revisión de corte.',
-        side: 'bottom' as const,
-        align: 'center' as const
-      }
-    },
-    {
-      element: '#facturas-impagas-btn',
-      popover: {
-        title: '📊 Exportar Facturas Impagas',
-        description:
-          'Exporta a Excel <strong>todas las facturas impagas</strong> del sistema. Útil para análisis y reportes financieros.',
+          'Actualiza y carga los datos más recientes del mantenedor de revisión de corte.',
         side: 'bottom' as const,
         align: 'center' as const
       }
@@ -283,7 +171,7 @@ export default function CorteReposicionComponent({
       popover: {
         title: '📈 Estadísticas Rápidas',
         description:
-          'Vista rápida de los <strong>totales por estado</strong>. Te permite entender la distribución de casos sin abrir el modal.',
+          'Vista rápida de los totales por estado (pendientes, liberados, cortados, reposición solicitada).',
         side: 'top' as const,
         align: 'center' as const
       }
@@ -291,19 +179,9 @@ export default function CorteReposicionComponent({
     {
       element: '#proceso-buttons',
       popover: {
-        title: '⚙️ Activar Actualización',
+        title: '⚙️ Flujo de Trabajo',
         description:
-          'Primer paso del <strong>flujo de trabajo</strong>: Activa la actualización del proceso de revisión antes de iniciarlo.',
-        side: 'bottom' as const,
-        align: 'center' as const
-      }
-    },
-    {
-      element: '#export-buttons',
-      popover: {
-        title: '💾 Exportar Datos',
-        description:
-          'Descarga los datos en formato <strong>Excel</strong>. Disponible en dos versiones: Mantenedor completo y Revisión de Corte específica.',
+          'Actualiza el proceso de revisión antes de iniciarlo o finalizarlo.',
         side: 'bottom' as const,
         align: 'center' as const
       }
@@ -313,15 +191,14 @@ export default function CorteReposicionComponent({
       popover: {
         title: '📋 Tabla de Datos',
         description:
-          'Listado detallado de todos los registros con <strong>filtros y búsqueda</strong>. Puedes buscar por código, RUT o razón social.',
+          'Listado detallado de registros con filtros y búsqueda por código, RUT o razón social.',
         side: 'top' as const,
         align: 'start' as const
       }
     }
   ];
 
-  // Función para iniciar el tour
-  const startTour = () => {
+  const startTour = (): void => {
     const driverjs = driver({
       showProgress: true,
       progressText: 'Paso {{current}} de {{total}}',
@@ -339,23 +216,46 @@ export default function CorteReposicionComponent({
         }
       }
     });
-
     driverjs.setSteps(tourSteps);
     driverjs.drive();
+  };
+
+  const renderResumen = () => {
+    if (!resumen) return null;
+    const items: Array<{ key: keyof CorteReposicionResumenResponse; label: string; tone: string }> = [
+      { key: 'pendientes', label: 'Pendientes', tone: 'amber' },
+      { key: 'liberados', label: 'Liberados', tone: 'emerald' },
+      { key: 'cortados', label: 'Cortados', tone: 'red' },
+      { key: 'reposicionSolicitada', label: 'Reposición Solicitada', tone: 'sky' }
+    ];
+    return (
+      <div
+        id="estadisticas-rapidas"
+        className="grid grid-cols-2 lg:grid-cols-4 gap-3"
+      >
+        {items.map(item => (
+          <div
+            key={item.key}
+            className="bg-card rounded-xl p-3 border border-border"
+          >
+            <div className="text-2xl font-bold">{resumen[item.key]}</div>
+            <div className="text-xs text-muted-foreground font-medium">
+              {item.label}
+            </div>
+          </div>
+        ))}
+      </div>
+    );
   };
 
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto p-3 space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          {/* Header */}
           <ModernHeader
             title="Corte y Reposición"
             description="Gestión integral de procesos de corte y reposición de servicios"
           />
-
-          {/* Botón de Guía Interactiva */}
-          {/* Botón para iniciar el tour interactivo */}
           <Button
             variant="outline"
             size="sm"
@@ -366,234 +266,150 @@ export default function CorteReposicionComponent({
           </Button>
         </div>
 
-        <div className="space-y-4">
-          {/* Panel de Revisión modernizado */}
-          <Card id="panel-revision" className="border-border bg-card">
-            <Collapsible open={isRevisionOpen} onOpenChange={setIsRevisionOpen}>
-              <CollapsibleTrigger asChild>
-                <div className="p-3 border-b border-border cursor-pointer hover:bg-muted/30 transition-colors">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary/10">
-                        <ListChecks className="h-4 w-4 text-primary" />
-                      </div>
-                      <div>
-                        <CardTitle className="text-lg font-semibold">
-                          Panel de Revisión
-                        </CardTitle>
-                      </div>
-                    </div>
-                    <ChevronDown
-                      className={`h-5 w-5 transition-transform duration-200 ${
-                        isRevisionOpen ? 'rotate-180' : ''
-                      }`}
-                    />
-                  </div>
-                </div>
-              </CollapsibleTrigger>
-              <CollapsibleContent>
-                <CardContent className="p-4 space-y-6">
-                  {/* Botones de Acción modernizados */}
-                  <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-7 gap-3">
-                    <Button
-                      id="buscar-btn"
-                      variant="outline"
-                      size="sm"
-                      onClick={handleBuscar}
-                      disabled={isSearching}
-                      className="gap-1.5 w-full"
-                    >
-                      {isSearching ? (
-                        <Spinner className="h-4 w-4" />
-                      ) : (
-                        <Search className="h-4 w-4" />
-                      )}
-                      Buscar
-                    </Button>
-                    <Button
-                      id="facturas-impagas-btn"
-                      variant="outline"
-                      size="sm"
-                      onClick={handleExportarFacturasImpagas}
-                      disabled={isExportingFacturas}
-                      className="gap-1.5 w-full bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 border-blue-500/30"
-                    >
-                      {isExportingFacturas ? (
-                        <Spinner className="h-4 w-4" />
-                      ) : (
-                        <FileSpreadsheet className="h-4 w-4" />
-                      )}
-                      Facturas Impagas
-                    </Button>
-                    <Button
-                      id="export-buttons"
-                      variant="default"
-                      size="sm"
-                      onClick={handleExportarExcel}
-                      disabled={isExportingExcel}
-                      className="gap-1.5 bg-emerald-500 hover:bg-emerald-600 w-full"
-                    >
-                      {isExportingExcel ? (
-                        <Spinner className="h-4 w-4" />
-                      ) : (
-                        <Download className="h-4 w-4" />
-                      )}
-                      Exportar
-                    </Button>
-                    <Button
-                      variant="default"
-                      size="sm"
-                      onClick={handleExportarExcelCorte}
-                      disabled={isExportingCorte}
-                      className="gap-1.5 bg-emerald-500 hover:bg-emerald-600 w-full"
-                    >
-                      {isExportingCorte ? (
-                        <Spinner className="h-4 w-4" />
-                      ) : (
-                        <Download className="h-4 w-4" />
-                      )}
-                      Exportar Corte
-                    </Button>
-                    <Button
-                      id="proceso-buttons"
-                      variant="link"
-                      size="sm"
-                      onClick={handleActivarActualizacion}
-                      disabled={isActivating}
-                      className="bg-accent/10 hover:bg-accent/20 transition-colors text-accent-foreground hover:text-accent-foreground/90 w-full"
-                    >
-                      {isActivating ? (
-                        <Spinner className="h-4 w-4" />
-                      ) : (
-                        <ArrowUpToLine className="h-4 w-4" />
-                      )}
-                      Actualizar
-                    </Button>
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={handleIniciar}
-                      disabled={isStarting}
-                      className="gap-1.5 w-full"
-                    >
-                      {isStarting ? (
-                        <Spinner className="h-4 w-4" />
-                      ) : (
-                        <Play className="h-4 w-4" />
-                      )}
-                      Iniciar
-                    </Button>
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      onClick={() => setShowFinalizarDialog(true)}
-                      disabled={isFinalizing}
-                      className="gap-1.5 w-full"
-                    >
-                      {isFinalizing ? (
-                        <Spinner className="h-4 w-4" />
-                      ) : (
-                        <CheckCircle2 className="h-4 w-4" />
-                      )}
-                      Finalizar
-                    </Button>
-                  </div>
-                </CardContent>
-              </CollapsibleContent>
-            </Collapsible>
-          </Card>
+        {error && (
+          <div className="p-4 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive">
+            {error}
+          </div>
+        )}
 
-          {/* Panel de Datos de Mantenedor modernizado */}
-          <Card className="border-border bg-card">
-            <div className="p-4 border-b border-border">
-              <div className="flex items-center gap-3">
-                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary/10">
-                  <FileText className="h-4 w-4 text-primary" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold">
-                    Mantenedor de Revisión de Corte
-                  </h3>
-                  <p className="text-sm text-muted-foreground">
-                    Listado de registros de mantenimiento
-                  </p>
+        <Card id="panel-revision" className="border-border bg-card">
+          <Collapsible open={isRevisionOpen} onOpenChange={setIsRevisionOpen}>
+            <CollapsibleTrigger asChild>
+              <div className="p-3 border-b border-border cursor-pointer hover:bg-muted/30 transition-colors">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary/10">
+                      <ListChecks className="h-4 w-4 text-primary" />
+                    </div>
+                    <CardTitle className="text-lg font-semibold">
+                      Panel de Revisión
+                    </CardTitle>
+                  </div>
+                  <ChevronDown
+                    className={`h-5 w-5 transition-transform duration-200 ${
+                      isRevisionOpen ? 'rotate-180' : ''
+                    }`}
+                  />
                 </div>
               </div>
-            </div>
-            <div className="p-4">
-              {mantenedorCorteData.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-12">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-muted/30 mb-4">
-                    <FileText className="h-8 w-8 text-muted-foreground" />
-                  </div>
-                  <p className="text-lg font-medium">
-                    No se encontraron registros
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    No hay datos de mantenimiento disponibles
-                  </p>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {/* Estadísticas rápidas */}
-                  <div
-                    id="estadisticas-rapidas"
-                    className="grid grid-cols-2 lg:grid-cols-4 gap-3"
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <CardContent className="p-4">
+                <div
+                  id="proceso-buttons"
+                  className="grid grid-cols-1 sm:grid-cols-4 gap-2"
+                >
+                  <Button
+                    id="buscar-btn"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleBuscar}
+                    disabled={isSearching}
+                    className="gap-1.5 w-full"
                   >
-                    <div className="bg-card rounded-xl p-3 border border-border">
-                      <div className="text-2xl font-bold">
-                        {getCantidadPorCodigo('NULL')}
-                      </div>
-                      <div className="text-xs text-muted-foreground font-medium">
-                        Pendientes
-                      </div>
-                    </div>
-                    <div className="bg-card rounded-xl p-3 border border-border">
-                      <div className="text-2xl font-bold">
-                        {getCantidadPorCodigo('1')}
-                      </div>
-                      <div className="text-xs text-muted-foreground font-medium">
-                        Liberados
-                      </div>
-                    </div>
-                    <div className="bg-card rounded-xl p-3 border border-border">
-                      <div className="text-2xl font-bold">
-                        {getCantidadPorCodigo('2')}
-                      </div>
-                      <div className="text-xs text-muted-foreground font-medium">
-                        Cortados
-                      </div>
-                    </div>
-                    <div className="bg-card rounded-xl p-3 border border-border">
-                      <div className="text-2xl font-bold">
-                        {getCantidadPorCodigo('3')}
-                      </div>
-                      <div className="text-xs text-muted-foreground font-medium">
-                        Reposición Solicitada
-                      </div>
-                    </div>
-                  </div>
+                    {isSearching ? (
+                      <Spinner className="h-4 w-4" />
+                    ) : (
+                      <Search className="h-4 w-4" />
+                    )}
+                    Buscar
+                  </Button>
 
-                  {/* Tabla moderna */}
-                  <div
-                    id="tabla-datos"
-                    className="border-border bg-card overflow-hidden"
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={handleActualizar}
+                    disabled={isActivating}
+                    className="gap-1.5 w-full"
                   >
-                    <DataTable
-                      columns={columns()}
-                      data={mantenedorCorteData}
-                      meta={{ handleBuscar }}
-                      searchPlaceholder="Buscar por código, RUT o razón social..."
-                      defaultPageSize={15}
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
-          </Card>
-        </div>
+                    {isActivating ? (
+                      <Spinner className="h-4 w-4" />
+                    ) : (
+                      <ArrowUpToLine className="h-4 w-4" />
+                    )}
+                    Actualizar
+                  </Button>
 
-        {/* AlertDialog de confirmación para finalizar */}
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={handleIniciar}
+                    disabled={isStarting}
+                    className="gap-1.5 w-full"
+                  >
+                    {isStarting ? (
+                      <Spinner className="h-4 w-4" />
+                    ) : (
+                      <Play className="h-4 w-4" />
+                    )}
+                    Iniciar
+                  </Button>
+
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowFinalizarDialog(true)}
+                    disabled={isFinalizing}
+                    className="gap-1.5 w-full"
+                  >
+                    {isFinalizing ? (
+                      <Spinner className="h-4 w-4" />
+                    ) : (
+                      <CheckCircle2 className="h-4 w-4" />
+                    )}
+                    Finalizar
+                  </Button>
+                </div>
+              </CardContent>
+            </CollapsibleContent>
+          </Collapsible>
+        </Card>
+
+        <Card className="border-border bg-card">
+          <div className="p-4 border-b border-border">
+            <div className="flex items-center gap-3">
+              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary/10">
+                <FileText className="h-4 w-4 text-primary" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold">
+                  Mantenedor de Revisión de Corte
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  Listado de registros de mantenimiento
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="p-4 space-y-4">
+            {renderResumen()}
+            {mantenedorCorteData.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-12">
+                <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-muted/30 mb-4">
+                  <FileText className="h-8 w-8 text-muted-foreground" />
+                </div>
+                <p className="text-lg font-medium">No se encontraron registros</p>
+                <p className="text-sm text-muted-foreground">
+                  No hay datos de mantenimiento disponibles
+                </p>
+              </div>
+            ) : (
+              <div
+                id="tabla-datos"
+                className="border-border bg-card overflow-hidden"
+              >
+                <DataTable
+                  columns={columns()}
+                  data={mantenedorCorteData}
+                  meta={{ handleBuscar }}
+                  searchPlaceholder="Buscar por código, RUT o razón social..."
+                  defaultPageSize={15}
+                />
+              </div>
+            )}
+          </div>
+        </Card>
+
         <AlertDialog
           open={showFinalizarDialog}
           onOpenChange={setShowFinalizarDialog}

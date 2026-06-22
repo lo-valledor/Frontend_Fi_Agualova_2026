@@ -1,5 +1,4 @@
 import { ChevronDown, ChevronUp, Search, X, Zap } from 'lucide-react';
-
 import React from 'react';
 
 import { Button } from '~/components/ui/button';
@@ -11,14 +10,20 @@ import {
 } from '~/components/ui/collapsible';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
-import { type NuevoMedidorFormProps } from '~/types/operaciones';
+
+interface NuevoMedidorFormProps {
+  numeroSerie: string;
+  isLoading: boolean;
+  onNumeroSerieChange: (value: string) => void;
+  onBuscar: () => void;
+}
 
 export default function NuevoMedidorForm({
-  medidorNuevo,
+  numeroSerie,
   isLoading,
-  onMedidorChange,
+  onNumeroSerieChange,
   onBuscar
-}: NuevoMedidorFormProps) {
+}: Readonly<NuevoMedidorFormProps>) {
   const [isOpen, setIsOpen] = React.useState(true);
 
   return (
@@ -71,20 +76,17 @@ export default function NuevoMedidorForm({
                   <Input
                     id="nuevo-serie"
                     placeholder="Ingrese el número de serie del nuevo medidor"
-                    value={medidorNuevo.numeroSerie}
-                    onChange={onMedidorChange}
+                    value={numeroSerie}
+                    onChange={e => onNumeroSerieChange(e.target.value)}
                     className="rounded-r-none focus-visible:ring-1 border-emerald-200 focus-visible:ring-emerald-500 dark:border-emerald-800 text-sm sm:text-base h-9 sm:h-10"
                   />
                   <Button
                     type="button"
                     variant="outline"
                     size="icon"
-                    onClick={() => {
-                      onMedidorChange({
-                        target: { id: 'nuevo-serie', value: '' }
-                      } as React.ChangeEvent<HTMLInputElement>);
-                    }}
+                    onClick={() => onNumeroSerieChange('')}
                     className="rounded-l-none border-l-0 border-emerald-200 hover:bg-emerald-50 dark:border-emerald-800 dark:hover:bg-emerald-900/50 h-9 sm:h-10 w-9 sm:w-10"
+                    disabled={!numeroSerie}
                   >
                     <X className="h-3 w-3 sm:h-4 sm:w-4" />
                   </Button>
@@ -96,7 +98,7 @@ export default function NuevoMedidorForm({
                   variant="default"
                   size="sm"
                   onClick={onBuscar}
-                  disabled={isLoading}
+                  disabled={isLoading || !numeroSerie}
                   className="h-8 sm:h-9 gap-1 sm:gap-1.5 bg-emerald-500 hover:bg-emerald-600 shadow-sm text-sm sm:text-base px-3 sm:px-4"
                 >
                   {isLoading ? (

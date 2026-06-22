@@ -1,59 +1,74 @@
-import { Loader2, PlusCircle } from 'lucide-react';
-import { useState } from 'react';
-import { toast } from 'sonner';
+import { Loader2, PlusCircle } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
 
-import { Button } from '~/components/ui/button';
+import { Button } from "~/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger
-} from '~/components/ui/dialog';
-import { Input } from '~/components/ui/input';
-import { Label } from '~/components/ui/label';
-import api from '~/lib/api';
-import type { DialogAgregarPreciosProps } from '~/types/operaciones';
+  DialogTrigger,
+} from "~/components/ui/dialog";
+import { Input } from "~/components/ui/input";
+import { Label } from "~/components/ui/label";
+import api from "~/lib/api";
+
+interface DialogAgregarPreciosProps {
+  codigo: number;
+  mes: string;
+  anio: string;
+  onSuccess: () => void;
+}
+
+interface ValoresForm {
+  valor1: string;
+  valor2: string;
+  valor3: string;
+}
+
+const VALORES_INICIALES: ValoresForm = {
+  valor1: "",
+  valor2: "",
+  valor3: "",
+};
 
 export default function DialogAgregarPrecios({
   codigo,
   mes,
   anio,
-  onSuccess
-}: DialogAgregarPreciosProps) {
+  onSuccess,
+}: Readonly<DialogAgregarPreciosProps>) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [valores, setValores] = useState({
-    valor1: '',
-    valor2: '',
-    valor3: ''
-  });
+  const [valores, setValores] = useState<ValoresForm>(VALORES_INICIALES);
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (): Promise<void> => {
     if (!valores.valor1 || !valores.valor2 || !valores.valor3) {
-      toast.error('Por favor complete todos los valores');
+      toast.error("Por favor complete todos los valores");
       return;
     }
 
     try {
       setIsLoading(true);
-      const response = await api.post('/ingresar-precio-cargo', {
-        mes: Number.parseInt(mes),
-        año: Number.parseInt(anio),
-        codigo: codigo,
+      const response = await api.post("/ingresar-precio-cargo", {
+        mes: Number.parseInt(mes, 10),
+        anio: Number.parseInt(anio, 10),
+        codigo,
         valor: parseFloat(valores.valor1),
-        valor2: parseFloat(valores.valor2),
-        valor3: parseFloat(valores.valor3)
       });
 
       if (response.status === 200) {
-        toast.success('Precios agregados correctamente');
+        toast.success("Precios agregados correctamente");
         setIsOpen(false);
-        if (onSuccess) onSuccess();
+        setValores(VALORES_INICIALES);
+        onSuccess();
       }
     } catch (error) {
-      toast.error('Error al agregar los precios', error as any);
+      toast.error("Error al agregar los precios", {
+        description: String(error),
+      });
     } finally {
       setIsLoading(false);
     }
@@ -80,45 +95,23 @@ export default function DialogAgregarPrecios({
           </DialogTitle>
         </DialogHeader>
         <div className="grid gap-3 sm:gap-4 py-2 sm:py-3">
-          <div className="space-y-1 sm:space-y-1.5">
-            <Label className="text-xs font-medium text-muted-foreground">
-              Valor 1{' '}
-            </Label>
-            <Input
-              type="number"
-              step="0.01"
-              placeholder="Precio 1"
-              value={valores.valor1}
-              onChange={e => setValores({ ...valores, valor1: e.target.value })}
-              className="bg-background border-border/70 h-8 sm:h-10 text-xs sm:text-sm"
-            />
-          </div>
-          <div className="space-y-1 sm:space-y-1.5">
-            <Label className="text-xs font-medium text-muted-foreground">
-              Valor 2{' '}
-            </Label>
-            <Input
-              type="number"
-              step="0.01"
-              placeholder="Precio 2"
-              value={valores.valor2}
-              onChange={e => setValores({ ...valores, valor2: e.target.value })}
-              className="bg-background border-border/70 h-8 sm:h-10 text-xs sm:text-sm"
-            />
-          </div>
-          <div className="space-y-1 sm:space-y-1.5">
-            <Label className="text-xs font-medium text-muted-foreground">
-              Valor 3{' '}
-            </Label>
-            <Input
-              type="number"
-              step="0.01"
-              placeholder="Precio 3"
-              value={valores.valor3}
-              onChange={e => setValores({ ...valores, valor3: e.target.value })}
-              className="bg-background border-border/70 h-8 sm:h-10 text-xs sm:text-sm"
-            />
-          </div>
+          {(["valor1", "valor2", "valor3"] as const).map((field) => (
+            <div key={field} className="space-y-1 sm:space-y-1.5">
+              <Label className="text-xs font-medium text-muted-foreground">
+                Valor {field.charAt(field.length - 1)}
+              </Label>
+              <Input
+                type="number"
+                step="0.01"
+                placeholder={`Precio ${field.charAt(field.length - 1)}`}
+                value={valores[field]}
+                onChange={(e) =>
+                  setValores({ ...valores, [field]: e.target.value })
+                }
+                className="bg-background border-border/70 h-8 sm:h-10 text-xs sm:text-sm"
+              />
+            </div>
+          ))}
         </div>
         <DialogFooter className="flex-col sm:flex-row gap-2">
           <Button
@@ -145,7 +138,7 @@ export default function DialogAgregarPrecios({
               </>
             ) : (
               <>
-                <PlusCircle className="h-3 w-3 sm:h-4 sm:w-4" />
+                <PlusCircle className="h-3 w-3 sm:h-4 sm:h-4" />
                 <span className="hidden sm:inline">Agregar Valores</span>
                 <span className="sm:hidden">Agregar</span>
               </>

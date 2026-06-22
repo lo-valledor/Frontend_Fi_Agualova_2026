@@ -63,16 +63,6 @@ export {
 } from './mantencion';
 // Servicios de monitor
 export { monitorService } from './monitorService';
-// Servicios de operaciones (REFACTORIZADOS)
-// Compatibilidad hacia atrás - operacionesService ahora es un alias
-export {
-  billingCalculationService,
-  operacionesServices,
-  operacionesServices as operacionesService,
-  periodosService,
-  preparationService,
-  pricingService
-} from './operations';
 // Servicios de reportes (REFACTORIZADOS)
 // Compatibilidad hacia atrás - reportesService ahora es un alias
 export {

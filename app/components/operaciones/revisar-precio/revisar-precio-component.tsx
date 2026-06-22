@@ -1,301 +1,232 @@
 import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
 import {
   AlertCircleIcon,
-  BarChartIcon,
-  Building2,
-  CalendarIcon,
-  ClockIcon,
-  HelpCircle
+  Calendar,
+  CheckCircle,
+  ChevronDown,
+  Eraser,
+  HelpCircle,
+  Lock,
+  Search,
+  TrendingUp
 } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
-import 'driver.js/dist/driver.css';
 
-import { useMemo, useState } from 'react';
 import { ModernHeader } from '~/components/shared/modern-header';
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent } from '~/components/ui/card';
-import { Label } from '~/components/ui/label';
+import { Collapsible, CollapsibleContent } from '~/components/ui/collapsible';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '~/components/ui/select';
-import { Skeleton } from '~/components/ui/skeleton';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
-import { useAuth } from '~/context/AuthContext';
-import type {
-  Ciclo,
-  PeriodoAbierto,
-  RevisarPrecioDos,
-  RevisarPrecioUno
-} from '~/types/operaciones';
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle
+} from '~/components/ui/dialog';
+import { Input } from '~/components/ui/input';
+import { Label } from '~/components/ui/label';
+import { operacionesService } from '~/services/operacionesService';
+import type { RevisionPreciosBuscarRequest } from '~/types/operaciones';
+import {
+  getCurrentMonth,
+  getCurrentYear,
+  getMonthLabel,
+  getYearsRange,
+  MONTHS,
+  validatePeriod
+} from '~/utils/operaciones';
 import {
   filterPendingConfirmations,
   processConfirmations
 } from '~/utils/operaciones/confirmation-helpers';
-import { columnsAgualova } from './columns-agualova';
-import { columnsEnel } from './columns-enel';
+
+import { columns } from './columns';
 import { DataTableVirtualized } from './data-table-virtualized';
-import DialogModificarPrecio from './dialog-modificar-precio';
 
 interface RevisarPrecioComponentProps {
-  dataPeriodoAbierto: PeriodoAbierto[];
-  dataConsultarPreciosUno: RevisarPrecioUno[];
-  dataConsultarPreciosDos: RevisarPrecioDos[];
-  ciclosFacturacion: Ciclo[];
-  cicloSeleccionado: string;
-  onCicloChange: (ciclo: string) => Promise<void>;
-  isLoading: boolean;
+  precios: RevisionPreciosBuscarRequest[];
+  initialMes: string;
+  initialAnio: string;
   error: string | null;
-  onRecargarPrecios: () => Promise<void>;
-  isLoadingPrecios: boolean;
 }
 
 export default function RevisarPrecioComponent({
-  dataPeriodoAbierto,
-  dataConsultarPreciosUno,
-  dataConsultarPreciosDos,
-  ciclosFacturacion,
-  cicloSeleccionado,
-  onCicloChange,
-  isLoading,
-  error,
-  onRecargarPrecios,
-  isLoadingPrecios
+  precios: initialPrecios,
+  initialMes,
+  initialAnio,
+  error
 }: Readonly<RevisarPrecioComponentProps>) {
-  const { user } = useAuth();
-
-  // Estados para las filas seleccionadas
-  const [selectedEnelRows, setSelectedEnelRows] = useState<string[]>([]);
-  const [selectedAgualovaRows, setSelectedAgualovaRows] = useState<string[]>(
+  const [mes, setMes] = useState(initialMes);
+  const [anio, setAnio] = useState(initialAnio);
+  const [precios, setPrecios] =
+    useState<RevisionPreciosBuscarRequest[]>(initialPrecios);
+  const [selectedCodigosCargo, setSelectedCodigosCargo] = useState<number[]>(
     []
   );
+  const [passwordConfirmacion, setPasswordConfirmacion] = useState('');
+  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [isConfirming, setIsConfirming] = useState(false);
+  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
-  // Verificamos si el periodo está cargando
-  const isPeriodoLoading = isLoading;
-
-  // Verificamos si los ciclos están cargando
-  const isCiclosLoading = isLoading;
-
-  const confirmarCambios = async () => {
-    if (!user?.fullName) {
-      toast.error('No se pudo obtener información del usuario');
-      return;
-    }
-
-    if (selectedEnelRows.length === 0 && selectedAgualovaRows.length === 0) {
-      toast.info('Debes seleccionar al menos un registro para confirmar');
+  const handleSearch = async (): Promise<void> => {
+    const validation = validatePeriod(mes, anio);
+    if (!validation.isValid) {
+      toast.error(validation.error);
       return;
     }
 
     try {
-      setIsConfirming(true);
+      setIsLoading(true);
+      setIsFiltersOpen(false);
+      const result = await operacionesService.gerRevisarPreciosData(mes, anio);
 
-      // Filtrar registros pendientes
-      const confirmacionesEnel = filterPendingConfirmations(
-        dataConsultarPreciosUno,
-        selectedEnelRows,
-        'codigo'
-      );
-
-      const confirmacionesAgualova = filterPendingConfirmations(
-        dataConsultarPreciosDos,
-        selectedAgualovaRows,
-        'codigo'
-      );
-
-      // Procesar confirmaciones Enel
-      const resultEnel = await processConfirmations(
-        confirmacionesEnel,
-        user.fullName,
-        toast
-      );
-
-      // Early return si debemos detener (sesión expirada)
-      if (resultEnel.shouldStop) {
-        setIsConfirming(false);
+      if (result.error || !result.data) {
+        toast.error(result.error || 'Error al buscar precios de revisión');
         return;
       }
 
-      // Procesar confirmaciones Agualova
-      const resultAgualova = await processConfirmations(
-        confirmacionesAgualova,
-        user.fullName,
-        toast
+      const data = Array.isArray(result.data)
+        ? (result.data as RevisionPreciosBuscarRequest[])
+        : [];
+
+      setPrecios(data);
+      setSelectedCodigosCargo([]);
+      toast.success('Búsqueda completada');
+    } catch (err) {
+      toast.error('Error al buscar precios de revisión', {
+        description: String(err)
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleClearFilters = (): void => {
+    setMes(getCurrentMonth());
+    setAnio(getCurrentYear());
+    setSelectedCodigosCargo([]);
+    toast.success('Filtros reiniciados');
+  };
+
+  const refreshData = async (): Promise<void> => {
+    const result = await operacionesService.gerRevisarPreciosData(mes, anio);
+    if (result.error || !result.data) return;
+    const data = Array.isArray(result.data)
+      ? (result.data as RevisionPreciosBuscarRequest[])
+      : [];
+    setPrecios(data);
+  };
+
+  const pendientes = useMemo(
+    () =>
+      filterPendingConfirmations(precios, selectedCodigosCargo),
+    [precios, selectedCodigosCargo]
+  );
+
+  const handleOpenConfirmDialog = (): void => {
+    if (selectedCodigosCargo.length === 0) {
+      toast.info('Selecciona al menos un registro pendiente para confirmar');
+      return;
+    }
+    setPasswordConfirmacion('');
+    setIsConfirmDialogOpen(true);
+  };
+
+  const handleConfirmar = async (): Promise<void> => {
+    if (!passwordConfirmacion) {
+      toast.error('Debes ingresar tu contraseña para confirmar');
+      return;
+    }
+
+    setIsConfirming(true);
+    try {
+      const resultado = await processConfirmations(
+        pendientes,
+        passwordConfirmacion
       );
 
-      // Early return si debemos detener
-      if (resultAgualova.shouldStop) {
-        setIsConfirming(false);
+      if (resultado.shouldStop) {
+        setIsConfirmDialogOpen(false);
         return;
       }
 
-      // Calcular totales
-      const totalExitosas = resultEnel.exitosas + resultAgualova.exitosas;
-      const totalFallidas = resultEnel.fallidas + resultAgualova.fallidas;
+      setIsConfirmDialogOpen(false);
 
-      // Actualizar UI si hubo confirmaciones exitosas
-      if (totalExitosas > 0) {
-        setSelectedEnelRows([]);
-        setSelectedAgualovaRows([]);
-        await onRecargarPrecios();
+      if (resultado.exitosas > 0) {
         toast.success(
-          `Se han confirmado ${totalExitosas} registros correctamente`
+          `Se han confirmado ${resultado.exitosas} registros correctamente`
         );
-      } else if (totalExitosas === 0 && totalFallidas === 0) {
-        toast.info('No había registros pendientes para confirmar');
+        setSelectedCodigosCargo([]);
+        await refreshData();
+      } else {
+        toast.error('No se pudo confirmar los registros');
       }
-
-      if (totalFallidas > 0) {
-        toast.error(`No se pudieron confirmar ${totalFallidas} registros`);
-      }
-    } catch (error) {
-      console.error('Error al confirmar cambios:', error);
-      toast.error('Error al confirmar cambios');
+    } catch (err) {
+      toast.error('Error al confirmar', { description: String(err) });
     } finally {
       setIsConfirming(false);
     }
   };
 
-  const handleCicloChange = async (nuevoCiclo: string) => {
-    try {
-      await onCicloChange(nuevoCiclo);
-    } catch (error) {
-      toast.error('Error al cambiar el ciclo', error as any);
-    }
-  };
+  const totalPendientesGlobal = useMemo(
+    () => precios.filter(p => p.indice > 0 && !p.estaConfirmado).length,
+    [precios]
+  );
 
-  // Configurar columnas con las propiedades necesarias
-  const configuredColumnsEnel = useMemo(() => {
-    return columnsEnel.map(col => {
-      if (col.id === 'acciones') {
-        return {
-          ...col,
-          cell: ({ row }: { row: any }) => {
-            const renderActionContent = () => {
-              if (row.original.confirmacion === 'Confirmado') {
-                return (
-                  <Badge className="bg-success/10 text-success border-success/20">
-                    Confirmado
-                  </Badge>
-                );
-              }
-
-              if (row.original.indice === '') {
-                return (
-                  <Badge className="bg-destructive/10 text-destructive border-destructive/20">
-                    Inhabilitado
-                  </Badge>
-                );
-              }
-
-              return (
-                <DialogModificarPrecio
-                  indice={Number(row.original.indice)}
-                  descripcion={row.original.descripcion}
-                  valorActual={row.original.valor}
-                  onSuccess={onRecargarPrecios}
-                />
-              );
-            };
-
-            return <div className="text-center">{renderActionContent()}</div>;
-          }
-        };
-      }
-      return col;
-    });
-  }, [onRecargarPrecios]);
-
-  const configuredColumnsAgualova = useMemo(() => {
-    return columnsAgualova.map(col => {
-      if (col.id === 'acciones') {
-        return {
-          ...col,
-          cell: ({ row }: { row: any }) => {
-            return (
-              <div className="text-center">
-                {row.original.confirmacion === 'Confirmado' ? (
-                  <Badge className="bg-success/10 text-success border-success/20">
-                    Confirmado
-                  </Badge>
-                ) : (
-                  <DialogModificarPrecio
-                    indice={Number(row.original.indice)}
-                    descripcion={row.original.descripcion}
-                    valorActual={row.original.valor}
-                    onSuccess={onRecargarPrecios}
-                  />
-                )}
-              </div>
-            );
-          }
-        };
-      }
-      return col;
-    });
-  }, [onRecargarPrecios]);
-
-  // Pasos del tour interactivo con driver.js
   const tourSteps = [
     {
-      element: '#confirmar-btn',
+      element: '#filtros-periodo',
       popover: {
-        title: '📋 Confirmar Cambios',
+        title: 'Filtros de Período',
         description:
-          'Después de seleccionar los registros que deseas confirmar, usa este botón para <strong>guardar los cambios</strong> en el sistema.',
-        side: 'top' as const,
-        align: 'center' as const
-      }
-    },
-    {
-      element: '#tabs-precios-revision',
-      popover: {
-        title: '🔄 Pestañas de Precios',
-        description:
-          'Alterna entre <strong>Valores ENEL</strong> y <strong>Precios Agualova</strong> según el ciclo de facturación seleccionado.',
-        side: 'top' as const,
-        align: 'start' as const
-      }
-    },
-    {
-      element: '#selector-ciclo',
-      popover: {
-        title: '⏰ Selector de Ciclo',
-        description:
-          'Selecciona el <strong>ciclo de facturación</strong> para ver los precios correspondientes a ese período (día 15 o día 30).',
+          'Selecciona el <strong>mes y año</strong> para consultar los precios de revisión.',
         side: 'bottom' as const,
         align: 'start' as const
       }
     },
     {
-      element: '#tabla-valores-enel',
+      element: '#buscar-btn',
       popover: {
-        title: '💰 Tabla de Valores ENEL',
+        title: 'Buscar Precios',
+        description: 'Carga los precios de revisión para el período seleccionado.',
+        side: 'bottom' as const,
+        align: 'center' as const
+      }
+    },
+    {
+      element: '#tabla-precios',
+      popover: {
+        title: 'Tabla de Precios',
         description:
-          'Aquí se muestran los <strong>precios aplicados de ENEL</strong> para cada contrato. Puedes modificar valores pendientes.',
+          'Revisa los precios, selecciona los pendientes y modifícalos o confírmalos.',
         side: 'top' as const,
         align: 'start' as const
       }
     },
     {
-      element: '#tabla-precios-agualova',
+      element: '#confirmar-btn',
       popover: {
-        title: '💼 Tabla de Precios Agualova',
+        title: 'Confirmar Cambios',
         description:
-          'Esta tabla muestra los <strong>precios de Agualova por ciclo</strong>. Revisa y confirma los valores antes de la facturación.',
+          'Confirma los registros seleccionados con tu contraseña de usuario.',
         side: 'top' as const,
-        align: 'start' as const
+        align: 'center' as const
       }
     }
   ];
 
-  // Función para iniciar el tour
-  const startTour = () => {
+  useEffect(() => {
+    return () => {
+      const driverEl = document.querySelector('.driver-active');
+      if (driverEl) driverEl.remove();
+    };
+  }, []);
+
+  const startTour = (): void => {
     const driverjs = driver({
       showProgress: true,
       progressText: 'Paso {{current}} de {{total}}',
@@ -308,27 +239,23 @@ export default function RevisarPrecioComponent({
       prevBtnText: 'Anterior',
       doneBtnText: 'Finalizar',
       onHighlightStarted: element => {
-        if (element) {
-          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
+        if (element) element.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
     });
-
     driverjs.setSteps(tourSteps);
     driverjs.drive();
   };
 
-  // Mostrar error si existe
   if (error) {
     return (
-      <div className="min-h-screen ">
-        <div className="container mx-auto p-2 space-y-3">
-          <div className="text-center py-12">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-destructive/10 rounded-xl mb-4">
-              <AlertCircleIcon className="w-8 h-8 text-destructive" />
+      <div className="min-h-screen bg-background">
+        <div className="container mx-auto p-3 space-y-4">
+          <div className="text-center py-8">
+            <div className="inline-flex items-center justify-center w-12 h-12 bg-destructive/10 rounded-xl mb-3">
+              <TrendingUp className="w-6 h-6 text-destructive" />
             </div>
-            <h1 className="text-2xl font-bold mb-2">Error al cargar datos</h1>
-            <p className="text-muted-foreground">{error}</p>
+            <h1 className="text-xl font-semibold mb-2">Error al cargar datos</h1>
+            <p className="text-sm text-muted-foreground">{error}</p>
           </div>
         </div>
       </div>
@@ -339,13 +266,10 @@ export default function RevisarPrecioComponent({
     <div className="min-h-screen bg-background">
       <div className="container mx-auto p-3 space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          {/* Header */}
           <ModernHeader
             title="Revisar Precios"
-            description="Gestión y validación de precios del sistema"
+            description="Validación y confirmación de precios de revisión"
           />
-
-          {/* Botón de Guía Interactiva */}
           <Button
             variant="outline"
             size="sm"
@@ -356,217 +280,232 @@ export default function RevisarPrecioComponent({
           </Button>
         </div>
 
+        <Card id="filtros-periodo" className="border border-border shadow-sm">
+          <Collapsible open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
+            <div
+              className="p-4 border-b border-border cursor-pointer hover:bg-muted/50 transition-colors"
+              onClick={() => setIsFiltersOpen(!isFiltersOpen)}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-muted">
+                    <Calendar className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-medium">Período de Consulta</h3>
+                    <p className="text-xs text-muted-foreground">
+                      Selecciona mes y año para revisar los precios
+                    </p>
+                  </div>
+                </div>
+                <ChevronDown
+                  className={`h-4 w-4 transition-transform duration-200 ${
+                    isFiltersOpen ? 'rotate-180' : ''
+                  }`}
+                />
+              </div>
+            </div>
+
+            <CollapsibleContent>
+              <CardContent className="px-4 pb-4 space-y-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium">Mes</Label>
+                    <select
+                      value={mes}
+                      onChange={e => setMes(e.target.value)}
+                      className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm"
+                    >
+                      {MONTHS.map(m => (
+                        <option key={m.value} value={m.value}>
+                          {m.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium">Año</Label>
+                    <select
+                      value={anio}
+                      onChange={e => setAnio(e.target.value)}
+                      className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm"
+                    >
+                      {getYearsRange().map(y => (
+                        <option key={y.value} value={y.value}>
+                          {y.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="flex gap-2 justify-end pt-3 border-t border-border">
+                  <Button
+                    id="limpiar-btn"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleClearFilters}
+                    className="gap-2"
+                  >
+                    <Eraser className="w-4 h-4" />
+                    Limpiar
+                  </Button>
+                  <Button
+                    id="buscar-btn"
+                    size="sm"
+                    onClick={handleSearch}
+                    disabled={isLoading}
+                    className="gap-2"
+                  >
+                    {isLoading ? (
+                      <>
+                        <div className="w-4 h-4 animate-spin rounded-full border-2 border-primary-foreground border-t-transparent" />
+                        Buscando...
+                      </>
+                    ) : (
+                      <>
+                        <Search className="w-4 h-4" />
+                        Buscar
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </CardContent>
+            </CollapsibleContent>
+          </Collapsible>
+        </Card>
+
         <Card className="bg-card border border-border shadow-sm">
           <CardContent className="p-3">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-3 bg-muted/30 rounded-lg border border-border">
               <div className="space-y-1">
                 <h3 className="font-medium text-sm sm:text-base">
-                  <span className="hidden sm:inline">
-                    Confirmación de Cambios
-                  </span>
-                  <span className="sm:hidden">Confirmación</span>
+                  Confirmación de Cambios
                 </h3>
                 <p className="text-xs sm:text-sm text-muted-foreground">
-                  <span className="hidden sm:inline">
-                    Registros seleccionados:{' '}
-                  </span>
-                  <span className="sm:hidden">Seleccionados: </span>
+                  Registros seleccionados:{' '}
                   <span className="font-medium text-primary">
-                    {selectedEnelRows.length + selectedAgualovaRows.length}
-                  </span>
+                    {selectedCodigosCargo.length}
+                  </span>{' '}
+                  / Pendientes totales:{' '}
+                  <span className="font-medium">{totalPendientesGlobal}</span>
                 </p>
               </div>
-              <Button
-                id="confirmar-btn"
-                onClick={confirmarCambios}
-                disabled={
-                  isConfirming ||
-                  (selectedEnelRows.length === 0 &&
-                    selectedAgualovaRows.length === 0)
-                }
-                className="bg-primary hover:bg-primary/90 text-primary-foreground w-full sm:w-auto"
-                size="sm"
-              >
-                <AlertCircleIcon className="w-4 h-4 mr-2" />
-                <span className="hidden sm:inline">
-                  {isConfirming ? 'Procesando...' : 'Confirmar Cambios'}
-                </span>
-                <span className="sm:hidden">
-                  {isConfirming ? '...' : 'Confirmar'}
-                </span>
-              </Button>
+              <div className="flex items-center gap-2">
+                <Badge variant="outline" className="text-sm">
+                  {getMonthLabel(mes)} {anio}
+                </Badge>
+                <Button
+                  id="confirmar-btn"
+                  onClick={handleOpenConfirmDialog}
+                  disabled={
+                    isConfirming || selectedCodigosCargo.length === 0
+                  }
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground"
+                  size="sm"
+                >
+                  <CheckCircle className="w-4 h-4 mr-2" />
+                  <span className="hidden sm:inline">
+                    {isConfirming ? 'Procesando...' : 'Confirmar'}
+                  </span>
+                  <span className="sm:hidden">Confirmar</span>
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Tablas de Precios con Tabs */}
         <Card className="bg-card border border-border shadow-sm">
           <CardContent className="p-3">
-            <Tabs
-              id="tabs-precios-revision"
-              defaultValue="enel"
-              className="w-full"
+            <div
+              id="tabla-precios"
+              className="rounded-xl border border-border overflow-hidden bg-card"
             >
-              <TabsList className="w-full justify-start rounded-none border-b bg-transparent p-0">
-                <TabsTrigger
-                  value="enel"
-                  className="relative h-auto rounded-none border-b-2 border-transparent bg-transparent px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm font-medium shadow-none transition-none data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:shadow-none"
-                >
-                  <Building2 className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
-                  <span className="hidden sm:inline">Valores Enel</span>
-                  <span className="sm:hidden">Enel</span>
-                </TabsTrigger>
-                <TabsTrigger
-                  value="agualova"
-                  className="relative h-auto rounded-none border-b-2 border-transparent bg-transparent px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm font-medium shadow-none transition-none data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:shadow-none"
-                >
-                  <BarChartIcon className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
-                  <span className="hidden sm:inline">Precios Agualova</span>
-                  <span className="sm:hidden">Agualova</span>
-                </TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="enel" className="space-y-4 pt-4">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                  <div>
-                    <h3 className="text-base sm:text-lg font-semibold">
-                      <span className="hidden sm:inline">
-                        Valores Compañía de Electricidad
-                      </span>
-                      <span className="sm:hidden">Valores Enel</span>
-                    </h3>
-                    <p className="text-xs sm:text-sm">
-                      <span className="hidden sm:inline">
-                        Revisión de precios para el período activo
-                      </span>
-                      <span className="sm:hidden">Período activo</span>
-                    </p>
-                  </div>
-                  <Badge
-                    variant="outline"
-                    className="bg-muted/50 border-border self-start sm:self-auto"
-                  >
-                    <CalendarIcon className="w-3 h-3 mr-1" />
-                    {isPeriodoLoading ? (
-                      <Skeleton className="h-4 w-20" />
-                    ) : dataPeriodoAbierto && dataPeriodoAbierto.length > 0 ? (
-                      <span className="text-xs sm:text-sm">
-                        {dataPeriodoAbierto[0].descripcion}
-                      </span>
-                    ) : (
-                      'Sin período'
-                    )}
-                  </Badge>
-                </div>
-                <div
-                  id="tabla-valores-enel"
-                  className="rounded-xl border border-border overflow-hidden bg-card"
-                >
-                  <DataTableVirtualized
-                    columns={configuredColumnsEnel}
-                    data={dataConsultarPreciosUno}
-                    enableSelection={true}
-                    selectedRowIds={selectedEnelRows}
-                    onRowSelectionChange={setSelectedEnelRows}
-                    isLoading={isLoadingPrecios}
-                  />
-                </div>
-              </TabsContent>
-
-              <TabsContent value="agualova" className="space-y-4 pt-4">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                  <div>
-                    <h3 className="text-base sm:text-lg font-semibold">
-                      <span className="hidden sm:inline">
-                        Precios por Ciclo de Facturación
-                      </span>
-                      <span className="sm:hidden">Precios Agualova</span>
-                    </h3>
-                    <p className="text-xs sm:text-sm">
-                      <span className="hidden sm:inline">
-                        Precios de ENERLOVA según ciclo de facturación
-                      </span>
-                      <span className="sm:hidden">
-                        Según ciclo de facturación
-                      </span>
-                    </p>
-                  </div>
-                  <Badge
-                    variant="outline"
-                    className="bg-muted/50 border-border self-start sm:self-auto"
-                  >
-                    <ClockIcon className="w-3 h-3 mr-1" />
-                    <span className="text-xs sm:text-sm">
-                      Ciclo {cicloSeleccionado}
-                    </span>
-                  </Badge>
-                </div>
-
-                {/* Selector de ciclo */}
-                <div
-                  id="selector-ciclo"
-                  className="flex flex-col lg:flex-row gap-2 lg:gap-3 items-start lg:items-end"
-                >
-                  <div className="space-y-2 flex-1 w-full">
-                    <Label className="text-xs sm:text-sm font-medium flex items-center gap-2">
-                      <ClockIcon className="w-3 h-3 sm:w-4 sm:h-4 text-primary" />
-                      <span className="hidden sm:inline">
-                        Ciclo de Facturación
-                      </span>
-                      <span className="sm:hidden">Ciclo</span>
-                    </Label>
-                    {isCiclosLoading ? (
-                      <Skeleton className="h-9 sm:h-10 w-full" />
-                    ) : (
-                      <Select
-                        value={cicloSeleccionado}
-                        onValueChange={handleCicloChange}
-                        disabled={isPeriodoLoading}
-                      >
-                        <SelectTrigger className="bg-background border-border h-9 sm:h-10 text-sm">
-                          <SelectValue placeholder="Selecciona un ciclo" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {ciclosFacturacion && ciclosFacturacion.length > 0 ? (
-                            ciclosFacturacion.map(ciclo => (
-                              <SelectItem
-                                key={ciclo.diaFacturacion}
-                                value={ciclo.diaFacturacion}
-                              >
-                                {ciclo.descripcion}
-                              </SelectItem>
-                            ))
-                          ) : (
-                            <>
-                              <SelectItem value="15">Ciclo día 15</SelectItem>
-                              <SelectItem value="30">Ciclo día 30</SelectItem>
-                            </>
-                          )}
-                        </SelectContent>
-                      </Select>
-                    )}
-                  </div>
-                </div>
-
-                {/* Tabla de precios Agualova */}
-                <div
-                  id="tabla-precios-agualova"
-                  className="rounded-xl border border-border overflow-hidden bg-card"
-                >
-                  <DataTableVirtualized
-                    columns={configuredColumnsAgualova}
-                    data={dataConsultarPreciosDos}
-                    enableSelection={true}
-                    selectedRowIds={selectedAgualovaRows}
-                    onRowSelectionChange={setSelectedAgualovaRows}
-                    isLoading={isLoadingPrecios}
-                  />
-                </div>
-              </TabsContent>
-            </Tabs>
+              <DataTableVirtualized
+                columns={columns}
+                data={precios}
+                enableSelection
+                selectedRowIds={selectedCodigosCargo.map(String)}
+                onRowSelectionChange={ids =>
+                  setSelectedCodigosCargo(ids.map(Number))
+                }
+                rowId="codigoCargo"
+                isLoading={isLoading}
+              />
+            </div>
           </CardContent>
         </Card>
       </div>
+
+      <Dialog
+        open={isConfirmDialogOpen}
+        onOpenChange={setIsConfirmDialogOpen}
+      >
+        <DialogContent className="max-w-[95vw] sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-base sm:text-lg">
+              <Lock className="h-4 w-4" />
+              Confirmar {selectedCodigosCargo.length} registro
+              {selectedCodigosCargo.length === 1 ? '' : 's'}
+            </DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-3 py-2">
+            <p className="text-sm text-muted-foreground">
+              Ingresa tu contraseña para confirmar la selección de{' '}
+              <strong>{pendientes.length}</strong> registro
+              {pendientes.length === 1 ? '' : 's'} pendiente
+              {pendientes.length === 1 ? '' : 's'}.
+            </p>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="password" className="text-sm font-medium">
+                Contraseña
+              </Label>
+              <Input
+                id="password"
+                type="password"
+                autoComplete="current-password"
+                value={passwordConfirmacion}
+                onChange={e => setPasswordConfirmacion(e.target.value)}
+                placeholder="Tu contraseña"
+                className="h-9"
+              />
+            </div>
+          </div>
+
+          <DialogFooter className="flex flex-col sm:flex-row gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setIsConfirmDialogOpen(false)}
+              disabled={isConfirming}
+              size="sm"
+              className="flex-1"
+            >
+              Cancelar
+            </Button>
+            <Button
+              onClick={handleConfirmar}
+              disabled={isConfirming || !passwordConfirmacion}
+              size="sm"
+              className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground"
+            >
+              {isConfirming ? (
+                <>
+                  <div className="w-4 h-4 animate-spin rounded-full border-2 border-primary-foreground border-t-transparent mr-2" />
+                  Confirmando...
+                </>
+              ) : (
+                <>
+                  <AlertCircleIcon className="w-4 h-4 mr-2" />
+                  Confirmar
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

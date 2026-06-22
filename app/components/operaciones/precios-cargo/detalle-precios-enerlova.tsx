@@ -28,190 +28,143 @@ import { ScrollArea } from '~/components/ui/scroll-area';
 import { Separator } from '~/components/ui/separator';
 import { Tabs, TabsList, TabsTrigger } from '~/components/ui/tabs';
 import api from '~/lib/api';
-import type { DetallepreciosCargoAgualova } from '~/types/operaciones';
 
-import DialogNuevoValorAgualova from './dialog-nuevo-valor-agualova';
+import DialogNuevoValorAgualova from './dialog-nuevo-valor-enerlova';
 
-// Modificamos la configuración del gráfico para usar un color personalizado
+interface DetallePreciosCargoAgualova {
+  id: number;
+  codigo: number;
+  descripcion: string;
+  valor: string;
+  fecha_inicio: string;
+  fecha_fin: string;
+}
+
+type PeriodoTiempo = 'todo' | '1año' | '6meses' | '3meses';
+
 const chartConfig = {
   desktop: {
     label: 'Valor',
-    // Cambiamos el color a un tono de azul más vibrante
-    color: 'hsl(210, 100%, 50%)' // Puedes usar cualquier color CSS válido aquí
+    color: 'hsl(210, 100%, 50%)'
   }
 } satisfies ChartConfig;
 
-// Función auxiliar para normalizar valores numéricos
 const normalizarValor = (valor: string | number | undefined): number => {
   if (valor === undefined || valor === null) return 0;
   if (typeof valor === 'number') return valor;
   if (typeof valor === 'string') {
-    // Detectar formato europeo (1.234,56) o americano (1,234.56)
-    // Si contiene punto y coma, es europeo: 1.234,56 => 1234.56
     if (valor.includes('.') && valor.includes(',')) {
-      // Europeo: quitar puntos (miles), cambiar coma por punto (decimal)
       const limpio = valor.replace(/\./g, '').replace(',', '.');
       const numero = parseFloat(limpio);
       return Number.isNaN(numero) ? 0 : numero;
     }
-    // Si solo tiene coma, es decimal latino: 11,32 => 11.32
     if (valor.includes(',') && !valor.includes('.')) {
       const numero = parseFloat(valor.replace(',', '.'));
       return Number.isNaN(numero) ? 0 : numero;
     }
-    // Si solo tiene punto, puede ser decimal o miles
-    // Si hay más de 3 dígitos antes del punto, probablemente es miles
     const puntoIndex = valor.indexOf('.');
     if (puntoIndex > 0 && valor.length - puntoIndex - 1 === 3) {
-      // Ejemplo: 1.132 => 1132
       const limpio = valor.replace(/\./g, '');
       const numero = parseFloat(limpio);
       return Number.isNaN(numero) ? 0 : numero;
     }
-    // Si solo tiene punto y menos de 3 dígitos después, tratar como decimal
     const numero = parseFloat(valor);
     return Number.isNaN(numero) ? 0 : numero;
   }
   return 0;
 };
 
-// Función para formatear valores numéricos para mostrar
-const formatearValor = (valor: number | string): string => {
-  const numero = normalizarValor(valor);
-  // Formateamos con 2 decimales y separador de miles
-  return numero.toLocaleString('es-CL', {
+const formatearValor = (valor: number | string): string =>
+  normalizarValor(valor).toLocaleString('es-CL', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
   });
+
+const obtenerNuevaFechaInicio = (
+  ultimaFechaFin: string | undefined
+): string => {
+  if (!ultimaFechaFin) return '';
+
+  const partes = ultimaFechaFin.split('-');
+  if (
+    partes.length !== 3 ||
+    partes[0].length !== 2 ||
+    partes[1].length !== 2 ||
+    partes[2].length !== 4
+  ) {
+    return '';
+  }
+  const [day, month, year] = partes;
+
+  try {
+    const fechaFinDate = new Date(`${year}-${month}-${day}T00:00:00Z`);
+    if (Number.isNaN(fechaFinDate.getTime())) return '';
+
+    fechaFinDate.setUTCDate(fechaFinDate.getUTCDate() + 1);
+
+    const paddedDay = String(fechaFinDate.getUTCDate()).padStart(2, '0');
+    const paddedMonth = String(fechaFinDate.getUTCMonth() + 1).padStart(2, '0');
+
+    return `${paddedDay}-${paddedMonth}-${fechaFinDate.getUTCFullYear()}`;
+  } catch {
+    return '';
+  }
 };
 
-// Tipos para los filtros de tiempo
-type PeriodoTiempo = 'todo' | '1año' | '6meses' | '3meses';
+const parsearFechaInicioADate = (fechaInicio: string): Date | null => {
+  const partes = fechaInicio.split('-');
+  if (partes.length !== 3) return null;
+  const fecha = new Date(`${partes[2]}-${partes[1]}-${partes[0]}`);
+  return Number.isNaN(fecha.getTime()) ? null : fecha;
+};
+
+interface DetallePreciosAgualovaProps {
+  codigo: number;
+  onDataUpdate?: () => void;
+}
 
 export default function DetallePreciosAgualova({
   codigo,
   onDataUpdate
-}: {
-  codigo: number;
-  onDataUpdate?: () => void;
-}) {
-  const [data, setData] = useState<DetallepreciosCargoAgualova[]>([]);
+}: Readonly<DetallePreciosAgualovaProps>) {
+  const [data, setData] = useState<DetallePreciosCargoAgualova[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [periodoSeleccionado, setPeriodoSeleccionado] =
     useState<PeriodoTiempo>('todo');
 
-  const fetchData = async () => {
+  const fetchData = async (): Promise<void> => {
     try {
       setIsLoading(true);
-      const response = await api.get(`/modificar/${codigo}`);
-
-      // Normalizamos los datos al recibirlos
-      const datosNormalizados = (
-        response.data as DetallepreciosCargoAgualova[]
-      ).map(item => ({
-        ...item,
-        // Aseguramos que valor sea un número para operaciones
-        valorNumerico: normalizarValor(item.valor)
-      }));
-
-      setData(datosNormalizados);
+      const response = await api.get<DetallePreciosCargoAgualova[]>(
+        `/modificar/${codigo}`
+      );
+      const payload = response.data;
+      const list = Array.isArray(payload)
+        ? payload
+        : Array.isArray((payload as { data?: unknown })?.data)
+          ? ((payload as { data: DetallePreciosCargoAgualova[] }).data ?? [])
+          : [];
+      setData(list);
     } catch (error) {
-      toast.error('Error al cargar los precios del cargo', error as any);
+      toast.error('Error al cargar los precios del cargo', {
+        description: String(error)
+      });
       setData([]);
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Cargar datos cuando se abre el diálogo
   useEffect(() => {
     if (isOpen) {
       fetchData();
     }
   }, [isOpen, codigo]);
 
-  // Obtenemos el ultimo valor del cargo
-  const ultimoValor = data && data.length > 0 ? data[data.length - 1] : null;
-
-  const obtenerNuevaFechaInicio = (
-    ultimaFechaFin: string | undefined
-  ): string => {
-    if (!ultimaFechaFin) {
-      return '';
-    }
-
-    // 1. Parsear de DD-MM-YYYY a partes [day, month, year]
-    const dateParts = ultimaFechaFin.split('-');
-    if (
-      dateParts.length !== 3 ||
-      dateParts[0].length !== 2 ||
-      dateParts[1].length !== 2 ||
-      dateParts[2].length !== 4
-    ) {
-      console.error(
-        'Formato de fecha de entrada inesperado:',
-        ultimaFechaFin,
-        'Se esperaba DD-MM-YYYY.'
-      );
-      return '';
-    }
-    const day = dateParts[0];
-    const month = dateParts[1];
-    const year = dateParts[2];
-
-    // 2. Construir formato YYYY-MM-DD para new Date() (más fiable)
-    //    Usamos UTC ('Z') para evitar problemas de zona horaria al sumar días.
-    const fechaFormatoISO = `${year}-${month}-${day}`;
-
-    try {
-      // 3. Crear objeto Date en UTC
-      const fechaFinDate = new Date(fechaFormatoISO + 'T00:00:00Z');
-
-      if (Number.isNaN(fechaFinDate.getTime())) {
-        return '';
-      }
-
-      // 4. Sumar un día usando métodos UTC
-      fechaFinDate.setUTCDate(fechaFinDate.getUTCDate() + 1);
-
-      // 5. Extraer componentes de la nueva fecha (UTC)
-      const finalDay = fechaFinDate.getUTCDate();
-      const finalMonth = fechaFinDate.getUTCMonth() + 1; // getUTCMonth es 0-indexed (0-11)
-      const finalYear = fechaFinDate.getUTCFullYear();
-
-      // 6. Formatear a DD-MM-YYYY con padding (ceros a la izquierda)
-      const paddedDay = String(finalDay).padStart(2, '0');
-      const paddedMonth = String(finalMonth).padStart(2, '0');
-
-      const nuevaFechaInicioStringDDMMYYYY = `${paddedDay}-${paddedMonth}-${finalYear}`;
-
-      return nuevaFechaInicioStringDDMMYYYY;
-    } catch (error) {
-      console.error('Error al calcular nueva fecha de inicio:', error);
-      return '';
-    }
-  };
-
+  const ultimoValor = data.length > 0 ? data[data.length - 1] : null;
   const nuevaFechaInicio = obtenerNuevaFechaInicio(ultimoValor?.fecha_fin);
 
-  // Función para convertir formato DD-MM-YYYY a Date (para filtrado)
-  const parsearFechaInicioADate = (
-    fechaInicio: string | undefined
-  ): Date | null => {
-    if (!fechaInicio) return null;
-
-    const partes = fechaInicio.split('-');
-    if (partes.length !== 3) return null;
-
-    // Formato para new Date(): YYYY-MM-DD
-    const fechaISO = `${partes[2]}-${partes[1]}-${partes[0]}`;
-    const fecha = new Date(fechaISO);
-
-    return Number.isNaN(fecha.getTime()) ? null : fecha;
-  };
-
-  // Filtrar datos según el período seleccionado
   const datosFiltrados = useMemo(() => {
     if (!data.length || periodoSeleccionado === 'todo') {
       return data;
@@ -220,7 +173,6 @@ export default function DetallePreciosAgualova({
     const hoy = new Date();
     const fechaLimite = new Date();
 
-    // Establecer la fecha límite según el período
     switch (periodoSeleccionado) {
       case '1año':
         fechaLimite.setFullYear(hoy.getFullYear() - 1);
@@ -233,21 +185,20 @@ export default function DetallePreciosAgualova({
         break;
     }
 
-    // Filtrar los datos que estén dentro del rango
     return data.filter(item => {
       const fechaItem = parsearFechaInicioADate(item.fecha_inicio);
       return fechaItem && fechaItem >= fechaLimite;
     });
   }, [data, periodoSeleccionado]);
 
-  // Preparamos los datos para el gráfico asegurándonos que valor sea numérico
-  const datosGrafico = useMemo(() => {
-    return datosFiltrados.map(item => ({
-      ...item,
-      // Aseguramos que valor sea un número para el gráfico
-      valor: normalizarValor(item.valor)
-    }));
-  }, [datosFiltrados]);
+  const datosGrafico = useMemo(
+    () =>
+      datosFiltrados.map(item => ({
+        ...item,
+        valor: normalizarValor(item.valor)
+      })),
+    [datosFiltrados]
+  );
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -276,9 +227,8 @@ export default function DetallePreciosAgualova({
               <div className="flex justify-center items-center h-60 sm:h-96">
                 <Loader2 className="h-8 w-8 animate-spin text-sky-600" />
               </div>
-            ) : data && data.length > 0 ? (
+            ) : data.length > 0 ? (
               <div className="space-y-6">
-                {/* Información del cargo actual */}
                 <div className="bg-muted/30 rounded-xl p-4 sm:p-5 border border-border/40">
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div>
@@ -294,7 +244,7 @@ export default function DetallePreciosAgualova({
                         Valor Actual
                       </p>
                       <p className="font-bold text-lg text-sky-700 dark:text-sky-300">
-                        ${formatearValor(ultimoValor?.valor || 0)}
+                        ${formatearValor(ultimoValor?.valor ?? 0)}
                       </p>
                     </div>
                     <div>
@@ -318,7 +268,6 @@ export default function DetallePreciosAgualova({
 
                 <Separator />
 
-                {/* Gráfico de evolución */}
                 <Card className="border-2">
                   <CardHeader className="pb-3">
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
@@ -387,12 +336,9 @@ export default function DetallePreciosAgualova({
                               tickMargin={8}
                               tick={{ fontSize: 11 }}
                               tickFormatter={value => {
-                                // Simplificar la fecha para el eje X (solo mostrar mes-año)
                                 const partes = value.split('-');
                                 if (partes.length === 3) {
-                                  return `${partes[1]}/${partes[2].substring(
-                                    2
-                                  )}`;
+                                  return `${partes[1]}/${partes[2].substring(2)}`;
                                 }
                                 return value;
                               }}
@@ -468,17 +414,15 @@ export default function DetallePreciosAgualova({
           {nuevaFechaInicio && ultimoValor && (
             <DialogNuevoValorAgualova
               codigo={codigo.toString()}
-              descripcion={data[0]?.descripcion || ''}
+              descripcion={data[0]?.descripcion ?? ''}
               fecha_inicio={nuevaFechaInicio}
-              fecha_fin={''}
+              fecha_fin=""
               valor={normalizarValor(ultimoValor.valor)}
               onSuccess={() => {
                 fetchData();
-                if (onDataUpdate) {
-                  onDataUpdate();
-                }
+                onDataUpdate?.();
               }}
-              id={ultimoValor.id.toString() || ''}
+              id={ultimoValor.id.toString()}
             />
           )}
         </div>

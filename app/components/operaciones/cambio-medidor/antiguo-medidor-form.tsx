@@ -1,5 +1,4 @@
 import { ChevronDown, Gauge, Search, X } from 'lucide-react';
-
 import React from 'react';
 
 import { Button } from '~/components/ui/button';
@@ -10,26 +9,37 @@ import {
 } from '~/components/ui/collapsible';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
-import { type AntiguoMedidorFormProps } from '~/types/operaciones';
+
+interface AntiguoMedidorFormProps {
+  acometida: string;
+  numeroSerie: string;
+  isLoading: boolean;
+  onAcometidaChange: (value: string) => void;
+  onNumeroSerieChange: (value: string) => void;
+  onBuscar: () => void;
+  onLimpiar: () => void;
+}
 
 export default function AntiguoMedidorForm({
-  medidorAntiguo,
+  acometida,
+  numeroSerie,
   isLoading,
-  onMedidorChange,
+  onAcometidaChange,
+  onNumeroSerieChange,
   onBuscar,
   onLimpiar
-}: AntiguoMedidorFormProps) {
+}: Readonly<AntiguoMedidorFormProps>) {
   return (
     <Collapsible
       defaultOpen
-      className="rounded-xl border border-border bg-background backdrop-blur-sm shadow-lg "
+      className="rounded-xl border border-border bg-background backdrop-blur-sm shadow-lg"
     >
       <CollapsibleTrigger className="flex w-full items-center justify-between px-3 sm:px-6 py-3 sm:py-4">
         <div className="flex items-center gap-2 sm:gap-3 min-w-0">
           <div className="flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-background shadow-sm">
-            <Gauge className="h-3 w-3 sm:h-4 sm:w-4" />
+            <Gauge className="h-3 w-3 sm:h-4 sm:h-4" />
           </div>
-          <span className="font-semibold  text-sm sm:text-base truncate">
+          <span className="font-semibold text-sm sm:text-base truncate">
             <span className="hidden sm:inline">Buscar Medidor Antiguo</span>
             <span className="sm:hidden">Medidor Antiguo</span>
           </span>
@@ -53,25 +63,16 @@ export default function AntiguoMedidorForm({
                   type="text"
                   placeholder="Ingrese el código de acometida"
                   className="rounded-r-none focus-visible:ring-1 border-border focus-visible:ring-ring text-sm sm:text-base h-9 sm:h-10"
-                  value={medidorAntiguo.acometida}
-                  onChange={onMedidorChange}
+                  value={acometida}
+                  onChange={e => onAcometidaChange(e.target.value)}
                 />
                 <Button
                   type="button"
                   variant="outline"
                   size="icon"
-                  onClick={() => {
-                    const inputElement = document.getElementById(
-                      'acometida'
-                    ) as HTMLInputElement;
-                    if (inputElement) {
-                      inputElement.value = '';
-                      onMedidorChange({
-                        target: { id: 'acometida', value: '' }
-                      } as React.ChangeEvent<HTMLInputElement>);
-                    }
-                  }}
+                  onClick={() => onAcometidaChange('')}
                   className="rounded-l-none border-l-0 border-border hover:bg-muted h-9 sm:h-10 w-9 sm:w-10"
+                  disabled={!acometida}
                 >
                   <X className="h-3 w-3 sm:h-4 sm:w-4" />
                 </Button>
@@ -91,25 +92,16 @@ export default function AntiguoMedidorForm({
                   type="text"
                   placeholder="Ingrese el número de serie"
                   className="rounded-r-none focus-visible:ring-1 border-border focus-visible:ring-ring text-sm sm:text-base h-9 sm:h-10"
-                  value={medidorAntiguo.numeroSerie}
-                  onChange={onMedidorChange}
+                  value={numeroSerie}
+                  onChange={e => onNumeroSerieChange(e.target.value)}
                 />
                 <Button
                   type="button"
                   variant="outline"
                   size="icon"
-                  onClick={() => {
-                    const inputElement = document.getElementById(
-                      'numeroSerie'
-                    ) as HTMLInputElement;
-                    if (inputElement) {
-                      inputElement.value = '';
-                      onMedidorChange({
-                        target: { id: 'numeroSerie', value: '' }
-                      } as React.ChangeEvent<HTMLInputElement>);
-                    }
-                  }}
+                  onClick={() => onNumeroSerieChange('')}
                   className="rounded-l-none border-l-0 border-border hover:bg-muted h-9 sm:h-10 w-9 sm:w-10"
+                  disabled={!numeroSerie}
                 >
                   <X className="h-3 w-3 sm:h-4 sm:w-4" />
                 </Button>

@@ -3,59 +3,57 @@ import {
   CheckCircle,
   Clock,
   History,
-  PlusCircleIcon
-} from 'lucide-react';
+  PlusCircleIcon,
+} from "lucide-react";
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState } from "react";
 
-import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
-import { DataTable } from '~/components/data-table/data-table';
-import { ModernHeader } from '~/components/shared/modern-header';
-import { AlertDescription, AlertTitle } from '~/components/ui/alert';
-import { Button } from '~/components/ui/button';
+import { BreadcrumbSetter } from "~/components/breadcrumb-setter";
+import { DataTable } from "~/components/data-table/data-table";
+import { ModernHeader } from "~/components/shared/modern-header";
+import { AlertDescription, AlertTitle } from "~/components/ui/alert";
+import { Button } from "~/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle
-} from '~/components/ui/card';
+  CardTitle,
+} from "~/components/ui/card";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
-  TooltipTrigger
-} from '~/components/ui/tooltip';
-import api from '~/lib/api';
-import type {
-  PeriodosAniosDisponiblesResponse,
-  PeriodosBuscarRequest
-} from '~/types/operaciones';
-import CerrarPeriodo from './cerrar-periodo';
-import { columns } from './columns';
-import DialogNuevoPeriodo from './dialog-nuevo-periodo';
+  TooltipTrigger,
+} from "~/components/ui/tooltip";
+import api from "~/lib/api";
+import CerrarPeriodo from "./cerrar-periodo";
+import { columns } from "./columns";
+import DialogNuevoPeriodo from "./dialog-nuevo-periodo";
 
 export default function AbrirPeriodoFacturacion({
   years,
   periodos,
-  error
+  error,
 }: Readonly<{
-  years: PeriodosAniosDisponiblesResponse[];
-  periodos: PeriodosBuscarRequest[];
+  years: Anio[];
+  periodos: Periodos[];
   error: string | null;
 }>) {
   const [isOpenDialog, setIsOpenDialog] = useState(false);
-  const [periodosData, setPeriodosData] = useState(periodos);
+  const [periodosData, setPeriodosData] = useState<Periodos[]>(
+    Array.isArray(periodos) ? periodos : [],
+  );
 
   const pageBreadcrumbs = [
-    { label: 'Operaciones' },
-    { label: 'Período Facturación' }
+    { label: "Operaciones" },
+    { label: "Período Facturación" },
   ];
 
   // Se ejecuta cuando se crea o cierra un periodo
   const fetchPeriodos = async () => {
     try {
-      const res = await api.get('/consulta-periodo');
+      const res = await api.get("/periodos/buscar");
 
       // Early return si no hay datos
       if (!res.data || !Array.isArray(res.data)) {
@@ -63,16 +61,18 @@ export default function AbrirPeriodoFacturacion({
         return;
       }
 
-      setPeriodosData(res.data as PeriodosBuscarRequest[]);
+      setPeriodosData(res.data as Periodos[]);
     } catch (error) {
-      console.error('Error al obtener periodos:', error);
+      console.error("Error al obtener periodos:", error);
       setPeriodosData([]);
     }
   };
 
   // Encontrar período abierto
   const periodoAbierto = useMemo(() => {
-    return periodosData.find(p => p.estado === 'Abierto');
+    return Array.isArray(periodosData)
+      ? periodosData.find((p) => p.estado === "Abierto")
+      : undefined;
   }, [periodosData]);
 
   // Early return para error state
@@ -119,7 +119,7 @@ export default function AbrirPeriodoFacturacion({
                     <CardDescription className="mt-1 text-xs">
                       <span className="font-medium text-primary">
                         {periodoAbierto.descripcion}
-                      </span>{' '}
+                      </span>{" "}
                       está abierto
                     </CardDescription>
                   </div>
@@ -242,7 +242,7 @@ export default function AbrirPeriodoFacturacion({
                 <DataTable
                   columns={columns}
                   data={periodosData}
-                  initialSorting={[{ id: 'Column1', desc: true }]}
+                  initialSorting={[{ id: "fechaInicio", desc: true }]}
                   searchPlaceholder="Buscar por descripción o ID..."
                   defaultPageSize={10}
                 />

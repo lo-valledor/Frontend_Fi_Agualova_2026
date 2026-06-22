@@ -1,4 +1,4 @@
-import { Calendar, Clock, Hash, Scissors } from 'lucide-react';
+import { Calendar, Clock, Scissors } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
@@ -20,49 +20,58 @@ import {
   TooltipProvider,
   TooltipTrigger
 } from '~/components/ui/tooltip';
-import api from '~/lib/api';
+import { operacionesService } from '~/services/operacionesService';
+import type { CorteReposicionRegistrarCorteRequest } from '~/types/operaciones';
 
 interface CorteRegistradoDialogProps {
   acometida: string;
   onSuccess: () => void;
 }
 
+interface FormState {
+  fecha: string;
+  hora: string;
+}
+
+const FORM_INICIAL: FormState = { fecha: '', hora: '' };
+
 export function CorteRegistradoDialog({
   acometida,
   onSuccess
 }: Readonly<CorteRegistradoDialogProps>) {
   const [open, setOpen] = useState(false);
-  const [fecha, setFecha] = useState('');
-  const [hora, setHora] = useState('');
-  const [periodo, setPeriodo] = useState('');
+  const [form, setForm] = useState<FormState>(FORM_INICIAL);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = async () => {
-    if (!isFormValid) return;
+  const handleSubmit = async (): Promise<void> => {
+    if (!form.fecha || !form.hora) return;
 
     setIsSubmitting(true);
     try {
-      await api.post('corte-registrado', null, {
-        params: { acometida, fecha, hora, periodo }
-      });
+      const request: CorteReposicionRegistrarCorteRequest = {
+        acometida,
+        fecha: form.fecha,
+        hora: form.hora
+      };
+      const result = await operacionesService.postRegistrarCorte(request);
+      if (result.error) {
+        toast.error(result.error);
+        return;
+      }
       toast.success('Corte registrado correctamente');
-      onSuccess();
       setOpen(false);
-      // Limpiar formulario
-      setFecha('');
-      setHora('');
-      setPeriodo('');
-    } catch (error) {
-      toast.error(
-        'Error al registrar el corte. Intente nuevamente.',
-        error as any
-      );
+      setForm(FORM_INICIAL);
+      onSuccess();
+    } catch (err) {
+      toast.error('Error al registrar el corte', {
+        description: String(err)
+      });
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const isFormValid = fecha && hora && periodo;
+  const isFormValid = Boolean(form.fecha && form.hora);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -108,9 +117,9 @@ export function CorteRegistradoDialog({
               </Label>
               <Input
                 id="fecha"
-                value={fecha}
-                onChange={e => setFecha(e.target.value)}
-                placeholder="dd-MM-yyyy"
+                type="date"
+                value={form.fecha}
+                onChange={e => setForm(prev => ({ ...prev, fecha: e.target.value }))}
                 className="text-xs h-8"
               />
             </div>
@@ -121,25 +130,9 @@ export function CorteRegistradoDialog({
               </Label>
               <Input
                 id="hora"
-                value={hora}
-                onChange={e => setHora(e.target.value)}
-                placeholder="HH:mm:ss"
-                className="text-xs h-8"
-              />
-            </div>
-            <div className="space-y-1">
-              <Label
-                htmlFor="periodo"
-                className="flex items-center gap-1 text-xs"
-              >
-                <Hash className="h-3 w-3" />
-                Periodo
-              </Label>
-              <Input
-                id="periodo"
-                value={periodo}
-                onChange={e => setPeriodo(e.target.value)}
-                placeholder="MMAAAA"
+                type="time"
+                value={form.hora}
+                onChange={e => setForm(prev => ({ ...prev, hora: e.target.value }))}
                 className="text-xs h-8"
               />
             </div>

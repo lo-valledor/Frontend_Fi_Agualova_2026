@@ -3,6 +3,7 @@ import {
   CheckCircle,
   Edit3,
   Loader2,
+  Lock,
   PencilIcon
 } from 'lucide-react';
 import { useState } from 'react';
@@ -22,150 +23,120 @@ import {
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
 import { Textarea } from '~/components/ui/textarea';
-import { useAuth } from '~/context/AuthContext';
-import api from '~/lib/api';
+import { operacionesService } from '~/services/operacionesService';
 
 interface DialogModificarPrecioProps {
-  indice: number;
+  codigoCargo: number;
   descripcion?: string;
   valorActual?: string;
   onSuccess?: () => void;
 }
 
+interface FormState {
+  nuevoValor: string;
+  motivo: string;
+  passwordConfirmacion: string;
+}
+
+const FORM_INICIAL: FormState = {
+  nuevoValor: '',
+  motivo: '',
+  passwordConfirmacion: ''
+};
+
+const MIN_LONGITUD_MOTIVO = 5;
+
+const normalizarValor = (valor: string): number => {
+  if (!valor) return 0;
+  const limpio = valor.replace(/\./g, '').replace(',', '.');
+  const numero = parseFloat(limpio);
+  return Number.isNaN(numero) ? 0 : numero;
+};
+
+const formatearValorCL = (valor: string): string =>
+  normalizarValor(valor).toLocaleString('es-CL', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+
 export default function DialogModificarPrecio({
-  indice,
+  codigoCargo,
   descripcion = '',
   valorActual = '',
   onSuccess
-}: DialogModificarPrecioProps) {
+}: Readonly<DialogModificarPrecioProps>) {
   const [isOpen, setIsOpen] = useState(false);
-  const [valor, setValor] = useState(valorActual);
-  const [motivo, setMotivo] = useState('');
+  const [form, setForm] = useState<FormState>(FORM_INICIAL);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const { user } = useAuth();
 
-  const resetForm = () => {
-    setValor(valorActual);
-    setMotivo('');
+  const resetForm = (): void => {
+    setForm(FORM_INICIAL);
     setError('');
   };
 
-  const handleOpenChange = (open: boolean) => {
+  const handleOpenChange = (open: boolean): void => {
     setIsOpen(open);
-    if (!open) {
-      resetForm();
-    }
+    if (!open) resetForm();
   };
 
-  const validateForm = (): boolean => {
-    if (!valor.trim()) {
-      setError('El valor es obligatorio');
-      return false;
-    }
+  const updateField = <K extends keyof FormState>(
+    field: K,
+    value: FormState[K]
+  ): void => {
+    setForm(prev => ({ ...prev, [field]: value }));
+  };
 
-    if (Number.isNaN(Number(valor)) || Number(valor) <= 0) {
+  const validarFormulario = (): boolean => {
+    const nuevoValorNum = normalizarValor(form.nuevoValor);
+
+    if (nuevoValorNum <= 0) {
       setError('El valor debe ser un número positivo');
       return false;
     }
 
-    if (!motivo.trim()) {
-      setError('El motivo es obligatorio');
+    if (!form.motivo.trim() || form.motivo.trim().length < MIN_LONGITUD_MOTIVO) {
+      setError(`El motivo debe tener al menos ${MIN_LONGITUD_MOTIVO} caracteres`);
       return false;
     }
 
-    if (motivo.length < 5) {
-      setError('El motivo debe tener al menos 5 caracteres');
+    if (!form.passwordConfirmacion) {
+      setError('La contraseña de confirmación es obligatoria');
       return false;
     }
 
     return true;
   };
 
-  const handleConfirmar = async () => {
-    if (!user) {
-      toast.error('No se pudo obtener información del usuario');
-      return;
-    }
-
-    if (!validateForm()) {
-      return;
-    }
+  const handleConfirmar = async (): Promise<void> => {
+    if (!validarFormulario()) return;
 
     setIsLoading(true);
     setError('');
 
     try {
-      const payload = {
-        indice: indice,
-        valor: valor,
-        motivo: motivo,
-        usuario: user.username
-      };
+      const result = await operacionesService.postCorregirPrecioCargo({
+        codigoCargo,
+        nuevoValor: normalizarValor(form.nuevoValor),
+        motivo: form.motivo.trim(),
+        passwordConfirmacion: form.passwordConfirmacion
+      });
 
-      const response = await api.post(
-        `/modificar-precio-cargo-correccion`,
-        payload
-      );
-
-      if (response.status === 200) {
-        toast.success('Precio modificado correctamente');
-        setIsOpen(false);
-        if (onSuccess) {
-          onSuccess();
-        }
-      } else {
-        setError('No se pudo modificar el precio');
-        toast.error('No se pudo modificar el precio');
-      }
-    } catch (error: any) {
-      if (error.response?.status === 401) {
-        const errorMessage =
-          error.response.data?.mensaje || error.response.data?.message || '';
-
-        setError(
-          errorMessage ||
-            'Sesión expirada. Recarga la página e inicia sesión nuevamente.'
-        );
-        toast.error(
-          errorMessage ||
-            'Sesión expirada. Recarga la página e inicia sesión nuevamente.'
-        );
+      if (result.error) {
+        setError(result.error);
+        toast.error(result.error);
         return;
       }
 
-      if (error.response?.status === 400) {
-        const errorMessage =
-          error.response.data?.mensaje || 'Datos incorrectos';
-        setError(`Error en los datos: ${errorMessage}`);
-        toast.error(`Error en los datos: ${errorMessage}`);
-        return;
-      }
-
-      if (error.response?.status === 422) {
-        const errorMessage =
-          error.response.data?.mensaje || 'Datos de validación incorrectos';
-        setError(`Error de validación: ${errorMessage}`);
-        toast.error(`Error de validación: ${errorMessage}`);
-        return;
-      }
-
-      if (error.response) {
-        const errorMessage =
-          error.response.data?.mensaje ||
-          error.response.data?.message ||
-          'Error al procesar la solicitud';
-        setError(`Error ${error.response.status}: ${errorMessage}`);
-        toast.error(`Error ${error.response.status}: ${errorMessage}`);
-      } else if (error.request) {
-        setError('No se recibió respuesta del servidor. Verifica tu conexión.');
-        toast.error(
-          'No se recibió respuesta del servidor. Verifica tu conexión.'
-        );
-      } else {
-        setError(`Error: ${error.message}`);
-        toast.error(`Error: ${error.message}`);
-      }
+      toast.success('Precio modificado correctamente');
+      setIsOpen(false);
+      resetForm();
+      onSuccess?.();
+    } catch (err) {
+      const mensaje =
+        err instanceof Error ? err.message : 'Error al modificar el precio';
+      setError(mensaje);
+      toast.error(mensaje);
     } finally {
       setIsLoading(false);
     }
@@ -192,14 +163,10 @@ export default function DialogModificarPrecio({
             </div>
             <div>
               <DialogTitle className="text-lg sm:text-xl font-semibold">
-                <span className="hidden sm:inline">Modificar Precio</span>
-                <span className="sm:hidden">Modificar</span>
+                Modificar Precio
               </DialogTitle>
               <DialogDescription className="text-xs sm:text-sm">
-                <span className="hidden sm:inline">
-                  Modifica el valor del cargo y especifica el motivo del cambio
-                </span>
-                <span className="sm:hidden">Modifica el valor y motivo</span>
+                Modifica el valor del cargo y registra el motivo del cambio.
               </DialogDescription>
             </div>
           </div>
@@ -211,7 +178,7 @@ export default function DialogModificarPrecio({
               <Label className="text-xs sm:text-sm font-medium">
                 Descripción
               </Label>
-              <div className="bg-background p-2 sm:p-3 rounded-xl text-xs sm:text-sm border-border">
+              <div className="bg-muted/30 p-2 sm:p-3 rounded-xl text-xs sm:text-sm border">
                 {descripcion}
               </div>
             </div>
@@ -219,12 +186,14 @@ export default function DialogModificarPrecio({
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <div className="space-y-1 sm:space-y-2">
-              <Label className="text-xs sm:text-sm font-medium">Índice</Label>
+              <Label className="text-xs sm:text-sm font-medium">
+                Código Cargo
+              </Label>
               <Input
                 type="text"
-                value={indice}
+                value={codigoCargo}
                 disabled
-                className="bg-background h-8 sm:h-10 text-xs sm:text-sm"
+                className="bg-muted/30 h-8 sm:h-10 text-xs sm:text-sm font-mono"
               />
             </div>
 
@@ -234,9 +203,9 @@ export default function DialogModificarPrecio({
               </Label>
               <Input
                 type="text"
-                value={valorActual}
+                value={formatearValorCL(valorActual)}
                 disabled
-                className="bg-background h-8 sm:h-10 text-xs sm:text-sm"
+                className="bg-muted/30 h-8 sm:h-10 text-xs sm:text-sm font-mono"
               />
             </div>
           </div>
@@ -248,28 +217,44 @@ export default function DialogModificarPrecio({
             <Input
               id="valor"
               type="number"
-              placeholder="Nuevo valor"
-              value={valor}
-              onChange={e => setValor(e.target.value)}
+              placeholder="0,00"
+              value={form.nuevoValor}
+              onChange={e => updateField('nuevoValor', e.target.value)}
               min="0"
               step="0.01"
-              className="bg-background border-border h-8 sm:h-10 text-xs sm:text-sm"
+              className="bg-background border h-8 sm:h-10 text-xs sm:text-sm"
             />
           </div>
 
           <div className="space-y-1 sm:space-y-2">
             <Label htmlFor="motivo" className="text-xs sm:text-sm font-medium">
-              <span className="hidden sm:inline">
-                Motivo de la Modificación
-              </span>
-              <span className="sm:hidden">Motivo</span>
+              Motivo de la Modificación
             </Label>
             <Textarea
               id="motivo"
-              placeholder="Motivo de la modificación"
-              value={motivo}
-              onChange={e => setMotivo(e.target.value)}
-              className="min-h-[60px] sm:min-h-[80px] bg-background border-border text-xs sm:text-sm"
+              placeholder="Describe el motivo (mínimo 5 caracteres)"
+              value={form.motivo}
+              onChange={e => updateField('motivo', e.target.value)}
+              className="min-h-[60px] sm:min-h-[80px] bg-background border text-xs sm:text-sm"
+            />
+          </div>
+
+          <div className="space-y-1 sm:space-y-2">
+            <Label
+              htmlFor="password"
+              className="text-xs sm:text-sm font-medium flex items-center gap-1.5"
+            >
+              <Lock className="h-3 w-3" />
+              Contraseña de confirmación
+            </Label>
+            <Input
+              id="password"
+              type="password"
+              placeholder="Tu contraseña"
+              value={form.passwordConfirmacion}
+              onChange={e => updateField('passwordConfirmacion', e.target.value)}
+              autoComplete="current-password"
+              className="bg-background border h-8 sm:h-10 text-xs sm:text-sm"
             />
           </div>
 

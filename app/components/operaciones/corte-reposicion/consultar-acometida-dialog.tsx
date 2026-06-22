@@ -28,28 +28,28 @@ import {
   TooltipTrigger
 } from '~/components/ui/tooltip';
 import api from '~/lib/api';
+import { operacionesService } from '~/services/operacionesService';
 
-interface ConsultarAcometidaData {
-  ctId: string;
-  seCodigo: string;
-  meNSerie: string;
-  clRut: string;
-  clRazonSocialCompleto: string;
-  niDescripcion: string;
-  secDescripcion: string;
-  reEstado: string;
-  reCantDocumentos: number;
-  reDeudaTotal: number;
-  reFechaIngreso: string;
+interface ConsultaAcometidaDetalle {
+  ctId?: string;
+  seCodigo?: string;
+  meNSerie?: string;
+  clRut?: string;
+  clRazonSocialCompleto?: string;
+  niDescripcion?: string;
+  secDescripcion?: string;
+  reCantDocumentos?: number;
+  reDeudaTotal?: number;
+  reFechaIngreso?: string;
 }
 
 interface FacturaImpaga {
-  clRut: string;
-  seCodigo: string;
-  faNumero: number;
-  faFechaVencimiento: string;
-  faTotal: number;
-  faSaldo: number;
+  clRut?: string;
+  seCodigo?: string;
+  faNumero?: number;
+  faFechaVencimiento?: string;
+  faTotal?: number;
+  faSaldo?: number;
 }
 
 interface ConsultarAcometidaDialogProps {
@@ -57,71 +57,61 @@ interface ConsultarAcometidaDialogProps {
   onSuccess: () => void;
 }
 
+const FORMATO_MONEDA = new Intl.NumberFormat('es-CL', {
+  style: 'currency',
+  currency: 'CLP',
+  minimumFractionDigits: 0,
+  maximumFractionDigits: 0
+});
+
+const formatCurrency = (value: number | undefined): string =>
+  FORMATO_MONEDA.format(value ?? 0);
+
+const ColonCell = () => (
+  <TableCell className="text-xs py-1 w-3 text-center">:</TableCell>
+);
+
 export function ConsultarAcometidaDialog({
   acometida,
   onSuccess
 }: Readonly<ConsultarAcometidaDialogProps>) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [data, setData] = useState<ConsultarAcometidaData | null>(null);
-  const [facturasImpagas, setFacturasImpagas] = useState<FacturaImpaga[]>([]);
-  const [loadingFacturas, setLoadingFacturas] = useState(false);
+  const [data, setData] = useState<ConsultaAcometidaDetalle | null>(null);
   const [comentario, setComentario] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
 
-  // Cargar datos cuando se abre el diálogo
   useEffect(() => {
     if (open) {
       void loadData();
-      void loadFacturasImpagas();
     }
   }, [open]);
 
-  const loadData = async () => {
+  const loadData = async (): Promise<void> => {
     setLoading(true);
     try {
-      const response = await api.get<ConsultarAcometidaData[]>(
-        'consulta-mantenedor-revision',
-        {
-          params: { acometida }
-        }
-      );
-
-      if (
-        response.data &&
-        Array.isArray(response.data) &&
-        response.data.length > 0
-      ) {
-        setData(response.data[0]);
+      const response = await operacionesService.getConsultarDeuda(acometida);
+      const list = Array.isArray(response.data) ? response.data : [];
+      if (list.length > 0) {
+        setData(list[0] as ConsultaAcometidaDetalle);
+      } else if (response.data && !Array.isArray(response.data)) {
+        setData(response.data as ConsultaAcometidaDetalle);
       } else {
         toast.error('No se encontraron datos para esta acometida');
+        setData(null);
       }
-    } catch (error) {
-      toast.error('Error al cargar los datos de la acometida', error as any);
+    } catch (err) {
+      toast.error('Error al cargar los datos de la acometida', {
+        description: String(err)
+      });
+      setData(null);
     } finally {
       setLoading(false);
     }
   };
 
-  const loadFacturasImpagas = async () => {
-    setLoadingFacturas(true);
-    try {
-      const response = await api.get<FacturaImpaga[]>(
-        `facturas-impagas/${acometida}/2`
-      );
-
-      if (response.data && Array.isArray(response.data)) {
-        setFacturasImpagas(response.data);
-      }
-    } catch (error) {
-      toast.error('Error al cargar las facturas impagas', error as any);
-    } finally {
-      setLoadingFacturas(false);
-    }
-  };
-
-  const handleExportarExcel = async () => {
+  const handleExportarExcel = async (): Promise<void> => {
     setIsExporting(true);
     try {
       const response = await api.get('exportar-facturas-impagas', {
@@ -129,9 +119,6 @@ export function ConsultarAcometidaDialog({
         responseType: 'blob'
       });
 
-      // Crear un link temporal para descargar el archivo
-      // El tipado de axios con responseType: 'blob' retorna response.data como "unknown"
-      // así que lo forzamos a Blob de manera segura para su uso en el objeto URL.
       const blob =
         response.data instanceof Blob
           ? response.data
@@ -141,20 +128,21 @@ export function ConsultarAcometidaDialog({
       link.href = url;
       link.setAttribute('download', `facturas-impagas-${acometida}.xlsx`);
       document.body.appendChild(link);
-
       link.click();
       link.remove();
       globalThis.URL.revokeObjectURL(url);
 
       toast.success('Excel exportado correctamente');
-    } catch (error) {
-      toast.error('Error al exportar las facturas a Excel', error as any);
+    } catch (err) {
+      toast.error('Error al exportar las facturas a Excel', {
+        description: String(err)
+      });
     } finally {
       setIsExporting(false);
     }
   };
 
-  const handleLiberar = async () => {
+  const handleLiberar = async (): Promise<void> => {
     if (!comentario.trim()) {
       toast.error('El comentario es obligatorio');
       return;
@@ -162,37 +150,26 @@ export function ConsultarAcometidaDialog({
 
     setIsSubmitting(true);
     try {
-      await api.post('marcar-liberar', null, {
-        params: { acometida, comentario }
+      const result = await operacionesService.postLiberarAcometida({
+        acometida,
+        comentario
       });
+      if (result.error) {
+        toast.error(result.error);
+        return;
+      }
       toast.success('Liberación registrada correctamente');
-      onSuccess();
       setOpen(false);
-      // Limpiar formulario
       setComentario('');
-    } catch (error) {
-      toast.error(
-        'Error al registrar la liberación. Intente nuevamente.',
-        error as any
-      );
+      onSuccess();
+    } catch (err) {
+      toast.error('Error al registrar la liberación', {
+        description: String(err)
+      });
     } finally {
       setIsSubmitting(false);
     }
   };
-
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('es-CL', {
-      style: 'currency',
-      currency: 'CLP',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
-    }).format(value);
-  };
-
-  // Celda estándar para los dos puntos con ancho y alineación uniforme
-  const ColonCell = () => (
-    <TableCell className="text-xs py-1 w-3 text-center">:</TableCell>
-  );
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -227,13 +204,25 @@ export function ConsultarAcometidaDialog({
           </DialogDescription>
         </DialogHeader>
 
+        <div className="flex justify-end">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleExportarExcel}
+            disabled={isExporting}
+            className="gap-1.5"
+          >
+            <Download className="h-3 w-3" />
+            {isExporting ? 'Exportando...' : 'Exportar Facturas'}
+          </Button>
+        </div>
+
         {loading ? (
           <div className="flex items-center justify-center py-6">
-            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary" />
           </div>
         ) : data ? (
           <div className="space-y-3">
-            {/* Información principal */}
             <div className="bg-muted rounded-lg p-2 border">
               <Table className="table-fixed w-full">
                 <TableBody>
@@ -243,7 +232,7 @@ export function ConsultarAcometidaDialog({
                     </TableCell>
                     <ColonCell />
                     <TableCell className="font-mono text-xs py-1">
-                      {data.clRut}
+                      {data.clRut ?? '-'}
                     </TableCell>
                   </TableRow>
                   <TableRow>
@@ -252,14 +241,13 @@ export function ConsultarAcometidaDialog({
                     </TableCell>
                     <ColonCell />
                     <TableCell className="text-xs py-1">
-                      {data.clRazonSocialCompleto}
+                      {data.clRazonSocialCompleto ?? '-'}
                     </TableCell>
                   </TableRow>
                 </TableBody>
               </Table>
             </div>
 
-            {/* Información de cliente */}
             <div className="bg-card rounded-lg p-2 border">
               <Table className="table-fixed w-full">
                 <TableBody>
@@ -269,7 +257,7 @@ export function ConsultarAcometidaDialog({
                     </TableCell>
                     <ColonCell />
                     <TableCell className="font-mono text-xs py-1">
-                      {data.seCodigo}
+                      {data.seCodigo ?? '-'}
                     </TableCell>
                   </TableRow>
                   <TableRow className="border-border">
@@ -278,7 +266,7 @@ export function ConsultarAcometidaDialog({
                     </TableCell>
                     <ColonCell />
                     <TableCell className="font-mono text-xs py-1">
-                      {data.ctId}
+                      {data.ctId ?? '-'}
                     </TableCell>
                   </TableRow>
                   <TableRow>
@@ -287,7 +275,7 @@ export function ConsultarAcometidaDialog({
                     </TableCell>
                     <ColonCell />
                     <TableCell className="font-mono text-xs py-1">
-                      {data.meNSerie}
+                      {data.meNSerie ?? '-'}
                     </TableCell>
                   </TableRow>
                   <TableRow>
@@ -296,7 +284,7 @@ export function ConsultarAcometidaDialog({
                     </TableCell>
                     <ColonCell />
                     <TableCell className="text-xs py-1">
-                      {data.secDescripcion}
+                      {data.secDescripcion ?? '-'}
                     </TableCell>
                   </TableRow>
                   <TableRow>
@@ -305,20 +293,19 @@ export function ConsultarAcometidaDialog({
                     </TableCell>
                     <ColonCell />
                     <TableCell className="text-xs py-1">
-                      {data.niDescripcion}
+                      {data.niDescripcion ?? '-'}
                     </TableCell>
                   </TableRow>
                 </TableBody>
               </Table>
             </div>
 
-            {/* Información financiera */}
             <div className="bg-accent rounded-lg p-2 border">
               <Table className="table-fixed w-full">
                 <TableBody>
                   <TableRow className="border-border">
                     <TableCell className="font-medium text-xs py-1 w-2/5">
-                      Total
+                      Deuda Total
                     </TableCell>
                     <ColonCell />
                     <TableCell className="font-mono font-bold text-sm py-1">
@@ -327,110 +314,26 @@ export function ConsultarAcometidaDialog({
                   </TableRow>
                   <TableRow className="border-border">
                     <TableCell className="font-medium text-xs py-1">
-                      Saldo
+                      Documentos Asociados
                     </TableCell>
                     <ColonCell />
-                    <TableCell className="font-mono font-bold text-sm py-1">
-                      {formatCurrency(data.reDeudaTotal)}
-                    </TableCell>
-                  </TableRow>
-                  <TableRow className="border-border">
-                    <TableCell className="font-medium text-xs py-1">
-                      HC Asociada
-                    </TableCell>
-                    <TableCell className="text-xs py-1 w-3 text-center">
-                      :
-                    </TableCell>
                     <TableCell className="font-mono text-xs py-1">
-                      {data.reCantDocumentos}
+                      {data.reCantDocumentos ?? 0}
+                    </TableCell>
+                  </TableRow>
+                  <TableRow className="border-border">
+                    <TableCell className="font-medium text-xs py-1">
+                      Fecha Ingreso
+                    </TableCell>
+                    <ColonCell />
+                    <TableCell className="font-mono text-xs py-1">
+                      {data.reFechaIngreso ?? '-'}
                     </TableCell>
                   </TableRow>
                 </TableBody>
               </Table>
             </div>
 
-            {/* Facturas Impagas */}
-            <div className="border-t pt-3">
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="text-sm font-semibold">Facturas Impagas</h3>
-                <Button
-                  onClick={handleExportarExcel}
-                  disabled={isExporting || facturasImpagas.length === 0}
-                  size="sm"
-                  variant="outline"
-                  className="h-7 text-xs"
-                >
-                  <Download className="h-3 w-3 mr-1" />
-                  {isExporting ? 'Exportando...' : 'Exportar Excel'}
-                </Button>
-              </div>
-
-              {loadingFacturas ? (
-                <div className="flex items-center justify-center py-4">
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-primary"></div>
-                </div>
-              ) : facturasImpagas.length > 0 ? (
-                <div className="border rounded-lg overflow-hidden">
-                  <div className="max-h-[300px] overflow-y-auto">
-                    <Table>
-                      <TableHeader className="sticky top-0 bg-muted z-10">
-                        <TableRow>
-                          <TableHead className="text-xs py-2">
-                            N° Factura
-                          </TableHead>
-                          <TableHead className="text-xs py-2">
-                            Vencimiento
-                          </TableHead>
-                          <TableHead className="text-xs py-2 text-right">
-                            Total
-                          </TableHead>
-                          <TableHead className="text-xs py-2 text-right">
-                            Saldo
-                          </TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {facturasImpagas.map((factura, index) => (
-                          <TableRow key={index} className="border-border">
-                            <TableCell className="font-mono text-xs py-2">
-                              {factura.faNumero}
-                            </TableCell>
-                            <TableCell className="text-xs py-2">
-                              {new Date(
-                                factura.faFechaVencimiento
-                              ).toLocaleDateString('es-CL')}
-                            </TableCell>
-                            <TableCell className="font-mono text-xs py-2 text-right">
-                              {formatCurrency(factura.faTotal)}
-                            </TableCell>
-                            <TableCell className="font-mono text-xs py-2 text-right">
-                              {formatCurrency(factura.faSaldo)}
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </div>
-                  <div className="bg-muted px-3 py-2 text-xs font-medium border-t">
-                    Total facturas: {facturasImpagas.length} | Total adeudado:{' '}
-                    {formatCurrency(
-                      facturasImpagas.reduce(
-                        (sum, factura) => sum + factura.faSaldo,
-                        0
-                      )
-                    )}
-                  </div>
-                </div>
-              ) : (
-                <div className="flex flex-col items-center justify-center py-4 border rounded-lg bg-muted/50">
-                  <p className="text-muted-foreground text-xs">
-                    No hay facturas impagas
-                  </p>
-                </div>
-              )}
-            </div>
-
-            {/* Sección de comentario para liberar */}
             <div className="border-t pt-2">
               <p className="text-xs text-muted-foreground mb-2">
                 Para liberar de corte, ingresar motivo y presionar liberar
@@ -449,7 +352,7 @@ export function ConsultarAcometidaDialog({
                     value={comentario}
                     onChange={e => setComentario(e.target.value)}
                     placeholder="Comentario obligatorio para liberación..."
-                    className="min-h-[60px] resize-none text-xs"
+                    className="min-h-15 resize-none text-xs"
                     maxLength={500}
                   />
                   <div className="text-xs text-right text-muted-foreground">
