@@ -4,47 +4,47 @@ import {
   FileX,
   RotateCcw,
   Trash2,
-  X,
-} from "lucide-react";
+  X
+} from 'lucide-react';
 
-import { useState } from "react";
+import { useState } from 'react';
 
-import { ModernHeader } from "~/components/shared/modern-header";
-import { Alert, AlertDescription, AlertTitle } from "~/components/ui/alert";
-import { Button } from "~/components/ui/button";
+import { ModernHeader } from '~/components/shared/modern-header';
+import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert';
+import { Button } from '~/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
+  CardTitle
+} from '~/components/ui/card';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
-} from "~/components/ui/dialog";
-import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
-import { Separator } from "~/components/ui/separator";
-import { Switch } from "~/components/ui/switch";
-import api from "~/lib/api";
+  DialogTrigger
+} from '~/components/ui/dialog';
+import { Input } from '~/components/ui/input';
+import { Label } from '~/components/ui/label';
+import { Separator } from '~/components/ui/separator';
+import { Switch } from '~/components/ui/switch';
+import { operacionesService } from '~/services/operacionesService';
 
 export default function AnularFacturaImpresaComponent() {
-  const [numeroFactura, setNumeroFactura] = useState<string>("");
+  const [numeroFactura, setNumeroFactura] = useState<string>('');
   const [conTomaLectura, setConTomaLectura] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
-  const [alertMessage, setAlertMessage] = useState<string>("");
+  const [alertMessage, setAlertMessage] = useState<string>('');
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
   const handleAnular = async () => {
     if (!numeroFactura) {
       setAlertMessage(
-        "Debe ingresar un número de factura válido para proceder con la anulación.",
+        'Debe ingresar un número de factura válido para proceder con la anulación.'
       );
       setShowAlert(true);
       return;
@@ -55,21 +55,31 @@ export default function AnularFacturaImpresaComponent() {
       setShowAlert(false);
       setShowConfirmDialog(false);
 
-      const response = await api.post("/anular-factura/ejecutar", {
-        numeroFolio: numeroFactura,
-        alcance: conTomaLectura ? 1 : 2,
+      const response = await operacionesService.postAnularFactura({
+        numeroFactura,
+        conTomaLectura
       });
 
-      if (response.status === 200) {
-        setAlertMessage("Factura anulada correctamente.");
+      if (response.error) {
+        setAlertMessage(
+          response.error ||
+            'Ocurrió un error al anular la factura. Por favor, intente nuevamente.'
+        );
         setShowAlert(true);
-        setNumeroFactura("");
-        setConTomaLectura(false);
+        return;
       }
+
+      setAlertMessage('Factura anulada correctamente.');
+      setShowAlert(true);
+      setNumeroFactura('');
+      setConTomaLectura(false);
     } catch (error) {
       console.error(error);
+      const message = error instanceof Error ? error.message : '';
       setAlertMessage(
-        "Ocurrió un error al anular la factura. Por favor, intente nuevamente.",
+        message
+          ? `Ocurrió un error al anular la factura: ${message}`
+          : 'Ocurrió un error al anular la factura. Por favor, intente nuevamente.'
       );
       setShowAlert(true);
     } finally {
@@ -78,7 +88,7 @@ export default function AnularFacturaImpresaComponent() {
   };
 
   const handleClearForm = () => {
-    setNumeroFactura("");
+    setNumeroFactura('');
     setConTomaLectura(false);
     setShowAlert(false);
   };
@@ -86,43 +96,41 @@ export default function AnularFacturaImpresaComponent() {
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto p-3 space-y-4">
-        {/* Header */}
         <ModernHeader
           title="Anular Factura"
           description="Gestión de anulación de facturas impresas"
         />
 
-        {/* Alert */}
         {showAlert && (
           <Alert
             variant={
-              alertMessage.includes("correctamente") ? "default" : "destructive"
+              alertMessage.includes('correctamente') ? 'default' : 'destructive'
             }
             className={`border border-border shadow-sm ${
-              alertMessage.includes("correctamente")
-                ? "bg-success/10"
-                : "bg-destructive/10"
+              alertMessage.includes('correctamente')
+                ? 'bg-success/10'
+                : 'bg-destructive/10'
             }`}
           >
-            {alertMessage.includes("correctamente") ? (
+            {alertMessage.includes('correctamente') ? (
               <CheckCircle2 className="h-4 w-4 text-success" />
             ) : (
               <AlertCircle className="h-4 w-4 text-destructive" />
             )}
             <AlertTitle
               className={`text-base ${
-                alertMessage.includes("correctamente")
-                  ? "text-success"
-                  : "text-destructive"
+                alertMessage.includes('correctamente')
+                  ? 'text-success'
+                  : 'text-destructive'
               }`}
             >
-              {alertMessage.includes("correctamente") ? "Completado" : "Error"}
+              {alertMessage.includes('correctamente') ? 'Completado' : 'Error'}
             </AlertTitle>
             <AlertDescription
               className={`text-sm ${
-                alertMessage.includes("correctamente")
-                  ? "text-success"
-                  : "text-destructive"
+                alertMessage.includes('correctamente')
+                  ? 'text-success'
+                  : 'text-destructive'
               }`}
             >
               {alertMessage}
@@ -130,7 +138,6 @@ export default function AnularFacturaImpresaComponent() {
           </Alert>
         )}
 
-        {/* Main Form */}
         <Card className="border border-border shadow-sm">
           <CardHeader className="border-b border-border bg-background p-4">
             <div className="flex items-center gap-3">
@@ -149,7 +156,6 @@ export default function AnularFacturaImpresaComponent() {
           </CardHeader>
 
           <CardContent className="p-4 space-y-4">
-            {/* Número de Factura */}
             <div className="space-y-2">
               <Label htmlFor="numeroFactura" className="text-sm font-medium">
                 Número de Factura
@@ -168,7 +174,7 @@ export default function AnularFacturaImpresaComponent() {
                     type="button"
                     variant="ghost"
                     size="sm"
-                    onClick={() => setNumeroFactura("")}
+                    onClick={() => setNumeroFactura('')}
                     className="absolute right-0 top-0 h-full px-3 text-muted-foreground hover:text-foreground"
                   >
                     <X className="h-4 w-4" />
@@ -179,7 +185,6 @@ export default function AnularFacturaImpresaComponent() {
 
             <Separator />
 
-            {/* Configuración de Anulación */}
             <div className="space-y-4">
               <Label className="text-sm font-medium">
                 Configuración de Anulación
@@ -198,19 +203,18 @@ export default function AnularFacturaImpresaComponent() {
                     className="text-sm font-medium cursor-pointer"
                   >
                     {conTomaLectura
-                      ? "Con nueva toma de lectura"
-                      : "Sin nueva toma de lectura"}
+                      ? 'Con nueva toma de lectura'
+                      : 'Sin nueva toma de lectura'}
                   </Label>
                   <p className="text-xs leading-relaxed">
                     {conTomaLectura
-                      ? "Se realizará una nueva lectura del medidor antes de la refacturación"
-                      : "Se mantendrá la última lectura registrada para la refacturación"}
+                      ? 'Se realizará una nueva lectura del medidor antes de la refacturación'
+                      : 'Se mantendrá la última lectura registrada para la refacturación'}
                   </p>
                 </div>
               </div>
             </div>
 
-            {/* Actions */}
             <div className="flex flex-col sm:flex-row gap-3 pt-4">
               <Button
                 variant="outline"
@@ -244,7 +248,7 @@ export default function AnularFacturaImpresaComponent() {
                       Confirmar Anulación
                     </DialogTitle>
                     <DialogDescription className="text-sm">
-                      ¿Está seguro que desea anular la factura{" "}
+                      ¿Está seguro que desea anular la factura{' '}
                       <strong className="break-all">{numeroFactura}</strong>?
                       Esta acción no se puede deshacer.
                     </DialogDescription>
@@ -268,7 +272,7 @@ export default function AnularFacturaImpresaComponent() {
                       ) : (
                         <Trash2 className="mr-2 h-4 w-4" />
                       )}
-                      {isLoading ? "Procesando..." : "Confirmar Anulación"}
+                      {isLoading ? 'Procesando...' : 'Confirmar Anulación'}
                     </Button>
                   </div>
                 </DialogContent>

@@ -1,4 +1,62 @@
-// Tipos centralizados para los componentes de monitor
+// Tipos Sistema de Agualova - Módulo de Monitor
+export type MonitorPeriodos = {
+  value: string;
+  text: string;
+  fechaInicio: string | null;
+  fechaFin: string | null;
+};
+
+export type MonitorClaves = {
+  value: string;
+  text: string;
+  grupo: string;
+};
+
+export type MonitorSectores = {
+  secId: number;
+  descripcion: string;
+  estado: number;
+  color: number;
+};
+
+export type MonitorMedidores = {
+  id: number;
+  nSerie: string;
+  claveHtml: string;
+  ultimaLectura: number;
+  fechaLectura: string;
+  consumo: number;
+  clave: string;
+};
+
+export type MonitorFilas = {
+  numero: number;
+  medidores: MonitorMedidores[];
+};
+
+export type MonitorNichos = {
+  nombre: string;
+  filas: MonitorFilas[];
+};
+
+// historial-lectura
+export type MonitorCabecera = {
+  nroMedidor: string;
+  constante: string;
+  tipo: string;
+  subempalme: string;
+  tarifa: string;
+};
+
+export type MonitorHistorialLectura = {
+  estadoFacturar: number;
+  permiteAceptar: boolean;
+  permiteIngresar: boolean;
+  cabecera: MonitorCabecera;
+  claves: string[];
+  lecturasAnteriores: string[];
+  complementoBT43: string | null;
+};
 
 // Tipos base de useMonitor
 export interface Periodo {
@@ -265,14 +323,14 @@ export interface StatsData {
 }
 
 export type MeterStatusType =
-  | 'SINLEC' // Sin Lectura
-  | 'SINCLA' // Lectura Normal
-  | 'CLAINF' // Clave Informativa
-  | 'CLAREL' // Clave Relevante
-  | 'CLACRI' // Clave Crítica
-  | 'LECCER' // Lectura Cerrada
-  | 'LECIMP' // En Facturación
-  | 'IMPORT'; // Lecturas Importadas
+  | "SINLEC" // Sin Lectura
+  | "SINCLA" // Lectura Normal
+  | "CLAINF" // Clave Informativa
+  | "CLAREL" // Clave Relevante
+  | "CLACRI" // Clave Crítica
+  | "LECCER" // Lectura Cerrada
+  | "LECIMP" // En Facturación
+  | "IMPORT"; // Lecturas Importadas
 
 export interface MeterStatusInfo {
   color: string;
