@@ -47,6 +47,52 @@ interface DialogNuevoValorAgualovaProps {
   id: string;
 }
 
+interface FormValues {
+  codigo: string;
+  descripcion: string;
+  fecha_inicio: string;
+  fecha_fin: string;
+  valor: number;
+  id: string;
+}
+
+const PORCENTAJE_CAMBIO_INUSUAL = 50;
+
+const formatearFechaADDMMYYYY = (fechaStr: string): string => {
+  if (!fechaStr) return '';
+  if (/^\d{2}-\d{2}-\d{4}$/.test(fechaStr)) return fechaStr;
+  const partes = fechaStr.split('-');
+  if (partes.length === 3) {
+    return `${partes[2]}-${partes[1]}-${partes[0]}`;
+  }
+  return fechaStr;
+};
+
+const formatearValorInput = (input: string): string => {
+  let limpio = input.replace(/[^\d,]/g, '');
+  if (!limpio) return '';
+  const partes = limpio.split(',');
+  if (partes.length > 2) {
+    limpio = `${partes[0]},${partes.slice(1).join('')}`;
+  }
+  if (partes.length === 2) {
+    limpio = `${partes[0]},${partes[1].substring(0, 2)}`;
+  }
+  return limpio;
+};
+
+const parsearValor = (valorStr: string): number => {
+  if (!valorStr) return 0;
+  const numero = parseFloat(valorStr.replace(',', '.'));
+  return Number.isNaN(numero) ? 0 : numero;
+};
+
+const formatValorCL = (valor: number): string =>
+  valor.toLocaleString('es-CL', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+
 export default function DialogNuevoValorAgualova({
   codigo,
   descripcion,
@@ -54,13 +100,13 @@ export default function DialogNuevoValorAgualova({
   valor,
   onSuccess,
   id
-}: DialogNuevoValorAgualovaProps) {
+}: Readonly<DialogNuevoValorAgualovaProps>) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [valorDisplay, setValorDisplay] = useState('');
   const [fechaFinInput, setFechaFinInput] = useState('');
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-  const [formValues, setFormValues] = useState({
+  const [formValues, setFormValues] = useState<FormValues>({
     codigo,
     descripcion,
     fecha_inicio,
@@ -69,147 +115,67 @@ export default function DialogNuevoValorAgualova({
     id
   });
 
-  // Formatear valor cuando el diálogo se abre
   useEffect(() => {
     if (isOpen) {
-      const valorFormateado = valor.toLocaleString('es-CL', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-      });
-      setValorDisplay(valorFormateado);
-
-      setFormValues(prev => ({
-        ...prev,
+      setValorDisplay(formatValorCL(valor));
+      setFormValues({
         codigo,
         descripcion,
         fecha_inicio,
         fecha_fin: '',
         valor,
         id
-      }));
+      });
     } else {
-      // Reset cuando se cierra
       setFechaFinInput('');
       setValorDisplay('');
     }
   }, [isOpen, valor, fecha_inicio, codigo, descripcion, id]);
 
-  // Función para formatear el valor mientras se escribe
-  const formatearValorInput = (input: string): string => {
-    // Eliminar todo excepto números y coma (formato chileno usa coma como decimal)
-    let limpio = input.replace(/[^\d,]/g, '');
-
-    // Si está vacío, retornar vacío
-    if (!limpio) return '';
-
-    // Eliminar múltiples comas, dejando solo la primera
-    const partes = limpio.split(',');
-    if (partes.length > 2) {
-      limpio = partes[0] + ',' + partes.slice(1).join('');
-    }
-
-    // Limitar a 2 decimales después de la coma
-    if (partes.length === 2) {
-      limpio = partes[0] + ',' + partes[1].substring(0, 2);
-    }
-
-    return limpio;
-  };
-
-  // Función para parsear valor con formato chileno (coma como decimal)
-  const parsearValor = (valorStr: string): number => {
-    if (!valorStr) return 0;
-
-    // En formato chileno, la coma es el separador decimal
-    // Convertir coma a punto para parseFloat
-    const valorLimpio = valorStr.replace(',', '.');
-
-    const numero = parseFloat(valorLimpio);
-    return Number.isNaN(numero) ? 0 : numero;
-  };
-
-  // Manejador para el cambio de valor con formato
   const handleValorChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      const input = e.target.value;
-      const valorFormateado = formatearValorInput(input);
-
+      const valorFormateado = formatearValorInput(e.target.value);
       setValorDisplay(valorFormateado);
-
-      // Convertir a número para validación
-      const valorNumerico = parsearValor(valorFormateado);
       setFormValues(prev => ({
         ...prev,
-        valor: valorNumerico
+        valor: parsearValor(valorFormateado)
       }));
     },
     []
   );
 
-  // Cuando el input pierde el foco, formatear completamente
   const handleValorBlur = useCallback(() => {
     if (formValues.valor > 0) {
-      const valorFormateado = formValues.valor.toLocaleString('es-CL', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-      });
-      setValorDisplay(valorFormateado);
+      setValorDisplay(formatValorCL(formValues.valor));
     }
   }, [formValues.valor]);
 
-  // Cuando el input recibe foco, mostrar formato editable
   const handleValorFocus = useCallback(() => {
     if (formValues.valor > 0) {
-      // Mostrar con punto decimal para facilitar edición
       setValorDisplay(formValues.valor.toString());
     }
   }, [formValues.valor]);
 
-  // Calcular diferencia porcentual con el valor anterior
   const diferenciaPorcentual = useMemo(() => {
     if (!valor || valor === 0) return null;
-    const diferencia = ((formValues.valor - valor) / valor) * 100;
-    return diferencia;
+    return ((formValues.valor - valor) / valor) * 100;
   }, [formValues.valor, valor]);
 
-  // Función para formatear fecha YYYY-MM-DD a formato DD-MM-YYYY
-  const formatearFechaADDMMYYYY = useCallback((fechaStr: string) => {
-    if (!fechaStr) return '';
-    // Si ya está en formato DD-MM-YYYY, lo devolvemos así
-    if (/^\d{2}-\d{2}-\d{4}$/.test(fechaStr)) return fechaStr;
-
-    // Si está en formato YYYY-MM-DD (formato HTML input date), lo convertimos
-    const partes = fechaStr.split('-');
-    if (partes.length === 3) {
-      return `${partes[2]}-${partes[1]}-${partes[0]}`;
-    }
-
-    return fechaStr;
-  }, []);
-
-  // Manejador para el cambio de fecha fin
   const handleFechaFinChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const fechaYYYYMMDD = e.target.value;
       setFechaFinInput(fechaYYYYMMDD);
-
-      // Actualizar formValues con la fecha en formato YYYY-MM-DD
-      setFormValues(prev => ({
-        ...prev,
-        fecha_fin: fechaYYYYMMDD
-      }));
+      setFormValues(prev => ({ ...prev, fecha_fin: fechaYYYYMMDD }));
     },
     []
   );
 
-  // Errores de validación
-  const validationErrors = useMemo(() => {
+  const validationErrors = useMemo<string[]>(() => {
     const errors: string[] = [];
 
     if (!formValues.fecha_fin) {
       errors.push('La fecha de fin es requerida');
     } else {
-      // Convertir fechas para comparación
       const fechaInicioPartes = formValues.fecha_inicio.split('-');
       const fechaFinPartes = formValues.fecha_fin.split('-');
 
@@ -220,9 +186,7 @@ export default function DialogNuevoValorAgualova({
         const fechaFin = new Date(formValues.fecha_fin);
 
         if (fechaFin <= fechaInicio) {
-          errors.push(
-            'La fecha de fin debe ser posterior a la fecha de inicio'
-          );
+          errors.push('La fecha de fin debe ser posterior a la fecha de inicio');
         }
       }
     }
@@ -234,91 +198,61 @@ export default function DialogNuevoValorAgualova({
     return errors;
   }, [formValues]);
 
-  // Validación del formulario
-  const isFormValid = useMemo(() => {
-    return (
+  const isFormValid = useMemo(
+    () =>
       !!formValues.codigo &&
       !!formValues.descripcion &&
       !!formValues.fecha_inicio &&
       !!formValues.fecha_fin &&
       formValues.valor > 0 &&
-      validationErrors.length === 0
-    );
-  }, [formValues, validationErrors]);
+      validationErrors.length === 0,
+    [formValues, validationErrors]
+  );
 
-  // Detectar si el cambio de valor es inusual (más de 50% de diferencia)
   const isUnusualChange = useMemo(() => {
     if (!valor || valor === 0 || !formValues.valor) return false;
-    const cambio = Math.abs(diferenciaPorcentual || 0);
-    return cambio > 50;
+    return Math.abs(diferenciaPorcentual || 0) > PORCENTAJE_CAMBIO_INUSUAL;
   }, [valor, formValues.valor, diferenciaPorcentual]);
 
-  // Función para guardar los datos en la API
   const saveData = useCallback(async () => {
     try {
       setIsLoading(true);
 
-      // Formateamos la fecha fin al formato DD-MM-YYYY
-      const fechaFinFormateada = formatearFechaADDMMYYYY(formValues.fecha_fin);
-
       const payload = {
-        codigo: Number.parseInt(formValues.codigo),
+        codigo: Number.parseInt(formValues.codigo, 10),
         fechaInicio: formValues.fecha_inicio,
-        fechaFin: fechaFinFormateada,
+        fechaFin: formatearFechaADDMMYYYY(formValues.fecha_fin),
         valor: formValues.valor
       };
 
-      const response = await api.post(
-        '/ingresa-precio-cargo-agualova',
-        payload
-      );
+      const response = await api.post('/ingresa-precio-cargo-agualova', payload);
 
       if (response.status === 200) {
         toast.success('Precio agregado correctamente');
         setIsOpen(false);
         setShowConfirmDialog(false);
-        // Resetear valores
         setValorDisplay('');
         setFechaFinInput('');
-        setFormValues({
-          codigo,
-          descripcion,
-          fecha_inicio,
-          fecha_fin: '',
-          valor: 0,
-          id
-        });
-        if (onSuccess) onSuccess();
+        onSuccess();
       }
     } catch (error) {
-      toast.error('Error al agregar el precio', error as any);
+      toast.error('Error al agregar el precio', { description: String(error) });
     } finally {
       setIsLoading(false);
     }
-  }, [
-    formValues,
-    onSuccess,
-    formatearFechaADDMMYYYY,
-    codigo,
-    descripcion,
-    fecha_inicio,
-    id
-  ]);
+  }, [formValues, onSuccess]);
 
-  // Manejador para enviar el formulario
   const handleSubmit = useCallback(async () => {
     if (validationErrors.length > 0) {
-      toast.error(validationErrors[0]);
+      toast.error(validationErrors[0] ?? 'Error de validación');
       return;
     }
 
-    // Si el cambio es inusual, mostrar diálogo de confirmación
     if (isUnusualChange) {
       setShowConfirmDialog(true);
       return;
     }
 
-    // Si el cambio es normal, guardar directamente
     await saveData();
   }, [validationErrors, isUnusualChange, saveData]);
 
@@ -348,7 +282,6 @@ export default function DialogNuevoValorAgualova({
 
         <ScrollArea className="flex-1 overflow-auto">
           <div className="space-y-6 py-6 px-4 sm:px-6">
-            {/* Información del cargo */}
             <div className="bg-muted/30 rounded-xl p-4 sm:p-5 space-y-4 border border-border/40">
               <div className="flex items-start gap-3">
                 <div className="mt-0.5 p-2 bg-sky-100 dark:bg-sky-900/40 rounded-lg">
@@ -377,11 +310,7 @@ export default function DialogNuevoValorAgualova({
                         Valor Actual
                       </p>
                       <p className="font-semibold text-sm text-sky-700 dark:text-sky-300">
-                        $
-                        {valor.toLocaleString('es-CL', {
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2
-                        })}
+                        ${formatValorCL(valor)}
                       </p>
                     </div>
                   </div>
@@ -402,7 +331,6 @@ export default function DialogNuevoValorAgualova({
 
             <Separator />
 
-            {/* Nuevo período de vigencia */}
             <div className="space-y-4">
               <div className="flex items-center gap-2">
                 <div className="p-1.5 bg-sky-100 dark:bg-sky-900/40 rounded-lg">
@@ -455,7 +383,6 @@ export default function DialogNuevoValorAgualova({
 
             <Separator />
 
-            {/* Nuevo valor */}
             <div className="space-y-4">
               <div className="flex items-center gap-2">
                 <div className="p-1.5 bg-emerald-100 dark:bg-emerald-900/40 rounded-lg">
@@ -490,7 +417,6 @@ export default function DialogNuevoValorAgualova({
                   />
                 </div>
 
-                {/* Indicador de cambio */}
                 {diferenciaPorcentual !== null &&
                   formValues.valor !== valor &&
                   formValues.valor > 0 && (
@@ -521,7 +447,6 @@ export default function DialogNuevoValorAgualova({
               </div>
             </div>
 
-            {/* Errores de validación */}
             {validationErrors.length > 0 && (
               <Alert variant="destructive" className="border-2">
                 <AlertCircle className="h-4 w-4" />
@@ -566,7 +491,6 @@ export default function DialogNuevoValorAgualova({
         </DialogFooter>
       </DialogContent>
 
-      {/* Diálogo de confirmación para cambios inusuales */}
       <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -584,11 +508,7 @@ export default function DialogNuevoValorAgualova({
                     Valor actual:
                   </span>
                   <span className="font-semibold text-base">
-                    $
-                    {valor.toLocaleString('es-CL', {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2
-                    })}
+                    ${formatValorCL(valor)}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
@@ -596,11 +516,7 @@ export default function DialogNuevoValorAgualova({
                     Nuevo valor:
                   </span>
                   <span className="font-semibold text-base text-amber-600 dark:text-amber-400">
-                    $
-                    {formValues.valor.toLocaleString('es-CL', {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2
-                    })}
+                    ${formatValorCL(formValues.valor)}
                   </span>
                 </div>
                 <Separator />
@@ -613,9 +529,7 @@ export default function DialogNuevoValorAgualova({
                         : 'text-red-600 dark:text-red-400'
                     }`}
                   >
-                    {diferenciaPorcentual && diferenciaPorcentual > 0
-                      ? '+'
-                      : ''}
+                    {diferenciaPorcentual && diferenciaPorcentual > 0 ? '+' : ''}
                     {diferenciaPorcentual?.toFixed(2)}%
                   </span>
                 </div>

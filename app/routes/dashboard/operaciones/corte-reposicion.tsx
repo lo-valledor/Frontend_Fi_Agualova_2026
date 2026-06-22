@@ -1,14 +1,14 @@
 /* eslint-disable no-empty-pattern */
-import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
-import CorteReposicionComponent from '~/components/operaciones/corte-reposicion/corte-reposicion-component';
-import { operacionesService } from '~/services/operacionesService';
+import { BreadcrumbSetter } from "~/components/breadcrumb-setter";
+import CorteReposicionComponent from "~/components/operaciones/corte-reposicion/corte-reposicion-component";
+import { operacionesService } from "~/services/operacionesService";
 
-import type { Route } from './+types/corte-reposicion';
+import type { Route } from "./+types/corte-reposicion";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: 'Agualova | Corte y Reposición' },
-    { name: 'description', content: 'Corte y Reposición' }
+    { title: "Agualova | Corte y Reposición" },
+    { name: "description", content: "Corte y Reposición" },
   ];
 }
 
@@ -18,7 +18,7 @@ export async function clientLoader({}: Route.ClientActionArgs) {
   if (result.error || !result.data) {
     return {
       totalesData: [],
-      mantenedorCorteData: []
+      mantenedorCorteData: [],
     };
   }
 
@@ -26,13 +26,13 @@ export async function clientLoader({}: Route.ClientActionArgs) {
 }
 
 export default function CorteReposicion({
-  loaderData
+  loaderData,
 }: Readonly<Route.ComponentProps>) {
   const { mantenedorCorteData } = loaderData;
 
   const pageBreadcrumbs = [
-    { label: 'Operaciones' },
-    { label: 'Corte y Reposición' }
+    { label: "Operaciones" },
+    { label: "Corte y Reposición" },
   ];
 
   return (

@@ -4,7 +4,11 @@ import { useCallback, useState } from 'react';
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import PrepararLecturasComponent from '~/components/operaciones/preparar-lecturas/preparar-lecturas-component';
 import { operacionesService } from '~/services/operacionesService';
-import type { ConsultarAsignacionSectores } from '~/types/operaciones';
+import type {
+  PrepararLecturasBuscarNichosRequest,
+  PrepararLecturasFiltrosCiclosResponse,
+  PrepararLecturasFiltrosPeriodosResponse
+} from '~/types/operaciones';
 
 import type { Route } from './+types/preparar-lecturas';
 
@@ -15,60 +19,65 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
+interface PrepararLecturasLoaderData {
+  periodoAbierto: PrepararLecturasFiltrosPeriodosResponse[];
+  ciclos: PrepararLecturasFiltrosCiclosResponse[];
+  error: string | null;
+}
+
 export async function clientLoader() {
   const result = await operacionesService.getPrepararLecturasData();
 
   if (result.error || !result.data) {
     return {
-      periodoAbierto: null,
-      lecturasPendientes: null,
-      sectores: null,
-      opcionesPreparar: null
-    };
+      periodoAbierto: [],
+      ciclos: [],
+      error: 'Error al cargar los datos de preparación'
+    } satisfies PrepararLecturasLoaderData;
   }
 
-  return result.data;
+  return {
+    periodoAbierto: result.data.periodoAbierto,
+    ciclos: result.data.ciclos,
+    error: null
+  } satisfies PrepararLecturasLoaderData;
 }
 
 export default function PrepararLecturas({ loaderData }: Route.ComponentProps) {
-  const { periodoAbierto, lecturasPendientes, sectores, opcionesPreparar } =
-    loaderData;
+  const { periodoAbierto, ciclos, error } = loaderData;
 
-  // Estado local para los datos de asignación de sectores (permitirá actualizaciones reactivas)
-  const [asignacionSectores, setAsignacionSectores] = useState<
-    ConsultarAsignacionSectores[]
-  >([]);
-  const [isLoadingAsignacion, setIsLoadingAsignacion] = useState(false);
+  const [nichos, setNichos] = useState<PrepararLecturasBuscarNichosRequest[]>([]);
+  const [isLoadingNichos, setIsLoadingNichos] = useState(false);
 
   const pageBreadcrumbs = [
     { label: 'Operaciones' },
     { label: 'Preparar Lecturas' }
   ];
 
-  // Función para recargar los datos de asignación de sectores
-  const recargarAsignacionSectores = useCallback(
-    async (cicloFacturable: string, periodo: string) => {
-      if (!cicloFacturable || !periodo) {
-        return;
-      }
+  const recargarNichos = useCallback(
+    async (cicloId: number, periodoId: string) => {
+      if (!cicloId || !periodoId) return;
 
-      setIsLoadingAsignacion(true);
+      setIsLoadingNichos(true);
       try {
-        const result = await operacionesService.getAsignacionSectores(
-          cicloFacturable,
-          periodo
+        const result = await operacionesService.getBuscarNichos(
+          cicloId,
+          periodoId
         );
 
         if (result.error || !result.data) {
-          setAsignacionSectores([]);
+          setNichos([]);
         } else {
-          setAsignacionSectores(result.data);
+          const data = Array.isArray(result.data)
+            ? (result.data as PrepararLecturasBuscarNichosRequest[])
+            : [];
+          setNichos(data);
         }
-      } catch (error) {
-        console.error('Error al obtener la asignación de sectores:', error);
-        setAsignacionSectores([]);
+      } catch (err) {
+        console.error('Error al obtener nichos:', err);
+        setNichos([]);
       } finally {
-        setIsLoadingAsignacion(false);
+        setIsLoadingNichos(false);
       }
     },
     []
@@ -78,14 +87,13 @@ export default function PrepararLecturas({ loaderData }: Route.ComponentProps) {
     <div>
       <BreadcrumbSetter items={pageBreadcrumbs} />
       <PrepararLecturasComponent
-        periodoAbierto={periodoAbierto ?? []}
-        lecturasPendientes={lecturasPendientes}
-        sectores={sectores ?? []}
-        opcionesPreparar={opcionesPreparar ?? []}
-        asignacionSectores={asignacionSectores}
-        setAsignacionSectores={setAsignacionSectores}
-        isLoadingAsignacion={isLoadingAsignacion}
-        onRecargarAsignacionSectores={recargarAsignacionSectores}
+        periodoAbierto={periodoAbierto}
+        ciclos={ciclos}
+        nichos={nichos}
+        setNichos={setNichos}
+        isLoadingNichos={isLoadingNichos}
+        onRecargarNichos={recargarNichos}
+        error={error}
       />
     </div>
   );

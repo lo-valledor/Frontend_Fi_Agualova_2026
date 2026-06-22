@@ -1,13 +1,7 @@
 import { useEffect, useState } from 'react';
 
-import api from '~/lib/api';
-import type { RevisarPrecioDos, RevisarPrecioUno } from '~/types/operaciones';
-import {
-  convertirCicloParaAPI,
-  extraerMesYAnio,
-  obtenerDiaDelCiclo,
-  validarCicloYPeriodo
-} from './utils/cycle-utilities';
+import { operacionesService } from '~/services/operacionesService';
+import type { RevisionPreciosBuscarRequest } from '~/types/operaciones';
 import { extraerErrorMessage } from './utils/error-handler';
 import {
   type PriceValidationResult,
@@ -41,9 +35,11 @@ export function useValidacionPrecios({
   const [totalPendientes, setTotalPendientes] = useState(0);
 
   const verificarPrecios = async (): Promise<void> => {
-    // Early return si faltan parámetros
-    if (!validarCicloYPeriodo(periodoFormateado, cicloId)) {
+    if (!periodoFormateado || !cicloId) {
       setPreciosConfirmados(false);
+      setTotalValidos(0);
+      setTotalConfirmados(0);
+      setTotalPendientes(0);
       return;
     }
 
@@ -51,26 +47,22 @@ export function useValidacionPrecios({
     setError(null);
 
     try {
-      const cicloParaAPI = convertirCicloParaAPI(cicloId);
       const { mes, anio } = extraerMesYAnio(periodoFormateado);
-      const dia = obtenerDiaDelCiclo(cicloParaAPI);
+      const result = await operacionesService.gerRevisarPreciosData(mes, anio);
 
-      // Obtener precios de ambas tablas en paralelo
-      const [responsePreciosUno, responsePreciosDos] = await Promise.all([
-        api.get<RevisarPrecioUno[]>(
-          `/ConsultarPreciosUno?mes=${mes}&año=${anio}`
-        ),
-        api.get<RevisarPrecioDos[]>(
-          `/ConsultarPreciosDos?mes=${mes}&año=${anio}&dia=${dia}`
-        )
-      ]);
+      if (result.error || !result.data) {
+        setError(result.error || 'Error al consultar precios');
+        setPreciosConfirmados(false);
+        return;
+      }
 
-      const preciosUno = (responsePreciosUno.data as RevisarPrecioUno[]) || [];
-      const preciosDos = (responsePreciosDos.data as RevisarPrecioDos[]) || [];
+      const precios = (result.data as RevisionPreciosBuscarRequest[]) || [];
+      const resultado = validarPreciosConfirmados(precios);
 
-      // Validar precios
-      const resultado = validarPreciosConfirmados(preciosUno, preciosDos);
-      actualizarEstadoPrecios(resultado);
+      setTotalValidos(resultado.totalValidos);
+      setTotalConfirmados(resultado.totalConfirmados);
+      setTotalPendientes(resultado.totalPendientes);
+      setPreciosConfirmados(resultado.todosConfirmados);
     } catch (err) {
       const { message } = extraerErrorMessage(err);
       setError(message);
@@ -80,14 +72,6 @@ export function useValidacionPrecios({
     }
   };
 
-  const actualizarEstadoPrecios = (resultado: PriceValidationResult): void => {
-    setTotalValidos(resultado.totalValidos);
-    setTotalConfirmados(resultado.totalConfirmados);
-    setTotalPendientes(resultado.totalPendientes);
-    setPreciosConfirmados(resultado.todosConfirmados);
-  };
-
-  // Verificar automáticamente cuando cambian los parámetros
   useEffect(() => {
     verificarPrecios();
   }, [periodoFormateado, cicloId]);
@@ -104,5 +88,15 @@ export function useValidacionPrecios({
     totalPendientes,
     todosConfirmados: preciosConfirmados,
     verificarPrecios
+  };
+}
+
+function extraerMesYAnio(periodoFormateado: string): {
+  mes: string;
+  anio: string;
+} {
+  return {
+    mes: periodoFormateado.substring(0, 2),
+    anio: periodoFormateado.substring(2)
   };
 }
