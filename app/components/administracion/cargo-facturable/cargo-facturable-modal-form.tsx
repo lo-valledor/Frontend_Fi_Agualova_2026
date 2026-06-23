@@ -152,9 +152,10 @@ export default function CargoFacturableModalForm({
           periodicoEventual: mapearPeriodicoEventual(
             cargo.periodicoEventual || ''
           ),
-          idConcepto: normalizeAndFind(conceptos, cargo.concepto),
-          idTarifa: normalizeAndFind(tarifas, cargo.tarifa),
-          idTipoMedidor: normalizeAndFind(tiposMedidor, cargo.tipoMedidor)
+          idConcepto: Number(normalizeAndFind(conceptos, cargo.concepto)) || 0,
+          idTarifa: Number(normalizeAndFind(tarifas, cargo.tarifa)) || 0,
+          idTipoMedidor:
+            Number(normalizeAndFind(tiposMedidor, cargo.tipoMedidor)) || 0
         });
       } else {
         form.reset({

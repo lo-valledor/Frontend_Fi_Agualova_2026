@@ -19,31 +19,23 @@ export async function clientLoader() {
   ]);
 
   const periodoAbierto =
-    periodoResult.error || !periodoResult.data ? [] : periodoResult.data;
+    periodoResult.error || !periodoResult.data
+      ? []
+      : periodoResult.data.map((periodo) => {
+          const digits = periodo.id.replace(/\D/g, '');
 
-  // Verificar estado de cierre de lecturas si hay período abierto
-  let estadoCierreLecturas = null;
-  if (periodoAbierto.length > 0) {
-    const { mes, anio } = periodoAbierto[0];
-    const periodoFormateado = `${mes.toString().padStart(2, "0")}${anio.toString()}`;
-    const cicloId = "1"; // Ciclo día 15 (único ciclo normado)
-
-    const estadoCierreResult =
-      await operacionesService.verificarEstadoCierreLecturas(
-        cicloId,
-        periodoFormateado,
-      );
-
-    if (!estadoCierreResult.error && estadoCierreResult.data) {
-      estadoCierreLecturas = estadoCierreResult.data;
-    }
-  }
+          return {
+            ...periodo,
+            mes: Number(digits.slice(0, 2)) || 0,
+            anio: Number(digits.slice(-4)) || 0,
+          };
+        });
 
   return {
     periodoAbierto,
     ciclosFacturacionActivos:
       ciclosResult.error || !ciclosResult.data ? [] : ciclosResult.data,
-    estadoCierreLecturas,
+    estadoCierreLecturas: null,
   };
 }
 

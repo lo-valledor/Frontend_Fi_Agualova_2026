@@ -1,36 +1,29 @@
-import type { AxiosError } from 'axios';
-import type {
-  ClienteErrorInfo,
-  ClienteLoadingState,
-  ClienteModalState,
-  GetClienteById,
-  GetClientes,
-  GetClientesByRut
-} from '~/types/administracion';
+import type { AxiosError } from "axios";
+import type { Cliente, ClientesRow } from "~/types/administracion";
 
-export const CLIENTES_ROUTE = '/dashboard/administracion/clientes';
-export const CLIENTES_CREAR_ROUTE = '/dashboard/administracion/clientes/crear';
+export const CLIENTES_ROUTE = "/dashboard/administracion/clientes";
+export const CLIENTES_CREAR_ROUTE = "/dashboard/administracion/clientes/crear";
 
-export const createInitialClienteModalState = (): ClienteModalState => ({
+export const createInitialClienteModalState = () => ({
   details: {
-    isOpen: false
-  }
+    isOpen: false,
+  },
 });
 
-export const createInitialLoadingState = (): ClienteLoadingState => ({
+export const createInitialLoadingState = () => ({
   isLoading: false,
-  rutLoading: null
+  rutLoading: null,
 });
 
 export const extractClienteErrorMessage = (
   error: unknown,
-  defaultMessage: string
-): ClienteErrorInfo => {
+  defaultMessage: string,
+) => {
   // Early return para errores de red
   if (isNetworkError(error)) {
     return {
-      message: 'Error de conexión. Por favor, intenta nuevamente.',
-      isNetworkError: true
+      message: "Error de conexión. Por favor, intenta nuevamente.",
+      isNetworkError: true,
     };
   }
 
@@ -39,14 +32,14 @@ export const extractClienteErrorMessage = (
   if (serverMessage) {
     return {
       message: serverMessage,
-      isNetworkError: false
+      isNetworkError: false,
     };
   }
 
   // Fallback
   return {
     message: defaultMessage,
-    isNetworkError: false
+    isNetworkError: false,
   };
 };
 
@@ -61,14 +54,14 @@ const extractServerMessage = (error: unknown): string | null => {
 };
 
 export const isValidClienteForOperation = (
-  cliente: GetClientes | null | undefined
-): cliente is GetClientes => {
+  cliente: ClientesRow | null | undefined,
+): cliente is ClientesRow => {
   return cliente !== null && cliente !== undefined && Boolean(cliente.rut);
 };
 
 export const isValidDetailedCliente = (
-  cliente: GetClienteById | GetClientesByRut | null | undefined
-): cliente is GetClienteById | GetClientesByRut => {
+  cliente: Cliente | null | undefined,
+): cliente is Cliente => {
   return cliente !== null && cliente !== undefined && Boolean(cliente.rut);
 };
 
@@ -77,27 +70,27 @@ export const getClienteEditUrl = (rutCliente: string): string => {
 };
 
 export const normalizeClienteDetallado = (
-  clienteDetallado: GetClienteById | GetClientesByRut | any
-): GetClientesByRut => {
+  clienteDetallado: Cliente,
+): Cliente => {
   return {
     rut: clienteDetallado.rut,
+    nombreComuna: clienteDetallado.nombreComuna,
+    nombreGiro: clienteDetallado.nombreGiro,
     nombre: clienteDetallado.nombre,
     apellido: clienteDetallado.apellido,
     esEmpresa: clienteDetallado.esEmpresa,
     direccion: clienteDetallado.direccion,
-    comuna: clienteDetallado.comuna,
-    codComuna: clienteDetallado.codComuna ?? '',
+    codigoComuna: clienteDetallado.codigoComuna,
     contacto: clienteDetallado.contacto,
     telefono: clienteDetallado.telefono,
-    correo: clienteDetallado.email ?? clienteDetallado.correo ?? '',
-    codigoGiro: clienteDetallado.codigoGiro ?? '',
-    giro: clienteDetallado.giro ?? ''
+    email: clienteDetallado.email,
+    codigoGiro: clienteDetallado.codigoGiro,
   };
 };
 
 export const isLoadingCliente = (
-  loading: ClienteLoadingState,
-  rutCliente: string
+  loading: { isLoading: boolean; rutLoading: string | null },
+  rutCliente: string,
 ): boolean => {
   return loading.isLoading && loading.rutLoading === rutCliente;
 };

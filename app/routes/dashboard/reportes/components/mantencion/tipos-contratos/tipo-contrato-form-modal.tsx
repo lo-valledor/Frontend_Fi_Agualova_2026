@@ -1,18 +1,18 @@
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Loader2 } from 'lucide-react';
-import React from 'react';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2 } from "lucide-react";
+import React from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
-import { Button } from '~/components/ui/button';
+import { Button } from "~/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle
-} from '~/components/ui/dialog';
+  DialogTitle,
+} from "~/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -20,18 +20,18 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage
-} from '~/components/ui/form';
-import { Input } from '~/components/ui/input';
-import { Switch } from '~/components/ui/switch';
-import type { TiposContrato } from '~/types/mantencion';
+  FormMessage,
+} from "~/components/ui/form";
+import { Input } from "~/components/ui/input";
+import { Switch } from "~/components/ui/switch";
+import type { TipoContrato } from "~/types/mantencion";
 
 const tipoContratoSchema = z.object({
   nombre: z
     .string()
-    .min(1, 'El nombre es requerido')
-    .max(100, 'El nombre no debe exceder 100 caracteres'),
-  estado: z.boolean()
+    .min(1, "El nombre es requerido")
+    .max(100, "El nombre no debe exceder 100 caracteres"),
+  estado: z.boolean(),
 });
 
 type TipoContratoFormData = z.infer<typeof tipoContratoSchema>;
@@ -40,8 +40,8 @@ interface TipoContratoFormModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
-  tipoContrato?: TiposContrato;
-  mode: 'add' | 'edit';
+  tipoContrato?: TipoContrato;
+  mode: "add" | "edit";
 }
 
 export default function TipoContratoFormModal({
@@ -49,14 +49,14 @@ export default function TipoContratoFormModal({
   onClose,
   onSuccess,
   tipoContrato,
-  mode
+  mode,
 }: Readonly<TipoContratoFormModalProps>) {
   const form = useForm<TipoContratoFormData>({
     resolver: zodResolver(tipoContratoSchema),
     defaultValues: {
-      nombre: tipoContrato?.nombre || '',
-      estado: tipoContrato?.estado !== false
-    }
+      nombre: tipoContrato?.nombre || "",
+      estado: tipoContrato?.estado !== false,
+    },
   });
 
   const isLoading = form.formState.isSubmitting;
@@ -64,29 +64,29 @@ export default function TipoContratoFormModal({
   React.useEffect(() => {
     if (isOpen) {
       form.reset({
-        nombre: tipoContrato?.nombre || '',
-        estado: tipoContrato?.estado !== false
+        nombre: tipoContrato?.nombre || "",
+        estado: tipoContrato?.estado !== false,
       });
     }
   }, [isOpen, tipoContrato, form]);
 
   const onSubmit = async (data: TipoContratoFormData) => {
     try {
-      const { default: api } = await import('~/lib/api');
+      const { default: api } = await import("~/lib/api");
 
-      if (mode === 'add') {
-        await api.post('/crearTipoContrato', data);
+      if (mode === "add") {
+        await api.post("/crearTipoContrato", data);
       } else {
         await api.put(`/modificarTipoContrato`, {
           ...data,
-          id: tipoContrato?.id
+          id: tipoContrato?.id,
         });
       }
 
       onSuccess();
       onClose();
     } catch (error) {
-      console.error('Error al guardar el tipo de contrato:', error);
+      console.error("Error al guardar el tipo de contrato:", error);
     }
   };
 
@@ -95,14 +95,14 @@ export default function TipoContratoFormModal({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>
-            {mode === 'add'
-              ? 'Agregar Nuevo Tipo de Contrato'
-              : 'Editar Tipo de Contrato'}
+            {mode === "add"
+              ? "Agregar Nuevo Tipo de Contrato"
+              : "Editar Tipo de Contrato"}
           </DialogTitle>
           <DialogDescription>
-            {mode === 'add'
-              ? 'Complete los datos para crear un nuevo tipo de contrato'
-              : 'Modifique los datos del tipo de contrato seleccionado'}
+            {mode === "add"
+              ? "Complete los datos para crear un nuevo tipo de contrato"
+              : "Modifique los datos del tipo de contrato seleccionado"}
           </DialogDescription>
         </DialogHeader>
 
@@ -158,9 +158,9 @@ export default function TipoContratoFormModal({
               </Button>
               <Button type="submit" disabled={isLoading} variant="default">
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {mode === 'add'
-                  ? 'Crear Tipo de Contrato'
-                  : 'Actualizar Tipo de Contrato'}
+                {mode === "add"
+                  ? "Crear Tipo de Contrato"
+                  : "Actualizar Tipo de Contrato"}
               </Button>
             </DialogFooter>
           </form>

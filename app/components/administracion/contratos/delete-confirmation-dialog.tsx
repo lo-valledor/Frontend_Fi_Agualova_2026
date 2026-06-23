@@ -6,22 +6,22 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogTitle
-} from '~/components/ui/alert-dialog';
-import type { GetContratos } from '~/types/administracion';
+  AlertDialogTitle,
+} from "~/components/ui/alert-dialog";
+import type { ContratosRow } from "~/types/administracion";
 
 interface DeleteConfirmationDialogProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
-  contract: GetContratos | null;
+  contract: ContratosRow | null;
 }
 
 export function DeleteConfirmationDialog({
   isOpen,
   onClose,
   onConfirm,
-  contract
+  contract,
 }: DeleteConfirmationDialogProps) {
   return (
     <AlertDialog open={isOpen} onOpenChange={onClose}>
@@ -30,10 +30,10 @@ export function DeleteConfirmationDialog({
           <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
           <AlertDialogDescription>
             Esta acción no se puede deshacer. Se eliminará permanentemente el
-            contrato{' '}
+            contrato{" "}
             <span className="font-semibold text-foreground">
-              {contract?.codigoContrato}
-            </span>{' '}
+              {contract?.codigo}
+            </span>{" "}
             del sistema.
           </AlertDialogDescription>
         </AlertDialogHeader>

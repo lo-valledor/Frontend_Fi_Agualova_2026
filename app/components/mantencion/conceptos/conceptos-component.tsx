@@ -1,79 +1,79 @@
-import { LayoutList, Plus } from 'lucide-react';
-import { motion } from 'motion/react';
-import { useMemo, useState } from 'react';
-import { useRevalidator } from 'react-router';
-import { toast } from 'sonner';
+import { LayoutList, Plus } from "lucide-react";
+import { motion } from "motion/react";
+import { useMemo, useState } from "react";
+import { useRevalidator } from "react-router";
+import { toast } from "sonner";
 
-import { DataTable } from '~/components/data-table/data-table';
-import { ModernHeader } from '~/components/shared/modern-header';
-import { Button } from '~/components/ui/button';
+import { DataTable } from "~/components/data-table/data-table";
+import { ModernHeader } from "~/components/shared/modern-header";
+import { Button } from "~/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle
-} from '~/components/ui/card';
-import type { Concepto, ConceptoAsociables } from '~/types/mantencion';
+  CardTitle,
+} from "~/components/ui/card";
+import type { Concepto, ConceptoAsociables } from "~/types/mantencion";
 
-import { createColumns } from './columns';
-import ConceptoFormModal from './concepto-form-modal';
+import { createColumns } from "./columns";
+import ConceptoFormModal from "./concepto-form-modal";
 
 const mechanicalEase = [0.25, 0.1, 0.25, 1] as const;
 
 interface ConceptosComponentProps {
   conceptos: Concepto[];
-  comboAsociadoConceptos: ConceptoAsociables[];
+  conceptoAsociables: ConceptoAsociables[];
 }
 
 export default function ConceptosComponent({
   conceptos,
-  comboAsociadoConceptos
+  conceptoAsociables,
 }: Readonly<ConceptosComponentProps>) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedConcepto, setSelectedConcepto] = useState<
     Concepto | undefined
   >(undefined);
-  const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
+  const [modalMode, setModalMode] = useState<"add" | "edit">("add");
 
   const revalidator = useRevalidator();
 
   const handleAdd = () => {
     setSelectedConcepto(undefined);
-    setModalMode('add');
+    setModalMode("add");
     setIsModalOpen(true);
   };
 
   const handleEdit = (concepto: Concepto) => {
     setSelectedConcepto(concepto);
-    setModalMode('edit');
+    setModalMode("edit");
     setIsModalOpen(true);
   };
 
   const handleDelete = async (concepto: Concepto) => {
     if (
       globalThis.confirm(
-        `¿Está seguro de que desea eliminar el concepto "${concepto.denominacion}"?`
+        `¿Está seguro de que desea eliminar el concepto "${concepto.denominacion}"?`,
       )
     ) {
       try {
-        const { default: api } = await import('~/lib/api');
+        const { default: api } = await import("~/lib/api");
         await api.delete(`/eliminarConceptos/${concepto.id}`);
 
-        toast.success('Concepto eliminado exitosamente');
+        toast.success("Concepto eliminado exitosamente");
         revalidator.revalidate();
       } catch (error) {
-        console.error('Error al eliminar el concepto:', error);
-        toast.error('Error al eliminar el concepto');
+        console.error("Error al eliminar el concepto:", error);
+        toast.error("Error al eliminar el concepto");
       }
     }
   };
 
   const handleSuccess = () => {
     toast.success(
-      modalMode === 'add'
-        ? 'Concepto creado exitosamente'
-        : 'Concepto actualizado exitosamente'
+      modalMode === "add"
+        ? "Concepto creado exitosamente"
+        : "Concepto actualizado exitosamente",
     );
     revalidator.revalidate();
   };
@@ -82,9 +82,9 @@ export default function ConceptosComponent({
     () =>
       createColumns({
         onEdit: handleEdit,
-        onDelete: handleDelete
+        onDelete: handleDelete,
       }),
-    [handleEdit, handleDelete]
+    [handleEdit, handleDelete],
   );
 
   return (
@@ -121,7 +121,7 @@ export default function ConceptosComponent({
                   </CardTitle>
                   <CardDescription className="text-xs mt-0.5 text-muted-foreground">
                     {conceptos.length} concepto
-                    {conceptos.length !== 1 ? 's' : ''}
+                    {conceptos.length !== 1 ? "s" : ""}
                   </CardDescription>
                 </div>
               </div>
@@ -142,7 +142,7 @@ export default function ConceptosComponent({
           onSuccess={handleSuccess}
           concepto={selectedConcepto}
           mode={modalMode}
-          comboAsociadoConceptos={comboAsociadoConceptos}
+          conceptoAsociables={conceptoAsociables}
         />
       </div>
     </div>

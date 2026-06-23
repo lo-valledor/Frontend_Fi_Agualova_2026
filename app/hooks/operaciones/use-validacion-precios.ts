@@ -1,12 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
-import { operacionesService } from '~/services/operacionesService';
-import type { RevisionPreciosBuscarRequest } from '~/types/operaciones';
-import { extraerErrorMessage } from './utils/error-handler';
+import { operacionesService } from "~/services/operacionesService";
+import type { RevisionPreciosBuscarRequest } from "~/types/operaciones";
+import { extraerErrorMessage } from "./utils/error-handler";
 import {
   type PriceValidationResult,
-  validarPreciosConfirmados
-} from './utils/price-validator';
+  validarPreciosConfirmados,
+} from "./utils/price-validator";
 
 interface UseValidacionPreciosProps {
   periodoFormateado: string;
@@ -25,7 +25,7 @@ export interface ValidacionPreciosResult extends PriceValidationResult {
 
 export function useValidacionPrecios({
   periodoFormateado,
-  cicloId
+  cicloId,
 }: UseValidacionPreciosProps): ValidacionPreciosResult {
   const [preciosConfirmados, setPreciosConfirmados] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -48,10 +48,10 @@ export function useValidacionPrecios({
 
     try {
       const { mes, anio } = extraerMesYAnio(periodoFormateado);
-      const result = await operacionesService.gerRevisarPreciosData(mes, anio);
+      const result = await operacionesService.getRevisarPreciosData(mes, anio);
 
       if (result.error || !result.data) {
-        setError(result.error || 'Error al consultar precios');
+        setError(result.error || "Error al consultar precios");
         setPreciosConfirmados(false);
         return;
       }
@@ -87,7 +87,7 @@ export function useValidacionPrecios({
     totalConfirmados,
     totalPendientes,
     todosConfirmados: preciosConfirmados,
-    verificarPrecios
+    verificarPrecios,
   };
 }
 
@@ -97,6 +97,6 @@ function extraerMesYAnio(periodoFormateado: string): {
 } {
   return {
     mes: periodoFormateado.substring(0, 2),
-    anio: periodoFormateado.substring(2)
+    anio: periodoFormateado.substring(2),
   };
 }

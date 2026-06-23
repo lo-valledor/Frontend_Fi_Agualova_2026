@@ -6,9 +6,9 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogTitle
-} from '~/components/ui/alert-dialog';
-import type { Usuarios } from '~/types/administracion';
+  AlertDialogTitle,
+} from "~/components/ui/alert-dialog";
+import type { Usuarios } from "~/types/administracion";
 
 interface DeleteConfirmationDialogProps {
   isOpen: boolean;
@@ -21,7 +21,7 @@ export function DeleteConfirmationDialog({
   isOpen,
   onClose,
   onConfirm,
-  user
+  user,
 }: DeleteConfirmationDialogProps) {
   return (
     <AlertDialog open={isOpen} onOpenChange={onClose}>
@@ -30,10 +30,10 @@ export function DeleteConfirmationDialog({
           <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
           <AlertDialogDescription>
             Esta acción no se puede deshacer. Se eliminará permanentemente el
-            usuario{' '}
+            usuario{" "}
             <span className="font-semibold text-foreground">
-              {user?.nombres} {user?.apellidos}
-            </span>{' '}
+              {user?.nombre_Usuario} {user?.apellidos_Usuario}
+            </span>{" "}
             del sistema.
           </AlertDialogDescription>
         </AlertDialogHeader>

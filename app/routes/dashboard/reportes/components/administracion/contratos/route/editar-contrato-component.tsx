@@ -1,4 +1,4 @@
-import { useVirtualizer } from '@tanstack/react-virtual';
+import { useVirtualizer } from "@tanstack/react-virtual";
 import {
   ArrowLeft,
   Building2,
@@ -7,54 +7,54 @@ import {
   Save,
   Search,
   User,
-  X
-} from 'lucide-react';
+  X,
+} from "lucide-react";
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from "react";
 
-import { useNavigate } from 'react-router';
-import { toast } from 'sonner';
+import { useNavigate } from "react-router";
+import { toast } from "sonner";
 
-import { ModernHeader } from '~/components/shared/modern-header';
-import { Button } from '~/components/ui/button';
+import { ModernHeader } from "~/components/shared/modern-header";
+import { Button } from "~/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogTitle
-} from '~/components/ui/dialog';
-import { Input } from '~/components/ui/input';
-import { Label } from '~/components/ui/label';
+  DialogTitle,
+} from "~/components/ui/dialog";
+import { Input } from "~/components/ui/input";
+import { Label } from "~/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
-} from '~/components/ui/select';
-import { Switch } from '~/components/ui/switch';
+  SelectValue,
+} from "~/components/ui/select";
+import { Switch } from "~/components/ui/switch";
 import {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
-} from '~/components/ui/table';
-import { Textarea } from '~/components/ui/textarea';
-import { administracionService } from '~/services/administracionService';
-import { mantencionService } from '~/services/mantencionService';
+  TableRow,
+} from "~/components/ui/table";
+import { Textarea } from "~/components/ui/textarea";
+import { administracionService } from "~/services/administracionService";
+import { mantencionService } from "~/services/mantencionService";
 import type {
   ContratoFormData,
   GetClienteContrato,
-  GetComunas,
   GetContratoPorId,
   GetLocal,
   GetMadres,
-  GetPropietario
-} from '~/types/administracion';
-import type { Tarifas, TiposContrato } from '~/types/mantencion';
+  NombreComuna,
+  PropietariosRow,
+} from "~/types/administracion";
+import type { Tarifas, TiposContrato } from "~/types/mantencion";
 
 export default function EditarContratoComponent({
   contrato,
@@ -62,12 +62,12 @@ export default function EditarContratoComponent({
   locales,
   comunas,
   madres,
-  clientes: _clientes
+  clientes: _clientes,
 }: {
   readonly contrato: GetContratoPorId;
-  readonly propietarios: GetPropietario[];
+  readonly propietarios: PropietariosRow[];
   readonly locales: GetLocal[];
-  readonly comunas: GetComunas[];
+  readonly comunas: NombreComuna[];
   readonly madres: GetMadres[];
   readonly clientes: GetClienteContrato[];
 }) {
@@ -82,11 +82,11 @@ export default function EditarContratoComponent({
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Estados para las búsquedas
-  const [busquedaPropietario, setBusquedaPropietario] = useState('');
-  const [busquedaCliente, setBusquedaCliente] = useState('');
-  const [busquedaLocal, setBusquedaLocal] = useState('');
-  const [busquedaMadres, setBusquedaMadres] = useState('');
-  const [busquedaComuna, setBusquedaComuna] = useState('');
+  const [busquedaPropietario, setBusquedaPropietario] = useState("");
+  const [busquedaCliente, setBusquedaCliente] = useState("");
+  const [busquedaLocal, setBusquedaLocal] = useState("");
+  const [busquedaMadres, setBusquedaMadres] = useState("");
+  const [busquedaComuna, setBusquedaComuna] = useState("");
 
   // Refs para virtualización de modales
   const propietariosTableRef = useRef<HTMLDivElement>(null);
@@ -101,9 +101,9 @@ export default function EditarContratoComponent({
 
   // Helper para convertir fecha al formato YYYY-MM-DD para inputs tipo date (Frontend)
   const convertirFechaParaInput = (
-    fechaString: string | null | undefined
+    fechaString: string | null | undefined,
   ): string => {
-    if (!fechaString) return '';
+    if (!fechaString) return "";
 
     try {
       const fechaLimpia = fechaString.trim();
@@ -116,8 +116,8 @@ export default function EditarContratoComponent({
       // Si la fecha está en formato DD-MM-YYYY HH:mm:ss (del backend)
       // Ejemplo: "31-01-2014 00:00:00" o "24-10-2025 00:00:00"
       if (/^\d{2}-\d{2}-\d{4}(\s+\d{2}:\d{2}:\d{2})?$/.test(fechaLimpia)) {
-        const [fechaParte] = fechaLimpia.split(' '); // Separar fecha de hora
-        const [dia, mes, año] = fechaParte.split('-');
+        const [fechaParte] = fechaLimpia.split(" "); // Separar fecha de hora
+        const [dia, mes, año] = fechaParte.split("-");
         const resultado = `${año}-${mes}-${dia}`;
 
         return resultado;
@@ -125,7 +125,7 @@ export default function EditarContratoComponent({
 
       // Si la fecha está en formato DD/MM/YYYY (con barra)
       if (/^\d{2}\/\d{2}\/\d{4}$/.test(fechaLimpia)) {
-        const [dia, mes, año] = fechaLimpia.split('/');
+        const [dia, mes, año] = fechaLimpia.split("/");
         const resultado = `${año}-${mes}-${dia}`;
         return resultado;
       }
@@ -137,28 +137,28 @@ export default function EditarContratoComponent({
         const fecha = new Date(fechaLimpia);
         if (!Number.isNaN(fecha.getTime())) {
           const year = fecha.getFullYear();
-          const month = String(fecha.getMonth() + 1).padStart(2, '0');
-          const day = String(fecha.getDate()).padStart(2, '0');
+          const month = String(fecha.getMonth() + 1).padStart(2, "0");
+          const day = String(fecha.getDate()).padStart(2, "0");
           const resultado = `${year}-${month}-${day}`;
           return resultado;
         }
       }
 
-      return '';
+      return "";
     } catch (_error) {
-      console.error('Error al convertir fecha:', _error);
-      return '';
+      console.error("Error al convertir fecha:", _error);
+      return "";
     }
   };
 
   // Helper para convertir fecha de YYYY-MM-DD (input) a DD/MM/YYYY (SQL Server)
   const convertirFechaParaBackend = (fechaInput: string): string => {
-    if (!fechaInput) return '';
+    if (!fechaInput) return "";
 
     try {
       // Si la fecha está en formato YYYY-MM-DD (del input)
       if (/^\d{4}-\d{2}-\d{2}$/.test(fechaInput)) {
-        const [year, month, day] = fechaInput.split('-');
+        const [year, month, day] = fechaInput.split("-");
         const resultado = `${day}/${month}/${year}`;
 
         return resultado;
@@ -166,60 +166,60 @@ export default function EditarContratoComponent({
 
       // Si ya está en formato DD/MM/YYYY, retornarla tal cual
       if (/^\d{2}[/-]\d{2}[/-]\d{4}$/.test(fechaInput)) {
-        const resultado = fechaInput.replaceAll('-', '/');
+        const resultado = fechaInput.replaceAll("-", "/");
 
         return resultado;
       }
 
       return fechaInput;
     } catch (_error) {
-      console.error('Error al convertir fecha para backend:', _error);
+      console.error("Error al convertir fecha para backend:", _error);
       return fechaInput;
     }
   };
 
   // Función para mapear GetContratoPorId a ContratoFormData
   const mapContratoToFormData = (
-    contratoData: GetContratoPorId
+    contratoData: GetContratoPorId,
   ): ContratoFormData => {
     const fechaInicioConvertida = convertirFechaParaInput(
-      contratoData.fechaInicio
+      contratoData.fechaInicio,
     );
     const fechaTerminoConvertida = convertirFechaParaInput(
-      contratoData.fechaTermino
+      contratoData.fechaTermino,
     );
 
     const mappedData = {
-      tipoContrato: contratoData.tipoContrato || '',
-      tarifa: contratoData.tarifa || '',
-      nombrePropietario: contratoData.nombrePropietario || '',
-      nombreCliente: contratoData.nombreCliente || '',
-      local: contratoData.lugarEntrega || contratoData.codigoLocal || '',
+      tipoContrato: contratoData.tipoContrato || "",
+      tarifa: contratoData.tarifa || "",
+      nombrePropietario: contratoData.nombrePropietario || "",
+      nombreCliente: contratoData.nombreCliente || "",
+      local: contratoData.lugarEntrega || contratoData.codigoLocal || "",
       fechaInicio: fechaInicioConvertida,
-      activo: contratoData.activoTexto === 'Si',
+      activo: contratoData.activoTexto === "Si",
       fechaTermino: fechaTerminoConvertida,
-      comunaEnvio: contratoData.codigoComuna || '',
-      direccionEnvio: contratoData.direccion || '',
+      comunaEnvio: contratoData.codigoComuna || "",
+      direccionEnvio: contratoData.direccion || "",
       limiteInvierno: contratoData.limiteInvierno || 0,
-      promedioAnual: '',
-      cicloFacturacion: contratoData.cicloFacturacion || 'Ciclo Día 15',
-      potenciaContratada: contratoData.potenciaContratada || '',
-      liberadoCorte: contratoData.esMadreTexto === 'Si',
-      madre: contratoData.codigoContratoMadre || ''
+      promedioAnual: "",
+      cicloFacturacion: contratoData.cicloFacturacion || "Ciclo Día 15",
+      potenciaContratada: contratoData.potenciaContratada || "",
+      liberadoCorte: contratoData.esMadreTexto === "Si",
+      madre: contratoData.codigoContratoMadre || "",
     };
 
     return mappedData;
   };
 
   const [selectedRutPropietario, setSelectedRutPropietario] = useState(
-    contrato.rutPropietario || ''
+    contrato.rutPropietario || "",
   );
   const [selectedRutCliente, setSelectedRutCliente] = useState(
-    contrato.rutCliente || ''
+    contrato.rutCliente || "",
   );
 
   const [formData, setFormData] = useState<ContratoFormData>(() =>
-    mapContratoToFormData(contrato)
+    mapContratoToFormData(contrato),
   );
 
   // Cargar datos adicionales al montar el componente
@@ -238,8 +238,8 @@ export default function EditarContratoComponent({
           setTarifas(tarifasResult.data);
         }
       } catch (_error) {
-        console.error('Error al cargar datos adicionales:', _error);
-        toast.error('Error al cargar datos del formulario');
+        console.error("Error al cargar datos adicionales:", _error);
+        toast.error("Error al cargar datos del formulario");
       }
     };
 
@@ -249,9 +249,9 @@ export default function EditarContratoComponent({
   // Funciones de filtrado
   const propietariosFiltrados = useMemo(() => {
     return propietarios.filter(
-      p =>
+      (p) =>
         p.nombre.toLowerCase().includes(busquedaPropietario.toLowerCase()) ||
-        p.rut.toLowerCase().includes(busquedaPropietario.toLowerCase())
+        p.rut.toLowerCase().includes(busquedaPropietario.toLowerCase()),
     );
   }, [propietarios, busquedaPropietario]);
 
@@ -264,33 +264,33 @@ export default function EditarContratoComponent({
           ?.toLowerCase()
           .includes(busquedaCliente.toLowerCase()) ||
         c.rut?.toLowerCase().includes(busquedaCliente.toLowerCase()) ||
-        c.nombre?.toLowerCase().includes(busquedaCliente.toLowerCase())
+        c.nombre?.toLowerCase().includes(busquedaCliente.toLowerCase()),
     );
   }, [_clientes, busquedaCliente]);
 
   const localesFiltrados = useMemo(() => {
     return locales.filter(
-      l =>
+      (l) =>
         l.numeroLocal?.toLowerCase().includes(busquedaLocal.toLowerCase()) ||
-        l.empresa?.toLowerCase().includes(busquedaLocal.toLowerCase())
+        l.empresa?.toLowerCase().includes(busquedaLocal.toLowerCase()),
     );
   }, [locales, busquedaLocal]);
 
   const madresFiltradas = useMemo(() => {
     return madres.filter(
-      m =>
+      (m) =>
         m.nombrePropietario
           ?.toLowerCase()
           .includes(busquedaMadres.toLowerCase()) ||
-        m.codigoContrato?.toLowerCase().includes(busquedaMadres.toLowerCase())
+        m.codigoContrato?.toLowerCase().includes(busquedaMadres.toLowerCase()),
     );
   }, [madres, busquedaMadres]);
 
   const comunasFiltradas = useMemo(() => {
     return comunas.filter(
-      c =>
+      (c) =>
         c.nombre?.toLowerCase().includes(busquedaComuna.toLowerCase()) ||
-        c.codigo?.toLowerCase().includes(busquedaComuna.toLowerCase())
+        c.codigo?.toLowerCase().includes(busquedaComuna.toLowerCase()),
     );
   }, [comunas, busquedaComuna]);
 
@@ -299,35 +299,35 @@ export default function EditarContratoComponent({
     count: propietariosFiltrados.length,
     getScrollElement: () => propietariosTableRef.current,
     estimateSize: () => 50,
-    overscan: 10
+    overscan: 10,
   });
 
   const clientesVirtualizer = useVirtualizer({
     count: clientesFiltrados.length,
     getScrollElement: () => clientesTableRef.current,
     estimateSize: () => 60,
-    overscan: 10
+    overscan: 10,
   });
 
   const localesVirtualizer = useVirtualizer({
     count: localesFiltrados.length,
     getScrollElement: () => localesTableRef.current,
     estimateSize: () => 50,
-    overscan: 10
+    overscan: 10,
   });
 
   const madresVirtualizer = useVirtualizer({
     count: madresFiltradas.length,
     getScrollElement: () => madresTableRef.current,
     estimateSize: () => 50,
-    overscan: 10
+    overscan: 10,
   });
 
   const comunasVirtualizer = useVirtualizer({
     count: comunasFiltradas.length,
     getScrollElement: () => comunasTableRef.current,
     estimateSize: () => 50,
-    overscan: 10
+    overscan: 10,
   });
 
   // Forzar medición del virtualizador cuando se abren los modales
@@ -384,35 +384,35 @@ export default function EditarContratoComponent({
 
   // Funciones de selección
   const handleSelectPropietario = (propietarioRut: string) => {
-    const prop = propietarios.find(p => p.rut === propietarioRut);
+    const prop = propietarios.find((p) => p.rut === propietarioRut);
     if (prop) {
-      setFormData(prev => ({ ...prev, nombrePropietario: prop.nombre }));
+      setFormData((prev) => ({ ...prev, nombrePropietario: prop.nombre }));
       setSelectedRutPropietario(prop.rut);
     }
     setModalPropietario(false);
-    setBusquedaPropietario('');
+    setBusquedaPropietario("");
   };
 
   const handleSelectCliente = (clienteRut: string) => {
-    const cliente = _clientes.find(c => c.rut === clienteRut);
+    const cliente = _clientes.find((c) => c.rut === clienteRut);
     if (cliente) {
       const nombreCompleto = cliente.esEmpresa
         ? cliente.nombre
         : `${cliente.nombre.trim()}`;
-      setFormData(prev => ({ ...prev, nombreCliente: nombreCompleto }));
+      setFormData((prev) => ({ ...prev, nombreCliente: nombreCompleto }));
       setSelectedRutCliente(cliente.rut);
     }
     setModalCliente(false);
-    setBusquedaCliente('');
+    setBusquedaCliente("");
   };
 
   const handleSelectLocal = (localNumero: string) => {
-    const loc = locales.find(l => l.numeroLocal === localNumero);
+    const loc = locales.find((l) => l.numeroLocal === localNumero);
     if (loc) {
-      setFormData(prev => ({ ...prev, local: loc.numeroLocal }));
+      setFormData((prev) => ({ ...prev, local: loc.numeroLocal }));
     }
     setModalLocal(false);
-    setBusquedaLocal('');
+    setBusquedaLocal("");
   };
 
   // Helper para obtener el RUT del propietario basándose en el nombre
@@ -420,7 +420,7 @@ export default function EditarContratoComponent({
     if (selectedRutPropietario) return selectedRutPropietario;
 
     const propietario = propietarios.find(
-      p => p.nombre.trim() === formData.nombrePropietario.trim()
+      (p) => p.nombre.trim() === formData.nombrePropietario.trim(),
     );
 
     const resultado = propietario
@@ -437,7 +437,7 @@ export default function EditarContratoComponent({
     // Si hay clientes disponibles, buscar por nombre
     if (_clientes && _clientes.length > 0) {
       const cliente = _clientes.find(
-        (c: any) => c.nombre.trim() === formData.nombreCliente.trim()
+        (c: any) => c.nombre.trim() === formData.nombreCliente.trim(),
       );
 
       if (cliente) {
@@ -447,7 +447,7 @@ export default function EditarContratoComponent({
 
     // Si no se encuentra en clientes, buscar en propietarios
     const propietario = propietarios.find(
-      p => p.nombre.trim() === formData.nombreCliente.trim()
+      (p) => p.nombre.trim() === formData.nombreCliente.trim(),
     );
 
     const resultado = propietario ? propietario.rut : formData.nombreCliente;
@@ -456,83 +456,83 @@ export default function EditarContratoComponent({
   };
 
   const handleSelectMadre = (madreCodigo: string) => {
-    const mad = madres.find(m => m.codigoContrato === madreCodigo);
+    const mad = madres.find((m) => m.codigoContrato === madreCodigo);
     if (mad) {
-      setFormData(prev => ({ ...prev, madre: mad.nombrePropietario }));
+      setFormData((prev) => ({ ...prev, madre: mad.nombrePropietario }));
     }
     setModalMadres(false);
-    setBusquedaMadres('');
+    setBusquedaMadres("");
   };
 
   const handleSelectComuna = (comunaCodigo: string) => {
-    const com = comunas.find(c => c.codigo === comunaCodigo);
+    const com = comunas.find((c) => c.codigo === comunaCodigo);
     if (com) {
-      setFormData(prev => ({ ...prev, comunaEnvio: com.codigo }));
+      setFormData((prev) => ({ ...prev, comunaEnvio: com.codigo }));
     }
     setModalComuna(false);
-    setBusquedaComuna('');
+    setBusquedaComuna("");
   };
 
   const handleInputChange = (
     field: keyof ContratoFormData,
-    value: string | number | boolean
+    value: string | number | boolean,
   ) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   // Funciones para deseleccionar
   const handleClearPropietario = () => {
-    setFormData(prev => ({ ...prev, nombrePropietario: '' }));
-    setSelectedRutPropietario('');
+    setFormData((prev) => ({ ...prev, nombrePropietario: "" }));
+    setSelectedRutPropietario("");
   };
 
   const handleClearCliente = () => {
-    setFormData(prev => ({ ...prev, nombreCliente: '' }));
-    setSelectedRutCliente('');
+    setFormData((prev) => ({ ...prev, nombreCliente: "" }));
+    setSelectedRutCliente("");
   };
 
   const handleClearLocal = () => {
-    setFormData(prev => ({ ...prev, local: '' }));
+    setFormData((prev) => ({ ...prev, local: "" }));
   };
 
   const handleClearComuna = () => {
-    setFormData(prev => ({ ...prev, comunaEnvio: '' }));
+    setFormData((prev) => ({ ...prev, comunaEnvio: "" }));
   };
 
   const handleClearMadre = () => {
-    setFormData(prev => ({ ...prev, madre: '' }));
+    setFormData((prev) => ({ ...prev, madre: "" }));
   };
 
   // Helper para mostrar el nombre de la comuna en el input
   const getComunaDisplayName = () => {
-    const comuna = comunas.find(c => c.codigo === formData.comunaEnvio);
+    const comuna = comunas.find((c) => c.codigo === formData.comunaEnvio);
     return comuna ? comuna.nombre : formData.comunaEnvio;
   };
 
   const handleSubmit = async () => {
     // Validaciones de campos requeridos
     if (!formData.fechaInicio) {
-      toast.error('La fecha de inicio es obligatoria');
+      toast.error("La fecha de inicio es obligatoria");
       return;
     }
 
     if (!formData.tipoContrato) {
-      toast.error('El tipo de contrato es obligatorio');
+      toast.error("El tipo de contrato es obligatorio");
       return;
     }
 
     if (!formData.tarifa) {
-      toast.error('La tarifa es obligatoria');
+      toast.error("La tarifa es obligatoria");
       return;
     }
 
     if (!formData.nombrePropietario) {
-      toast.error('El nombre del propietario es obligatorio');
+      toast.error("El nombre del propietario es obligatorio");
       return;
     }
 
     if (!formData.nombreCliente) {
-      toast.error('El nombre del cliente es obligatorio');
+      toast.error("El nombre del cliente es obligatorio");
       return;
     }
 
@@ -541,7 +541,7 @@ export default function EditarContratoComponent({
     try {
       // Obtener el ID del contrato desde la URL
       const urlPath = globalThis.location.pathname;
-      const urlParts = urlPath.split('/');
+      const urlParts = urlPath.split("/");
       const contratoIdFromUrl = urlParts.at(-1);
 
       // Obtener RUTs
@@ -550,20 +550,20 @@ export default function EditarContratoComponent({
 
       // Convertir fechas de YYYY-MM-DD (input) a DD/MM/YYYY (SQL Server)
       const fechaInicioBackend = convertirFechaParaBackend(
-        formData.fechaInicio
+        formData.fechaInicio,
       );
       const fechaTerminoBackend = formData.fechaTermino
         ? convertirFechaParaBackend(formData.fechaTermino)
-        : '';
+        : "";
 
-      // Preparar los datos para la API usando ModificarContratoProps
+      // Preparar los datos para la API usando ContratoFormValues
       const submitData: any = {
         codigo: contratoIdFromUrl,
         tipoContrato: Number.parseInt(formData.tipoContrato) || 0,
         tarifa: Number.parseInt(formData.tarifa) || 0,
         propietario: propietarioRut,
         cliente: clienteRut,
-        localId: formData.local || '',
+        localId: formData.local || "",
         fechaInicio: fechaInicioBackend,
         activo: formData.activo,
         fechaTermino: fechaTerminoBackend,
@@ -572,26 +572,26 @@ export default function EditarContratoComponent({
         limite: formData.limiteInvierno,
         ciclo: 1, // Valor fijo para "Ciclo Día 15"
         potencia: formData.potenciaContratada,
-        madre: formData.madre || '',
-        lugar: formData.local || '',
-        sinCorte: formData.liberadoCorte ? 1 : 0
+        madre: formData.madre || "",
+        lugar: formData.local || "",
+        sinCorte: formData.liberadoCorte ? 1 : 0,
       };
 
       // Enviar al backend
       const result = await administracionService.modificarContrato(submitData);
 
       if (result.error) {
-        toast.error(result.error || 'Error al actualizar el contrato');
+        toast.error(result.error || "Error al actualizar el contrato");
         return;
       }
 
-      toast.success('Contrato actualizado exitosamente');
-      navigate('/dashboard/administracion/contratos');
+      toast.success("Contrato actualizado exitosamente");
+      navigate("/dashboard/administracion/contratos");
     } catch (error: any) {
       const errorMsg =
         error.response?.data?.mensaje ||
         error.message ||
-        'Error inesperado al actualizar el contrato';
+        "Error inesperado al actualizar el contrato";
       toast.error(errorMsg);
     } finally {
       setIsSubmitting(false);
@@ -611,7 +611,7 @@ export default function EditarContratoComponent({
                 <Button
                   variant="ghost"
                   onClick={() =>
-                    navigate('/dashboard/administracion/contratos')
+                    navigate("/dashboard/administracion/contratos")
                   }
                   disabled={isSubmitting}
                   className="gap-2"
@@ -622,7 +622,7 @@ export default function EditarContratoComponent({
                 <Button
                   variant="outline"
                   onClick={() =>
-                    navigate('/dashboard/administracion/contratos')
+                    navigate("/dashboard/administracion/contratos")
                   }
                   disabled={isSubmitting}
                 >
@@ -634,7 +634,7 @@ export default function EditarContratoComponent({
                   disabled={isSubmitting}
                 >
                   <Save className="h-4 w-4" />
-                  {isSubmitting ? 'Actualizando...' : 'Actualizar Contrato'}
+                  {isSubmitting ? "Actualizando..." : "Actualizar Contrato"}
                 </Button>
               </>
             }
@@ -656,15 +656,15 @@ export default function EditarContratoComponent({
                   <Label htmlFor="tipoContrato">Tipo de Contrato *</Label>
                   <Select
                     value={formData.tipoContrato}
-                    onValueChange={value =>
-                      handleInputChange('tipoContrato', value)
+                    onValueChange={(value) =>
+                      handleInputChange("tipoContrato", value)
                     }
                   >
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Seleccionar tipo" />
                     </SelectTrigger>
                     <SelectContent>
-                      {tipoContrato.map(tipo => (
+                      {tipoContrato.map((tipo) => (
                         <SelectItem key={tipo.id} value={tipo.id.toString()}>
                           {tipo.nombre}
                         </SelectItem>
@@ -677,13 +677,15 @@ export default function EditarContratoComponent({
                   <Label htmlFor="tarifa">Tarifa *</Label>
                   <Select
                     value={formData.tarifa}
-                    onValueChange={value => handleInputChange('tarifa', value)}
+                    onValueChange={(value) =>
+                      handleInputChange("tarifa", value)
+                    }
                   >
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Seleccionar tarifa" />
                     </SelectTrigger>
                     <SelectContent>
-                      {tarifas.map(tarifa => (
+                      {tarifas.map((tarifa) => (
                         <SelectItem
                           key={tarifa.id}
                           value={tarifa.id.toString()}
@@ -709,8 +711,8 @@ export default function EditarContratoComponent({
                     <Input
                       id="nombrePropietario"
                       value={formData.nombrePropietario}
-                      onChange={e =>
-                        handleInputChange('nombrePropietario', e.target.value)
+                      onChange={(e) =>
+                        handleInputChange("nombrePropietario", e.target.value)
                       }
                       placeholder="Nombre del propietario"
                       className="w-full"
@@ -748,8 +750,8 @@ export default function EditarContratoComponent({
                     <Input
                       id="nombreCliente"
                       value={formData.nombreCliente}
-                      onChange={e =>
-                        handleInputChange('nombreCliente', e.target.value)
+                      onChange={(e) =>
+                        handleInputChange("nombreCliente", e.target.value)
                       }
                       placeholder="Nombre del cliente"
                       className="w-full"
@@ -802,7 +804,9 @@ export default function EditarContratoComponent({
                     <Input
                       id="local"
                       value={formData.local}
-                      onChange={e => handleInputChange('local', e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("local", e.target.value)
+                      }
                       placeholder="Número del local"
                       className="w-full"
                       readOnly
@@ -838,8 +842,8 @@ export default function EditarContratoComponent({
                     <Input
                       id="comunaEnvio"
                       value={getComunaDisplayName()}
-                      onChange={e =>
-                        handleInputChange('comunaEnvio', e.target.value)
+                      onChange={(e) =>
+                        handleInputChange("comunaEnvio", e.target.value)
                       }
                       placeholder="Comuna de envío"
                       className="w-full"
@@ -876,8 +880,8 @@ export default function EditarContratoComponent({
                 <Textarea
                   id="direccionEnvio"
                   value={formData.direccionEnvio}
-                  onChange={e =>
-                    handleInputChange('direccionEnvio', e.target.value)
+                  onChange={(e) =>
+                    handleInputChange("direccionEnvio", e.target.value)
                   }
                   placeholder="Dirección completa de envío"
                   className="w-full resize-none"
@@ -899,8 +903,8 @@ export default function EditarContratoComponent({
                     id="fechaInicio"
                     type="date"
                     value={formData.fechaInicio}
-                    onChange={e =>
-                      handleInputChange('fechaInicio', e.target.value)
+                    onChange={(e) =>
+                      handleInputChange("fechaInicio", e.target.value)
                     }
                     className="w-full"
                     required
@@ -913,8 +917,8 @@ export default function EditarContratoComponent({
                     id="fechaTermino"
                     type="date"
                     value={formData.fechaTermino}
-                    onChange={e =>
-                      handleInputChange('fechaTermino', e.target.value)
+                    onChange={(e) =>
+                      handleInputChange("fechaTermino", e.target.value)
                     }
                     className="w-full"
                   />
@@ -927,10 +931,10 @@ export default function EditarContratoComponent({
                     id="limiteInvierno"
                     type="number"
                     value={formData.limiteInvierno}
-                    onChange={e =>
+                    onChange={(e) =>
                       handleInputChange(
-                        'limiteInvierno',
-                        Number.parseInt(e.target.value) || 0
+                        "limiteInvierno",
+                        Number.parseInt(e.target.value) || 0,
                       )
                     }
                     placeholder="0"
@@ -943,8 +947,8 @@ export default function EditarContratoComponent({
                   <Input
                     id="promedioAnual"
                     value={formData.promedioAnual}
-                    onChange={e =>
-                      handleInputChange('promedioAnual', e.target.value)
+                    onChange={(e) =>
+                      handleInputChange("promedioAnual", e.target.value)
                     }
                     placeholder="Promedio anual"
                     className="w-full"
@@ -958,8 +962,8 @@ export default function EditarContratoComponent({
                   <Input
                     id="potenciaContratada"
                     value={formData.potenciaContratada}
-                    onChange={e =>
-                      handleInputChange('potenciaContratada', e.target.value)
+                    onChange={(e) =>
+                      handleInputChange("potenciaContratada", e.target.value)
                     }
                     placeholder="Potencia contratada"
                     className="w-full"
@@ -971,8 +975,8 @@ export default function EditarContratoComponent({
                   <Switch
                     id="activo"
                     checked={formData.activo}
-                    onCheckedChange={checked =>
-                      handleInputChange('activo', checked)
+                    onCheckedChange={(checked) =>
+                      handleInputChange("activo", checked)
                     }
                   />
                   <Label htmlFor="activo" className="text-sm font-medium">
@@ -984,8 +988,8 @@ export default function EditarContratoComponent({
                   <Switch
                     id="liberadoCorte"
                     checked={formData.liberadoCorte}
-                    onCheckedChange={checked =>
-                      handleInputChange('liberadoCorte', checked)
+                    onCheckedChange={(checked) =>
+                      handleInputChange("liberadoCorte", checked)
                     }
                   />
                   <Label
@@ -1002,7 +1006,7 @@ export default function EditarContratoComponent({
                   <Input
                     id="madre"
                     value={formData.madre}
-                    onChange={e => handleInputChange('madre', e.target.value)}
+                    onChange={(e) => handleInputChange("madre", e.target.value)}
                     placeholder="Contrato madre (opcional)"
                     className="w-full"
                     readOnly
@@ -1059,7 +1063,7 @@ export default function EditarContratoComponent({
                 <Input
                   placeholder="Buscar por nombre o RUT..."
                   value={busquedaPropietario}
-                  onChange={e => setBusquedaPropietario(e.target.value)}
+                  onChange={(e) => setBusquedaPropietario(e.target.value)}
                   className="h-11 pl-10"
                 />
               </div>
@@ -1069,20 +1073,20 @@ export default function EditarContratoComponent({
                 className="border rounded-xl bg-background h-[45vh] sm:h-[50vh] overflow-auto"
               >
                 <div className="min-w-[500px]">
-                  <Table style={{ width: '100%' }}>
+                  <Table style={{ width: "100%" }}>
                     <TableHeader className="sticky top-0 bg-background z-10 border-b">
                       <TableRow>
                         <TableHead
-                          style={{ width: '140px', minWidth: '140px' }}
+                          style={{ width: "140px", minWidth: "140px" }}
                         >
                           RUT
                         </TableHead>
-                        <TableHead style={{ width: 'auto', minWidth: '200px' }}>
+                        <TableHead style={{ width: "auto", minWidth: "200px" }}>
                           Nombre
                         </TableHead>
                         <TableHead
                           className="text-center"
-                          style={{ width: '120px', minWidth: '120px' }}
+                          style={{ width: "120px", minWidth: "120px" }}
                         >
                           Acción
                         </TableHead>
@@ -1091,7 +1095,7 @@ export default function EditarContratoComponent({
                     <TableBody
                       style={{
                         height: `${propietariosVirtualizer.getTotalSize()}px`,
-                        position: 'relative'
+                        position: "relative",
                       }}
                     >
                       {propietariosFiltrados.length === 0 && (
@@ -1111,7 +1115,7 @@ export default function EditarContratoComponent({
                                 <p className="text-sm">
                                   {busquedaPropietario
                                     ? `No hay resultados para "${busquedaPropietario}"`
-                                    : 'Escriba en el campo de búsqueda para filtrar'}
+                                    : "Escriba en el campo de búsqueda para filtrar"}
                                 </p>
                               </div>
                             </div>
@@ -1120,38 +1124,38 @@ export default function EditarContratoComponent({
                       )}
                       {propietariosVirtualizer
                         .getVirtualItems()
-                        .map(virtualRow => {
+                        .map((virtualRow) => {
                           const prop = propietariosFiltrados[virtualRow.index];
                           return (
                             <TableRow
                               key={prop.rut}
                               data-index={virtualRow.index}
                               style={{
-                                position: 'absolute',
+                                position: "absolute",
                                 top: 0,
                                 left: 0,
-                                width: '100%',
-                                height: '50px',
+                                width: "100%",
+                                height: "50px",
                                 transform: `translateY(${virtualRow.start}px)`,
-                                display: 'table'
+                                display: "table",
                               }}
                               className="hover:bg-muted/50"
                             >
                               <TableCell
                                 className="font-medium font-mono text-sm h-[50px]"
-                                style={{ width: '140px', minWidth: '140px' }}
+                                style={{ width: "140px", minWidth: "140px" }}
                               >
                                 {prop.rut}
                               </TableCell>
                               <TableCell
                                 className="font-medium h-[50px]"
-                                style={{ width: 'auto', minWidth: '200px' }}
+                                style={{ width: "auto", minWidth: "200px" }}
                               >
                                 {prop.nombre}
                               </TableCell>
                               <TableCell
                                 className="text-center h-[50px]"
-                                style={{ width: '120px', minWidth: '120px' }}
+                                style={{ width: "120px", minWidth: "120px" }}
                               >
                                 <Button
                                   size="sm"
@@ -1197,7 +1201,7 @@ export default function EditarContratoComponent({
                 <Input
                   placeholder="Buscar por número de local o empresa..."
                   value={busquedaLocal}
-                  onChange={e => setBusquedaLocal(e.target.value)}
+                  onChange={(e) => setBusquedaLocal(e.target.value)}
                   className="h-11 pl-10"
                 />
               </div>
@@ -1207,20 +1211,20 @@ export default function EditarContratoComponent({
                 className="border rounded-xl bg-background h-[45vh] sm:h-[50vh] overflow-auto"
               >
                 <div className="min-w-[500px]">
-                  <Table style={{ width: '100%' }}>
+                  <Table style={{ width: "100%" }}>
                     <TableHeader className="sticky top-0 bg-background z-10 border-b">
                       <TableRow>
                         <TableHead
-                          style={{ width: '120px', minWidth: '120px' }}
+                          style={{ width: "120px", minWidth: "120px" }}
                         >
                           Número
                         </TableHead>
-                        <TableHead style={{ width: 'auto', minWidth: '200px' }}>
+                        <TableHead style={{ width: "auto", minWidth: "200px" }}>
                           Empresa
                         </TableHead>
                         <TableHead
                           className="text-center"
-                          style={{ width: '120px', minWidth: '120px' }}
+                          style={{ width: "120px", minWidth: "120px" }}
                         >
                           Acción
                         </TableHead>
@@ -1229,7 +1233,7 @@ export default function EditarContratoComponent({
                     <TableBody
                       style={{
                         height: `${localesVirtualizer.getTotalSize()}px`,
-                        position: 'relative'
+                        position: "relative",
                       }}
                     >
                       {localesFiltrados.length === 0 && (
@@ -1249,59 +1253,61 @@ export default function EditarContratoComponent({
                                 <p className="text-sm">
                                   {busquedaLocal
                                     ? `No hay resultados para "${busquedaLocal}"`
-                                    : 'Escriba en el campo de búsqueda para filtrar'}
+                                    : "Escriba en el campo de búsqueda para filtrar"}
                                 </p>
                               </div>
                             </div>
                           </TableCell>
                         </TableRow>
                       )}
-                      {localesVirtualizer.getVirtualItems().map(virtualRow => {
-                        const loc = localesFiltrados[virtualRow.index];
-                        return (
-                          <TableRow
-                            key={loc.numeroLocal}
-                            data-index={virtualRow.index}
-                            style={{
-                              position: 'absolute',
-                              top: 0,
-                              left: 0,
-                              width: '100%',
-                              height: '50px',
-                              transform: `translateY(${virtualRow.start}px)`,
-                              display: 'table'
-                            }}
-                            className="hover:bg-muted/50"
-                          >
-                            <TableCell
-                              className="font-medium font-mono text-sm h-[50px]"
-                              style={{ width: '120px', minWidth: '120px' }}
+                      {localesVirtualizer
+                        .getVirtualItems()
+                        .map((virtualRow) => {
+                          const loc = localesFiltrados[virtualRow.index];
+                          return (
+                            <TableRow
+                              key={loc.numeroLocal}
+                              data-index={virtualRow.index}
+                              style={{
+                                position: "absolute",
+                                top: 0,
+                                left: 0,
+                                width: "100%",
+                                height: "50px",
+                                transform: `translateY(${virtualRow.start}px)`,
+                                display: "table",
+                              }}
+                              className="hover:bg-muted/50"
                             >
-                              {loc.numeroLocal}
-                            </TableCell>
-                            <TableCell
-                              className="font-medium h-[50px]"
-                              style={{ width: 'auto', minWidth: '200px' }}
-                            >
-                              {loc.empresa}
-                            </TableCell>
-                            <TableCell
-                              className="text-center h-[50px]"
-                              style={{ width: '120px', minWidth: '120px' }}
-                            >
-                              <Button
-                                size="sm"
-                                variant="default"
-                                onClick={() =>
-                                  handleSelectLocal(loc.numeroLocal)
-                                }
+                              <TableCell
+                                className="font-medium font-mono text-sm h-[50px]"
+                                style={{ width: "120px", minWidth: "120px" }}
                               >
-                                Seleccionar
-                              </Button>
-                            </TableCell>
-                          </TableRow>
-                        );
-                      })}
+                                {loc.numeroLocal}
+                              </TableCell>
+                              <TableCell
+                                className="font-medium h-[50px]"
+                                style={{ width: "auto", minWidth: "200px" }}
+                              >
+                                {loc.empresa}
+                              </TableCell>
+                              <TableCell
+                                className="text-center h-[50px]"
+                                style={{ width: "120px", minWidth: "120px" }}
+                              >
+                                <Button
+                                  size="sm"
+                                  variant="default"
+                                  onClick={() =>
+                                    handleSelectLocal(loc.numeroLocal)
+                                  }
+                                >
+                                  Seleccionar
+                                </Button>
+                              </TableCell>
+                            </TableRow>
+                          );
+                        })}
                     </TableBody>
                   </Table>
                 </div>
@@ -1333,7 +1339,7 @@ export default function EditarContratoComponent({
                 <Input
                   placeholder="Buscar por propietario o código de contrato..."
                   value={busquedaMadres}
-                  onChange={e => setBusquedaMadres(e.target.value)}
+                  onChange={(e) => setBusquedaMadres(e.target.value)}
                   className="h-11 pl-10"
                 />
               </div>
@@ -1343,20 +1349,20 @@ export default function EditarContratoComponent({
                 className="border rounded-xl bg-background h-[45vh] sm:h-[50vh] overflow-auto"
               >
                 <div className="min-w-[500px]">
-                  <Table style={{ width: '100%' }}>
+                  <Table style={{ width: "100%" }}>
                     <TableHeader className="sticky top-0 bg-background z-10 border-b">
                       <TableRow>
                         <TableHead
-                          style={{ width: '140px', minWidth: '140px' }}
+                          style={{ width: "140px", minWidth: "140px" }}
                         >
                           Código
                         </TableHead>
-                        <TableHead style={{ width: 'auto', minWidth: '200px' }}>
+                        <TableHead style={{ width: "auto", minWidth: "200px" }}>
                           Propietario
                         </TableHead>
                         <TableHead
                           className="text-center"
-                          style={{ width: '120px', minWidth: '120px' }}
+                          style={{ width: "120px", minWidth: "120px" }}
                         >
                           Acción
                         </TableHead>
@@ -1365,7 +1371,7 @@ export default function EditarContratoComponent({
                     <TableBody
                       style={{
                         height: `${madresVirtualizer.getTotalSize()}px`,
-                        position: 'relative'
+                        position: "relative",
                       }}
                     >
                       {madresFiltradas.length === 0 && (
@@ -1385,45 +1391,45 @@ export default function EditarContratoComponent({
                                 <p className="text-sm">
                                   {busquedaMadres
                                     ? `No hay resultados para "${busquedaMadres}"`
-                                    : 'Escriba en el campo de búsqueda para filtrar'}
+                                    : "Escriba en el campo de búsqueda para filtrar"}
                                 </p>
                               </div>
                             </div>
                           </TableCell>
                         </TableRow>
                       )}
-                      {madresVirtualizer.getVirtualItems().map(virtualRow => {
+                      {madresVirtualizer.getVirtualItems().map((virtualRow) => {
                         const mad = madresFiltradas[virtualRow.index];
                         return (
                           <TableRow
                             key={mad.codigoContrato}
                             data-index={virtualRow.index}
                             style={{
-                              position: 'absolute',
+                              position: "absolute",
                               top: 0,
                               left: 0,
-                              width: '100%',
-                              height: '50px',
+                              width: "100%",
+                              height: "50px",
                               transform: `translateY(${virtualRow.start}px)`,
-                              display: 'table'
+                              display: "table",
                             }}
                             className="hover:bg-muted/50"
                           >
                             <TableCell
                               className="font-medium font-mono text-sm h-[50px]"
-                              style={{ width: '140px', minWidth: '140px' }}
+                              style={{ width: "140px", minWidth: "140px" }}
                             >
                               {mad.codigoContrato}
                             </TableCell>
                             <TableCell
                               className="font-medium h-[50px]"
-                              style={{ width: 'auto', minWidth: '200px' }}
+                              style={{ width: "auto", minWidth: "200px" }}
                             >
                               {mad.nombrePropietario}
                             </TableCell>
                             <TableCell
                               className="text-center h-[50px]"
-                              style={{ width: '120px', minWidth: '120px' }}
+                              style={{ width: "120px", minWidth: "120px" }}
                             >
                               <Button
                                 size="sm"
@@ -1469,7 +1475,7 @@ export default function EditarContratoComponent({
                 <Input
                   placeholder="Buscar por nombre, apellido o RUT..."
                   value={busquedaCliente}
-                  onChange={e => setBusquedaCliente(e.target.value)}
+                  onChange={(e) => setBusquedaCliente(e.target.value)}
                   className="h-11 pl-10"
                 />
               </div>
@@ -1479,23 +1485,23 @@ export default function EditarContratoComponent({
                 className="border rounded-xl bg-background h-[45vh] sm:h-[50vh] overflow-auto"
               >
                 <div className="min-w-[600px]">
-                  <Table style={{ width: '100%' }}>
+                  <Table style={{ width: "100%" }}>
                     <TableHeader className="sticky top-0 bg-background z-10 border-b">
                       <TableRow>
-                        <TableHead style={{ width: 'auto', minWidth: '180px' }}>
+                        <TableHead style={{ width: "auto", minWidth: "180px" }}>
                           Nombre
                         </TableHead>
-                        <TableHead style={{ width: 'auto', minWidth: '180px' }}>
+                        <TableHead style={{ width: "auto", minWidth: "180px" }}>
                           Apellido
                         </TableHead>
                         <TableHead
-                          style={{ width: '140px', minWidth: '140px' }}
+                          style={{ width: "140px", minWidth: "140px" }}
                         >
                           RUT
                         </TableHead>
                         <TableHead
                           className="text-center"
-                          style={{ width: '120px', minWidth: '120px' }}
+                          style={{ width: "120px", minWidth: "120px" }}
                         >
                           Acción
                         </TableHead>
@@ -1504,7 +1510,7 @@ export default function EditarContratoComponent({
                     <TableBody
                       style={{
                         height: `${clientesVirtualizer.getTotalSize()}px`,
-                        position: 'relative'
+                        position: "relative",
                       }}
                     >
                       {clientesFiltrados.length === 0 && (
@@ -1524,57 +1530,61 @@ export default function EditarContratoComponent({
                                 <p className="text-sm">
                                   {busquedaCliente
                                     ? `No hay resultados para "${busquedaCliente}"`
-                                    : 'Escriba en el campo de búsqueda para filtrar'}
+                                    : "Escriba en el campo de búsqueda para filtrar"}
                                 </p>
                               </div>
                             </div>
                           </TableCell>
                         </TableRow>
                       )}
-                      {clientesVirtualizer.getVirtualItems().map(virtualRow => {
-                        const cliente = clientesFiltrados[virtualRow.index];
-                        return (
-                          <TableRow
-                            key={cliente.rut}
-                            data-index={virtualRow.index}
-                            style={{
-                              position: 'absolute',
-                              top: 0,
-                              left: 0,
-                              width: '100%',
-                              height: '60px',
-                              transform: `translateY(${virtualRow.start}px)`,
-                              display: 'table'
-                            }}
-                            className="hover:bg-muted/50"
-                          >
-                            <TableCell
-                              className="font-medium h-[60px]"
-                              style={{ width: 'auto', minWidth: '180px' }}
+                      {clientesVirtualizer
+                        .getVirtualItems()
+                        .map((virtualRow) => {
+                          const cliente = clientesFiltrados[virtualRow.index];
+                          return (
+                            <TableRow
+                              key={cliente.rut}
+                              data-index={virtualRow.index}
+                              style={{
+                                position: "absolute",
+                                top: 0,
+                                left: 0,
+                                width: "100%",
+                                height: "60px",
+                                transform: `translateY(${virtualRow.start}px)`,
+                                display: "table",
+                              }}
+                              className="hover:bg-muted/50"
                             >
-                              {cliente.nombre || ''}
-                            </TableCell>
-                            <TableCell
-                              className="font-medium font-mono text-sm h-[60px]"
-                              style={{ width: '140px', minWidth: '140px' }}
-                            >
-                              {cliente.rut}
-                            </TableCell>
-                            <TableCell
-                              className="text-center h-[60px]"
-                              style={{ width: '120px', minWidth: '120px' }}
-                            >
-                              <Button
-                                size="sm"
-                                variant="default"
-                                onClick={() => handleSelectCliente(cliente.rut)}
+                              <TableCell
+                                className="font-medium h-[60px]"
+                                style={{ width: "auto", minWidth: "180px" }}
                               >
-                                Seleccionar
-                              </Button>
-                            </TableCell>
-                          </TableRow>
-                        );
-                      })}
+                                {cliente.nombre || ""}
+                              </TableCell>
+                              <TableCell
+                                className="font-medium font-mono text-sm h-[60px]"
+                                style={{ width: "140px", minWidth: "140px" }}
+                              >
+                                {cliente.rut}
+                              </TableCell>
+                              <TableCell
+                                className="text-center h-[60px]"
+                                style={{ width: "120px", minWidth: "120px" }}
+                              >
+                                <Button
+                                  size="sm"
+                                  variant="default"
+                                  onClick={() =>
+                                    handleSelectCliente(cliente.rut)
+                                  }
+                                >
+                                  Seleccionar
+                                </Button>
+                              </TableCell>
+                            </TableRow>
+                          );
+                        })}
                     </TableBody>
                   </Table>
                 </div>
@@ -1606,7 +1616,7 @@ export default function EditarContratoComponent({
                 <Input
                   placeholder="Buscar por nombre o código de comuna..."
                   value={busquedaComuna}
-                  onChange={e => setBusquedaComuna(e.target.value)}
+                  onChange={(e) => setBusquedaComuna(e.target.value)}
                   className="h-11 pl-10"
                 />
               </div>
@@ -1616,20 +1626,20 @@ export default function EditarContratoComponent({
                 className="border rounded-xl bg-background h-[45vh] sm:h-[50vh] overflow-auto"
               >
                 <div className="min-w-[500px]">
-                  <Table style={{ width: '100%' }}>
+                  <Table style={{ width: "100%" }}>
                     <TableHeader className="sticky top-0 bg-background z-10 border-b">
                       <TableRow>
                         <TableHead
-                          style={{ width: '100px', minWidth: '100px' }}
+                          style={{ width: "100px", minWidth: "100px" }}
                         >
                           Código
                         </TableHead>
-                        <TableHead style={{ width: 'auto', minWidth: '200px' }}>
+                        <TableHead style={{ width: "auto", minWidth: "200px" }}>
                           Nombre
                         </TableHead>
                         <TableHead
                           className="text-center"
-                          style={{ width: '120px', minWidth: '120px' }}
+                          style={{ width: "120px", minWidth: "120px" }}
                         >
                           Acción
                         </TableHead>
@@ -1638,7 +1648,7 @@ export default function EditarContratoComponent({
                     <TableBody
                       style={{
                         height: `${comunasVirtualizer.getTotalSize()}px`,
-                        position: 'relative'
+                        position: "relative",
                       }}
                     >
                       {comunasFiltradas.length === 0 && (
@@ -1658,57 +1668,59 @@ export default function EditarContratoComponent({
                                 <p className="text-sm">
                                   {busquedaComuna
                                     ? `No hay resultados para "${busquedaComuna}"`
-                                    : 'Escriba en el campo de búsqueda para filtrar'}
+                                    : "Escriba en el campo de búsqueda para filtrar"}
                                 </p>
                               </div>
                             </div>
                           </TableCell>
                         </TableRow>
                       )}
-                      {comunasVirtualizer.getVirtualItems().map(virtualRow => {
-                        const com = comunasFiltradas[virtualRow.index];
-                        return (
-                          <TableRow
-                            key={com.codigo}
-                            data-index={virtualRow.index}
-                            style={{
-                              position: 'absolute',
-                              top: 0,
-                              left: 0,
-                              width: '100%',
-                              height: '50px',
-                              transform: `translateY(${virtualRow.start}px)`,
-                              display: 'table'
-                            }}
-                            className="hover:bg-muted/50"
-                          >
-                            <TableCell
-                              className="font-medium font-mono text-sm h-[50px]"
-                              style={{ width: '100px', minWidth: '100px' }}
+                      {comunasVirtualizer
+                        .getVirtualItems()
+                        .map((virtualRow) => {
+                          const com = comunasFiltradas[virtualRow.index];
+                          return (
+                            <TableRow
+                              key={com.codigo}
+                              data-index={virtualRow.index}
+                              style={{
+                                position: "absolute",
+                                top: 0,
+                                left: 0,
+                                width: "100%",
+                                height: "50px",
+                                transform: `translateY(${virtualRow.start}px)`,
+                                display: "table",
+                              }}
+                              className="hover:bg-muted/50"
                             >
-                              {com.codigo}
-                            </TableCell>
-                            <TableCell
-                              className="font-medium h-[50px]"
-                              style={{ width: 'auto', minWidth: '200px' }}
-                            >
-                              {com.nombre}
-                            </TableCell>
-                            <TableCell
-                              className="text-center h-[50px]"
-                              style={{ width: '120px', minWidth: '120px' }}
-                            >
-                              <Button
-                                size="sm"
-                                onClick={() => handleSelectComuna(com.codigo)}
-                                className="bg-primary hover:bg-primary/90"
+                              <TableCell
+                                className="font-medium font-mono text-sm h-[50px]"
+                                style={{ width: "100px", minWidth: "100px" }}
                               >
-                                Seleccionar
-                              </Button>
-                            </TableCell>
-                          </TableRow>
-                        );
-                      })}
+                                {com.codigo}
+                              </TableCell>
+                              <TableCell
+                                className="font-medium h-[50px]"
+                                style={{ width: "auto", minWidth: "200px" }}
+                              >
+                                {com.nombre}
+                              </TableCell>
+                              <TableCell
+                                className="text-center h-[50px]"
+                                style={{ width: "120px", minWidth: "120px" }}
+                              >
+                                <Button
+                                  size="sm"
+                                  onClick={() => handleSelectComuna(com.codigo)}
+                                  className="bg-primary hover:bg-primary/90"
+                                >
+                                  Seleccionar
+                                </Button>
+                              </TableCell>
+                            </TableRow>
+                          );
+                        })}
                     </TableBody>
                   </Table>
                 </div>

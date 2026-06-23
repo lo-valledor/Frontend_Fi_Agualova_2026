@@ -1,4 +1,4 @@
-import { zodResolver } from '@hookform/resolvers/zod';
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   ArrowLeft,
   Building2,
@@ -8,64 +8,64 @@ import {
   MapPin,
   Phone,
   Save,
-  User
-} from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
-import { useNavigate, useParams } from 'react-router';
-import Select from 'react-select';
-import { toast } from 'sonner';
-import { z } from 'zod';
+  User,
+} from "lucide-react";
+import { useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { useNavigate, useParams } from "react-router";
+import Select from "react-select";
+import { toast } from "sonner";
+import { z } from "zod";
 
-import { ModernHeader } from '~/components/shared/modern-header';
-import { getReactSelectStyles } from '~/components/shared/react-select-styles';
-import { useTheme } from '~/components/theme-provider';
-import { Button } from '~/components/ui/button';
-import { Checkbox } from '~/components/ui/checkbox';
+import { ModernHeader } from "~/components/shared/modern-header";
+import { getReactSelectStyles } from "~/components/shared/react-select-styles";
+import { useTheme } from "~/components/theme-provider";
+import { Button } from "~/components/ui/button";
+import { Checkbox } from "~/components/ui/checkbox";
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage
-} from '~/components/ui/form';
-import { Input } from '~/components/ui/input';
-import api from '~/lib/api';
-import { administracionService } from '~/services/administracionService';
+  FormMessage,
+} from "~/components/ui/form";
+import { Input } from "~/components/ui/input";
+import api from "~/lib/api";
+import { administracionService } from "~/services/administracionService";
 import type {
   GetClientesByRut,
-  GetComunas,
-  GetGiros
-} from '~/types/administracion';
-import { formatRut, isValidRutFormat } from '~/utils/rut-utils';
+  NombreComuna,
+  NombreGiro,
+} from "~/types/administracion";
+import { formatRut, isValidRutFormat } from "~/utils/rut-utils";
 
 const createClienteSchema = (existingClients: string[], currentRut?: string) =>
   z.object({
     rut: z
       .string()
-      .min(1, 'El RUT es requerido')
+      .min(1, "El RUT es requerido")
       .refine(isValidRutFormat, {
-        message: 'El RUT debe tener el formato 12345678-9'
+        message: "El RUT debe tener el formato 12345678-9",
       })
       .refine(
-        rut => {
+        (rut) => {
           if (currentRut && rut === currentRut) return true;
           return !existingClients.includes(rut);
         },
         {
-          message: 'Este RUT ya está registrado en el sistema'
-        }
+          message: "Este RUT ya está registrado en el sistema",
+        },
       ),
-    nombre: z.string().min(1, 'El nombre es requerido'),
+    nombre: z.string().min(1, "El nombre es requerido"),
     apellido: z.string(),
     esEmpresa: z.boolean(),
-    direccion: z.string().min(1, 'La dirección es requerida'),
-    codComuna: z.string().min(1, 'La comuna es requerida'),
-    contacto: z.string().min(1, 'El contacto es requerido'),
+    direccion: z.string().min(1, "La dirección es requerida"),
+    codComuna: z.string().min(1, "La comuna es requerida"),
+    contacto: z.string().min(1, "El contacto es requerido"),
     telefono: z.string().optional(),
     correo: z.string().optional(),
-    codigoGiro: z.string().min(1, 'El código de giro es requerido')
+    codigoGiro: z.string().min(1, "El código de giro es requerido"),
   });
 
 type ClienteFormData = z.infer<ReturnType<typeof createClienteSchema>>;
@@ -76,31 +76,31 @@ export default function EditarClienteComponent() {
   const { theme } = useTheme();
 
   const [cliente, setCliente] = useState<GetClientesByRut | null>(null);
-  const [giros, setGiros] = useState<GetGiros[]>([]);
-  const [comunas, setComunas] = useState<GetComunas[]>([]);
+  const [giros, setGiros] = useState<NombreGiro[]>([]);
+  const [comunas, setComunas] = useState<NombreComuna[]>([]);
   const [existingClients, setExistingClients] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [rutValidationStatus, setRutValidationStatus] = useState<
-    'idle' | 'checking' | 'valid' | 'invalid'
-  >('idle');
+    "idle" | "checking" | "valid" | "invalid"
+  >("idle");
 
   const clienteSchema = createClienteSchema(existingClients, cliente?.rut);
 
   const form = useForm<ClienteFormData>({
     resolver: zodResolver(clienteSchema),
     defaultValues: {
-      rut: '',
-      nombre: '',
-      apellido: '',
+      rut: "",
+      nombre: "",
+      apellido: "",
       esEmpresa: false,
-      direccion: '',
-      codComuna: '',
-      contacto: '',
-      telefono: '',
-      correo: '',
-      codigoGiro: ''
-    }
+      direccion: "",
+      codComuna: "",
+      contacto: "",
+      telefono: "",
+      correo: "",
+      codigoGiro: "",
+    },
   });
 
   const selectStyles = getReactSelectStyles(theme);
@@ -108,15 +108,15 @@ export default function EditarClienteComponent() {
   useEffect(() => {
     const loadData = async () => {
       if (!rut) {
-        toast.error('RUT no proporcionado');
-        navigate('/dashboard/administracion/clientes');
+        toast.error("RUT no proporcionado");
+        navigate("/dashboard/administracion/clientes");
         return;
       }
 
       try {
         const [clientesDataResult, clienteResult] = await Promise.all([
           administracionService.getClientesData(),
-          administracionService.getClienteByRut(rut)
+          administracionService.getClienteByRut(rut),
         ]);
 
         if (clientesDataResult.error) {
@@ -127,34 +127,36 @@ export default function EditarClienteComponent() {
         if (clientesDataResult.data) {
           setGiros(clientesDataResult.data.giros);
           setComunas(clientesDataResult.data.comunas);
-          setExistingClients(clientesDataResult.data.clientes.map(c => c.rut));
+          setExistingClients(
+            clientesDataResult.data.clientes.map((c) => c.rut),
+          );
         }
 
         if (clienteResult.error) {
           toast.error(clienteResult.error);
-          navigate('/dashboard/administracion/clientes');
+          navigate("/dashboard/administracion/clientes");
           return;
         }
 
         if (clienteResult.data) {
-          const formattedRut = formatRut(clienteResult.data.rut || '');
+          const formattedRut = formatRut(clienteResult.data.rut || "");
           setCliente({ ...clienteResult.data, rut: formattedRut });
           form.reset({
             rut: formattedRut,
-            nombre: clienteResult.data.nombre || '',
-            apellido: clienteResult.data.apellido || '',
+            nombre: clienteResult.data.nombre || "",
+            apellido: clienteResult.data.apellido || "",
             esEmpresa: clienteResult.data.esEmpresa || false,
-            direccion: clienteResult.data.direccion || '',
-            codComuna: clienteResult.data.codComuna || '',
-            contacto: clienteResult.data.contacto || '',
-            telefono: clienteResult.data.telefono || '',
-            correo: clienteResult.data.correo || '',
-            codigoGiro: clienteResult.data.codigoGiro || ''
+            direccion: clienteResult.data.direccion || "",
+            codComuna: clienteResult.data.codComuna || "",
+            contacto: clienteResult.data.contacto || "",
+            telefono: clienteResult.data.telefono || "",
+            correo: clienteResult.data.correo || "",
+            codigoGiro: clienteResult.data.codigoGiro || "",
           });
         }
       } catch (error) {
-        toast.error('Error al cargar datos del cliente', error as any);
-        navigate('/dashboard/administracion/clientes');
+        toast.error("Error al cargar datos del cliente", error as any);
+        navigate("/dashboard/administracion/clientes");
       } finally {
         setIsLoading(false);
       }
@@ -165,34 +167,34 @@ export default function EditarClienteComponent() {
 
   const validateRut = (rutValue: string) => {
     if (!rutValue) {
-      setRutValidationStatus('idle');
+      setRutValidationStatus("idle");
       return;
     }
 
     // Validar formato
     if (!isValidRutFormat(rutValue)) {
-      setRutValidationStatus('invalid');
+      setRutValidationStatus("invalid");
       return;
     }
 
     // Si es el RUT actual del cliente, es válido
     if (cliente?.rut && rutValue === cliente.rut) {
-      setRutValidationStatus('valid');
+      setRutValidationStatus("valid");
       return;
     }
 
     // Validar si ya existe
     if (existingClients.includes(rutValue)) {
-      setRutValidationStatus('invalid');
+      setRutValidationStatus("invalid");
     } else {
-      setRutValidationStatus('valid');
+      setRutValidationStatus("valid");
     }
   };
 
   useEffect(() => {
-    const rutValue = form.watch('rut');
+    const rutValue = form.watch("rut");
     validateRut(rutValue);
-  }, [form.watch('rut'), existingClients, cliente?.rut]);
+  }, [form.watch("rut"), existingClients, cliente?.rut]);
 
   const onSubmit = async (data: ClienteFormData) => {
     setIsSubmitting(true);
@@ -200,17 +202,17 @@ export default function EditarClienteComponent() {
       // Asegurar que el RUT esté correctamente formateado antes de enviar
       const formattedData = {
         ...data,
-        rut: formatRut(data.rut)
+        rut: formatRut(data.rut),
       };
 
-      await api.put('/cliente/modificar', {
+      await api.put("/cliente/modificar", {
         ...formattedData,
-        id: cliente?.rut
+        id: cliente?.rut,
       });
-      toast.success('Cliente actualizado exitosamente');
-      navigate('/dashboard/administracion/clientes');
+      toast.success("Cliente actualizado exitosamente");
+      navigate("/dashboard/administracion/clientes");
     } catch (error) {
-      toast.error('Error al actualizar el cliente', error as any);
+      toast.error("Error al actualizar el cliente", error as any);
     } finally {
       setIsSubmitting(false);
     }
@@ -233,7 +235,7 @@ export default function EditarClienteComponent() {
         <div className="text-center">
           <p className="text-muted-foreground">Cliente no encontrado</p>
           <Button
-            onClick={() => navigate('/dashboard/administracion/clientes')}
+            onClick={() => navigate("/dashboard/administracion/clientes")}
             className="mt-4"
           >
             Volver
@@ -254,7 +256,7 @@ export default function EditarClienteComponent() {
               <>
                 <Button
                   variant="ghost"
-                  onClick={() => navigate('/dashboard/administracion/clientes')}
+                  onClick={() => navigate("/dashboard/administracion/clientes")}
                   disabled={isSubmitting}
                   className="gap-2"
                 >
@@ -263,7 +265,7 @@ export default function EditarClienteComponent() {
                 </Button>
                 <Button
                   variant="outline"
-                  onClick={() => navigate('/dashboard/administracion/clientes')}
+                  onClick={() => navigate("/dashboard/administracion/clientes")}
                   disabled={isSubmitting}
                 >
                   Cancelar
@@ -275,7 +277,7 @@ export default function EditarClienteComponent() {
                   disabled={isSubmitting}
                 >
                   <Save className="h-4 w-4" />
-                  {isSubmitting ? 'Actualizando...' : 'Actualizar Cliente'}
+                  {isSubmitting ? "Actualizando..." : "Actualizar Cliente"}
                 </Button>
               </>
             }
@@ -302,13 +304,13 @@ export default function EditarClienteComponent() {
                     name="rut"
                     render={({ field }) => {
                       const getRutInputClassName = () => {
-                        if (rutValidationStatus === 'valid') {
-                          return 'border-green-500 focus:border-green-500';
+                        if (rutValidationStatus === "valid") {
+                          return "border-green-500 focus:border-green-500";
                         }
-                        if (rutValidationStatus === 'invalid') {
-                          return 'border-red-500 focus:border-red-500';
+                        if (rutValidationStatus === "invalid") {
+                          return "border-red-500 focus:border-red-500";
                         }
-                        return '';
+                        return "";
                       };
 
                       return (
@@ -322,13 +324,13 @@ export default function EditarClienteComponent() {
                               <Input
                                 placeholder="12345678-9"
                                 {...field}
-                                onBlur={e => {
+                                onBlur={(e) => {
                                   const formatted = formatRut(e.target.value);
                                   field.onChange(formatted);
                                 }}
                                 className={`h-11 pr-10 ${getRutInputClassName()}`}
                               />
-                              {rutValidationStatus === 'valid' && (
+                              {rutValidationStatus === "valid" && (
                                 <div className="absolute inset-y-0 right-0 flex items-center pr-3">
                                   <CheckCircle2 className="h-5 w-5 text-green-500" />
                                 </div>
@@ -336,11 +338,11 @@ export default function EditarClienteComponent() {
                             </div>
                           </FormControl>
                           <FormMessage />
-                          {rutValidationStatus === 'invalid' && (
+                          {rutValidationStatus === "invalid" && (
                             <p className="text-sm text-red-600 dark:text-red-400 mt-1">
-                              {isValidRutFormat(form.watch('rut'))
-                                ? 'Este RUT ya está registrado en el sistema'
-                                : 'El RUT debe tener el formato 12345678-9'}
+                              {isValidRutFormat(form.watch("rut"))
+                                ? "Este RUT ya está registrado en el sistema"
+                                : "El RUT debe tener el formato 12345678-9"}
                             </p>
                           )}
                         </FormItem>
@@ -376,16 +378,16 @@ export default function EditarClienteComponent() {
                       <FormItem>
                         <FormLabel className="flex items-center gap-2">
                           <User className="h-4 w-4" />
-                          {form.watch('esEmpresa') ? 'Razón Social' : 'Nombre'}
+                          {form.watch("esEmpresa") ? "Razón Social" : "Nombre"}
                         </FormLabel>
                         <FormControl>
                           <Input
                             {...field}
                             className="h-11"
                             placeholder={
-                              form.watch('esEmpresa')
-                                ? 'Nombre de la empresa'
-                                : 'Nombre completo'
+                              form.watch("esEmpresa")
+                                ? "Nombre de la empresa"
+                                : "Nombre completo"
                             }
                           />
                         </FormControl>
@@ -394,7 +396,7 @@ export default function EditarClienteComponent() {
                     )}
                   />
 
-                  {!form.watch('esEmpresa') && (
+                  {!form.watch("esEmpresa") && (
                     <FormField
                       control={form.control}
                       name="apellido"
@@ -454,7 +456,7 @@ export default function EditarClienteComponent() {
                     name="codComuna"
                     render={({ field }) => {
                       const comunaActual = comunas.find(
-                        c => c.codigo === field.value
+                        (c) => c.codigo === field.value,
                       );
 
                       return (
@@ -466,20 +468,20 @@ export default function EditarClienteComponent() {
                           <FormControl>
                             <Select
                               instanceId="comuna-select"
-                              options={comunas.map(comuna => ({
+                              options={comunas.map((comuna) => ({
                                 value: comuna.codigo,
-                                label: `${comuna.nombre} (${comuna.codigo})`
+                                label: `${comuna.nombre} (${comuna.codigo})`,
                               }))}
                               value={
                                 comunaActual
                                   ? {
                                       value: comunaActual.codigo,
-                                      label: `${comunaActual.nombre} (${comunaActual.codigo})`
+                                      label: `${comunaActual.nombre} (${comunaActual.codigo})`,
                                     }
                                   : null
                               }
                               onChange={(option: any) =>
-                                field.onChange(option ? option.value : '')
+                                field.onChange(option ? option.value : "")
                               }
                               placeholder="Seleccione la comuna"
                               isClearable
@@ -582,7 +584,7 @@ export default function EditarClienteComponent() {
                     name="codigoGiro"
                     render={({ field }) => {
                       const giroActual = giros.find(
-                        g => g.codigo === field.value
+                        (g) => g.codigo === field.value,
                       );
 
                       return (
@@ -594,20 +596,20 @@ export default function EditarClienteComponent() {
                           <FormControl>
                             <Select
                               instanceId="giro-select"
-                              options={giros.map(giro => ({
+                              options={giros.map((giro) => ({
                                 value: giro.codigo,
-                                label: `${giro.codigo} - ${giro.actividadEconomica}`
+                                label: `${giro.codigo} - ${giro.actividadEconomica}`,
                               }))}
                               value={
                                 giroActual
                                   ? {
                                       value: giroActual.codigo,
-                                      label: `${giroActual.codigo} - ${giroActual.actividadEconomica}`
+                                      label: `${giroActual.codigo} - ${giroActual.actividadEconomica}`,
                                     }
                                   : null
                               }
                               onChange={(option: any) =>
-                                field.onChange(option ? option.value : '')
+                                field.onChange(option ? option.value : "")
                               }
                               placeholder="Seleccione el giro"
                               isClearable

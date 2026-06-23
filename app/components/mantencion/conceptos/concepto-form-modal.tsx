@@ -1,21 +1,21 @@
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Loader2 } from 'lucide-react';
-import React from 'react';
-import { Controller, useForm } from 'react-hook-form';
-import Select from 'react-select';
-import { z } from 'zod';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2 } from "lucide-react";
+import React from "react";
+import { Controller, useForm } from "react-hook-form";
+import Select from "react-select";
+import { z } from "zod";
 
-import { getReactSelectStyles } from '~/components/shared/react-select-styles';
-import { useTheme } from '~/components/theme-provider';
-import { Button } from '~/components/ui/button';
+import { getReactSelectStyles } from "~/components/shared/react-select-styles";
+import { useTheme } from "~/components/theme-provider";
+import { Button } from "~/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle
-} from '~/components/ui/dialog';
+  DialogTitle,
+} from "~/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -23,27 +23,27 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage
-} from '~/components/ui/form';
-import { Input } from '~/components/ui/input';
-import { Textarea } from '~/components/ui/textarea';
-import type { Concepto, ConceptoAsociables } from '~/types/mantencion';
+  FormMessage,
+} from "~/components/ui/form";
+import { Input } from "~/components/ui/input";
+import { Textarea } from "~/components/ui/textarea";
+import type { Concepto, ConceptoAsociables } from "~/types/mantencion";
 
 const conceptoSchema = z.object({
   denominacion: z
     .string()
-    .min(1, 'La denominación es requerida')
-    .max(100, 'La denominación no debe exceder 100 caracteres'),
+    .min(1, "La denominación es requerida")
+    .max(100, "La denominación no debe exceder 100 caracteres"),
   descripcion: z
     .string()
-    .min(1, 'La descripción es requerida')
-    .max(200, 'La descripción no debe exceder 200 caracteres'),
+    .min(1, "La descripción es requerida")
+    .max(200, "La descripción no debe exceder 200 caracteres"),
   unidad: z
     .string()
-    .min(1, 'La unidad es requerida')
-    .max(20, 'La unidad no debe exceder 20 caracteres'),
-  fijoVariable: z.string().min(1, 'El tipo Fijo/Variable es requerido'),
-  conceptoAsociado: z.string().optional()
+    .min(1, "La unidad es requerida")
+    .max(20, "La unidad no debe exceder 20 caracteres"),
+  fijoVariable: z.string().min(1, "El tipo Fijo/Variable es requerido"),
+  conceptoAsociado: z.string().optional(),
 });
 
 type ConceptoFormData = z.infer<typeof conceptoSchema>;
@@ -53,8 +53,8 @@ interface ConceptoFormModalProps {
   onClose: () => void;
   onSuccess: () => void;
   concepto?: Concepto;
-  mode: 'add' | 'edit';
-  comboAsociadoConceptos: ConceptoAsociables[];
+  mode: "add" | "edit";
+  conceptoAsociables: ConceptoAsociables[];
 }
 
 export default function ConceptoFormModal({
@@ -63,17 +63,17 @@ export default function ConceptoFormModal({
   onSuccess,
   concepto,
   mode,
-  comboAsociadoConceptos
+  conceptoAsociables,
 }: ConceptoFormModalProps) {
   const form = useForm<ConceptoFormData>({
     resolver: zodResolver(conceptoSchema),
     defaultValues: {
-      denominacion: concepto?.denominacion || '',
-      descripcion: concepto?.descripcion || '',
-      unidad: concepto?.unidad || '',
-      fijoVariable: concepto?.fijoVariable || '',
-      conceptoAsociado: concepto?.conceptoAsociado || undefined
-    }
+      denominacion: concepto?.denominacion || "",
+      descripcion: concepto?.descripcion || "",
+      unidad: concepto?.unidad || "",
+      fijoVariable: concepto?.fijoVariable || "",
+      conceptoAsociado: concepto?.conceptoAsociado || undefined,
+    },
   });
   const { theme } = useTheme();
 
@@ -88,8 +88,8 @@ export default function ConceptoFormModal({
       let conceptoAsociadoFinal = concepto?.conceptoAsociado;
 
       if (!conceptoAsociadoFinal && concepto?.descripcion) {
-        const asociadoEncontrado = comboAsociadoConceptos.find(
-          a => a.descripcion === concepto.descripcion
+        const asociadoEncontrado = conceptoAsociables.find(
+          (a) => a.descripcion === concepto.descripcion,
         );
         if (asociadoEncontrado) {
           conceptoAsociadoFinal = asociadoEncontrado.id.toString();
@@ -97,21 +97,21 @@ export default function ConceptoFormModal({
       }
 
       form.reset({
-        denominacion: concepto?.denominacion || '',
-        descripcion: concepto?.descripcion || '',
-        unidad: concepto?.unidad || '',
-        fijoVariable: concepto?.fijoVariable || '',
-        conceptoAsociado: conceptoAsociadoFinal ?? undefined
+        denominacion: concepto?.denominacion || "",
+        descripcion: concepto?.descripcion || "",
+        unidad: concepto?.unidad || "",
+        fijoVariable: concepto?.fijoVariable || "",
+        conceptoAsociado: conceptoAsociadoFinal ?? undefined,
       });
     }
-  }, [isOpen, concepto, comboAsociadoConceptos, form]);
+  }, [isOpen, concepto, conceptoAsociables, form]);
 
   const onSubmit = async (data: ConceptoFormData) => {
     try {
-      const { default: api } = await import('~/lib/api');
+      const { default: api } = await import("~/lib/api");
 
-      if (mode === 'add') {
-        await api.post('/conceptos/crear', data);
+      if (mode === "add") {
+        await api.post("/conceptos/crear", data);
       } else {
         await api.put(`/conceptos/editar`, { ...data, id: concepto?.id });
       }
@@ -119,7 +119,7 @@ export default function ConceptoFormModal({
       onSuccess();
       onClose();
     } catch (error) {
-      console.error('Error al guardar el concepto:', error);
+      console.error("Error al guardar el concepto:", error);
     }
   };
 
@@ -128,12 +128,12 @@ export default function ConceptoFormModal({
       <DialogContent className="sm:max-w-[550px]">
         <DialogHeader>
           <DialogTitle>
-            {mode === 'add' ? 'Agregar Nuevo Concepto' : 'Editar Concepto'}
+            {mode === "add" ? "Agregar Nuevo Concepto" : "Editar Concepto"}
           </DialogTitle>
           <DialogDescription>
-            {mode === 'add'
-              ? 'Complete los datos para crear un nuevo concepto'
-              : 'Modifique los datos del concepto seleccionado'}
+            {mode === "add"
+              ? "Complete los datos para crear un nuevo concepto"
+              : "Modifique los datos del concepto seleccionado"}
           </DialogDescription>
         </DialogHeader>
 
@@ -205,18 +205,18 @@ export default function ConceptoFormModal({
                           ? {
                               value: field.value,
                               label:
-                                field.value === 'FIJO' || field.value === 'F'
-                                  ? 'Fijo'
-                                  : 'Variable'
+                                field.value === "FIJO" || field.value === "F"
+                                  ? "Fijo"
+                                  : "Variable",
                             }
                           : null
                       }
                       onChange={(selectedOption: any) =>
-                        field.onChange(selectedOption?.value || '')
+                        field.onChange(selectedOption?.value || "")
                       }
                       options={[
-                        { value: 'F', label: 'Fijo' },
-                        { value: 'V', label: 'Variable' }
+                        { value: "F", label: "Fijo" },
+                        { value: "V", label: "Variable" },
                       ]}
                       placeholder="Seleccione el tipo"
                       isClearable
@@ -244,14 +244,14 @@ export default function ConceptoFormModal({
                   control={form.control}
                   render={({ field }) => {
                     // Filtrar el elemento "Seleccione.." (id: 0)
-                    const validAsociados = comboAsociadoConceptos.filter(
-                      a => a.id !== 0
+                    const validAsociados = conceptoAsociables.filter(
+                      (a) => a.id !== 0,
                     );
 
                     const selectedAsociado =
-                      field.value != null && field.value !== '0'
+                      field.value != null && field.value !== "0"
                         ? validAsociados.find(
-                            a => a.id.toString() === field.value
+                            (a) => a.id.toString() === field.value,
                           )
                         : null;
 
@@ -261,7 +261,7 @@ export default function ConceptoFormModal({
                           selectedAsociado
                             ? {
                                 value: selectedAsociado.id,
-                                label: selectedAsociado.descripcion
+                                label: selectedAsociado.descripcion,
                               }
                             : null
                         }
@@ -269,9 +269,9 @@ export default function ConceptoFormModal({
                           const newValue = selectedOption?.value ?? undefined;
                           field.onChange(newValue);
                         }}
-                        options={validAsociados.map(asociado => ({
+                        options={validAsociados.map((asociado) => ({
                           value: asociado.id,
-                          label: asociado.descripcion
+                          label: asociado.descripcion,
                         }))}
                         placeholder="Seleccione el asociado"
                         isClearable
@@ -303,7 +303,7 @@ export default function ConceptoFormModal({
               </Button>
               <Button type="submit" disabled={isLoading} variant="default">
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {mode === 'add' ? 'Crear Concepto' : 'Actualizar Concepto'}
+                {mode === "add" ? "Crear Concepto" : "Actualizar Concepto"}
               </Button>
             </DialogFooter>
           </form>

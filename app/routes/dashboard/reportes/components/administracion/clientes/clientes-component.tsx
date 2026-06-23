@@ -26,8 +26,8 @@ import type {
   ClienteModalState,
   GetClientes,
   GetClientesByRut,
-  GetComunas,
-  GetGiros,
+  NombreComuna,
+  NombreGiro,
 } from "~/types/administracion";
 import {
   CLIENTES_CREAR_ROUTE,
@@ -46,8 +46,8 @@ import { FilterSummary } from "./filter-summary";
 
 interface ClientesComponentProps {
   readonly clientes: GetClientes[];
-  readonly giros: GetGiros[];
-  readonly comunas: GetComunas[];
+  readonly giros: NombreGiro[];
+  readonly comunas: NombreComuna[];
 }
 
 export default function ClientesComponent({

@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "baseUrl": ".",
+    "paths": {"~/*": ["./app/*"]},
+    "strict": true,
+    "noEmit": true
+  },
+  "files": [".codex-import-test.ts"]
+}

@@ -14,7 +14,7 @@ import {
   CardHeader,
   CardTitle
 } from '~/components/ui/card';
-import type { Tarifas } from '~/types/mantencion';
+import type { Tarifa } from '~/types/mantencion';
 
 import { createColumns } from './columns';
 import TarifaFormModal from './tarifa-form-modal';
@@ -22,14 +22,14 @@ import TarifaFormModal from './tarifa-form-modal';
 const mechanicalEase = [0.25, 0.1, 0.25, 1] as const;
 
 interface TarifasComponentProps {
-  tarifas: Tarifas[];
+  tarifas: Tarifa[];
 }
 
 export default function TarifasComponent({
   tarifas
 }: Readonly<TarifasComponentProps>) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedTarifa, setSelectedTarifa] = useState<Tarifas | undefined>(
+  const [selectedTarifa, setSelectedTarifa] = useState<Tarifa | undefined>(
     undefined
   );
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
@@ -42,13 +42,13 @@ export default function TarifasComponent({
     setIsModalOpen(true);
   };
 
-  const handleEdit = (tarifa: Tarifas) => {
+  const handleEdit = (tarifa: Tarifa) => {
     setSelectedTarifa(tarifa);
     setModalMode('edit');
     setIsModalOpen(true);
   };
 
-  const handleDelete = async (tarifa: Tarifas) => {
+  const handleDelete = async (tarifa: Tarifa) => {
     if (
       globalThis.confirm(
         `¿Está seguro de que desea eliminar la tarifa "${tarifa.nombre}"?`

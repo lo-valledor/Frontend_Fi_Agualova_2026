@@ -1,15 +1,11 @@
-import api from '~/lib/api';
-import type { ServiceResponse } from '~/services/core/api-response';
-import { BaseApiService } from '~/services/core/base-service';
-import type {
-  Claves,
-  ComboAsociadoConceptos,
-  Conceptos
-} from '~/types/mantencion';
+import api from "~/lib/api";
+import type { ServiceResponse } from "~/services/core/api-response";
+import { BaseApiService } from "~/services/core/base-service";
+import type { Clave, Concepto, ConceptoAsociables } from "~/types/mantencion";
 
 export interface ConceptosData {
-  conceptos: Conceptos[];
-  comboAsociadoConceptos: ComboAsociadoConceptos[];
+  conceptos: Concepto[];
+  comboAsociadoConceptos: ConceptoAsociables[];
 }
 
 export class ConceptsService extends BaseApiService {
@@ -17,43 +13,43 @@ export class ConceptsService extends BaseApiService {
     super(httpClient);
   }
 
-  async getClaves(): Promise<ServiceResponse<Claves[]>> {
+  async getClaves(): Promise<ServiceResponse<Clave[]>> {
     return this.executeDataOperation(async () => {
-      const response = await this.httpClient.get('/buscarClaves');
-      return this.processResponseArray<Claves>(response);
-    }, 'Error getting keys');
+      const response = await this.httpClient.get("/claves/buscar");
+      return this.processResponseArray<Clave>(response);
+    }, "Error getting keys");
   }
 
   async getConceptosData(): Promise<ServiceResponse<ConceptosData>> {
     return this.executeDataOperation(async () => {
       const [resConceptos, resComboAsociado] =
         await this.executeParallelOperations([
-          () => this.httpClient.get('/buscarConceptos'),
-          () => this.httpClient.get('/combo-asociado-conoceptos')
+          () => this.httpClient.get("/conceptos/buscar"),
+          () => this.httpClient.get("/conceptos/asociables"),
         ]);
 
       return {
-        conceptos: this.processResponseArray<Conceptos>(resConceptos),
+        conceptos: this.processResponseArray<Concepto>(resConceptos),
         comboAsociadoConceptos:
-          this.processResponseArray<ComboAsociadoConceptos>(resComboAsociado)
+          this.processResponseArray<ConceptoAsociables>(resComboAsociado),
       };
-    }, 'Error getting concepts data');
+    }, "Error getting concepts data");
   }
 
-  async getConceptos(): Promise<ServiceResponse<Conceptos[]>> {
+  async getConceptos(): Promise<ServiceResponse<Concepto[]>> {
     return this.executeDataOperation(async () => {
-      const response = await this.httpClient.get('/buscarConceptos');
-      return this.processResponseArray<Conceptos>(response);
-    }, 'Error getting concepts');
+      const response = await this.httpClient.get("/conceptos/buscar");
+      return this.processResponseArray<Concepto>(response);
+    }, "Error getting concepts");
   }
 
   async getComboAsociadoConceptos(): Promise<
-    ServiceResponse<ComboAsociadoConceptos[]>
+    ServiceResponse<ConceptoAsociables[]>
   > {
     return this.executeDataOperation(async () => {
-      const response = await this.httpClient.get('/combo-asociado-conoceptos');
-      return this.processResponseArray<ComboAsociadoConceptos>(response);
-    }, 'Error getting associated concepts');
+      const response = await this.httpClient.get("/conceptos/asociables");
+      return this.processResponseArray<ConceptoAsociables>(response);
+    }, "Error getting associated concepts");
   }
 }
 

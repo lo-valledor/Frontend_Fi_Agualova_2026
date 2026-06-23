@@ -1,11 +1,7 @@
-import api from '~/lib/api';
-import type { ServiceResponse } from '~/services/core/api-response';
-import { BaseApiService } from '~/services/core/base-service';
-import type {
-  CreateNichoRequest,
-  Nicho,
-  UpdateNichoRequest
-} from '~/types/mantencion';
+import api from "~/lib/api";
+import type { ServiceResponse } from "~/services/core/api-response";
+import { BaseApiService } from "~/services/core/base-service";
+import type { Nicho, NichoFormValues } from "~/types/mantencion";
 
 export class NichosService extends BaseApiService {
   constructor(httpClient: any = api) {
@@ -14,42 +10,40 @@ export class NichosService extends BaseApiService {
 
   async getNichos(): Promise<ServiceResponse<Nicho[]>> {
     return this.executeDataOperation(async () => {
-      const response = await this.httpClient.get('/buscarNichoM');
+      const response = await this.httpClient.get("/buscarNichoM");
       return this.processResponseArray<Nicho>(response);
-    }, 'Error getting nichos');
+    }, "Error getting nichos");
   }
 
-  async createNicho(
-    nicho: CreateNichoRequest
-  ): Promise<ServiceResponse<Nicho>> {
+  async createNicho(nicho: NichoFormValues): Promise<ServiceResponse<Nicho>> {
     if (!nicho) {
       return this.handleError(
-        new Error('Nicho data is required'),
-        'Nicho data is required'
+        new Error("Nicho data is required"),
+        "Nicho data is required",
       );
     }
 
     return this.executeDataOperation(async () => {
-      const response = await this.httpClient.post('/CrearNichoM', nicho);
+      const response = await this.httpClient.post("/CrearNichoM", nicho);
       return this.processResponseSingle<Nicho>(response);
-    }, 'Error creating nicho') as Promise<ServiceResponse<Nicho>>;
+    }, "Error creating nicho") as Promise<ServiceResponse<Nicho>>;
   }
 
   async updateNicho(
     id: number,
-    nicho: UpdateNichoRequest
+    nicho: NichoFormValues,
   ): Promise<ServiceResponse<Nicho>> {
     if (!id || !nicho) {
       return this.handleError(
-        new Error('Nicho ID and data are required'),
-        'Nicho ID and data are required'
+        new Error("Nicho ID and data are required"),
+        "Nicho ID and data are required",
       );
     }
 
     return this.executeDataOperation(async () => {
       const response = await this.httpClient.patch(`/nichos/${id}`, nicho);
       return this.processResponseSingle<Nicho>(response);
-    }, 'Error updating nicho') as Promise<ServiceResponse<Nicho>>;
+    }, "Error updating nicho") as Promise<ServiceResponse<Nicho>>;
   }
 }
 

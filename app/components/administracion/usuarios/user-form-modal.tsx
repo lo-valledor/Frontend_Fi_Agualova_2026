@@ -271,15 +271,12 @@ export function UserFormModal({
               <span>Credenciales de Acceso</span>
             </div>
             <div className="space-y-2">
-              <Label
-                htmlFor="nombreDeUsuario"
-                className="flex items-center gap-2"
-              >
+              <Label htmlFor="username" className="flex items-center gap-2">
                 <User className="h-3.5 w-3.5 text-muted-foreground" />
                 Nombre de Usuario
               </Label>
               <Input
-                id="nombreDeUsuario"
+                id="username"
                 value={formData.username}
                 onChange={(e) => handleInputChange("username", e.target.value)}
                 placeholder="Ej: jperez"

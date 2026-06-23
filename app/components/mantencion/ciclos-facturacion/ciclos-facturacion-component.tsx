@@ -14,7 +14,7 @@ import {
   CardHeader,
   CardTitle
 } from '~/components/ui/card';
-import type { CiclosFacturacion } from '~/types/mantencion';
+import type { CicloFacturacion } from '~/types/mantencion';
 
 import CiclosFacturacionModalForm from './ciclos-facturacion-modal-form';
 import { columns } from './columns';
@@ -22,14 +22,14 @@ import { columns } from './columns';
 const mechanicalEase = [0.25, 0.1, 0.25, 1] as const;
 
 interface CiclosFacturacionComponentProps {
-  ciclosFacturacion: CiclosFacturacion[];
+  ciclosFacturacion: CicloFacturacion[];
 }
 
 export default function CiclosFacturacionComponent({
   ciclosFacturacion
 }: Readonly<CiclosFacturacionComponentProps>) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedCiclo, setSelectedCiclo] = useState<CiclosFacturacion | null>(
+  const [selectedCiclo, setSelectedCiclo] = useState<CicloFacturacion | null>(
     null
   );
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
@@ -41,13 +41,13 @@ export default function CiclosFacturacionComponent({
     setIsModalOpen(true);
   }, []);
 
-  const handleEditCiclo = useCallback((ciclo: CiclosFacturacion) => {
+  const handleEditCiclo = useCallback((ciclo: CicloFacturacion) => {
     setSelectedCiclo(ciclo);
     setModalMode('edit');
     setIsModalOpen(true);
   }, []);
 
-  const handleDeleteCiclo = useCallback((ciclo: CiclosFacturacion) => {
+  const handleDeleteCiclo = useCallback((ciclo: CicloFacturacion) => {
     setSelectedCiclo(ciclo);
     toast.warning('Ciclo de facturación eliminado exitosamente');
     setIsModalOpen(true);

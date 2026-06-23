@@ -1,25 +1,25 @@
-import axios from 'axios';
+import axios from "axios";
 
 import type {
   ContratoErrorInfo,
   ContratoModalState,
-  GetContratos
-} from '~/types/administracion';
+  ContratosRow,
+} from "~/types/administracion";
 
 export function createInitialContratoModalState(): ContratoModalState {
   return {
     delete: {
-      isOpen: false
+      isOpen: false,
     },
     details: {
-      isOpen: false
-    }
+      isOpen: false,
+    },
   };
 }
 
 export function extractContratoErrorMessage(
   error: unknown,
-  defaultMessage: string = 'Error al procesar el contrato'
+  defaultMessage: string = "Error al procesar el contrato",
 ): ContratoErrorInfo {
   const isNetworkError = axios.isAxiosError(error) && !error.response;
 
@@ -27,20 +27,20 @@ export function extractContratoErrorMessage(
     const responseData = error.response.data as Record<string, any>;
     return {
       message: responseData.message || responseData.error || defaultMessage,
-      isNetworkError: false
+      isNetworkError: false,
     };
   }
 
   if (error instanceof Error) {
     return {
       message: error.message || defaultMessage,
-      isNetworkError
+      isNetworkError,
     };
   }
 
   return {
     message: defaultMessage,
-    isNetworkError
+    isNetworkError,
   };
 }
 
@@ -49,17 +49,15 @@ export function getContratoEditUrl(codigoContrato: string): string {
 }
 
 export function getContratoCreateUrl(): string {
-  return '/dashboard/administracion/contratos/crear';
+  return "/dashboard/administracion/contratos/crear";
 }
 
 export function isValidContratoForOperation(
-  contrato: GetContratos | null | undefined
-): contrato is GetContratos {
-  return (
-    contrato !== null && contrato !== undefined && !!contrato.codigoContrato
-  );
+  contrato: ContratosRow | null | undefined,
+): contrato is ContratosRow {
+  return contrato !== null && contrato !== undefined && !!contrato.id;
 }
 
-export function isContratosListEmpty(contratos: GetContratos[]): boolean {
+export function isContratosListEmpty(contratos: ContratosRow[]): boolean {
   return !Array.isArray(contratos) || contratos.length === 0;
 }

@@ -65,7 +65,7 @@ export function UserRolesModal({
 
       // Obtener roles actuales del usuario
       const userRolesResponse = await rolesPermisosService.getRolesUsuario(
-        String(user.idUsuario),
+        String(user.id),
       );
       if (userRolesResponse.error) {
         throw new Error(userRolesResponse.error);
@@ -121,7 +121,7 @@ export function UserRolesModal({
       // Asignar roles nuevos
       if (rolesToAdd.length > 0) {
         const response = await rolesPermisosService.asignarRolesUsuario(
-          String(user.idUsuario),
+          String(user.id),
           { roles: rolesToAdd },
         );
 
@@ -133,7 +133,7 @@ export function UserRolesModal({
       // Quitar roles removidos
       for (const roleId of rolesToRemove) {
         const response = await rolesPermisosService.quitarRolUsuario(
-          String(user.idUsuario),
+          String(user.id),
           roleId,
         );
 
@@ -199,9 +199,9 @@ export function UserRolesModal({
               <span>
                 Asigna o quita roles para{" "}
                 <span className="font-semibold">
-                  {user.nombres} {user.apellidos}
+                  {user.nombre_Usuario} {user.apellidos_Usuario}
                 </span>{" "}
-                (@{user.nombreDeUsuario})
+                (@{user.userName})
               </span>
             )}
           </DialogDescription>

@@ -14,7 +14,7 @@ import {
   CardHeader,
   CardTitle
 } from '~/components/ui/card';
-import type { TiposContrato } from '~/types/mantencion';
+import type { TipoContrato } from '~/types/mantencion';
 
 import { createColumns } from './columns';
 import TipoContratoFormModal from './tipo-contrato-form-modal';
@@ -22,7 +22,7 @@ import TipoContratoFormModal from './tipo-contrato-form-modal';
 const mechanicalEase = [0.25, 0.1, 0.25, 1] as const;
 
 interface TiposContratosComponentProps {
-  tiposContratos: TiposContrato[];
+  tiposContratos: TipoContrato[];
 }
 
 export default function TiposContratosComponent({
@@ -30,7 +30,7 @@ export default function TiposContratosComponent({
 }: Readonly<TiposContratosComponentProps>) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTipoContrato, setSelectedTipoContrato] = useState<
-    TiposContrato | undefined
+    TipoContrato | undefined
   >(undefined);
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
 
@@ -42,13 +42,13 @@ export default function TiposContratosComponent({
     setIsModalOpen(true);
   };
 
-  const handleEdit = (tipoContrato: TiposContrato) => {
+  const handleEdit = (tipoContrato: TipoContrato) => {
     setSelectedTipoContrato(tipoContrato);
     setModalMode('edit');
     setIsModalOpen(true);
   };
 
-  const handleDelete = async (tipoContrato: TiposContrato) => {
+  const handleDelete = async (tipoContrato: TipoContrato) => {
     if (
       globalThis.confirm(
         `¿Está seguro de que desea eliminar el tipo de contrato "${tipoContrato.nombre}"?`

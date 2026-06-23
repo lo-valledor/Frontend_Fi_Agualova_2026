@@ -1,39 +1,39 @@
-import { LayoutList, Plus } from 'lucide-react';
-import { motion } from 'motion/react';
+import { LayoutList, Plus } from "lucide-react";
+import { motion } from "motion/react";
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState } from "react";
 
-import { useNavigate } from 'react-router';
+import { useNavigate } from "react-router";
 
-import { VirtualDataTable } from '~/components/data-table/virtual-data-table';
-import { ExportButton } from '~/components/shared/export-button';
-import { ModernHeader } from '~/components/shared/modern-header';
-import { Button } from '~/components/ui/button';
+import { VirtualDataTable } from "~/components/data-table/virtual-data-table";
+import { ExportButton } from "~/components/shared/export-button";
+import { ModernHeader } from "~/components/shared/modern-header";
+import { Button } from "~/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle
-} from '~/components/ui/card';
+  CardTitle,
+} from "~/components/ui/card";
 import type {
-  GetComunas,
   GetContratante,
-  GetGiros
-} from '~/types/administracion';
+  NombreComuna,
+  NombreGiro,
+} from "~/types/administracion";
 
-import { columns } from './columns';
+import { columns } from "./columns";
 import {
   type ContratanteFilters,
-  ContratanteFiltersComponent
-} from './contratante-filters';
-import { ContratanteDetailsModal } from './detalles-contratante';
-import { FilterSummary } from './filter-summary';
+  ContratanteFiltersComponent,
+} from "./contratante-filters";
+import { ContratanteDetailsModal } from "./detalles-contratante";
+import { FilterSummary } from "./filter-summary";
 
 interface ContratantesComponentProps {
   contratantes: GetContratante[];
-  comunas: GetComunas[];
-  giros: GetGiros[];
+  comunas: NombreComuna[];
+  giros: NombreGiro[];
 }
 
 interface FilterOptions {
@@ -42,7 +42,7 @@ interface FilterOptions {
 
 export default function ContratantesComponent({
   contratantes,
-  comunas
+  comunas,
 }: Readonly<ContratantesComponentProps>) {
   const [contratantesList] = useState<GetContratante[]>(contratantes);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
@@ -50,11 +50,11 @@ export default function ContratantesComponent({
     useState<GetContratante | null>(null);
   const [detailingContratanteRut] = useState<string | null>(null);
   const [filters, setFilters] = useState<ContratanteFilters>({
-    esEmpresa: 'all',
-    comuna: 'all',
-    tieneContacto: 'all',
-    tieneTelefono: 'all',
-    tieneEmail: 'all'
+    esEmpresa: "all",
+    comuna: "all",
+    tieneContacto: "all",
+    tieneTelefono: "all",
+    tieneEmail: "all",
   });
 
   const router = useNavigate();
@@ -62,21 +62,21 @@ export default function ContratantesComponent({
   // Filter options from data
   const filterOptions = useMemo((): FilterOptions => {
     const comunasNombres = [
-      ...new Set(contratantesList.map(c => c.comuna).filter(Boolean))
+      ...new Set(contratantesList.map((c) => c.comuna).filter(Boolean)),
     ].sort((a, b) => a.localeCompare(b));
 
     return {
-      comunas: comunasNombres
+      comunas: comunasNombres,
     };
   }, [contratantesList]);
 
   // Filtered contratantes
   const filteredContratantes = useMemo(() => {
-    return contratantesList.filter(contratante => {
+    return contratantesList.filter((contratante) => {
       // Filtro por tipo de contratante
       if (
         filters.esEmpresa &&
-        filters.esEmpresa !== 'all' &&
+        filters.esEmpresa !== "all" &&
         contratante.esEmpresa.toString() !== filters.esEmpresa
       ) {
         return false;
@@ -85,7 +85,7 @@ export default function ContratantesComponent({
       // Filtro por comuna
       if (
         filters.comuna &&
-        filters.comuna !== 'all' &&
+        filters.comuna !== "all" &&
         contratante.comuna !== filters.comuna
       ) {
         return false;
@@ -94,9 +94,9 @@ export default function ContratantesComponent({
       // Filtro por contacto
       if (
         filters.tieneContacto &&
-        filters.tieneContacto !== 'all' &&
-        ((filters.tieneContacto === 'true' && !contratante.contacto) ||
-          (filters.tieneContacto === 'false' && contratante.contacto))
+        filters.tieneContacto !== "all" &&
+        ((filters.tieneContacto === "true" && !contratante.contacto) ||
+          (filters.tieneContacto === "false" && contratante.contacto))
       ) {
         return false;
       }
@@ -104,9 +104,9 @@ export default function ContratantesComponent({
       // Filtro por teléfono
       if (
         filters.tieneTelefono &&
-        filters.tieneTelefono !== 'all' &&
-        ((filters.tieneTelefono === 'true' && !contratante.telefono) ||
-          (filters.tieneTelefono === 'false' && contratante.telefono))
+        filters.tieneTelefono !== "all" &&
+        ((filters.tieneTelefono === "true" && !contratante.telefono) ||
+          (filters.tieneTelefono === "false" && contratante.telefono))
       ) {
         return false;
       }
@@ -114,9 +114,9 @@ export default function ContratantesComponent({
       // Filtro por email
       if (
         filters.tieneEmail &&
-        filters.tieneEmail !== 'all' &&
-        ((filters.tieneEmail === 'true' && !contratante.email) ||
-          (filters.tieneEmail === 'false' && contratante.email))
+        filters.tieneEmail !== "all" &&
+        ((filters.tieneEmail === "true" && !contratante.email) ||
+          (filters.tieneEmail === "false" && contratante.email))
       ) {
         return false;
       }
@@ -130,32 +130,32 @@ export default function ContratantesComponent({
     const total = contratantesList.length;
     const filtered = filteredContratantes.length;
     const activeFilters = Object.values(filters).filter(
-      value => value !== '' && value !== 'all'
+      (value) => value !== "" && value !== "all",
     ).length;
 
     return {
       total,
       filtered,
       activeFilters,
-      isFiltered: activeFilters > 0
+      isFiltered: activeFilters > 0,
     };
   }, [contratantesList.length, filteredContratantes.length, filters]);
 
   // Export columns
   const contratanteColumns = [
-    { header: 'RUT', key: 'rut' },
-    { header: 'Nombre', key: 'nombre' },
-    { header: 'Apellido', key: 'apellido' },
-    { header: 'Es Empresa', key: 'esEmpresa' },
-    { header: 'Dirección', key: 'direccion' },
-    { header: 'Comuna', key: 'comuna' },
-    { header: 'Contacto', key: 'contacto' },
-    { header: 'Teléfono', key: 'telefono' },
-    { header: 'Email', key: 'email' }
+    { header: "RUT", key: "rut" },
+    { header: "Nombre", key: "nombre" },
+    { header: "Apellido", key: "apellido" },
+    { header: "Es Empresa", key: "esEmpresa" },
+    { header: "Dirección", key: "direccion" },
+    { header: "Comuna", key: "comuna" },
+    { header: "Contacto", key: "contacto" },
+    { header: "Teléfono", key: "telefono" },
+    { header: "Email", key: "email" },
   ];
 
   const handleAddContratante = () => {
-    router('/dashboard/administracion/contratantes/crear');
+    router("/dashboard/administracion/contratantes/crear");
   };
 
   const handleDetailsContratante = (contratante: GetContratante) => {
@@ -169,11 +169,11 @@ export default function ContratantesComponent({
 
   const handleClearFilters = () => {
     setFilters({
-      esEmpresa: 'all',
-      comuna: 'all',
-      tieneContacto: 'all',
-      tieneTelefono: 'all',
-      tieneEmail: 'all'
+      esEmpresa: "all",
+      comuna: "all",
+      tieneContacto: "all",
+      tieneTelefono: "all",
+      tieneEmail: "all",
     });
   };
 
@@ -239,7 +239,7 @@ export default function ContratantesComponent({
                   </CardTitle>
                   <CardDescription className="text-xs mt-0.5 text-muted-foreground">
                     {filteredContratantes.length} contratante
-                    {filteredContratantes.length !== 1 ? 's' : ''}
+                    {filteredContratantes.length !== 1 ? "s" : ""}
                   </CardDescription>
                 </div>
               </div>
@@ -251,7 +251,7 @@ export default function ContratantesComponent({
                   columns={columns({
                     onDetails: handleDetailsContratante,
                     detailingContratanteRut,
-                    comunas
+                    comunas,
                   })}
                   data={filteredContratantes}
                   searchPlaceholder="Buscar por RUT, nombre o email..."

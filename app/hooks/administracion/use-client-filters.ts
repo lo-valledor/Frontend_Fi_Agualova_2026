@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import type { GetClientes } from '~/types/administracion';
+import type { ClientesRow } from '~/types/administracion';
 import {
   extractUniqueOptions,
   filterByBoolean,
@@ -27,7 +27,7 @@ export interface ClientFilterOptions {
 export type FilterOptions = ClientFilterOptions;
 
 export function useClientFilters(
-  clients: GetClientes[],
+  clients: ClientesRow[],
   filters: ClientFilters
 ) {
   const filterOptions = useMemo((): ClientFilterOptions => {

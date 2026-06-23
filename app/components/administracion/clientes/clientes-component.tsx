@@ -3,8 +3,7 @@ import { motion } from "motion/react";
 import { useCallback, useState } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
-
-import { VirtualDataTable } from "~/components/data-table/virtual-data-table";
+import { DataTable } from "~/components/data-table/data-table";
 import { ExportButton } from "~/components/shared/export-button";
 import { ModernHeader } from "~/components/shared/modern-header";
 import { Button } from "~/components/ui/button";
@@ -22,12 +21,10 @@ import {
 import { useExportClientes } from "~/hooks/administracion/use-export-clientes";
 import { useClientes } from "~/hooks/use-administracion";
 import type {
-  ClienteLoadingState,
-  ClienteModalState,
-  GetClientes,
-  GetClientesByRut,
-  GetComunas,
-  GetGiros,
+  Cliente,
+  ClientesRow,
+  NombreComuna,
+  NombreGiro,
 } from "~/types/administracion";
 import {
   CLIENTES_CREAR_ROUTE,
@@ -38,35 +35,31 @@ import {
   isValidDetailedCliente,
   normalizeClienteDetallado,
 } from "~/utils/administracion";
-
 import { ClientFiltersComponent } from "./client-filters";
 import { columns } from "./columns";
 import { ClienteDetailsModal } from "./detalles-cliente";
 import { FilterSummary } from "./filter-summary";
 
 interface ClientesComponentProps {
-  readonly clientes: GetClientes[];
-  readonly giros: GetGiros[];
-  readonly comunas: GetComunas[];
+  readonly clientes: ClientesRow[];
+  readonly giros: NombreGiro[];
+  readonly comunas: NombreComuna[];
 }
 
 export default function ClientesComponent({
   clientes,
 }: ClientesComponentProps) {
   // Estado de datos
-  const [clients] = useState<GetClientes[]>(clientes);
-  const [detailedCliente, setDetailedCliente] =
-    useState<GetClientesByRut | null>(null);
+  const [clients] = useState<ClientesRow[]>(clientes);
+  const [detailedCliente, setDetailedCliente] = useState<Cliente | null>(null);
 
   // Estado unificado de modales
-  const [modalsState, setModalsState] = useState<ClienteModalState>(
+  const [modalsState, setModalsState] = useState(
     createInitialClienteModalState(),
   );
 
   // Estado de carga
-  const [loadingState, setLoadingState] = useState<ClienteLoadingState>(
-    createInitialLoadingState(),
-  );
+  const [loadingState, setLoadingState] = useState(createInitialLoadingState());
 
   // Estado de filtros
   const [filters, setFilters] = useState<ClientFilters>({
@@ -93,35 +86,29 @@ export default function ClientesComponent({
   }, [navigate]);
 
   const handleEditCliente = useCallback(
-    (cliente: GetClientes) => {
+    (cliente: ClientesRow) => {
       navigate(getClienteEditUrl(cliente.rut));
     },
     [navigate],
   );
 
   const handleDetailsCliente = useCallback(
-    async (cliente: GetClientes) => {
+    async (cliente: ClientesRow) => {
       // Early return: validar cliente
       if (!cliente?.rut) {
         toast.error("Cliente inválido");
         return;
       }
 
-      // Comenzar carga
-      setLoadingState({
-        isLoading: true,
-        rutLoading: cliente.rut,
-      });
+      setLoadingState((prev) => ({ ...prev, isLoading: true }));
 
       try {
         const clienteDetallado = await getClienteByRut(cliente.rut);
-        // Early return: validar respuesta
         if (!isValidDetailedCliente(clienteDetallado)) {
           toast.error("Los detalles del cliente no son válidos");
           return;
         }
 
-        // Normalizar y mostrar
         const clienteNormalizado = normalizeClienteDetallado(clienteDetallado);
         setDetailedCliente(clienteNormalizado);
         setModalsState((prev) => ({
@@ -135,11 +122,7 @@ export default function ClientesComponent({
         );
         toast.error(errorInfo.message);
       } finally {
-        // Finalizar carga
-        setLoadingState({
-          isLoading: false,
-          rutLoading: null,
-        });
+        setLoadingState((prev) => ({ ...prev, isLoading: false }));
       }
     },
     [getClienteByRut],
@@ -226,17 +209,14 @@ export default function ClientesComponent({
             <div className="industrial-divider" />
             <CardContent className="p-4">
               <div className="overflow-x-auto -mx-1">
-                <VirtualDataTable
+                <DataTable
                   columns={columns({
-                    onDetails: handleDetailsCliente,
                     onEdit: handleEditCliente,
+                    onDetails: handleDetailsCliente,
                     editingClienteRut: null,
-                    detailingClienteRut: loadingState.rutLoading,
+                    detailingClienteRut: null,
                   })}
                   data={filteredClients}
-                  searchPlaceholder="Buscar por RUT, nombre o email..."
-                  estimateRowHeight={55}
-                  maxHeight="650px"
                 />
               </div>
             </CardContent>

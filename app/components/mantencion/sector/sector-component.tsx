@@ -14,7 +14,7 @@ import {
   CardHeader,
   CardTitle
 } from '~/components/ui/card';
-import type { Sectores } from '~/types/mantencion';
+import type { Sector } from '~/types/mantencion';
 
 import { columns } from './columns';
 import SectorFormModal from './sector-form-modal';
@@ -22,12 +22,12 @@ import SectorFormModal from './sector-form-modal';
 const mechanicalEase = [0.25, 0.1, 0.25, 1] as const;
 
 interface SectorComponentProps {
-  sectores: Sectores[];
+  sectores: Sector[];
 }
 
 export default function SectorComponent({ sectores }: SectorComponentProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedSector, setSelectedSector] = useState<Sectores | null>(null);
+  const [selectedSector, setSelectedSector] = useState<Sector | null>(null);
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
   const revalidator = useRevalidator();
 
@@ -37,13 +37,13 @@ export default function SectorComponent({ sectores }: SectorComponentProps) {
     setIsModalOpen(true);
   }, []);
 
-  const handleEditSector = useCallback((sector: Sectores) => {
+  const handleEditSector = useCallback((sector: Sector) => {
     setSelectedSector(sector);
     setModalMode('edit');
     setIsModalOpen(true);
   }, []);
 
-  const handleDeleteSector = useCallback((sector: Sectores) => {
+  const handleDeleteSector = useCallback((sector: Sector) => {
     setSelectedSector(sector);
     toast.warning('Sector eliminado exitosamente');
     setIsModalOpen(true);

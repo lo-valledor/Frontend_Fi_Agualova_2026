@@ -248,6 +248,57 @@ export type ContratosRow = {
   estado: string;
 };
 
+export type GetContratoById = {
+  idContrato: string;
+  idTipoContrato: number;
+  idTarifa: number;
+  nombrePropietario: string;
+  rutPropietario: string;
+  nombreCliente: string;
+  rutCliente: string;
+  idLocal: string;
+  lugarEntrega: string;
+  fechaInicio: string;
+  fechaTermino: string;
+  activo: boolean;
+  direccionEnvio: string;
+  comunaEnvio: string;
+  nombreComuna: string;
+  limiteInvierno: number;
+  idCiclo: number;
+  potencia: string;
+  esMadre: boolean;
+  idContratoMadre: string;
+  liberadoCorte: boolean;
+};
+
+export type ContratoProps = {
+  idTipoContrato: number;
+  idTarifa: number;
+  rutPropietario: string;
+  rutCliente: string;
+  idLocal: string;
+  fechaInicio: string;
+  activo: boolean;
+  direccion: string;
+  codigoComuna: string;
+  limiteInvierno: number;
+  idCiclo: number;
+  potencia: string;
+  crearClienteDesdePropietario: boolean;
+  esMadre: boolean;
+  idContratoMadre: string;
+  lugarEntrega: string;
+  liberadoCorte: boolean;
+};
+
+export type ContratoFormValues = ContratoProps & {
+  idContrato: string;
+  fechaTermino: string;
+};
+
+export type GetContratoPorId = GetContratoById;
+
 // Medidores
 export type MedidoresRow = {
   idMedidor: number;
@@ -381,3 +432,43 @@ export type CrearUsuario = {
   email: string;
   rol: string;
 };
+
+export type GetContratante = {
+  rut: string;
+  nombre: string;
+  apellido: string;
+  esEmpresa: boolean;
+  direccion: string;
+  contacto: string;
+  telefono: string;
+  email: string;
+  comuna: string;
+  comunaNombre: string;
+};
+
+export type ContratoErrorInfo = {
+  message: string;
+  isNetworkError: boolean;
+};
+
+export type ContratoModalState = {
+  delete: { isOpen: boolean };
+  details: { isOpen: boolean };
+};
+
+export type UsuarioErrorInfo = {
+  message: string;
+  isNetworkError: boolean;
+};
+
+export type UsuarioModalState = {
+  userForm: {
+    isOpen: boolean;
+    mode: UsuarioModalMode;
+  };
+  deleteDialog: { isOpen: boolean };
+  permissions: { isOpen: boolean };
+  roles: { isOpen: boolean };
+};
+
+export type UsuarioModalMode = "add" | "edit" | "view" | null;

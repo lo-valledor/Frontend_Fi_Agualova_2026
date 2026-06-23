@@ -51,10 +51,10 @@ import { mantencionService } from "~/services/mantencionService";
 import type {
   ContratoFormData,
   GetClienteContrato,
-  GetComunas,
   GetLocal,
   GetMadres,
-  GetPropietario,
+  NombreComuna,
+  PropietariosRow,
 } from "~/types/administracion";
 import type { Tarifas, TiposContrato } from "~/types/mantencion";
 
@@ -65,9 +65,9 @@ export default function CrearContratoComponent({
   madres,
   clientes: _clientes,
 }: {
-  readonly propietarios: GetPropietario[];
+  readonly propietarios: PropietariosRow[];
   readonly locales: GetLocal[];
-  readonly comunas: GetComunas[];
+  readonly comunas: NombreComuna[];
   readonly madres: GetMadres[];
   readonly clientes: GetClienteContrato[];
 }) {

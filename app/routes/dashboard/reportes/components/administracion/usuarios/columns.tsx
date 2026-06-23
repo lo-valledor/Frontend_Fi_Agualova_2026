@@ -1,9 +1,9 @@
-import type { ColumnDef } from '@tanstack/react-table';
-import { Pencil, Shield, Trash2, UserCog } from 'lucide-react';
+import type { ColumnDef } from "@tanstack/react-table";
+import { Pencil, Shield, Trash2, UserCog } from "lucide-react";
 
-import { EstadoBadge } from '~/components/data-table/table-helpers';
-import { Button } from '~/components/ui/button';
-import type { Usuarios } from '~/types/administracion';
+import { EstadoBadge } from "~/components/data-table/table-helpers";
+import { Button } from "~/components/ui/button";
+import type { Usuarios } from "~/types/administracion";
 
 interface TableColumnsProps {
   onEdit: (user: Usuarios) => void;
@@ -16,32 +16,32 @@ export const columns = ({
   onEdit,
   onDelete,
   onViewPermissions,
-  onManageRoles
+  onManageRoles,
 }: TableColumnsProps): ColumnDef<Usuarios>[] => [
   {
-    accessorKey: 'nombres',
-    header: 'Usuario',
+    accessorKey: "nombres",
+    header: "Usuario",
     cell: ({ row }) => {
       const user = row.original;
       return (
         <div className="flex items-center space-x-3">
           <div>
             <div className="font-medium ">
-              {user.nombres} {user.apellidos}
+              {user.nombre_Usuario} {user.apellidos_Usuario}
             </div>
             <div className="text-sm text-muted-foreground">
-              @{user.nombreDeUsuario}
+              @{user.userName}
             </div>
           </div>
         </div>
       );
-    }
+    },
   },
   {
-    accessorKey: 'email',
-    header: 'Email',
+    accessorKey: "email",
+    header: "Email",
     cell: ({ row }) => {
-      const email = row.getValue('email') as string | null;
+      const email = row.getValue("email") as string | null;
       return (
         <div className="text-sm text-gray-600 dark:text-gray-300">
           {email || (
@@ -49,20 +49,20 @@ export const columns = ({
           )}
         </div>
       );
-    }
+    },
   },
   {
-    accessorKey: 'departamento',
-    header: 'Departamento',
+    accessorKey: "departamento",
+    header: "Departamento",
     cell: ({ row }) => {
-      const departamento = row.getValue('departamento') as number;
+      const departamento = row.getValue("departamento") as number;
       const departamentos = {
-        1: 'Gerencia',
-        2: 'Tecnología',
-        3: 'Recaudación',
-        4: 'Seguridad',
-        5: 'RR.HH',
-        6: 'Agualova'
+        1: "Gerencia",
+        2: "Tecnología",
+        3: "Recaudación",
+        4: "Seguridad",
+        5: "RR.HH",
+        6: "Agualova",
       };
       return (
         <div className="text-sm text-gray-600 dark:text-gray-300">
@@ -70,35 +70,35 @@ export const columns = ({
             `Departamento ${departamento}`}
         </div>
       );
-    }
+    },
   },
 
   {
-    accessorKey: 'activo',
-    header: 'Estado',
+    accessorKey: "activo",
+    header: "Estado",
     cell: ({ row }) => {
-      return <EstadoBadge estado={row.getValue('activo')} />;
+      return <EstadoBadge estado={row.getValue("activo")} />;
     },
     enableSorting: true,
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id));
-    }
+    },
   },
   {
-    accessorKey: 'fechaCreacion',
-    header: 'Fecha de Creación',
+    accessorKey: "fechaCreacion",
+    header: "Fecha de Creación",
     cell: ({ row }) => {
-      const fecha = new Date(row.getValue('fechaCreacion'));
+      const fecha = new Date(row.getValue("fechaCreacion"));
       return (
         <div className="text-sm text-gray-600 dark:text-gray-300">
-          {fecha.toLocaleDateString('es-ES')}
+          {fecha.toLocaleDateString("es-ES")}
         </div>
       );
-    }
+    },
   },
   {
-    id: 'actions',
-    header: 'Acciones',
+    id: "actions",
+    header: "Acciones",
     cell: ({ row }) => {
       const user = row.original;
       return (
@@ -141,6 +141,6 @@ export const columns = ({
           </Button>
         </div>
       );
-    }
-  }
+    },
+  },
 ];

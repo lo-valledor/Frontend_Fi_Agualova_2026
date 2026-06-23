@@ -10,14 +10,14 @@ import {
   CardHeader,
   CardTitle
 } from '~/components/ui/card';
-import type { BuscarContratos } from '~/types/reportes';
+import type { BuscarContrato } from '~/types/reportes';
 
 import { columns } from './columns';
 
 const mechanicalEase = [0.25, 0.1, 0.25, 1] as const;
 
 interface ConsultarContratoComponentProps {
-  buscarContratos: BuscarContratos[];
+  buscarContratos: BuscarContrato[];
   error: Error | null;
 }
 

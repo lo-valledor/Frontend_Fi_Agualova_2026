@@ -10,14 +10,14 @@ import {
   Percent,
   Settings,
   TrendingUp,
-  XCircle
-} from 'lucide-react';
-import React, { useEffect, useState } from 'react';
-import { toast } from 'sonner';
+  XCircle,
+} from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { toast } from "sonner";
 
-import { Badge } from '~/components/ui/badge';
-import api from '~/lib/api';
-import type { GetCondicionesContratoPorId } from '~/types/administracion';
+import { Badge } from "~/components/ui/badge";
+import api from "~/lib/api";
+import type { CondicionContrato } from "~/types/administracion";
 
 interface DetallesCondicionesContratoProps {
   condicionId: number;
@@ -27,7 +27,7 @@ const DetailItem = ({
   label,
   value,
   icon: Icon,
-  className = ''
+  className = "",
 }: {
   label: string;
   value: React.ReactNode;
@@ -35,16 +35,16 @@ const DetailItem = ({
   className?: string;
 }) => {
   const renderValue = () => {
-    if (typeof value === 'string' && value) {
+    if (typeof value === "string" && value) {
       return value;
     }
 
-    if (typeof value === 'number') {
+    if (typeof value === "number") {
       return value.toString();
     }
 
-    if (typeof value === 'boolean') {
-      return value ? 'Activo' : 'Inactivo';
+    if (typeof value === "boolean") {
+      return value ? "Activo" : "Inactivo";
     }
 
     return (
@@ -75,7 +75,7 @@ const DetailItem = ({
 
 const SectionTitle = ({
   icon: Icon,
-  title
+  title,
 }: {
   icon: React.ComponentType<{ className?: string }>;
   title: string;
@@ -89,10 +89,9 @@ const SectionTitle = ({
 );
 
 export default function DetallesCondicionesContrato({
-  condicionId
+  condicionId,
 }: Readonly<DetallesCondicionesContratoProps>) {
-  const [condicion, setCondicion] =
-    useState<GetCondicionesContratoPorId | null>(null);
+  const [condicion, setCondicion] = useState<CondicionContrato | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -101,17 +100,17 @@ export default function DetallesCondicionesContrato({
       try {
         setLoading(true);
         const response = await api.get(
-          `condicion-contrato/obtieneDatosEdicion/${condicionId}`
+          `condicion-contrato/obtieneDatosEdicion/${condicionId}`,
         );
-        setCondicion(response.data as GetCondicionesContratoPorId);
+        setCondicion(response.data as CondicionContrato);
         setError(null);
       } catch (err) {
         console.error(
-          'Error al cargar los detalles de la condición de contrato:',
-          err
+          "Error al cargar los detalles de la condición de contrato:",
+          err,
         );
-        setError('Error al cargar los detalles de la condición de contrato');
-        toast.error('Error al cargar los detalles');
+        setError("Error al cargar los detalles de la condición de contrato");
+        toast.error("Error al cargar los detalles");
       } finally {
         setLoading(false);
       }
@@ -143,7 +142,7 @@ export default function DetallesCondicionesContrato({
           </h3>
           <p className="text-muted-foreground mb-4">
             {error ||
-              'No se pudieron cargar los detalles de la condición de contrato'}
+              "No se pudieron cargar los detalles de la condición de contrato"}
           </p>
         </div>
       </div>
@@ -166,10 +165,10 @@ export default function DetallesCondicionesContrato({
               </h2>
               <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                 <Badge
-                  variant={condicion.estado ? 'default' : 'secondary'}
+                  variant={condicion.estado ? "default" : "secondary"}
                   className="rounded-xl px-3 py-1"
                 >
-                  {condicion.estado ? 'Activo' : 'Inactivo'}
+                  {condicion.estado ? "Activo" : "Inactivo"}
                 </Badge>
                 <span className="text-sm text-muted-foreground">
                   ID: {condicion.id}
@@ -213,7 +212,7 @@ export default function DetallesCondicionesContrato({
             <div className="divide-y divide-border">
               <DetailItem
                 label="Tipo de Cálculo"
-                value={condicion.usaPorcentaje ? 'Porcentual' : 'Valor Fijo'}
+                value={condicion.usaPorcentaje ? "Porcentual" : "Valor Fijo"}
                 icon={condicion.usaPorcentaje ? Percent : DollarSign}
               />
               <DetailItem

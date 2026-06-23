@@ -27,6 +27,7 @@ import {
   TooltipTrigger,
 } from "~/components/ui/tooltip";
 import api from "~/lib/api";
+import type { Anio, Periodos } from "~/types/operaciones";
 import CerrarPeriodo from "./cerrar-periodo";
 import { columns } from "./columns";
 import DialogNuevoPeriodo from "./dialog-nuevo-periodo";

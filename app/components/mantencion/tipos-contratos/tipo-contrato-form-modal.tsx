@@ -24,7 +24,7 @@ import {
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
 import { Switch } from '~/components/ui/switch';
-import type { TiposContrato } from '~/types/mantencion';
+import type { TipoContrato } from '~/types/mantencion';
 
 const tipoContratoSchema = z.object({
   nombre: z
@@ -40,7 +40,7 @@ interface TipoContratoFormModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
-  tipoContrato?: TiposContrato;
+  tipoContrato?: TipoContrato;
   mode: 'add' | 'edit';
 }
 

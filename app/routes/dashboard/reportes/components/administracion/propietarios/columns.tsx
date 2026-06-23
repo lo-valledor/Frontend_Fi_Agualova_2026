@@ -1,19 +1,19 @@
-import type { ColumnDef } from '@tanstack/react-table';
-import { format } from 'rut.js';
+import type { ColumnDef } from "@tanstack/react-table";
+import { format } from "rut.js";
 
-import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
-import { TableActions } from '~/components/data-table/table-helpers';
-import type { GetPropietario } from '~/types/administracion';
+import { DataTableColumnHeader } from "~/components/data-table/data-table-column-header";
+import { TableActions } from "~/components/data-table/table-helpers";
+import type { PropietariosRow } from "~/types/administracion";
 
 interface PropietariosColumnsProps {
-  onDetails: (propietario: GetPropietario) => void;
+  onDetails: (propietario: PropietariosRow) => void;
 }
 
 export const columns = ({
-  onDetails
-}: PropietariosColumnsProps): ColumnDef<GetPropietario>[] => [
+  onDetails,
+}: PropietariosColumnsProps): ColumnDef<PropietariosRow>[] => [
   {
-    accessorKey: 'rut',
+    accessorKey: "rut",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="RUT" />
     ),
@@ -28,7 +28,7 @@ export const columns = ({
               {row.original.nombre}
             </div>
             <div className="text-xs font-mono truncate">
-              {format(row.getValue('rut'))}
+              {format(row.getValue("rut"))}
             </div>
           </div>
         </div>
@@ -36,10 +36,10 @@ export const columns = ({
     },
     size: 170,
     minSize: 140,
-    maxSize: 200
+    maxSize: 200,
   },
   {
-    accessorKey: 'email',
+    accessorKey: "email",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Email" />
     ),
@@ -49,9 +49,9 @@ export const columns = ({
           <div className="min-w-0 flex-1">
             <div
               className="font-medium truncate text-xs sm:text-sm"
-              title={row.original.email || 'No especificado'}
+              title={row.original.email || "No especificado"}
             >
-              {row.original.email || 'No especificado'}
+              {row.original.email || "No especificado"}
             </div>
           </div>
         </div>
@@ -59,10 +59,10 @@ export const columns = ({
     },
     size: 170,
     minSize: 140,
-    maxSize: 200
+    maxSize: 200,
   },
   {
-    accessorKey: 'telefono',
+    accessorKey: "telefono",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Teléfono" />
     ),
@@ -72,9 +72,9 @@ export const columns = ({
           <div className="min-w-0 flex-1">
             <div
               className="font-medium truncate text-xs sm:text-sm"
-              title={row.original.telefono || 'No especificado'}
+              title={row.original.telefono || "No especificado"}
             >
-              {row.original.telefono || 'No especificado'}
+              {row.original.telefono || "No especificado"}
             </div>
           </div>
         </div>
@@ -82,10 +82,10 @@ export const columns = ({
     },
     size: 130,
     minSize: 110,
-    maxSize: 150
+    maxSize: 150,
   },
   {
-    accessorKey: 'celular',
+    accessorKey: "celular",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Celular" />
     ),
@@ -95,9 +95,9 @@ export const columns = ({
           <div className="min-w-0 flex-1">
             <div
               className="font-medium truncate text-xs sm:text-sm"
-              title={row.original.celular || 'No especificado'}
+              title={row.original.celular || "No especificado"}
             >
-              {row.original.celular || 'No especificado'}
+              {row.original.celular || "No especificado"}
             </div>
           </div>
         </div>
@@ -105,10 +105,10 @@ export const columns = ({
     },
     size: 130,
     minSize: 110,
-    maxSize: 150
+    maxSize: 150,
   },
   {
-    accessorKey: 'comuna',
+    accessorKey: "comuna",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Comuna" />
     ),
@@ -128,10 +128,10 @@ export const columns = ({
     },
     size: 130,
     minSize: 110,
-    maxSize: 150
+    maxSize: 150,
   },
   {
-    id: 'actions',
+    id: "actions",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Acciones" />
     ),
@@ -151,6 +151,6 @@ export const columns = ({
     size: 90,
     minSize: 80,
     maxSize: 100,
-    enableSorting: false
-  }
+    enableSorting: false,
+  },
 ];
