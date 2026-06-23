@@ -101,8 +101,8 @@ export function DataTable<TData, TValue>({
   manualPagination = false,
   pageCount,
   onPaginationChange,
-  defaultPageSize = 20,
-  pageSizeOptions = [10, 20, 50, 100],
+  defaultPageSize = 10,
+  pageSizeOptions = [10, 20, 50],
 
   isLoading = false,
   error = null,
