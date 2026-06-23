@@ -32,7 +32,7 @@ export function DeleteConfirmationDialog({
             Esta acción no se puede deshacer. Se eliminará permanentemente el
             contrato{' '}
             <span className="font-semibold text-foreground">
-              {contract?.codigo}
+              {contract?.subEmpalme}
             </span>{' '}
             del sistema.
           </AlertDialogDescription>

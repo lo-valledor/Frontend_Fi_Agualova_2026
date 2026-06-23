@@ -95,7 +95,8 @@ export default function ProfileComponent() {
           activo: true
         });
       } catch (error) {
-        toast.error('Error al cargar los datos del perfil', error as any);
+        if (import.meta.env.DEV) console.error('loadUserData', error);
+        toast.error('Error al cargar los datos del perfil');
       } finally {
         setLoadingUserData(false);
       }

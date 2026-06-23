@@ -13,7 +13,8 @@ import {
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router';
-import Select from 'react-select';
+import Select, { type SingleValue } from 'react-select';
+import type { OptionType } from '~/components/shared/react-select-styles';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
@@ -473,8 +474,8 @@ export default function EditarClienteComponent() {
                               instanceId="comuna-select"
                               options={comunaOptions}
                               value={comunaActual ?? null}
-                              onChange={(option: any) =>
-                                field.onChange(option ? option.value : '')
+                              onChange={(option: SingleValue<OptionType>) =>
+                                field.onChange(option ? String(option.value) : '')
                               }
                               placeholder="Seleccione la comuna"
                               isClearable
@@ -600,8 +601,8 @@ export default function EditarClienteComponent() {
                               instanceId="giro-select"
                               options={giroOptions}
                               value={giroActual ?? null}
-                              onChange={(option: any) =>
-                                field.onChange(option ? option.value : '')
+                              onChange={(option: SingleValue<OptionType>) =>
+                                field.onChange(option ? String(option.value) : '')
                               }
                               placeholder="Seleccione el giro"
                               isClearable

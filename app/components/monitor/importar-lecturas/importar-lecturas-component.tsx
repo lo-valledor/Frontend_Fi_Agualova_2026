@@ -15,6 +15,7 @@ import { toast } from 'sonner';
 import * as XLSX from 'xlsx';
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import { ModernHeader } from '~/components/shared/modern-header';
+import { getAuthToken } from '~/services/axiosConfig';
 import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert';
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
@@ -353,7 +354,7 @@ export default function ImportarLecturasComponent() {
       const formData = new FormData();
       formData.append('file', file);
 
-      const token = localStorage.getItem('token');
+      const token = getAuthToken();
       const ENERLINK_API_URL = import.meta.env.VITE_API_URL;
       const baseUrl = ENERLINK_API_URL || '';
       const url = `${baseUrl}/upload`;
@@ -389,7 +390,7 @@ export default function ImportarLecturasComponent() {
   const fetchEstadoProcesamiento = async () => {
     setLoadingEstado(true);
     try {
-      const token = localStorage.getItem('token');
+      const token = getAuthToken();
       const VITE_API_URL = import.meta.env.VITE_API_URL;
       const baseUrl = VITE_API_URL || '';
       const url = `${baseUrl}/estado-procesamiento`;
@@ -420,7 +421,7 @@ export default function ImportarLecturasComponent() {
   const fetchRegistrosPendientes = async () => {
     setLoadingRegistros(true);
     try {
-      const token = localStorage.getItem('token');
+      const token = getAuthToken();
       const VITE_API_URL = import.meta.env.VITE_API_URL;
       const baseUrl = VITE_API_URL || '';
       const url = `${baseUrl}/registros-pendientes`;
@@ -461,7 +462,7 @@ export default function ImportarLecturasComponent() {
     }
     setProcessingBT(true);
     try {
-      const token = localStorage.getItem('token');
+      const token = getAuthToken();
       const ENERLINK_API_URL = import.meta.env.VITE_API_URL;
       const baseUrl = ENERLINK_API_URL || '';
       const url = `${baseUrl}/procesar-bt1-bt2`;
@@ -506,7 +507,7 @@ export default function ImportarLecturasComponent() {
   const fetchValidacionLecturasPendientes = async () => {
     setLoadingValidacion(true);
     try {
-      const token = localStorage.getItem('token');
+      const token = getAuthToken();
       const VITE_API_URL = import.meta.env.VITE_API_URL;
       const baseUrl = VITE_API_URL || '';
 

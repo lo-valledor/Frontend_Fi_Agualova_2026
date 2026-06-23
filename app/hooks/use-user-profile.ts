@@ -80,18 +80,20 @@ export function useUserProfile(): UseUserProfileReturn {
       if (usuarioEncontrado) {
         setUserData(usuarioEncontrado);
       } else {
-        // User not found in database, create mock data
-        console.warn(
-          'Usuario no encontrado en la lista, usando datos del token'
-        );
+        if (import.meta.env.DEV) {
+          console.warn(
+            'Usuario no encontrado en la lista, usando datos del token'
+          );
+        }
         throw new Error('Usuario no encontrado');
       }
     } catch (apiError) {
-      // Fallback: create mock data from token
-      console.warn(
-        'No se pudo obtener datos del usuario desde la API, usando datos del token',
-        apiError
-      );
+      if (import.meta.env.DEV) {
+        console.warn(
+          'No se pudo obtener datos del usuario desde la API, usando datos del token',
+          apiError
+        );
+      }
 
       const mockUserData = createMockUserData(user);
       setUserData(mockUserData);
@@ -136,11 +138,12 @@ export function useUserProfile(): UseUserProfileReturn {
           );
         }
       } catch (apiError) {
-        // Fallback: update locally only
-        console.warn(
-          'No se pudo actualizar en la API, actualizando solo localmente',
-          apiError
-        );
+        if (import.meta.env.DEV) {
+          console.warn(
+            'No se pudo actualizar en la API, actualizando solo localmente',
+            apiError
+          );
+        }
 
         setUserData((prev): Usuarios | null =>
           prev

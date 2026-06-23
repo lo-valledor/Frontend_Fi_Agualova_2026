@@ -286,7 +286,7 @@ class SecurityAlertManager {
     if (!import.meta.env.PROD) return;
 
     try {
-      // TODO: Implement actual backend reporting
+      // FIXME: pendiente integrar con backend de alertas
       // await fetch('/api/security/alerts', {
       //   method: 'POST',
       //   headers: { 'Content-Type': 'application/json' },

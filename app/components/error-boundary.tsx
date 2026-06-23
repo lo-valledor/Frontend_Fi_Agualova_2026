@@ -4,6 +4,7 @@ import React from 'react';
 
 import { Alert, AlertDescription } from '~/components/ui/alert';
 import { Button } from '~/components/ui/button';
+import { clearAuthToken } from '~/services/axiosConfig';
 import {
   Card,
   CardContent,
@@ -34,8 +35,7 @@ export const ErrorBoundary: React.FC<ErrorBoundaryProps> = ({
   };
 
   const handleLogout = () => {
-    // Limpiar token y datos de autenticación
-    localStorage.removeItem('token');
+    clearAuthToken();
     localStorage.removeItem('user');
     sessionStorage.clear();
 

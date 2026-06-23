@@ -1,8 +1,7 @@
-import { useEffect, useState } from 'react';
-
-import { operacionesService } from '~/services/operacionesService';
-import type { Anio, Periodos } from '~/types/operaciones';
-import { handleDataLoad } from './utils/data-loader';
+import { useEffect, useState } from "react";
+import type { Anio, Periodos } from "~/types/operaciones";
+import { handleDataLoad } from "./utils/data-loader";
+import { operacionesService } from "~/services/operacionesService";
 
 type PeriodoAbierto = {
   id: string;
@@ -24,14 +23,14 @@ export function usePeriodoFacturacion() {
       () => operacionesService.getPeriodoFacturacionPageData(),
       setData,
       setError,
-      setLoading
+      setLoading,
     );
   }, []);
 
   return {
     data,
     loading,
-    error
+    error,
   };
 }
 
@@ -50,29 +49,29 @@ export function usePeriodoAbierto() {
         }
 
         return {
-          data: result.data.map(periodo => {
-            const digits = periodo.id.replace(/\D/g, '');
+          data: result.data.map((periodo) => {
+            const digits = periodo.id.replace(/\D/g, "");
             const mes = Number(digits.slice(0, 2)) || 0;
             const anio = Number(digits.slice(-4)) || 0;
 
             return {
               ...periodo,
               mes,
-              anio
+              anio,
             };
           }),
-          error: null
+          error: null,
         };
       },
-      result => setPeriodoAbierto((result as PeriodoAbierto[]) || []),
+      (result) => setPeriodoAbierto((result as PeriodoAbierto[]) || []),
       setError,
-      setLoading
+      setLoading,
     );
   }, []);
 
   return {
     periodoAbierto,
     loading,
-    error
+    error,
   };
 }

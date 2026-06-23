@@ -5,6 +5,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 
 import { authService } from '../services/authService';
+import { clearAuthToken, getAuthToken, setAuthToken } from '../services/axiosConfig';
 
 export interface UserData {
   id: string;
@@ -77,7 +78,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     // Verificar si hay un token almacenado al cargar la aplicación
     const initializeAuth = async () => {
       try {
-        const token = localStorage.getItem('token');
+        const token = getAuthToken();
 
         if (token) {
           const isValid = isTokenValid(token);
@@ -86,18 +87,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
             const userData = parseUserFromToken(token);
             setUser(userData);
           } else {
-            // Token expirado o inválido
-            localStorage.removeItem('token');
-            console.warn(
-              'Token expirado o inválido, removido del localStorage'
-            );
+            clearAuthToken();
+            if (import.meta.env.DEV) {
+              console.warn(
+                'Token expirado o inválido, removido del localStorage'
+              );
+            }
           }
         } else {
           setUser(null);
         }
       } catch (error) {
         console.error('Error al inicializar la autenticación:', error);
-        localStorage.removeItem('token');
+        clearAuthToken();
       } finally {
         setLoading(false);
       }
@@ -149,20 +151,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       // Intentar validar el token, pero no fallar si hay problemas menores
       try {
         const isValid = isTokenValid(token);
-        if (!isValid) {
+        if (!isValid && import.meta.env.DEV) {
           console.warn(
             'Token posiblemente inválido, pero continuando con el login'
           );
         }
       } catch (validationError) {
-        console.warn(
-          'Error al validar token, pero continuando:',
-          validationError
-        );
+        if (import.meta.env.DEV) {
+          console.warn(
+            'Error al validar token, pero continuando:',
+            validationError
+          );
+        }
       }
 
       // Guardar token y datos del usuario
-      localStorage.setItem('token', token);
+      setAuthToken(token);
       const userData = parseUserFromToken(token);
       setUser(userData);
 
@@ -172,8 +176,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       const errorMessage =
         err instanceof Error ? err.message : 'Error desconocido';
       setError(errorMessage);
-      // Limpiar cualquier token residual en caso de error
-      localStorage.removeItem('token');
+      clearAuthToken();
       setUser(null);
       throw err;
     } finally {
@@ -190,7 +193,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       console.error('Error al hacer logout en el servidor:', err);
     } finally {
       // Siempre limpiar la sesión local, incluso si hay error en el servidor
-      localStorage.removeItem('token');
+      clearAuthToken();
       setUser(null);
       setError(null);
       setLoading(false);

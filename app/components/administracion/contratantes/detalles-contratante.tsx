@@ -72,11 +72,11 @@ export function ContratanteDetailsModal({
     if (isOpen && contratante) {
       setIsLoading(true);
       setError(null);
-      // Simula la carga de datos
-      setTimeout(() => {
+      const timer = setTimeout(() => {
         setDetailsData(contratante);
         setIsLoading(false);
       }, 500);
+      return () => clearTimeout(timer);
     }
   }, [isOpen, contratante]);
 

@@ -70,7 +70,8 @@ export default function CrearContratoComponent() {
       await administracionService.crearContrato(formData);
       toast.success('Contrato creado exitosamente');
       navigate('/dashboard/administracion/contratos');
-    } catch (_error) {
+    } catch (error) {
+      if (import.meta.env.DEV) console.error('crearContrato', error);
       toast.error('No fue posible crear el contrato');
     } finally {
       setIsSubmitting(false);

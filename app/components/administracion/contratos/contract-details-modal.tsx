@@ -12,6 +12,8 @@ import {
 } from '~/components/ui/dialog';
 import type { ContratosRow } from '~/types/administracion';
 
+const DETAILS_FETCH_DELAY_MS = 300;
+
 interface ContractDetailsModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -34,7 +36,7 @@ export function ContractDetailsModal({
       try {
         setIsLoading(true);
         setError(null);
-        await new Promise(resolve => setTimeout(resolve, 300));
+        await new Promise(resolve => setTimeout(resolve, DETAILS_FETCH_DELAY_MS));
         setDetailsData(contract);
       } catch (err) {
         console.error('Error al cargar los detalles del contrato:', err);
@@ -59,7 +61,7 @@ export function ContractDetailsModal({
           </div>
           {contract && (
             <DialogDescription>
-              Información del contrato {contract.codigo}
+              Información del contrato {contract.subEmpalme}
             </DialogDescription>
           )}
         </DialogHeader>
@@ -83,20 +85,22 @@ export function ContractDetailsModal({
             </CardHeader>
             <CardContent className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-muted-foreground">ID</span>
-                <span className="font-mono">{detailsData.id}</span>
+                <span className="text-muted-foreground">ID Contrato</span>
+                <span className="font-mono">{detailsData.idContrato}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Código</span>
-                <span className="font-mono">{detailsData.codigo}</span>
+                <span className="text-muted-foreground">Sub Empalme</span>
+                <span className="font-mono">{detailsData.subEmpalme}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Descripción</span>
-                <span className="text-right">{detailsData.descripcion}</span>
+                <span className="text-muted-foreground">Tipo Contrato</span>
+                <span className="text-right">{detailsData.tipoContrato}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Estado</span>
-                <Badge variant="secondary">{detailsData.estado}</Badge>
+                <Badge variant="secondary">
+                  {detailsData.activo ? 'Activo' : 'Inactivo'}
+                </Badge>
               </div>
             </CardContent>
           </Card>

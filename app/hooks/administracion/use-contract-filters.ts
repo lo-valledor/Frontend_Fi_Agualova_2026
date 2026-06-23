@@ -13,34 +13,56 @@ export interface ContractFilterOptions {
 
 export type FilterOptions = ContractFilterOptions;
 
+function uniqueSorted(values: string[]): string[] {
+  return Array.from(new Set(values.filter(Boolean))).sort((a, b) =>
+    a.localeCompare(b, "es"),
+  );
+}
+
 export function useContractFilters(
   contracts: ContratosRow[],
   filters: ContractFilters,
 ) {
   const filterOptions = useMemo((): ContractFilterOptions => {
     return {
-      tiposContrato: [],
-      ciclosFacturacion: [],
-      tarifas: [],
-      comunas: [],
+      tiposContrato: uniqueSorted(contracts.map(c => c.tipoContrato)),
+      ciclosFacturacion: uniqueSorted(contracts.map(c => c.ciclo)),
+      tarifas: uniqueSorted(contracts.map(c => c.tarifa)),
+      comunas: uniqueSorted(contracts.map(c => c.comunaEnvio)),
     };
   }, [contracts]);
 
   const filteredContracts = useMemo(() => {
-    return contracts.filter((_contract) => {
-      if (filters.cicloFacturacion && filters.cicloFacturacion !== "all") {
+    return contracts.filter(contract => {
+      if (
+        filters.tipoContrato &&
+        filters.tipoContrato !== "all" &&
+        contract.tipoContrato !== filters.tipoContrato
+      ) {
         return false;
       }
 
-      if (filters.tipoContrato && filters.tipoContrato !== "all") {
+      if (
+        filters.cicloFacturacion &&
+        filters.cicloFacturacion !== "all" &&
+        contract.ciclo !== filters.cicloFacturacion
+      ) {
         return false;
       }
 
-      if (filters.tarifa && filters.tarifa !== "all") {
+      if (
+        filters.tarifa &&
+        filters.tarifa !== "all" &&
+        contract.tarifa !== filters.tarifa
+      ) {
         return false;
       }
 
-      if (filters.comuna && filters.comuna !== "all") {
+      if (
+        filters.comuna &&
+        filters.comuna !== "all" &&
+        contract.comunaEnvio !== filters.comuna
+      ) {
         return false;
       }
 

@@ -59,11 +59,6 @@ describe('AcometidaFiltersComponent', () => {
     expect(screen.getByText('2 filtros activos')).toBeInTheDocument();
   });
 
-  it.skip('should call onFiltersChange when a filter is changed', async () => {
-    // Test desactivado - Radix UI Select requiere mocking adicional para testing
-    // Se recomienda usar E2E tests o mocking de react-select para este caso
-  });
-
   it('should call onClearFilters when the clear button is clicked', async () => {
     const user = userEvent.setup();
     const activeFilters: AcometidaFilters = {

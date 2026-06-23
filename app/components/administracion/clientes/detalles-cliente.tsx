@@ -71,11 +71,11 @@ export function ClienteDetailsModal({
     if (isOpen && cliente) {
       setIsLoading(true);
       setError(null);
-      // Simula la carga de datos, como en el modal de contratos
-      setTimeout(() => {
+      const timer = setTimeout(() => {
         setDetailsData(cliente);
         setIsLoading(false);
       }, 500);
+      return () => clearTimeout(timer);
     }
   }, [isOpen, cliente]);
 

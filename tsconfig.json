@@ -10,7 +10,6 @@
     "app/services/reportes/**/*",
     "app/components/reportes/resumen-facturacion/**/*",
     "app/components/reportes/consultar-contrato/contrato/**/*",
-    "app/hooks/use-operaciones.ts",
     "app/hooks/operaciones/use-calculo-facturacion-flow.ts",
     "app/components/administracion/acometida/**/*.test.tsx"
   ],
@@ -26,6 +25,7 @@
     "paths": {
       "~/*": ["./app/*"]
     },
+    "forceConsistentCasingInFileNames": true,
     "esModuleInterop": true,
     "verbatimModuleSyntax": true,
     "noEmit": true,

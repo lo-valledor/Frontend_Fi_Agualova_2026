@@ -1,39 +1,39 @@
-import { LayoutList, Plus } from 'lucide-react';
-import { motion } from 'motion/react';
-import { useState } from 'react';
-import { useRevalidator } from 'react-router';
-import { toast } from 'sonner';
+import { LayoutList, Plus } from "lucide-react";
+import { motion } from "motion/react";
+import { useState } from "react";
+import { useRevalidator } from "react-router";
+import { toast } from "sonner";
 
-import { VirtualDataTable } from '~/components/data-table/virtual-data-table';
-import { ExportButton } from '~/components/shared/export-button';
-import { ModernHeader } from '~/components/shared/modern-header';
-import { Button } from '~/components/ui/button';
+import { VirtualDataTable } from "~/components/data-table/virtual-data-table";
+import { ExportButton } from "~/components/shared/export-button";
+import { ModernHeader } from "~/components/shared/modern-header";
+import { Button } from "~/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle
-} from '~/components/ui/card';
-import { useAcometidaFilters } from '~/hooks/administracion/use-acometida-filters';
-import { useExportAcometidas } from '~/hooks/administracion/use-export-acometidas';
-import api from '~/lib/api';
+  CardTitle,
+} from "~/components/ui/card";
+import { useAcometidaFilters } from "~/hooks/administracion/use-acometida-filters";
+import { useExportAcometidas } from "~/hooks/administracion/use-export-acometidas";
+import api from "~/lib/api";
 import type {
   AcometidaProps,
   AcometidaRow,
   BuscarContratosLibres,
   Empalmes,
   Nichos,
-  Sectores
-} from '~/types/administracion';
+  Sectores,
+} from "~/types/administracion";
 
 import {
   type AcometidaFilters,
-  AcometidaFiltersComponent
-} from './acometida-filters';
-import { AcometidaForm } from './acometida-form';
-import { columns } from './columns';
-import { FilterSummary } from './filter-summary';
+  AcometidaFiltersComponent,
+} from "./acometida-filters";
+import { AcometidaForm } from "./acometida-form";
+import { columns } from "./columns";
+import { FilterSummary } from "./filter-summary";
 
 interface AcometidaComponentProps {
   acometidas: AcometidaRow[];
@@ -48,24 +48,24 @@ export default function AcometidaComponent({
   comboEmpalmes,
   comboNichos,
   comboSectores,
-  contratosDisponibles
+  contratosDisponibles,
 }: Readonly<AcometidaComponentProps>) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedAcometida, setSelectedAcometida] =
     useState<AcometidaRow | null>(null);
-  const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
+  const [modalMode, setModalMode] = useState<"add" | "edit">("add");
   const [, setEditingAcometidaId] = useState<number | null>(null);
 
   // Estados para filtros
   const [filters, setFilters] = useState<AcometidaFilters>({
-    empalmeDescripcion: '',
-    nichoDescripcion: '',
-    sectorDescripcion: '',
-    limitePotenciaMin: '',
-    limitePotenciaMax: '',
-    tieneUbicacion: '',
-    tieneMedidor: '',
-    tieneLimitePotencia: ''
+    empalmeDescripcion: "",
+    nichoDescripcion: "",
+    sectorDescripcion: "",
+    limitePotenciaMin: "",
+    limitePotenciaMax: "",
+    tieneUbicacion: "",
+    tieneMedidor: "",
+    tieneLimitePotencia: "",
   });
 
   const revalidator = useRevalidator();
@@ -80,56 +80,56 @@ export default function AcometidaComponent({
 
   const handleClearFilters = () => {
     setFilters({
-      empalmeDescripcion: '',
-      nichoDescripcion: '',
-      sectorDescripcion: '',
-      limitePotenciaMin: '',
-      limitePotenciaMax: '',
-      tieneUbicacion: '',
-      tieneMedidor: '',
-      tieneLimitePotencia: ''
+      empalmeDescripcion: "",
+      nichoDescripcion: "",
+      sectorDescripcion: "",
+      limitePotenciaMin: "",
+      limitePotenciaMax: "",
+      tieneUbicacion: "",
+      tieneMedidor: "",
+      tieneLimitePotencia: "",
     });
   };
 
   const handleAddAcometida = () => {
     setSelectedAcometida(null);
-    setModalMode('add');
+    setModalMode("add");
     setIsModalOpen(true);
   };
 
   const handleEditAcometida = async (acometida: AcometidaRow) => {
     setEditingAcometidaId(acometida.idAcometida);
     setSelectedAcometida(acometida);
-    setModalMode('edit');
+    setModalMode("edit");
     setIsModalOpen(true);
   };
 
   const handleSuccess = () => {
     setIsModalOpen(false);
     setSelectedAcometida(null);
-    setModalMode('add');
+    setModalMode("add");
     setEditingAcometidaId(null);
     revalidator.revalidate();
     toast.success(
-      modalMode === 'add'
-        ? 'Acometida creada exitosamente'
-        : 'Acometida actualizada exitosamente'
+      modalMode === "add"
+        ? "Acometida creada exitosamente"
+        : "Acometida actualizada exitosamente",
     );
   };
 
   const handleSubmitForm = async (data: AcometidaProps | AcometidaProps) => {
     try {
-      if (modalMode === 'add') {
-        await api.post('/acometidas/crear', data as AcometidaProps);
+      if (modalMode === "add") {
+        await api.post("/acometidas/crear", data as AcometidaProps);
       } else {
-        await api.put('/acometidas/editar', {
+        await api.put("/acometidas/editar", {
           idAcometida: selectedAcometida?.idAcometida,
-          ...data
+          ...data,
         });
       }
       handleSuccess();
     } catch {
-      toast.error('Ha ocurrido un error al guardar la acometida');
+      toast.error("Ha ocurrido un error al guardar la acometida");
     }
   };
 
@@ -193,7 +193,7 @@ export default function AcometidaComponent({
                   </CardTitle>
                   <CardDescription className="text-xs mt-0.5 text-muted-foreground">
                     {filteredAcometidas.length} acometida
-                    {filteredAcometidas.length !== 1 ? 's' : ''}
+                    {filteredAcometidas.length !== 1 ? "s" : ""}
                   </CardDescription>
                 </div>
               </div>
@@ -203,7 +203,7 @@ export default function AcometidaComponent({
               <div className="overflow-x-auto -mx-1">
                 <VirtualDataTable
                   columns={columns({
-                    onEdit: handleEditAcometida
+                    onEdit: handleEditAcometida,
                   })}
                   data={filteredAcometidas}
                   searchPlaceholder="Buscar por código, ubicación o contrato..."

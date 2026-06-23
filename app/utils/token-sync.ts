@@ -1,6 +1,12 @@
 // Utilidad para sincronizar el estado del token entre pestañas
 import { jwtDecode } from 'jwt-decode';
 
+import {
+  clearAuthToken,
+  getAuthToken,
+  setAuthToken
+} from '~/services/axiosConfig';
+
 export interface TokenData {
   sub: string;
   name: string;
@@ -17,21 +23,19 @@ export const isTokenValid = (token: string): boolean => {
     const currentTime = Date.now() / 1000;
     return decoded.exp > currentTime;
   } catch (error) {
-    console.error('Error al validar el token:', error);
+    if (import.meta.env.DEV) console.error('Error al validar el token:', error);
     return false;
   }
 };
 
-export const getStoredToken = (): string | null => {
-  return localStorage.getItem('token');
-};
+export const getStoredToken = (): string | null => getAuthToken();
 
 export const setStoredToken = (token: string): void => {
-  localStorage.setItem('token', token);
+  setAuthToken(token);
 };
 
 export const removeStoredToken = (): void => {
-  localStorage.removeItem('token');
+  clearAuthToken();
   // También limpiar sessionStorage por si acaso hay tokens residuales
   sessionStorage.removeItem('token');
 };
@@ -40,7 +44,9 @@ export const parseTokenData = (token: string): TokenData => {
   try {
     return jwtDecode<TokenData>(token);
   } catch (error) {
-    console.error('Error al decodificar el token:', error);
+    if (import.meta.env.DEV) {
+      console.error('Error al decodificar el token:', error);
+    }
     throw new Error('Token inválido');
   }
 };

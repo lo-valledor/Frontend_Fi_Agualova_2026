@@ -1,9 +1,9 @@
-import type { ColumnDef } from '@tanstack/react-table';
+import type { ColumnDef } from "@tanstack/react-table";
 
-import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
-import { TableActions } from '~/components/data-table/table-helpers';
-import { Badge } from '~/components/ui/badge';
-import { type ContratosRow } from '~/types/administracion';
+import { DataTableColumnHeader } from "~/components/data-table/data-table-column-header";
+import { TableActions } from "~/components/data-table/table-helpers";
+import { Badge } from "~/components/ui/badge";
+import { type ContratosRow } from "~/types/administracion";
 
 interface TableColumnsProps {
   onEdit: (contract: ContratosRow) => void;
@@ -11,168 +11,203 @@ interface TableColumnsProps {
   onViewDetails: (contract: ContratosRow) => void;
 }
 
-// Función para convertir string de fecha a objeto Date (para ordenamiento)
-const _parseDateString = (
-  dateValue: string | Date | null | undefined
-): Date | null => {
-  if (!dateValue) return null;
-
-  if (dateValue instanceof Date) {
-    return dateValue;
-  }
-
-  if (typeof dateValue === 'string') {
-    const dateString = dateValue.trim();
-
-    // Formato DD-MM-YYYY HH:mm:ss (del backend)
-    if (/^\d{2}-\d{2}-\d{4}(\s+\d{2}:\d{2}:\d{2})?$/.test(dateString)) {
-      const [fechaParte] = dateString.split(' ');
-      const [dia, mes, año] = fechaParte.split('-');
-      const date = new Date(`${año}-${mes}-${dia}`);
-      return Number.isNaN(date.getTime()) ? null : date;
-    }
-
-    // Formato DD/MM/YYYY (con barra)
-    if (/^\d{2}\/\d{2}\/\d{4}$/.test(dateString)) {
-      const [dia, mes, año] = dateString.split('/');
-      const date = new Date(`${año}-${mes}-${dia}`);
-      return Number.isNaN(date.getTime()) ? null : date;
-    }
-
-    // Formato ISO (YYYY-MM-DD)
-    if (/^\d{4}-\d{2}-\d{2}/.test(dateString)) {
-      const date = new Date(dateString);
-      return Number.isNaN(date.getTime()) ? null : date;
-    }
-  }
-
-  return null;
-};
-
-// Función robusta para formatear fechas en formato español
-const _formatDateToSpanish = (
-  dateValue: string | Date | null | undefined
-): string => {
-  if (!dateValue) return 'N/A';
-
-  let date: Date;
-
-  // Si es un string, intentar parsearlo
-  if (typeof dateValue === 'string') {
-    const dateString = dateValue.trim();
-
-    // Formato DD-MM-YYYY HH:mm:ss (del backend)
-    // Ejemplo: "31-01-2014 00:00:00" o "24-10-2025"
-    if (/^\d{2}-\d{2}-\d{4}(\s+\d{2}:\d{2}:\d{2})?$/.test(dateString)) {
-      const [fechaParte] = dateString.split(' '); // Separar fecha de hora
-      const [dia, mes, año] = fechaParte.split('-');
-
-      // Crear fecha en formato ISO para evitar ambigüedad
-      date = new Date(`${año}-${mes}-${dia}`);
-
-      // Verificar si la fecha es válida
-      if (Number.isNaN(date.getTime())) {
-        return 'Fecha inválida';
-      }
-
-      // Retornar en formato DD/MM/YYYY
-      return `${dia}/${mes}/${año}`;
-    }
-
-    // Formato DD/MM/YYYY (con barra)
-    if (/^\d{2}\/\d{2}\/\d{4}$/.test(dateString)) {
-      const [dia, mes, año] = dateString.split('/');
-
-      // Crear fecha en formato ISO
-      date = new Date(`${año}-${mes}-${dia}`);
-
-      if (Number.isNaN(date.getTime())) {
-        return 'Fecha inválida';
-      }
-
-      return `${dia}/${mes}/${año}`;
-    }
-
-    // Formato ISO (YYYY-MM-DD)
-    if (/^\d{4}-\d{2}-\d{2}/.test(dateString)) {
-      date = new Date(dateString);
-
-      if (Number.isNaN(date.getTime())) {
-        return 'Fecha inválida';
-      }
-
-      return date.toLocaleDateString('es-ES', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-      });
-    }
-
-    // Si no coincide con ningún formato conocido
-    return 'Fecha inválida';
-  } else {
-    date = dateValue;
-  }
-
-  // Verificar si la fecha es válida
-  if (Number.isNaN(date.getTime())) {
-    return 'Fecha inválida';
-  }
-
-  // Formatear en español
-  return date.toLocaleDateString('es-ES', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric'
-  });
-};
-
 export const columns = ({
   onEdit,
   onDelete,
-  onViewDetails
+  onViewDetails,
 }: TableColumnsProps): ColumnDef<ContratosRow>[] => [
   {
-    accessorKey: 'codigo',
+    accessorKey: "idContrato",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Código" />
     ),
     cell: ({ row }) => {
       return (
         <span className="font-mono text-xs sm:text-sm">
-          {row.original.codigo}
+          {row.original.idContrato}
         </span>
       );
     },
-    size: 120
+    size: 120,
   },
   {
-    accessorKey: 'descripcion',
+    accessorKey: "subEmpalme",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Descripción" />
+      <DataTableColumnHeader column={column} title="Sub Empalme" />
     ),
     cell: ({ row }) => {
       return (
-        <span className="text-xs sm:text-sm">{row.original.descripcion}</span>
+        <span className="text-xs sm:text-sm">{row.original.subEmpalme}</span>
       );
-    }
+    },
   },
   {
-    accessorKey: 'estado',
+    accessorKey: "tipoContrato",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Tipo Contrato" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <span className="text-xs sm:text-sm">{row.original.tipoContrato}</span>
+      );
+    },
+  },
+  {
+    accessorKey: "tarifa",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Tarifa" />
+    ),
+    cell: ({ row }) => {
+      return <span className="text-xs sm:text-sm">{row.original.tarifa}</span>;
+    },
+  },
+  {
+    accessorKey: "nombrePropietario",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Propietario" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <span className="text-xs sm:text-sm">
+          {row.original.nombrePropietario}
+        </span>
+      );
+    },
+  },
+  {
+    accessorKey: "nombreCliente",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Cliente" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <span className="text-xs sm:text-sm">{row.original.nombreCliente}</span>
+      );
+    },
+  },
+  {
+    accessorKey: "localEmpresa",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Local Empresa" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <span className="text-xs sm:text-sm">{row.original.localEmpresa}</span>
+      );
+    },
+  },
+  {
+    accessorKey: "fechaInicio",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Fecha Inicio" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <span className="text-xs sm:text-sm">
+          {new Date(row.original.fechaInicio).toLocaleDateString()}
+        </span>
+      );
+    },
+  },
+  {
+    accessorKey: "fechaTermino",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Fecha Término" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <span className="text-xs sm:text-sm">
+          {row.original.fechaTermino
+            ? new Date(row.original.fechaTermino).toLocaleDateString()
+            : "N/A"}
+        </span>
+      );
+    },
+  },
+  {
+    accessorKey: "comunaEnvio",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Comuna Envío" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <span className="text-xs sm:text-sm">{row.original.comunaEnvio}</span>
+      );
+    },
+  },
+  {
+    accessorKey: "direccionEnvio",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Dirección Envío" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <span className="text-xs sm:text-sm">
+          {row.original.direccionEnvio}
+        </span>
+      );
+    },
+  },
+  {
+    accessorKey: "limiteInvierno",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Límite Invierno" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <span className="text-xs sm:text-sm">
+          {row.original.limiteInvierno}
+        </span>
+      );
+    },
+  },
+  {
+    accessorKey: "ciclo",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Ciclo" />
+    ),
+    cell: ({ row }) => {
+      return <span className="text-xs sm:text-sm">{row.original.ciclo}</span>;
+    },
+  },
+  {
+    accessorKey: "potencia",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Potencia" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <span className="text-xs sm:text-sm">{row.original.potencia}</span>
+      );
+    },
+  },
+  {
+    accessorKey: "liberadoCorte",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Liberado Corte" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <span className="text-xs sm:text-sm">{row.original.liberadoCorte}</span>
+      );
+    },
+  },
+  {
+    accessorKey: "activo",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Estado" />
     ),
     cell: ({ row }) => {
       return (
         <Badge variant="secondary" className="text-xs">
-          {row.original.estado}
+          {row.original.activo ? "Activo" : "Inactivo"}
         </Badge>
       );
     },
-    size: 120
+    size: 120,
   },
   {
-    id: 'actions',
+    id: "actions",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Acciones" />
     ),
@@ -189,6 +224,6 @@ export const columns = ({
         </div>
       );
     },
-    size: 90
-  }
+    size: 90,
+  },
 ];

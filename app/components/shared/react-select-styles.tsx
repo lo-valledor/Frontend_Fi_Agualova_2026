@@ -1,7 +1,7 @@
 import type { GroupBase, StylesConfig } from 'react-select';
 
 // Definimos un tipo genérico para las opciones
-interface OptionType {
+export interface OptionType {
   value: string | number;
   label: string;
 }

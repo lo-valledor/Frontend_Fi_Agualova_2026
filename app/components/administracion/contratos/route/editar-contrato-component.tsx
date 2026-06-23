@@ -66,7 +66,8 @@ export default function EditarContratoComponent({
       });
       toast.success('Contrato actualizado exitosamente');
       navigate('/dashboard/administracion/contratos');
-    } catch (_error) {
+    } catch (error) {
+      if (import.meta.env.DEV) console.error('actualizarContrato', error);
       toast.error('No fue posible actualizar el contrato');
     } finally {
       setIsSubmitting(false);

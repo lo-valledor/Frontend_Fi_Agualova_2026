@@ -2,7 +2,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { DollarSign, Loader2, Percent } from 'lucide-react';
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import Select from 'react-select';
+import Select, { type SingleValue } from 'react-select';
+import type { OptionType } from '~/components/shared/react-select-styles';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
@@ -220,8 +221,8 @@ export default function CondicionesContratoModalForm({
                           }
                         : null
                     }
-                    onChange={(option: any) =>
-                      field.onChange(option?.value || 0)
+                    onChange={(option: SingleValue<OptionType>) =>
+                      field.onChange(option ? Number(option.value) : 0)
                     }
                     placeholder="Seleccione un concepto"
                     styles={selectStyles}

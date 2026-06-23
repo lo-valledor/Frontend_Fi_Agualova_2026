@@ -1,31 +1,29 @@
-import { LayoutList, Plus } from 'lucide-react';
-import { motion } from 'motion/react';
-import { useCallback, useState } from 'react';
-import { useNavigate } from 'react-router';
-import { toast } from 'sonner';
-import { DataTable } from '~/components/data-table/data-table';
-import { ExportButton } from '~/components/shared/export-button';
-import { ModernHeader } from '~/components/shared/modern-header';
-import { Button } from '~/components/ui/button';
+import { LayoutList, Plus } from "lucide-react";
+import { motion } from "motion/react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { PaginationState } from "@tanstack/react-table";
+import { useNavigate } from "react-router";
+import { toast } from "sonner";
+import { DataTable } from "~/components/data-table/data-table";
+import { ExportButton } from "~/components/shared/export-button";
+import { ModernHeader } from "~/components/shared/modern-header";
+import { Button } from "~/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle
-} from '~/components/ui/card';
-import {
-  type ClientFilters,
-  useClientFilters
-} from '~/hooks/administracion/use-client-filters';
-import { useExportClientes } from '~/hooks/administracion/use-export-clientes';
-import { useClientes } from '~/hooks/use-administracion';
+  CardTitle,
+} from "~/components/ui/card";
+import { useExportClientes } from "~/hooks/administracion/use-export-clientes";
+import { useClientes } from "~/hooks/use-administracion";
+import { administracionService } from "~/services/administracionService";
 import type {
   Cliente,
   ClientesRow,
   NombreComuna,
-  NombreGiro
-} from '~/types/administracion';
+  NombreGiro,
+} from "~/types/administracion";
 import {
   CLIENTES_CREAR_ROUTE,
   createInitialClienteModalState,
@@ -33,12 +31,10 @@ import {
   extractClienteErrorMessage,
   getClienteEditUrl,
   isValidDetailedCliente,
-  normalizeClienteDetallado
-} from '~/utils/administracion';
-import { ClientFiltersComponent } from './client-filters';
-import { columns } from './columns';
-import { ClienteDetailsModal } from './detalles-cliente';
-import { FilterSummary } from './filter-summary';
+  normalizeClienteDetallado,
+} from "~/utils/administracion";
+import { columns } from "./columns";
+import { ClienteDetailsModal } from "./detalles-cliente";
 
 interface ClientesComponentProps {
   readonly clientes: ClientesRow[];
@@ -47,41 +43,123 @@ interface ClientesComponentProps {
 }
 
 export default function ClientesComponent({
-  clientes
+  clientes,
 }: ClientesComponentProps) {
   // Estado de datos
-  const [clients] = useState<ClientesRow[]>(clientes);
   const [detailedCliente, setDetailedCliente] = useState<Cliente | null>(null);
 
   // Estado unificado de modales
   const [modalsState, setModalsState] = useState(
-    createInitialClienteModalState()
+    createInitialClienteModalState(),
   );
 
-  // Estado de carga
+  // Estado de carga (para modales, no la tabla)
   const [_loadingState, setLoadingState] = useState(
-    createInitialLoadingState()
+    createInitialLoadingState(),
   );
 
-  // Estado de filtros
-  const [filters, setFilters] = useState<ClientFilters>({
-    esEmpresa: 'all',
-    comuna: 'all',
-    codigoComuna: 'all',
-    tieneContacto: 'all',
-    tieneTelefono: 'all',
-    tieneEmail: 'all'
+  // ─── Estado de paginación/búsqueda server-side de la tabla ─────────
+  const DEFAULT_PAGE_SIZE = 10;
+  const [tableData, setTableData] = useState<ClientesRow[]>(clientes);
+  const [tableLoading, setTableLoading] = useState(false);
+  const [tableError, setTableError] = useState<string | null>(null);
+  const [searchField, setSearchField] = useState("nombreCliente");
+  const [searchValue, setSearchValue] = useState("");
+  const [tablePagination, setTablePagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: DEFAULT_PAGE_SIZE,
   });
+  const [hasMore, setHasMore] = useState(true);
+  const requestIdRef = useRef(0);
+
+  const searchFields = useMemo(
+    () => [{ value: "nombreCliente", label: "Nombre del cliente" }],
+    [],
+  );
 
   // Dependencias
   const navigate = useNavigate();
   const { getClienteByRut } = useClientes();
 
-  const { filteredClients, filterStats, filterOptions } = useClientFilters(
-    clients,
-    filters
-  );
   const { clientColumns } = useExportClientes();
+
+  const fetchClientesPage = useCallback(
+    async ({
+      pageIndex,
+      pageSize,
+      field,
+      value,
+    }: {
+      pageIndex: number;
+      pageSize: number;
+      field: string;
+      value: string;
+    }) => {
+      const requestId = ++requestIdRef.current;
+      setTableLoading(true);
+      setTableError(null);
+      const result = await administracionService.getClientesByLimitAndOffset({
+        limit: pageSize,
+        offset: pageIndex * pageSize,
+        ...(value.trim() ? { [field]: value.trim() } : {}),
+      });
+
+      if (requestId !== requestIdRef.current) return;
+
+      if (result.error || !result.data) {
+        setTableData([]);
+        setHasMore(false);
+        setTableError(result.error ?? "Error desconocido");
+      } else {
+        setTableData(result.data);
+        setHasMore(result.data.length >= pageSize);
+      }
+      setTableLoading(false);
+    },
+    [],
+  );
+
+  useEffect(() => {
+    fetchClientesPage({
+      pageIndex: 0,
+      pageSize: DEFAULT_PAGE_SIZE,
+      field: searchField,
+      value: "",
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleTablePaginationChange = useCallback(
+    (next: PaginationState) => {
+      setTablePagination(next);
+      fetchClientesPage({
+        pageIndex: next.pageIndex,
+        pageSize: next.pageSize,
+        field: searchField,
+        value: searchValue,
+      });
+    },
+    [fetchClientesPage, searchField, searchValue],
+  );
+
+  const handleTableSearchChange = useCallback(
+    ({ field, value }: { field: string; value: string }) => {
+      setSearchField(field);
+      setSearchValue(value);
+      const next: PaginationState = {
+        pageIndex: 0,
+        pageSize: tablePagination.pageSize,
+      };
+      setTablePagination(next);
+      fetchClientesPage({
+        pageIndex: next.pageIndex,
+        pageSize: next.pageSize,
+        field,
+        value,
+      });
+    },
+    [fetchClientesPage, tablePagination.pageSize],
+  );
 
   const handleAddCliente = useCallback(() => {
     navigate(CLIENTES_CREAR_ROUTE);
@@ -91,59 +169,44 @@ export default function ClientesComponent({
     (cliente: ClientesRow) => {
       navigate(getClienteEditUrl(cliente.rut));
     },
-    [navigate]
+    [navigate],
   );
 
   const handleDetailsCliente = useCallback(
     async (cliente: ClientesRow) => {
       // Early return: validar cliente
       if (!cliente?.rut) {
-        toast.error('Cliente inválido');
+        toast.error("Cliente inválido");
         return;
       }
 
-      setLoadingState(prev => ({ ...prev, isLoading: true }));
+      setLoadingState((prev) => ({ ...prev, isLoading: true }));
 
       try {
         const clienteDetallado = await getClienteByRut(cliente.rut);
         if (!isValidDetailedCliente(clienteDetallado)) {
-          toast.error('Los detalles del cliente no son válidos');
+          toast.error("Los detalles del cliente no son válidos");
           return;
         }
 
         const clienteNormalizado = normalizeClienteDetallado(clienteDetallado);
         setDetailedCliente(clienteNormalizado);
-        setModalsState(prev => ({
+        setModalsState((prev) => ({
           ...prev,
-          details: { isOpen: true }
+          details: { isOpen: true },
         }));
       } catch (error) {
         const errorInfo = extractClienteErrorMessage(
           error,
-          'Error al cargar los detalles del cliente'
+          "Error al cargar los detalles del cliente",
         );
         toast.error(errorInfo.message);
       } finally {
-        setLoadingState(prev => ({ ...prev, isLoading: false }));
+        setLoadingState((prev) => ({ ...prev, isLoading: false }));
       }
     },
-    [getClienteByRut]
+    [getClienteByRut],
   );
-
-  const handleFiltersChange = useCallback((newFilters: ClientFilters) => {
-    setFilters(newFilters);
-  }, []);
-
-  const handleClearFilters = useCallback(() => {
-    setFilters({
-      esEmpresa: 'all',
-      comuna: 'all',
-      codigoComuna: 'all',
-      tieneContacto: 'all',
-      tieneTelefono: 'all',
-      tieneEmail: 'all'
-    });
-  }, []);
 
   const mechanicalEase = [0.25, 0.1, 0.25, 1] as const;
 
@@ -157,7 +220,7 @@ export default function ClientesComponent({
             actions={
               <div className="flex gap-2">
                 <ExportButton
-                  data={filteredClients}
+                  data={tableData}
                   columns={clientColumns}
                   filename="clientes"
                   size="sm"
@@ -171,20 +234,6 @@ export default function ClientesComponent({
           />
           <div className="industrial-divider mt-4" />
         </header>
-
-        <ClientFiltersComponent
-          filters={filters}
-          onFiltersChange={handleFiltersChange}
-          onClearFilters={handleClearFilters}
-          filterOptions={filterOptions}
-        />
-
-        <FilterSummary
-          totalClients={clients.length}
-          filteredClients={filteredClients.length}
-          activeFilters={filterStats.activeFilters}
-          isFiltered={filterStats.isFiltered}
-        />
 
         <motion.div
           initial={{ opacity: 0, y: 8 }}
@@ -202,8 +251,9 @@ export default function ClientesComponent({
                     Listado de Clientes
                   </CardTitle>
                   <CardDescription className="text-xs mt-0.5 text-muted-foreground">
-                    {filteredClients.length} cliente
-                    {filteredClients.length !== 1 ? 's' : ''}
+                    {tableLoading
+                      ? "Cargando…"
+                      : `${tableData.length} cliente${tableData.length !== 1 ? "s" : ""} en esta página`}
                   </CardDescription>
                 </div>
               </div>
@@ -216,9 +266,32 @@ export default function ClientesComponent({
                     onEdit: handleEditCliente,
                     onDetails: handleDetailsCliente,
                     editingClienteRut: null,
-                    detailingClienteRut: null
+                    detailingClienteRut: null,
                   })}
-                  data={filteredClients}
+                  data={tableData}
+                  defaultPageSize={DEFAULT_PAGE_SIZE}
+                  searchFields={searchFields}
+                  manualPagination
+                  manualFiltering
+                  pageCount={-1}
+                  onPaginationChange={handleTablePaginationChange}
+                  onSearchChange={handleTableSearchChange}
+                  isLoading={tableLoading}
+                  hasMore={hasMore}
+                  error={tableError}
+                  onRetry={() =>
+                    fetchClientesPage({
+                      pageIndex: tablePagination.pageIndex,
+                      pageSize: tablePagination.pageSize,
+                      field: searchField,
+                      value: searchValue,
+                    })
+                  }
+                  emptyMessage={
+                    searchValue.trim()
+                      ? `Sin resultados para "${searchValue.trim()}"`
+                      : "No hay clientes registrados en el sistema"
+                  }
                 />
               </div>
             </CardContent>
@@ -229,9 +302,9 @@ export default function ClientesComponent({
         <ClienteDetailsModal
           isOpen={modalsState.details.isOpen}
           onClose={() =>
-            setModalsState(prev => ({
+            setModalsState((prev) => ({
               ...prev,
-              details: { isOpen: false }
+              details: { isOpen: false },
             }))
           }
           cliente={detailedCliente}

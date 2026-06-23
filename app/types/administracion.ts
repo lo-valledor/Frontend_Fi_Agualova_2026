@@ -242,10 +242,22 @@ export type Concepto = {
 
 // Contratos
 export type ContratosRow = {
-  id: string;
-  codigo: string;
-  descripcion: string;
-  estado: string;
+  idContrato: number;
+  subEmpalme: string;
+  tipoContrato: string;
+  tarifa: string;
+  nombrePropietario: string;
+  nombreCliente: string;
+  localEmpresa: string;
+  fechaInicio: string;
+  activo: boolean;
+  fechaTermino: string;
+  comunaEnvio: string;
+  direccionEnvio: string;
+  limiteInvierno: number;
+  ciclo: string;
+  potencia: string;
+  liberadoCorte: boolean;
 };
 
 export type GetContratoById = {
@@ -471,4 +483,4 @@ export type UsuarioModalState = {
   roles: { isOpen: boolean };
 };
 
-export type UsuarioModalMode = 'add' | 'edit' | 'view' | null;
+export type UsuarioModalMode = "add" | "edit" | "view" | null;

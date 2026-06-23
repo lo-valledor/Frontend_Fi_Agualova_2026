@@ -151,8 +151,8 @@ const MenusTabComponent: React.FC<MenusTabComponentProps> = ({
         resetForm();
         onDataChange?.();
       }
-    } catch (_error) {
-      console.error(_error);
+    } catch (error) {
+      if (import.meta.env.DEV) console.error('actualizarMenu', error);
       toast.error('Error inesperado al actualizar el menú');
     } finally {
       setIsLoading(false);
@@ -175,8 +175,8 @@ const MenusTabComponent: React.FC<MenusTabComponentProps> = ({
         setDeletingMenu(null);
         onDataChange?.();
       }
-    } catch (_error) {
-      console.error(_error);
+    } catch (error) {
+      if (import.meta.env.DEV) console.error('eliminarMenu', error);
       toast.error('Error inesperado al eliminar el menú');
     } finally {
       setIsLoading(false);

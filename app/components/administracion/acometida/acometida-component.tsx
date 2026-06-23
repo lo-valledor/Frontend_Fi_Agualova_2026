@@ -1,23 +1,24 @@
-import { LayoutList, Plus } from 'lucide-react';
-import { motion } from 'motion/react';
-import { useState } from 'react';
-import { useRevalidator } from 'react-router';
-import { toast } from 'sonner';
+import type { PaginationState } from "@tanstack/react-table";
+import { LayoutList, Plus } from "lucide-react";
+import { motion } from "motion/react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useRevalidator } from "react-router";
+import { toast } from "sonner";
 
-import { VirtualDataTable } from '~/components/data-table/virtual-data-table';
-import { ExportButton } from '~/components/shared/export-button';
-import { ModernHeader } from '~/components/shared/modern-header';
-import { Button } from '~/components/ui/button';
+import { DataTable } from "~/components/data-table/data-table";
+import { ExportButton } from "~/components/shared/export-button";
+import { ModernHeader } from "~/components/shared/modern-header";
+import { Button } from "~/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle
-} from '~/components/ui/card';
-import { useAcometidaFilters } from '~/hooks/administracion/use-acometida-filters';
-import { useExportAcometidas } from '~/hooks/administracion/use-export-acometidas';
-import api from '~/lib/api';
+  CardTitle,
+} from "~/components/ui/card";
+import { useExportAcometidas } from "~/hooks/administracion/use-export-acometidas";
+import api from "~/lib/api";
+import { administracionService } from "~/services/administracionService";
 import type {
   AcometidaFormValues,
   AcometidaProps,
@@ -25,16 +26,10 @@ import type {
   BuscarContratosLibres,
   Empalmes,
   Nichos,
-  Sectores
-} from '~/types/administracion';
-
-import {
-  type AcometidaFilters,
-  AcometidaFiltersComponent
-} from './acometida-filters';
-import { AcometidaForm } from './acometida-form';
-import { columns } from './columns';
-import { FilterSummary } from './filter-summary';
+  Sectores,
+} from "~/types/administracion";
+import { AcometidaForm } from "./acometida-form";
+import { columns } from "./columns";
 
 interface AcometidaComponentProps {
   acometidas: AcometidaRow[];
@@ -49,90 +44,150 @@ export default function AcometidaComponent({
   comboEmpalmes,
   comboNichos,
   comboSectores,
-  contratosDisponibles
+  contratosDisponibles,
 }: Readonly<AcometidaComponentProps>) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedAcometida, setSelectedAcometida] =
     useState<AcometidaRow | null>(null);
-  const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
+  const [modalMode, setModalMode] = useState<"add" | "edit">("add");
   const [, setEditingAcometidaId] = useState<number | null>(null);
 
-  // Estados para filtros
-  const [filters, setFilters] = useState<AcometidaFilters>({
-    empalmeDescripcion: '',
-    nichoDescripcion: '',
-    sectorDescripcion: '',
-    limitePotenciaMin: '',
-    limitePotenciaMax: '',
-    tieneUbicacion: '',
-    tieneMedidor: '',
-    tieneLimitePotencia: ''
+  // ─── Estado de paginación/búsqueda server-side de la tabla ─────────
+  const DEFAULT_PAGE_SIZE = 10;
+  const [tableData, setTableData] = useState<AcometidaRow[]>(acometidas);
+  const [tableLoading, setTableLoading] = useState(false);
+  const [tableError, setTableError] = useState<string | null>(null);
+  const [searchValue, setSearchValue] = useState("");
+  const [tablePagination, setTablePagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: DEFAULT_PAGE_SIZE,
   });
+  const [hasMore, setHasMore] = useState(true);
+  const requestIdRef = useRef(0);
+
+  const searchFields = useMemo(
+    () => [{ value: "ubicacion", label: "Ubicación" }],
+    [],
+  );
 
   const revalidator = useRevalidator();
-
   const { acometidaColumns } = useExportAcometidas();
-  const { filteredAcometidas, filterStats, filterOptions } =
-    useAcometidaFilters(acometidas, filters);
 
-  const handleFiltersChange = (newFilters: AcometidaFilters) => {
-    setFilters(newFilters);
-  };
+  const fetchAcometidasPage = useCallback(
+    async ({
+      pageIndex,
+      pageSize,
+      value,
+    }: {
+      pageIndex: number;
+      pageSize: number;
+      value: string;
+    }) => {
+      const requestId = ++requestIdRef.current;
+      setTableLoading(true);
+      setTableError(null);
+      const result = await administracionService.getAcometidaByLimitAndOffset(
+        value.trim() || undefined,
+        undefined,
+        undefined,
+        pageSize,
+        pageIndex * pageSize,
+      );
 
-  const handleClearFilters = () => {
-    setFilters({
-      empalmeDescripcion: '',
-      nichoDescripcion: '',
-      sectorDescripcion: '',
-      limitePotenciaMin: '',
-      limitePotenciaMax: '',
-      tieneUbicacion: '',
-      tieneMedidor: '',
-      tieneLimitePotencia: ''
+      if (requestId !== requestIdRef.current) return;
+
+      if (result.error || !result.data) {
+        setTableData([]);
+        setHasMore(false);
+        setTableError(result.error ?? "Error desconocido");
+      } else {
+        setTableData(result.data);
+        setHasMore(result.data.length >= pageSize);
+      }
+      setTableLoading(false);
+    },
+    [],
+  );
+
+  useEffect(() => {
+    fetchAcometidasPage({
+      pageIndex: 0,
+      pageSize: DEFAULT_PAGE_SIZE,
+      value: "",
     });
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleTablePaginationChange = useCallback(
+    (next: PaginationState) => {
+      setTablePagination(next);
+      fetchAcometidasPage({
+        pageIndex: next.pageIndex,
+        pageSize: next.pageSize,
+        value: searchValue,
+      });
+    },
+    [fetchAcometidasPage, searchValue],
+  );
+
+  const handleTableSearchChange = useCallback(
+    ({ value }: { value: string }) => {
+      setSearchValue(value);
+      const next: PaginationState = {
+        pageIndex: 0,
+        pageSize: tablePagination.pageSize,
+      };
+      setTablePagination(next);
+      fetchAcometidasPage({
+        pageIndex: next.pageIndex,
+        pageSize: next.pageSize,
+        value,
+      });
+    },
+    [fetchAcometidasPage, tablePagination.pageSize],
+  );
 
   const handleAddAcometida = () => {
     setSelectedAcometida(null);
-    setModalMode('add');
+    setModalMode("add");
     setIsModalOpen(true);
   };
 
   const handleEditAcometida = async (acometida: AcometidaRow) => {
     setEditingAcometidaId(acometida.idAcometida);
     setSelectedAcometida(acometida);
-    setModalMode('edit');
+    setModalMode("edit");
     setIsModalOpen(true);
   };
 
   const handleSuccess = () => {
     setIsModalOpen(false);
     setSelectedAcometida(null);
-    setModalMode('add');
+    setModalMode("add");
     setEditingAcometidaId(null);
     revalidator.revalidate();
     toast.success(
-      modalMode === 'add'
-        ? 'Acometida creada exitosamente'
-        : 'Acometida actualizada exitosamente'
+      modalMode === "add"
+        ? "Acometida creada exitosamente"
+        : "Acometida actualizada exitosamente",
     );
   };
 
   const handleSubmitForm = async (
-    data: AcometidaProps | AcometidaFormValues
+    data: AcometidaProps | AcometidaFormValues,
   ) => {
     try {
-      if (modalMode === 'add') {
-        await api.post('/acometidas/crear', data as AcometidaProps);
+      if (modalMode === "add") {
+        await api.post("/acometidas/crear", data as AcometidaProps);
       } else {
-        await api.put('/acometidas/editar', {
+        await api.put("/acometidas/editar", {
           idAcometida: selectedAcometida?.idAcometida,
-          ...data
+          ...data,
         });
       }
       handleSuccess();
     } catch {
-      toast.error('Ha ocurrido un error al guardar la acometida');
+      toast.error("Ha ocurrido un error al guardar la acometida");
     }
   };
 
@@ -146,7 +201,7 @@ export default function AcometidaComponent({
             actions={
               <div className="flex gap-2">
                 <ExportButton
-                  data={filteredAcometidas}
+                  data={tableData}
                   columns={acometidaColumns}
                   filename="acometidas"
                   size="sm"
@@ -165,20 +220,6 @@ export default function AcometidaComponent({
           <div className="industrial-divider mt-4" />
         </header>
 
-        <AcometidaFiltersComponent
-          filters={filters}
-          onFiltersChange={handleFiltersChange}
-          onClearFilters={handleClearFilters}
-          filterOptions={filterOptions}
-        />
-
-        <FilterSummary
-          totalAcometidas={filterStats.total}
-          filteredAcometidas={filterStats.filtered}
-          activeFilters={filterStats.activeFilters}
-          isFiltered={filterStats.isFiltered}
-        />
-
         <motion.div
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
@@ -195,8 +236,9 @@ export default function AcometidaComponent({
                     Listado de Acometidas
                   </CardTitle>
                   <CardDescription className="text-xs mt-0.5 text-muted-foreground">
-                    {filteredAcometidas.length} acometida
-                    {filteredAcometidas.length !== 1 ? 's' : ''}
+                    {tableLoading
+                      ? "Cargando…"
+                      : `${tableData.length} acometida${tableData.length !== 1 ? "s" : ""} en esta página`}
                   </CardDescription>
                 </div>
               </div>
@@ -204,14 +246,35 @@ export default function AcometidaComponent({
             <div className="industrial-divider" />
             <CardContent className="p-4">
               <div className="overflow-x-auto -mx-1">
-                <VirtualDataTable
+                <DataTable
                   columns={columns({
-                    onEdit: handleEditAcometida
+                    onEdit: handleEditAcometida,
                   })}
-                  data={filteredAcometidas}
-                  searchPlaceholder="Buscar por código, ubicación o contrato..."
-                  estimateRowHeight={60}
-                  maxHeight="600px"
+                  data={tableData}
+                  defaultPageSize={DEFAULT_PAGE_SIZE}
+                  searchFields={searchFields}
+                  manualPagination
+                  manualFiltering
+                  pageCount={-1}
+                  onPaginationChange={handleTablePaginationChange}
+                  onSearchChange={({ field: _field, value }) =>
+                    handleTableSearchChange({ value })
+                  }
+                  isLoading={tableLoading}
+                  hasMore={hasMore}
+                  error={tableError}
+                  onRetry={() =>
+                    fetchAcometidasPage({
+                      pageIndex: tablePagination.pageIndex,
+                      pageSize: tablePagination.pageSize,
+                      value: searchValue,
+                    })
+                  }
+                  emptyMessage={
+                    searchValue.trim()
+                      ? `Sin resultados para "${searchValue.trim()}"`
+                      : "No hay acometidas registradas en el sistema"
+                  }
                 />
               </div>
             </CardContent>

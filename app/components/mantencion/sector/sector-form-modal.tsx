@@ -147,7 +147,8 @@ export default function SectorFormModal({
         });
       }
       onSuccess();
-    } catch (_error: any) {
+    } catch (error) {
+      if (import.meta.env.DEV) console.error('guardarSector', error);
       toast.error(
         mode === 'add'
           ? 'Error al crear el sector'

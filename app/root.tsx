@@ -23,6 +23,7 @@ import { ThemeProvider } from './components/theme-provider';
 import { AuthProvider } from './context/AuthContext';
 import { BreadcrumbProvider } from './context/BreadcrumbContext';
 import { LoadingBarProvider, useLoadingBar } from './context/LoadingBarContext';
+import { getAuthToken } from './services/axiosConfig';
 import { initPerformanceMonitoring } from './utils/performance-monitor';
 
 export const links = () => [
@@ -107,7 +108,7 @@ export function ErrorBoundary({ error }: Readonly<{ error: unknown }>) {
   const currentUrl = isBrowser
     ? globalThis.location.href
     : 'No disponible en SSR';
-  const hasToken = isBrowser ? localStorage.getItem('token') : null;
+  const hasToken = isBrowser ? getAuthToken() : null;
 
   if (isRouteErrorResponse(error)) {
     message = error.status === 404 ? '404' : 'Error';

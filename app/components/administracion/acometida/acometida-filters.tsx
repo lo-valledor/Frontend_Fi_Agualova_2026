@@ -37,7 +37,7 @@ interface AcometidaFiltersProps {
   filters: AcometidaFilters;
   onFiltersChange: (filters: AcometidaFilters) => void;
   onClearFilters: () => void;
-  filterOptions: FilterOptions;
+  filterOptions?: FilterOptions;
 }
 
 export function AcometidaFiltersComponent({
@@ -46,6 +46,11 @@ export function AcometidaFiltersComponent({
   onClearFilters,
   filterOptions
 }: Readonly<AcometidaFiltersProps>) {
+  const safeOptions = filterOptions ?? {
+    empalmes: [],
+    nichos: [],
+    sectores: []
+  };
   const [isOpen, setIsOpen] = useState(false);
 
   const handleFilterChange = (key: keyof AcometidaFilters, value: string) => {
@@ -130,7 +135,7 @@ export function AcometidaFiltersComponent({
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Todos los empalmes</SelectItem>
-                    {filterOptions.empalmes.map(empalme => (
+                    {safeOptions.empalmes.map(empalme => (
                       <SelectItem key={empalme} value={empalme}>
                         {empalme}
                       </SelectItem>
@@ -158,7 +163,7 @@ export function AcometidaFiltersComponent({
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Todos los nichos</SelectItem>
-                    {filterOptions.nichos.map(nicho => (
+                    {safeOptions.nichos.map(nicho => (
                       <SelectItem key={nicho} value={nicho}>
                         {nicho}
                       </SelectItem>
@@ -186,7 +191,7 @@ export function AcometidaFiltersComponent({
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Todos los sectores</SelectItem>
-                    {filterOptions.sectores.map(sector => (
+                    {safeOptions.sectores.map(sector => (
                       <SelectItem key={sector} value={sector}>
                         {sector}
                       </SelectItem>

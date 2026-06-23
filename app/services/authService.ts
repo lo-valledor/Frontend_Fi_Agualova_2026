@@ -1,7 +1,7 @@
 import { AxiosError } from 'axios';
 import { toast } from 'sonner';
 
-import axiosInstance from './axiosConfig';
+import axiosInstance, { clearAuthToken, setAuthToken } from './axiosConfig';
 
 // ============================================================================
 // TIPOS
@@ -63,11 +63,11 @@ function validateTokenResponse(
 }
 
 function persistToken(token: string): void {
-  localStorage.setItem('token', token);
+  setAuthToken(token);
 }
 
 function clearStoredToken(): void {
-  localStorage.removeItem('token');
+  clearAuthToken();
 }
 
 function handleAuthenticationError(error: unknown): never {

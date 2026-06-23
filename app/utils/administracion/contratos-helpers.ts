@@ -55,7 +55,12 @@ export function getContratoCreateUrl(): string {
 export function isValidContratoForOperation(
   contrato: ContratosRow | null | undefined
 ): contrato is ContratosRow {
-  return contrato !== null && contrato !== undefined && !!contrato.id;
+  return (
+    contrato !== null &&
+    contrato !== undefined &&
+    contrato.idContrato !== undefined &&
+    contrato.idContrato !== null
+  );
 }
 
 export function isContratosListEmpty(contratos: ContratosRow[]): boolean {

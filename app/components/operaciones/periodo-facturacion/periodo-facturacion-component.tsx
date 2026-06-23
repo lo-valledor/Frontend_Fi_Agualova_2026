@@ -2,11 +2,13 @@ import {
   AlertTriangle,
   CheckCircle,
   Clock,
+  Filter,
   History,
-  PlusCircleIcon
+  PlusCircleIcon,
+  X
 } from 'lucide-react';
 
-import { useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import { DataTable } from '~/components/data-table/data-table';
@@ -20,17 +22,53 @@ import {
   CardHeader,
   CardTitle
 } from '~/components/ui/card';
+import { Label } from '~/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '~/components/ui/select';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger
 } from '~/components/ui/tooltip';
-import api from '~/lib/api';
+import { operacionesService } from '~/services/operacionesService';
 import type { Anio, Periodos } from '~/types/operaciones';
 import CerrarPeriodo from './cerrar-periodo';
 import { columns } from './columns';
 import DialogNuevoPeriodo from './dialog-nuevo-periodo';
+
+const MESES = [
+  { value: '01', label: 'Enero' },
+  { value: '02', label: 'Febrero' },
+  { value: '03', label: 'Marzo' },
+  { value: '04', label: 'Abril' },
+  { value: '05', label: 'Mayo' },
+  { value: '06', label: 'Junio' },
+  { value: '07', label: 'Julio' },
+  { value: '08', label: 'Agosto' },
+  { value: '09', label: 'Septiembre' },
+  { value: '10', label: 'Octubre' },
+  { value: '11', label: 'Noviembre' },
+  { value: '12', label: 'Diciembre' }
+];
+
+// Ordena cronológicamente ASC por fechaInicio (formato DD-MM-YYYY).
+// Centralizado acá porque el backend de periodos no garantiza el orden
+// en sus respuestas y el sortFn del cliente no aplica cuando hay filtro.
+const sortPeriodosAsc = (data: Periodos[]): Periodos[] =>
+  [...data].sort((a, b) => {
+    // fechaInicio viene como "DD-MM-YYYY" — convertir a comparable
+    const parseDate = (s: string): number => {
+      const [d, m, y] = s.split('-').map(Number);
+      return new Date(y, m - 1, d).getTime();
+    };
+    return parseDate(a.fechaInicio) - parseDate(b.fechaInicio);
+  });
 
 export default function AbrirPeriodoFacturacion({
   years,
@@ -43,38 +81,58 @@ export default function AbrirPeriodoFacturacion({
 }>) {
   const [isOpenDialog, setIsOpenDialog] = useState(false);
   const [periodosData, setPeriodosData] = useState<Periodos[]>(
-    Array.isArray(periodos) ? periodos : []
+    Array.isArray(periodos) ? periodos : [],
   );
+
+  // ─── Filtros server-side ─────────────────────────────────────────────
+  const [mesFilter, setMesFilter] = useState<string>('');
+  const [anioFilter, setAnioFilter] = useState<string>('');
+  const [tableError, setTableError] = useState<string | null>(null);
+  const [isFetching, setIsFetching] = useState(false);
 
   const pageBreadcrumbs = [
     { label: 'Operaciones' },
-    { label: 'Período Facturación' }
+    { label: 'Período Facturación' },
   ];
 
-  // Se ejecuta cuando se crea o cierra un periodo
-  const fetchPeriodos = async () => {
-    try {
-      const res = await api.get('/periodos/buscar');
+  // ─── Fetch server-side (filter por mes/anio, sin paginación) ────────
+  const fetchPeriodos = useCallback(async () => {
+    setIsFetching(true);
+    setTableError(null);
+    const result = await operacionesService.getPeriodoFacturacionData(
+      mesFilter || undefined,
+      anioFilter || undefined,
+    );
+    setIsFetching(false);
 
-      // Early return si no hay datos
-      if (!res.data || !Array.isArray(res.data)) {
-        setPeriodosData([]);
-        return;
-      }
-
-      setPeriodosData(res.data as Periodos[]);
-    } catch (error) {
-      console.error('Error al obtener periodos:', error);
+    if (result.error) {
+      setTableError(result.error);
       setPeriodosData([]);
+      return;
     }
-  };
+    const raw = Array.isArray(result.data) ? result.data : [];
+    // Orden ASC siempre — el backend no lo garantiza y la paginación
+    // client-side necesita datos estables para el sort.
+    setPeriodosData(sortPeriodosAsc(raw));
+  }, [mesFilter, anioFilter]);
 
-  // Encontrar período abierto
+  useEffect(() => {
+    fetchPeriodos();
+  }, [fetchPeriodos]);
+
+  // Encontrar período abierto dentro de la data cargada
   const periodoAbierto = useMemo(() => {
     return Array.isArray(periodosData)
       ? periodosData.find(p => p.estado === 'Abierto')
       : undefined;
   }, [periodosData]);
+
+  const hasActiveFilters = mesFilter !== '' || anioFilter !== '';
+
+  const clearFilters = useCallback(() => {
+    setMesFilter('');
+    setAnioFilter('');
+  }, []);
 
   // Early return para error state
   if (error) {
@@ -225,8 +283,75 @@ export default function AbrirPeriodoFacturacion({
               </div>
             </div>
           </CardHeader>
-          <CardContent className="p-4">
-            {periodosData.length === 0 ? (
+          <CardContent className="p-4 space-y-4">
+            {/* ─── Filtros server-side (mes / año) ─── */}
+            <div className="flex flex-col gap-3 rounded-lg border border-slate-200/70 dark:border-slate-800/70 bg-slate-50/60 dark:bg-slate-900/30 px-3 py-2.5 shadow-sm sm:flex-row sm:items-end">
+              <div className="flex items-center gap-2 text-muted-foreground sm:mr-2">
+                <Filter className="h-4 w-4" />
+                <span className="text-sm font-medium">Filtros</span>
+              </div>
+              <div className="flex flex-1 flex-col gap-1 sm:max-w-[180px]">
+                <Label htmlFor="mes-filter" className="text-xs">
+                  Mes
+                </Label>
+                <Select value={mesFilter} onValueChange={setMesFilter}>
+                  <SelectTrigger id="mes-filter" className="h-9 text-sm">
+                    <SelectValue placeholder="Todos" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {MESES.map(m => (
+                      <SelectItem key={m.value} value={m.value}>
+                        {m.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex flex-1 flex-col gap-1 sm:max-w-[180px]">
+                <Label htmlFor="anio-filter" className="text-xs">
+                  Año
+                </Label>
+                <Select value={anioFilter} onValueChange={setAnioFilter}>
+                  <SelectTrigger id="anio-filter" className="h-9 text-sm">
+                    <SelectValue placeholder="Todos" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {years.map(y => (
+                      <SelectItem key={y.idAnio} value={String(y.anio)}>
+                        {y.anio}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              {hasActiveFilters && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={clearFilters}
+                  className="h-9"
+                >
+                  <X className="mr-1 h-3 w-3" />
+                  Limpiar
+                </Button>
+              )}
+            </div>
+
+            {/* ─── Tabla ─── */}
+            {tableError ? (
+              <div className="flex flex-col items-center justify-center py-8 text-destructive">
+                <AlertTriangle className="h-6 w-6 mb-2" />
+                <p className="text-sm font-medium">{tableError}</p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="mt-3"
+                  onClick={fetchPeriodos}
+                >
+                  Reintentar
+                </Button>
+              </div>
+            ) : periodosData.length === 0 && !isFetching ? (
               <div className="flex flex-col items-center justify-center py-8">
                 <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-muted mb-3">
                   <History className="h-6 w-6 text-muted-foreground" />
@@ -235,7 +360,9 @@ export default function AbrirPeriodoFacturacion({
                   No se encontraron períodos
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  No hay períodos de facturación registrados
+                  {hasActiveFilters
+                    ? 'No hay períodos que coincidan con los filtros aplicados'
+                    : 'No hay períodos de facturación registrados'}
                 </p>
               </div>
             ) : (
@@ -243,7 +370,9 @@ export default function AbrirPeriodoFacturacion({
                 <DataTable
                   columns={columns}
                   data={periodosData}
-                  initialSorting={[{ id: 'fechaInicio', desc: true }]}
+                  // Orden inicial ASC — coincide con el orden del array.
+                  // El sortFn de las columnas de fecha mantiene el formato DD-MM-YYYY.
+                  initialSorting={[{ id: 'fechaInicio', desc: false }]}
                   searchPlaceholder="Buscar por descripción o ID..."
                   defaultPageSize={10}
                 />

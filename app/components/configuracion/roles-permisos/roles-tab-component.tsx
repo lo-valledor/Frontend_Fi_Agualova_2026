@@ -107,8 +107,8 @@ const RolesTabComponent: React.FC<RolesTabComponentProps> = ({
         resetForm();
         onDataChange?.();
       }
-    } catch (_error) {
-      console.error(_error);
+    } catch (error) {
+      if (import.meta.env.DEV) console.error('crearRol', error);
       toast.error('Error inesperado al crear el rol');
     } finally {
       setIsLoading(false);
@@ -138,8 +138,8 @@ const RolesTabComponent: React.FC<RolesTabComponentProps> = ({
         resetForm();
         onDataChange?.();
       }
-    } catch (_error) {
-      console.error(_error);
+    } catch (error) {
+      if (import.meta.env.DEV) console.error('actualizarRol', error);
       toast.error('Error inesperado al actualizar el rol');
     } finally {
       setIsLoading(false);
@@ -160,8 +160,9 @@ const RolesTabComponent: React.FC<RolesTabComponentProps> = ({
         setDeletingRol(null);
         onDataChange?.();
       }
-    } catch (_error) {
-      toast.error('Error inesperado al eliminar el rol', _error as any);
+    } catch (error) {
+      if (import.meta.env.DEV) console.error('eliminarRol', error);
+      toast.error('Error inesperado al eliminar el rol');
     } finally {
       setIsLoading(false);
     }
