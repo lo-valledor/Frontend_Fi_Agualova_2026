@@ -1,34 +1,34 @@
-import { LayoutList, Plus } from "lucide-react";
-import { motion } from "motion/react";
-import { useCallback, useState } from "react";
-import { useNavigate } from "react-router";
-import { toast } from "sonner";
+import { LayoutList, Plus } from 'lucide-react';
+import { motion } from 'motion/react';
+import { useCallback, useState } from 'react';
+import { useNavigate } from 'react-router';
+import { toast } from 'sonner';
 
-import { VirtualDataTable } from "~/components/data-table/virtual-data-table";
-import { ExportButton } from "~/components/shared/export-button";
-import { ModernHeader } from "~/components/shared/modern-header";
-import { Button } from "~/components/ui/button";
+import { VirtualDataTable } from '~/components/data-table/virtual-data-table';
+import { ExportButton } from '~/components/shared/export-button';
+import { ModernHeader } from '~/components/shared/modern-header';
+import { Button } from '~/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
+  CardTitle
+} from '~/components/ui/card';
 import {
   type ClientFilters,
-  useClientFilters,
-} from "~/hooks/administracion/use-client-filters";
-import { useExportClientes } from "~/hooks/administracion/use-export-clientes";
-import { useClientes } from "~/hooks/use-administracion";
+  useClientFilters
+} from '~/hooks/administracion/use-client-filters';
+import { useExportClientes } from '~/hooks/administracion/use-export-clientes';
+import { useClientes } from '~/hooks/use-administracion';
 import type {
   ClienteLoadingState,
   ClienteModalState,
   GetClientes,
   GetClientesByRut,
   NombreComuna,
-  NombreGiro,
-} from "~/types/administracion";
+  NombreGiro
+} from '~/types/administracion';
 import {
   CLIENTES_CREAR_ROUTE,
   createInitialClienteModalState,
@@ -36,13 +36,13 @@ import {
   extractClienteErrorMessage,
   getClienteEditUrl,
   isValidDetailedCliente,
-  normalizeClienteDetallado,
-} from "~/utils/administracion";
+  normalizeClienteDetallado
+} from '~/utils/administracion';
 
-import { ClientFiltersComponent } from "./client-filters";
-import { columns } from "./columns";
-import { ClienteDetailsModal } from "./detalles-cliente";
-import { FilterSummary } from "./filter-summary";
+import { ClientFiltersComponent } from './client-filters';
+import { columns } from './columns';
+import { ClienteDetailsModal } from './detalles-cliente';
+import { FilterSummary } from './filter-summary';
 
 interface ClientesComponentProps {
   readonly clientes: GetClientes[];
@@ -51,7 +51,7 @@ interface ClientesComponentProps {
 }
 
 export default function ClientesComponent({
-  clientes,
+  clientes
 }: ClientesComponentProps) {
   // Estado de datos
   const [clients] = useState<GetClientes[]>(clientes);
@@ -60,22 +60,22 @@ export default function ClientesComponent({
 
   // Estado unificado de modales
   const [modalsState, setModalsState] = useState<ClienteModalState>(
-    createInitialClienteModalState(),
+    createInitialClienteModalState()
   );
 
   // Estado de carga
   const [loadingState, setLoadingState] = useState<ClienteLoadingState>(
-    createInitialLoadingState(),
+    createInitialLoadingState()
   );
 
   // Estado de filtros
   const [filters, setFilters] = useState<ClientFilters>({
-    esEmpresa: "all",
-    comuna: "all",
-    codigoComuna: "all",
-    tieneContacto: "all",
-    tieneTelefono: "all",
-    tieneEmail: "all",
+    esEmpresa: 'all',
+    comuna: 'all',
+    codigoComuna: 'all',
+    tieneContacto: 'all',
+    tieneTelefono: 'all',
+    tieneEmail: 'all'
   });
 
   // Dependencias
@@ -84,7 +84,7 @@ export default function ClientesComponent({
 
   const { filteredClients, filterStats, filterOptions } = useClientFilters(
     clients,
-    filters,
+    filters
   );
   const { clientColumns } = useExportClientes();
 
@@ -96,53 +96,53 @@ export default function ClientesComponent({
     (cliente: GetClientes) => {
       navigate(getClienteEditUrl(cliente.rut));
     },
-    [navigate],
+    [navigate]
   );
 
   const handleDetailsCliente = useCallback(
     async (cliente: GetClientes) => {
       // Early return: validar cliente
       if (!cliente?.rut) {
-        toast.error("Cliente inválido");
+        toast.error('Cliente inválido');
         return;
       }
 
       // Comenzar carga
       setLoadingState({
         isLoading: true,
-        rutLoading: cliente.rut,
+        rutLoading: cliente.rut
       });
 
       try {
         const clienteDetallado = await getClienteByRut(cliente.rut);
         // Early return: validar respuesta
         if (!isValidDetailedCliente(clienteDetallado)) {
-          toast.error("Los detalles del cliente no son válidos");
+          toast.error('Los detalles del cliente no son válidos');
           return;
         }
 
         // Normalizar y mostrar
         const clienteNormalizado = normalizeClienteDetallado(clienteDetallado);
         setDetailedCliente(clienteNormalizado);
-        setModalsState((prev) => ({
+        setModalsState(prev => ({
           ...prev,
-          details: { isOpen: true },
+          details: { isOpen: true }
         }));
       } catch (error) {
         const errorInfo = extractClienteErrorMessage(
           error,
-          "Error al cargar los detalles del cliente",
+          'Error al cargar los detalles del cliente'
         );
         toast.error(errorInfo.message);
       } finally {
         // Finalizar carga
         setLoadingState({
           isLoading: false,
-          rutLoading: null,
+          rutLoading: null
         });
       }
     },
-    [getClienteByRut],
+    [getClienteByRut]
   );
 
   const handleFiltersChange = useCallback((newFilters: ClientFilters) => {
@@ -151,12 +151,12 @@ export default function ClientesComponent({
 
   const handleClearFilters = useCallback(() => {
     setFilters({
-      esEmpresa: "all",
-      comuna: "all",
-      codigoComuna: "all",
-      tieneContacto: "all",
-      tieneTelefono: "all",
-      tieneEmail: "all",
+      esEmpresa: 'all',
+      comuna: 'all',
+      codigoComuna: 'all',
+      tieneContacto: 'all',
+      tieneTelefono: 'all',
+      tieneEmail: 'all'
     });
   }, []);
 
@@ -218,7 +218,7 @@ export default function ClientesComponent({
                   </CardTitle>
                   <CardDescription className="text-xs mt-0.5 text-muted-foreground">
                     {filteredClients.length} cliente
-                    {filteredClients.length !== 1 ? "s" : ""}
+                    {filteredClients.length !== 1 ? 's' : ''}
                   </CardDescription>
                 </div>
               </div>
@@ -231,7 +231,7 @@ export default function ClientesComponent({
                     onDetails: handleDetailsCliente,
                     onEdit: handleEditCliente,
                     editingClienteRut: null,
-                    detailingClienteRut: loadingState.rutLoading,
+                    detailingClienteRut: loadingState.rutLoading
                   })}
                   data={filteredClients}
                   searchPlaceholder="Buscar por RUT, nombre o email..."
@@ -247,9 +247,9 @@ export default function ClientesComponent({
         <ClienteDetailsModal
           isOpen={modalsState.details.isOpen}
           onClose={() =>
-            setModalsState((prev) => ({
+            setModalsState(prev => ({
               ...prev,
-              details: { isOpen: false },
+              details: { isOpen: false }
             }))
           }
           cliente={detailedCliente}

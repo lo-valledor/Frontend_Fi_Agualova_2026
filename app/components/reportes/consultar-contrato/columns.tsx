@@ -116,7 +116,9 @@ export const columns: ColumnDef<BuscarContrato>[] = [
     ),
     cell: ({ row }) => {
       const acometida = row.getValue('acometida') as string;
-      return <div className="max-w-[200px] truncate font-medium">{acometida}</div>;
+      return (
+        <div className="max-w-[200px] truncate font-medium">{acometida}</div>
+      );
     },
     enableSorting: true,
     enableHiding: false

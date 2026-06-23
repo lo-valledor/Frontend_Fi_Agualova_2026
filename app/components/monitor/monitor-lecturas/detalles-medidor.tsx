@@ -9,7 +9,7 @@ import {
   PlugIcon,
   RefreshCw,
   Save,
-  Zap,
+  Zap
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
@@ -20,14 +20,11 @@ import { Button } from '~/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
+import { LoadingCard } from '~/components/ui/loading-card';
 import { ScrollArea } from '~/components/ui/scroll-area';
 import { Separator } from '~/components/ui/separator';
-import { LoadingCard } from '~/components/ui/loading-card';
 import { monitorService } from '~/services/monitorService';
-import type {
-  MonitorHistorialLectura,
-  MonitorProps
-} from '~/types/monitor';
+import type { MonitorHistorialLectura, MonitorProps } from '~/types/monitor';
 
 interface DetallesMedidorProps {
   lecturaId: number;
@@ -41,7 +38,7 @@ export default function DetallesMedidor({
   const [historial, setHistorial] = useState<MonitorHistorialLectura | null>(
     null
   );
-  const [detalle, setDetalle] = useState<unknown>(null);
+  const [_detalle, setDetalle] = useState<unknown>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -52,10 +49,10 @@ export default function DetallesMedidor({
   );
   const [lecturaActual, setLecturaActual] = useState<string>('');
   const [lecturaAnterior, setLecturaAnterior] = useState<string>('');
-  const [existeAdicional, setExisteAdicional] = useState(false);
-  const [tipoAdicional, setTipoAdicional] = useState<number>(0);
-  const [lecturaActualAd, setLecturaActualAd] = useState<string>('');
-  const [lecturaAnteriorAd, setLecturaAnteriorAd] = useState<string>('');
+  const [existeAdicional, _setExisteAdicional] = useState(false);
+  const [tipoAdicional, _setTipoAdicional] = useState<number>(0);
+  const [lecturaActualAd, _setLecturaActualAd] = useState<string>('');
+  const [lecturaAnteriorAd, _setLecturaAnteriorAd] = useState<string>('');
   const [complementoBT43, setComplementoBT43] = useState<string>('');
 
   const fetchData = async (): Promise<void> => {
@@ -257,7 +254,7 @@ export default function DetallesMedidor({
                   id="fecha"
                   type="date"
                   value={fecha}
-                  onChange={(e) => setFecha(e.target.value)}
+                  onChange={e => setFecha(e.target.value)}
                 />
               </div>
               <div className="space-y-1">
@@ -266,7 +263,7 @@ export default function DetallesMedidor({
                   id="lecturaAnterior"
                   type="number"
                   value={lecturaAnterior}
-                  onChange={(e) => setLecturaAnterior(e.target.value)}
+                  onChange={e => setLecturaAnterior(e.target.value)}
                 />
               </div>
               <div className="space-y-1">
@@ -275,15 +272,14 @@ export default function DetallesMedidor({
                   id="lecturaActual"
                   type="number"
                   value={lecturaActual}
-                  onChange={(e) => setLecturaActual(e.target.value)}
+                  onChange={e => setLecturaActual(e.target.value)}
                 />
               </div>
             </div>
 
             {historial.lecturasAnteriores?.length > 0 && (
               <div className="text-xs text-muted-foreground">
-                Lecturas anteriores:{' '}
-                {historial.lecturasAnteriores.join(' / ')}
+                Lecturas anteriores: {historial.lecturasAnteriores.join(' / ')}
               </div>
             )}
 
@@ -365,7 +361,7 @@ export default function DetallesMedidor({
                 <Input
                   id="complementoBT43"
                   value={complementoBT43 || historial.complementoBT43}
-                  onChange={(e) => setComplementoBT43(e.target.value)}
+                  onChange={e => setComplementoBT43(e.target.value)}
                 />
               </div>
             </CardContent>

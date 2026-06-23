@@ -46,7 +46,10 @@ interface PrepararLecturasComponentProps {
     React.SetStateAction<PrepararLecturasBuscarNichosRequest[]>
   >;
   readonly isLoadingNichos: boolean;
-  readonly onRecargarNichos: (cicloId: number, periodoId: string) => Promise<void>;
+  readonly onRecargarNichos: (
+    cicloId: number,
+    periodoId: string
+  ) => Promise<void>;
   readonly error: string | null;
 }
 
@@ -105,8 +108,7 @@ export default function PrepararLecturasComponent({
       setHasSearched(true);
       await onRecargarNichos(cicloIdNumero, periodoId);
     } catch (err) {
-      const mensaje =
-        err instanceof Error ? err.message : 'Error desconocido';
+      const mensaje = err instanceof Error ? err.message : 'Error desconocido';
       setErrorLocal(mensaje);
       toast.error(`Error al buscar nichos: ${mensaje}`);
     }
@@ -230,10 +232,7 @@ export default function PrepararLecturasComponent({
                           </span>
                         </div>
                       ) : (
-                        <Select
-                          value={periodoId}
-                          onValueChange={setPeriodoId}
-                        >
+                        <Select value={periodoId} onValueChange={setPeriodoId}>
                           <SelectTrigger className="h-[50px] bg-background border-border w-full text-sm">
                             <SelectValue placeholder="Selecciona un período" />
                           </SelectTrigger>
@@ -286,11 +285,7 @@ export default function PrepararLecturasComponent({
                     </Button>
                     <Button
                       onClick={handleBuscar}
-                      disabled={
-                        isLoadingNichos ||
-                        !cicloIdNumero ||
-                        !periodoId
-                      }
+                      disabled={isLoadingNichos || !cicloIdNumero || !periodoId}
                       className="gap-2 bg-primary hover:bg-primary/90 text-primary-foreground w-full sm:w-auto"
                     >
                       <SearchIcon className="h-4 w-4" />

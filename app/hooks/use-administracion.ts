@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
-import api from "~/lib/api";
-import { administracionService } from "~/services/administracionService";
+import api from '~/lib/api';
+import { administracionService } from '~/services/administracionService';
 import type {
   AcometidaRow,
   BuscarContratosLibres,
@@ -21,10 +21,10 @@ import type {
   NombreComuna,
   NombreGiro,
   Sectores,
-  Usuarios,
-} from "~/types/administracion";
-import type { Marca, Tarifa, TipoContrato } from "~/types/mantencion";
-import { handleDataLoad } from "./utils/data-loader";
+  Usuarios
+} from '~/types/administracion';
+import type { Marca, Tarifa, TipoContrato } from '~/types/mantencion';
+import { handleDataLoad } from './utils/data-loader';
 
 export function useAcometidasData() {
   const [data, setData] = useState<{
@@ -42,7 +42,7 @@ export function useAcometidasData() {
       () => administracionService.getAcometidasData(),
       setData,
       setError,
-      setLoading,
+      setLoading
     );
   }, []);
 
@@ -51,7 +51,7 @@ export function useAcometidasData() {
       () => administracionService.getAcometidasData(),
       setData,
       setError,
-      setLoading,
+      setLoading
     );
   };
 
@@ -59,7 +59,7 @@ export function useAcometidasData() {
     data,
     loading,
     error,
-    refreshData,
+    refreshData
   };
 }
 
@@ -77,14 +77,14 @@ export function useClientesData() {
       () => administracionService.getClientesData(),
       setData,
       setError,
-      setLoading,
+      setLoading
     );
   }, []);
 
   return {
     data,
     loading,
-    error,
+    error
   };
 }
 
@@ -106,14 +106,14 @@ export function useContratosData() {
       () => administracionService.getContratosData(),
       setData,
       setError,
-      setLoading,
+      setLoading
     );
   }, []);
 
   return {
     data,
     loading,
-    error,
+    error
   };
 }
 
@@ -130,14 +130,14 @@ export function useMedidoresData() {
       () => administracionService.getMedidoresData(),
       setData,
       setError,
-      setLoading,
+      setLoading
     );
   }, []);
 
   return {
     data,
     loading,
-    error,
+    error
   };
 }
 
@@ -149,16 +149,16 @@ export function useUsuarios() {
   useEffect(() => {
     handleDataLoad(
       () => administracionService.getUsuarios(),
-      (result) => setData(result || []),
+      result => setData(result || []),
       setError,
-      setLoading,
+      setLoading
     );
   }, []);
 
   return {
     data,
     loading,
-    error,
+    error
   };
 }
 
@@ -170,16 +170,16 @@ export function useCargoTipoContrato() {
   useEffect(() => {
     handleDataLoad(
       () => administracionService.getCargoTipoContrato(),
-      (result) => setData(result || []),
+      result => setData(result || []),
       setError,
-      setLoading,
+      setLoading
     );
   }, []);
 
   return {
     data,
     loading,
-    error,
+    error
   };
 }
 
@@ -196,14 +196,14 @@ export function useCondicionesContrato() {
       () => administracionService.getCondicionesContratoData(),
       setData,
       setError,
-      setLoading,
+      setLoading
     );
   }, []);
 
   return {
     data,
     loading,
-    error,
+    error
   };
 }
 
@@ -222,14 +222,14 @@ export function useCargoFacturable() {
       () => administracionService.getCargoFacturableData(),
       setData,
       setError,
-      setLoading,
+      setLoading
     );
   }, []);
 
   return {
     data,
     loading,
-    error,
+    error
   };
 }
 
@@ -245,78 +245,78 @@ export function useAdministracion() {
     createUsuario: { isLoading: false },
     updateUsuario: { isLoading: false },
     deleteUsuario: { isLoading: false },
-    fetchUsuarios: { isLoading: false },
+    fetchUsuarios: { isLoading: false }
   });
 
   const createUsuario = async (
-    userData: Partial<Usuarios>,
+    userData: Partial<Usuarios>
   ): Promise<unknown> => {
-    setLoadingState((prev) => ({
+    setLoadingState(prev => ({
       ...prev,
-      createUsuario: { isLoading: true },
+      createUsuario: { isLoading: true }
     }));
 
     try {
-      const response = await api.post("/register", userData);
+      const response = await api.post('/register', userData);
       return response.data;
     } finally {
-      setLoadingState((prev) => ({
+      setLoadingState(prev => ({
         ...prev,
-        createUsuario: { isLoading: false },
+        createUsuario: { isLoading: false }
       }));
     }
   };
 
   const updateUsuario = async (
     id: string | number,
-    userData: Partial<Usuarios>,
+    userData: Partial<Usuarios>
   ): Promise<unknown> => {
-    setLoadingState((prev) => ({
+    setLoadingState(prev => ({
       ...prev,
-      updateUsuario: { isLoading: true },
+      updateUsuario: { isLoading: true }
     }));
 
     try {
       const response = await api.put(`/actualizar/${id}`, userData);
       return response.data;
     } finally {
-      setLoadingState((prev) => ({
+      setLoadingState(prev => ({
         ...prev,
-        updateUsuario: { isLoading: false },
+        updateUsuario: { isLoading: false }
       }));
     }
   };
 
   const deleteUsuario = async (id: string): Promise<unknown> => {
-    setLoadingState((prev) => ({
+    setLoadingState(prev => ({
       ...prev,
-      deleteUsuario: { isLoading: true },
+      deleteUsuario: { isLoading: true }
     }));
 
     try {
       const response = await api.delete(`/eliminar/${id}`);
       return response.data;
     } finally {
-      setLoadingState((prev) => ({
+      setLoadingState(prev => ({
         ...prev,
-        deleteUsuario: { isLoading: false },
+        deleteUsuario: { isLoading: false }
       }));
     }
   };
 
   const fetchUsuarios = async (): Promise<unknown> => {
-    setLoadingState((prev) => ({
+    setLoadingState(prev => ({
       ...prev,
-      fetchUsuarios: { isLoading: true },
+      fetchUsuarios: { isLoading: true }
     }));
 
     try {
-      const response = await api.get("/GetAllUsers");
+      const response = await api.get('/GetAllUsers');
       return response.data;
     } finally {
-      setLoadingState((prev) => ({
+      setLoadingState(prev => ({
         ...prev,
-        fetchUsuarios: { isLoading: false },
+        fetchUsuarios: { isLoading: false }
       }));
     }
   };
@@ -326,7 +326,7 @@ export function useAdministracion() {
       const response = await api.get(`/GetUserById/${id}`);
       return response.data as Usuarios;
     } catch (error) {
-      console.error("Error al obtener el usuario:", error);
+      console.error('Error al obtener el usuario:', error);
       throw error;
     }
   };
@@ -337,7 +337,7 @@ export function useAdministracion() {
     deleteUsuario,
     fetchUsuarios,
     getUsuarioById,
-    loadingState,
+    loadingState
   };
 }
 
@@ -348,6 +348,6 @@ export function useClientes() {
   };
 
   return {
-    getClienteByRut,
+    getClienteByRut
   };
 }

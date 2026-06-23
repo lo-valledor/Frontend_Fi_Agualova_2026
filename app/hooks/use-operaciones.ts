@@ -1,8 +1,15 @@
 import { useEffect, useState } from 'react';
 
 import { operacionesService } from '~/services/operacionesService';
-import type { Anio, PeriodoAbierto, Periodos } from '~/types/operaciones';
+import type { Anio, Periodos } from '~/types/operaciones';
 import { handleDataLoad } from './utils/data-loader';
+
+type PeriodoAbierto = {
+  id: string;
+  descripcion: string;
+  mes: number;
+  anio: number;
+};
 
 export function usePeriodoFacturacion() {
   const [data, setData] = useState<{

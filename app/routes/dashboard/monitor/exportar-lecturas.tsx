@@ -1,9 +1,9 @@
 /* eslint-disable no-empty-pattern */
-import ExportarLecturasComponent from "~/components/monitor/exportar-lecturas-component";
-import { MonitorHydrateFallback } from "~/components/monitor/monitor-hydrate-fallback";
-import { monitorService } from "~/services/monitorService";
+import ExportarLecturasComponent from '~/components/monitor/exportar-lecturas-component';
+import { MonitorHydrateFallback } from '~/components/monitor/monitor-hydrate-fallback';
+import { monitorService } from '~/services/monitorService';
 
-import type { Route } from "./+types/exportar-lecturas";
+import type { Route } from './+types/exportar-lecturas';
 
 export function hydrateFallback() {
   return <MonitorHydrateFallback />;
@@ -11,8 +11,8 @@ export function hydrateFallback() {
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Agualova | Exportar Lecturas" },
-    { name: "description", content: "Exportar lecturas de medidores" },
+    { title: 'Agualova | Exportar Lecturas' },
+    { name: 'description', content: 'Exportar lecturas de medidores' }
   ];
 }
 
@@ -25,7 +25,7 @@ export async function clientLoader({}: Route.ClientLoaderArgs) {
       periodos: [],
       sectores: [],
       activePeriodoId: null,
-      error: new Error(result.error || "Error al cargar datos"),
+      error: new Error(result.error || 'Error al cargar datos')
     };
   }
 
@@ -35,7 +35,7 @@ export async function clientLoader({}: Route.ClientLoaderArgs) {
       ? Number(result.data.activePeriodoId)
       : null,
     sectores: resSectores.data || [],
-    error: null,
+    error: null
   };
 }
 

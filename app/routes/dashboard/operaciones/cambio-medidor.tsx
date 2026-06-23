@@ -1,4 +1,3 @@
-/** biome-ignore-all lint/correctness/noEmptyPattern: <explanation> */
 import { BreadcrumbSetter } from "~/components/breadcrumb-setter";
 import CambioMedidorComponent from "~/components/operaciones/cambio-medidor/cambio-medidor-component";
 

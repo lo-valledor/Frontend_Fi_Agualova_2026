@@ -1,9 +1,9 @@
 import type {
   MonitorFilas,
   MonitorMedidores,
-  MonitorNichosGet,
-} from "~/types/monitor";
-import { getMeterStatus } from "./monitor-status";
+  MonitorNichosGet
+} from '~/types/monitor';
+import { getMeterStatus } from './monitor-status';
 
 export interface StatsData {
   total: number;
@@ -16,7 +16,7 @@ export interface StatsData {
 }
 
 export function calculateNichoStats(
-  nicho: MonitorNichosGet | null | undefined,
+  nicho: MonitorNichosGet | null | undefined
 ): StatsData {
   const defaultStats: StatsData = {
     total: 0,
@@ -25,7 +25,7 @@ export function calculateNichoStats(
     info: 0,
     normal: 0,
     sinlec: 0,
-    imported: 0,
+    imported: 0
   };
 
   // Handle null/undefined nicho
@@ -83,7 +83,7 @@ export function calculateNichoStats(
 }
 
 export function calculateTotalStats(
-  nichos: MonitorNichosGet[] | null | undefined,
+  nichos: MonitorNichosGet[] | null | undefined
 ): StatsData {
   const defaultStats: StatsData = {
     total: 0,
@@ -92,7 +92,7 @@ export function calculateTotalStats(
     info: 0,
     normal: 0,
     sinlec: 0,
-    imported: 0,
+    imported: 0
   };
 
   // Handle null/undefined/empty array
@@ -111,7 +111,7 @@ export function calculateTotalStats(
       info: acc.info + stats.info,
       normal: acc.normal + stats.normal,
       sinlec: acc.sinlec + stats.sinlec,
-      imported: acc.imported + stats.imported,
+      imported: acc.imported + stats.imported
     };
   }, defaultStats);
 }
@@ -119,10 +119,10 @@ export function calculateTotalStats(
 export function calculatePercentage(
   value: number,
   total: number,
-  decimals = 1,
+  decimals = 1
 ): string {
   if (total === 0 || !Number.isFinite(value) || !Number.isFinite(total)) {
-    return "0.0";
+    return '0.0';
   }
 
   const percentage = (value / total) * 100;
@@ -132,7 +132,7 @@ export function calculatePercentage(
 export function calculateConsumption(
   currentReading: number | null | undefined,
   previousReading: number | null | undefined,
-  multiplier = 1,
+  multiplier = 1
 ): number {
   // Handle null/undefined values
   if (
@@ -156,7 +156,7 @@ export function calculateConsumption(
 }
 
 export function aggregateMetersByStatus(
-  medidores: MonitorMedidores[] | null | undefined,
+  medidores: MonitorMedidores[] | null | undefined
 ): Record<string, MonitorMedidores[]> {
   const defaultGrouping: Record<string, MonitorMedidores[]> = {};
 
@@ -182,7 +182,7 @@ export function aggregateMetersByStatus(
 }
 
 export function getAllMetersFromNicho(
-  nicho: MonitorNichosGet | null | undefined,
+  nicho: MonitorNichosGet | null | undefined
 ): MonitorMedidores[] {
   // Handle null/undefined nicho
   if (!nicho || !Array.isArray(nicho.filas)) {
@@ -190,27 +190,27 @@ export function getAllMetersFromNicho(
   }
 
   // Use flatMap to flatten the structure
-  return nicho.filas.flatMap((fila) => {
+  return nicho.filas.flatMap(fila => {
     if (!fila || !Array.isArray(fila.medidores)) {
       return [];
     }
-    return fila.medidores.filter((m) => m !== null && m !== undefined);
+    return fila.medidores.filter(m => m !== null && m !== undefined);
   });
 }
 
 export function getProblemMeters(
-  nicho: MonitorNichosGet | null | undefined,
+  nicho: MonitorNichosGet | null | undefined
 ): MonitorMedidores[] {
   const allMeters = getAllMetersFromNicho(nicho);
 
-  return allMeters.filter((medidor) => {
+  return allMeters.filter(medidor => {
     const status = getMeterStatus(medidor.claveHtml);
     return status.severity > 2;
   });
 }
 
 export function countMetersBySeverity(
-  fila: MonitorFilas | null | undefined,
+  fila: MonitorFilas | null | undefined
 ): Record<number, number> {
   const defaultCounts = { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0 };
 

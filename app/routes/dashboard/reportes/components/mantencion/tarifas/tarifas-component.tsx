@@ -1,23 +1,23 @@
-import { LayoutList, Plus } from "lucide-react";
-import { motion } from "motion/react";
-import { useMemo, useState } from "react";
-import { useRevalidator } from "react-router";
-import { toast } from "sonner";
+import { LayoutList, Plus } from 'lucide-react';
+import { motion } from 'motion/react';
+import { useMemo, useState } from 'react';
+import { useRevalidator } from 'react-router';
+import { toast } from 'sonner';
 
-import { DataTable } from "~/components/data-table/data-table";
-import { ModernHeader } from "~/components/shared/modern-header";
-import { Button } from "~/components/ui/button";
+import { DataTable } from '~/components/data-table/data-table';
+import { ModernHeader } from '~/components/shared/modern-header';
+import { Button } from '~/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
-import type { Tarifa } from "~/types/mantencion";
+  CardTitle
+} from '~/components/ui/card';
+import type { Tarifa } from '~/types/mantencion';
 
-import { createColumns } from "./columns";
-import TarifaFormModal from "./tarifa-form-modal";
+import { createColumns } from './columns';
+import TarifaFormModal from './tarifa-form-modal';
 
 const mechanicalEase = [0.25, 0.1, 0.25, 1] as const;
 
@@ -26,52 +26,52 @@ interface TarifasComponentProps {
 }
 
 export default function TarifasComponent({
-  tarifas,
+  tarifas
 }: Readonly<TarifasComponentProps>) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTarifa, setSelectedTarifa] = useState<Tarifa | undefined>(
-    undefined,
+    undefined
   );
-  const [modalMode, setModalMode] = useState<"add" | "edit">("add");
+  const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
 
   const revalidator = useRevalidator();
 
   const handleAdd = () => {
     setSelectedTarifa(undefined);
-    setModalMode("add");
+    setModalMode('add');
     setIsModalOpen(true);
   };
 
   const handleEdit = (tarifa: Tarifa) => {
     setSelectedTarifa(tarifa);
-    setModalMode("edit");
+    setModalMode('edit');
     setIsModalOpen(true);
   };
 
   const handleDelete = async (tarifa: Tarifa) => {
     if (
       globalThis.confirm(
-        `¿Está seguro de que desea eliminar la tarifa "${tarifa.nombre}"?`,
+        `¿Está seguro de que desea eliminar la tarifa "${tarifa.nombre}"?`
       )
     ) {
       try {
-        const { default: api } = await import("~/lib/api");
+        const { default: api } = await import('~/lib/api');
         await api.delete(`/eliminarTarifa/${tarifa.id}`);
 
-        toast.success("Tarifa eliminada exitosamente");
+        toast.success('Tarifa eliminada exitosamente');
         revalidator.revalidate();
       } catch (error) {
-        console.error("Error al eliminar la tarifa:", error);
-        toast.error("Error al eliminar la tarifa");
+        console.error('Error al eliminar la tarifa:', error);
+        toast.error('Error al eliminar la tarifa');
       }
     }
   };
 
   const handleSuccess = () => {
     toast.success(
-      modalMode === "add"
-        ? "Tarifa creada exitosamente"
-        : "Tarifa actualizada exitosamente",
+      modalMode === 'add'
+        ? 'Tarifa creada exitosamente'
+        : 'Tarifa actualizada exitosamente'
     );
     revalidator.revalidate();
   };
@@ -80,9 +80,9 @@ export default function TarifasComponent({
     () =>
       createColumns({
         onEdit: handleEdit,
-        onDelete: handleDelete,
+        onDelete: handleDelete
       }),
-    [handleEdit, handleDelete],
+    [handleEdit, handleDelete]
   );
 
   return (
@@ -118,7 +118,7 @@ export default function TarifasComponent({
                     Listado de Tarifa
                   </CardTitle>
                   <CardDescription className="text-xs mt-0.5 text-muted-foreground">
-                    {tarifas.length} tarifa{tarifas.length !== 1 ? "s" : ""}
+                    {tarifas.length} tarifa{tarifas.length !== 1 ? 's' : ''}
                   </CardDescription>
                 </div>
               </div>

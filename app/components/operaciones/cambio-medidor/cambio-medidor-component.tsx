@@ -4,8 +4,7 @@ import {
   CheckCircle2,
   FileText,
   Gauge,
-  Loader2,
-  RefreshCw
+  Loader2
 } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -31,10 +30,9 @@ import type {
 
 import AntiguoMedidorForm from './antiguo-medidor-form';
 import DetalleMedidorAntiguo from './detalle-medidor-antiguo';
-import DetalleMedidorNuevo from './detalle-medidor-nuevo';
 import NuevoMedidorForm from './nuevo-medidor-form';
 
-const MEDIDOR_ANTIGUO_INICIAL: CambioMedidorBuscarAntiguoRequest = {
+const _MEDIDOR_ANTIGUO_INICIAL: CambioMedidorBuscarAntiguoRequest = {
   idMedidor: 0,
   acometida: '',
   numeroSerie: '',
@@ -45,7 +43,7 @@ const MEDIDOR_ANTIGUO_INICIAL: CambioMedidorBuscarAntiguoRequest = {
   ultimaLectura: 0
 };
 
-const MEDIDOR_NUEVO_INICIAL: CambioMedidorBuscarNuevoRequest = {
+const _MEDIDOR_NUEVO_INICIAL: CambioMedidorBuscarNuevoRequest = {
   idMedidor: 0,
   tipo: '',
   constante: 0,
@@ -229,7 +227,9 @@ export default function CambioMedidorComponent() {
                 <Gauge className="h-5 w-5" />
               </div>
               <div>
-                <CardTitle className="text-lg">Paso 1: Buscar medidor antiguo</CardTitle>
+                <CardTitle className="text-lg">
+                  Paso 1: Buscar medidor antiguo
+                </CardTitle>
                 <CardDescription>
                   Busca el medidor que será reemplazado
                 </CardDescription>
@@ -352,7 +352,9 @@ export default function CambioMedidorComponent() {
                 <FileText className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <CardTitle className="text-lg">Paso 4: Confirmar Cambio</CardTitle>
+                <CardTitle className="text-lg">
+                  Paso 4: Confirmar Cambio
+                </CardTitle>
                 <CardDescription>
                   Revisa los datos y confirma el cambio de medidor
                 </CardDescription>
@@ -368,15 +370,21 @@ export default function CambioMedidorComponent() {
                 <CardContent className="p-3 space-y-2 text-sm">
                   <div className="flex justify-between">
                     <span>Acometida:</span>
-                    <span className="font-medium">{detalleAntiguo.acometida}</span>
+                    <span className="font-medium">
+                      {detalleAntiguo.acometida}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span>N° Serie:</span>
-                    <span className="font-medium">{detalleAntiguo.numeroSerie}</span>
+                    <span className="font-medium">
+                      {detalleAntiguo.numeroSerie}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span>Última lectura:</span>
-                    <span className="font-medium">{detalleAntiguo.ultimaLectura}</span>
+                    <span className="font-medium">
+                      {detalleAntiguo.ultimaLectura}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span>Lectura final:</span>
@@ -394,7 +402,9 @@ export default function CambioMedidorComponent() {
                 <CardContent className="p-3 space-y-2 text-sm">
                   <div className="flex justify-between">
                     <span>N° Serie:</span>
-                    <span className="font-medium">{detalleNuevo.numeroSerie}</span>
+                    <span className="font-medium">
+                      {detalleNuevo.numeroSerie}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span>Tipo:</span>
@@ -440,10 +450,7 @@ export default function CambioMedidorComponent() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label
-                      htmlFor="primera-lectura-nuevo"
-                      className="text-sm"
-                    >
+                    <Label htmlFor="primera-lectura-nuevo" className="text-sm">
                       Primera Lectura (Nuevo)
                     </Label>
                     <Input

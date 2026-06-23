@@ -1,5 +1,5 @@
-import { driver } from "driver.js";
-import "driver.js/dist/driver.css";
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
 import {
   AlertCircleIcon,
   Calendar,
@@ -9,42 +9,42 @@ import {
   HelpCircle,
   Lock,
   Search,
-  TrendingUp,
-} from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
-import { toast } from "sonner";
+  TrendingUp
+} from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
+import { toast } from 'sonner';
 
-import { ModernHeader } from "~/components/shared/modern-header";
-import { Badge } from "~/components/ui/badge";
-import { Button } from "~/components/ui/button";
-import { Card, CardContent } from "~/components/ui/card";
-import { Collapsible, CollapsibleContent } from "~/components/ui/collapsible";
+import { ModernHeader } from '~/components/shared/modern-header';
+import { Badge } from '~/components/ui/badge';
+import { Button } from '~/components/ui/button';
+import { Card, CardContent } from '~/components/ui/card';
+import { Collapsible, CollapsibleContent } from '~/components/ui/collapsible';
 import {
   Dialog,
   DialogContent,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
-} from "~/components/ui/dialog";
-import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
-import { operacionesService } from "~/services/operacionesService";
-import type { RevisionPreciosBuscarRequest } from "~/types/operaciones";
+  DialogTitle
+} from '~/components/ui/dialog';
+import { Input } from '~/components/ui/input';
+import { Label } from '~/components/ui/label';
+import { operacionesService } from '~/services/operacionesService';
+import type { RevisionPreciosBuscarRequest } from '~/types/operaciones';
 import {
   getCurrentMonth,
   getCurrentYear,
   getMonthLabel,
   getYearsRange,
   MONTHS,
-  validatePeriod,
-} from "~/utils/operaciones";
+  validatePeriod
+} from '~/utils/operaciones';
 import {
   filterPendingConfirmations,
-  processConfirmations,
-} from "~/utils/operaciones/confirmation-helpers";
+  processConfirmations
+} from '~/utils/operaciones/confirmation-helpers';
 
-import { columns } from "./columns";
-import { DataTableVirtualized } from "./data-table-virtualized";
+import { columns } from './columns';
+import { DataTableVirtualized } from './data-table-virtualized';
 
 interface RevisarPrecioComponentProps {
   precios: RevisionPreciosBuscarRequest[];
@@ -57,16 +57,16 @@ export default function RevisarPrecioComponent({
   precios: initialPrecios,
   initialMes,
   initialAnio,
-  error,
+  error
 }: Readonly<RevisarPrecioComponentProps>) {
   const [mes, setMes] = useState(initialMes);
   const [anio, setAnio] = useState(initialAnio);
   const [precios, setPrecios] =
     useState<RevisionPreciosBuscarRequest[]>(initialPrecios);
   const [selectedCodigosCargo, setSelectedCodigosCargo] = useState<number[]>(
-    [],
+    []
   );
-  const [passwordConfirmacion, setPasswordConfirmacion] = useState("");
+  const [passwordConfirmacion, setPasswordConfirmacion] = useState('');
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isConfirming, setIsConfirming] = useState(false);
@@ -85,7 +85,7 @@ export default function RevisarPrecioComponent({
       const result = await operacionesService.getRevisarPreciosData(mes, anio);
 
       if (result.error || !result.data) {
-        toast.error(result.error || "Error al buscar precios de revisión");
+        toast.error(result.error || 'Error al buscar precios de revisión');
         return;
       }
 
@@ -95,10 +95,10 @@ export default function RevisarPrecioComponent({
 
       setPrecios(data);
       setSelectedCodigosCargo([]);
-      toast.success("Búsqueda completada");
+      toast.success('Búsqueda completada');
     } catch (err) {
-      toast.error("Error al buscar precios de revisión", {
-        description: String(err),
+      toast.error('Error al buscar precios de revisión', {
+        description: String(err)
       });
     } finally {
       setIsLoading(false);
@@ -109,7 +109,7 @@ export default function RevisarPrecioComponent({
     setMes(getCurrentMonth());
     setAnio(getCurrentYear());
     setSelectedCodigosCargo([]);
-    toast.success("Filtros reiniciados");
+    toast.success('Filtros reiniciados');
   };
 
   const refreshData = async (): Promise<void> => {
@@ -123,21 +123,21 @@ export default function RevisarPrecioComponent({
 
   const pendientes = useMemo(
     () => filterPendingConfirmations(precios, selectedCodigosCargo),
-    [precios, selectedCodigosCargo],
+    [precios, selectedCodigosCargo]
   );
 
   const handleOpenConfirmDialog = (): void => {
     if (selectedCodigosCargo.length === 0) {
-      toast.info("Selecciona al menos un registro pendiente para confirmar");
+      toast.info('Selecciona al menos un registro pendiente para confirmar');
       return;
     }
-    setPasswordConfirmacion("");
+    setPasswordConfirmacion('');
     setIsConfirmDialogOpen(true);
   };
 
   const handleConfirmar = async (): Promise<void> => {
     if (!passwordConfirmacion) {
-      toast.error("Debes ingresar tu contraseña para confirmar");
+      toast.error('Debes ingresar tu contraseña para confirmar');
       return;
     }
 
@@ -145,7 +145,7 @@ export default function RevisarPrecioComponent({
     try {
       const resultado = await processConfirmations(
         pendientes,
-        passwordConfirmacion,
+        passwordConfirmacion
       );
 
       if (resultado.shouldStop) {
@@ -157,71 +157,71 @@ export default function RevisarPrecioComponent({
 
       if (resultado.exitosas > 0) {
         toast.success(
-          `Se han confirmado ${resultado.exitosas} registros correctamente`,
+          `Se han confirmado ${resultado.exitosas} registros correctamente`
         );
         setSelectedCodigosCargo([]);
         await refreshData();
       } else {
-        toast.error("No se pudo confirmar los registros");
+        toast.error('No se pudo confirmar los registros');
       }
     } catch (err) {
-      toast.error("Error al confirmar", { description: String(err) });
+      toast.error('Error al confirmar', { description: String(err) });
     } finally {
       setIsConfirming(false);
     }
   };
 
   const totalPendientesGlobal = useMemo(
-    () => precios.filter((p) => p.indice > 0 && !p.estaConfirmado).length,
-    [precios],
+    () => precios.filter(p => p.indice > 0 && !p.estaConfirmado).length,
+    [precios]
   );
 
   const tourSteps = [
     {
-      element: "#filtros-periodo",
+      element: '#filtros-periodo',
       popover: {
-        title: "Filtros de Período",
+        title: 'Filtros de Período',
         description:
-          "Selecciona el <strong>mes y año</strong> para consultar los precios de revisión.",
-        side: "bottom" as const,
-        align: "start" as const,
-      },
+          'Selecciona el <strong>mes y año</strong> para consultar los precios de revisión.',
+        side: 'bottom' as const,
+        align: 'start' as const
+      }
     },
     {
-      element: "#buscar-btn",
+      element: '#buscar-btn',
       popover: {
-        title: "Buscar Precios",
+        title: 'Buscar Precios',
         description:
-          "Carga los precios de revisión para el período seleccionado.",
-        side: "bottom" as const,
-        align: "center" as const,
-      },
+          'Carga los precios de revisión para el período seleccionado.',
+        side: 'bottom' as const,
+        align: 'center' as const
+      }
     },
     {
-      element: "#tabla-precios",
+      element: '#tabla-precios',
       popover: {
-        title: "Tabla de Precios",
+        title: 'Tabla de Precios',
         description:
-          "Revisa los precios, selecciona los pendientes y modifícalos o confírmalos.",
-        side: "top" as const,
-        align: "start" as const,
-      },
+          'Revisa los precios, selecciona los pendientes y modifícalos o confírmalos.',
+        side: 'top' as const,
+        align: 'start' as const
+      }
     },
     {
-      element: "#confirmar-btn",
+      element: '#confirmar-btn',
       popover: {
-        title: "Confirmar Cambios",
+        title: 'Confirmar Cambios',
         description:
-          "Confirma los registros seleccionados con tu contraseña de usuario.",
-        side: "top" as const,
-        align: "center" as const,
-      },
-    },
+          'Confirma los registros seleccionados con tu contraseña de usuario.',
+        side: 'top' as const,
+        align: 'center' as const
+      }
+    }
   ];
 
   useEffect(() => {
     return () => {
-      const driverEl = document.querySelector(".driver-active");
+      const driverEl = document.querySelector('.driver-active');
       if (driverEl) driverEl.remove();
     };
   }, []);
@@ -229,19 +229,19 @@ export default function RevisarPrecioComponent({
   const startTour = (): void => {
     const driverjs = driver({
       showProgress: true,
-      progressText: "Paso {{current}} de {{total}}",
+      progressText: 'Paso {{current}} de {{total}}',
       smoothScroll: true,
       stagePadding: 4,
       stageRadius: 6,
       animate: true,
       allowClose: true,
-      nextBtnText: "Siguiente",
-      prevBtnText: "Anterior",
-      doneBtnText: "Finalizar",
-      onHighlightStarted: (element) => {
+      nextBtnText: 'Siguiente',
+      prevBtnText: 'Anterior',
+      doneBtnText: 'Finalizar',
+      onHighlightStarted: element => {
         if (element)
-          element.scrollIntoView({ behavior: "smooth", block: "center" });
-      },
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
     });
     driverjs.setSteps(tourSteps);
     driverjs.drive();
@@ -305,7 +305,7 @@ export default function RevisarPrecioComponent({
                 </div>
                 <ChevronDown
                   className={`h-4 w-4 transition-transform duration-200 ${
-                    isFiltersOpen ? "rotate-180" : ""
+                    isFiltersOpen ? 'rotate-180' : ''
                   }`}
                 />
               </div>
@@ -318,10 +318,10 @@ export default function RevisarPrecioComponent({
                     <Label className="text-sm font-medium">Mes</Label>
                     <select
                       value={mes}
-                      onChange={(e) => setMes(e.target.value)}
+                      onChange={e => setMes(e.target.value)}
                       className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm"
                     >
-                      {MONTHS.map((m) => (
+                      {MONTHS.map(m => (
                         <option key={m.value} value={m.value}>
                           {m.label}
                         </option>
@@ -333,10 +333,10 @@ export default function RevisarPrecioComponent({
                     <Label className="text-sm font-medium">Año</Label>
                     <select
                       value={anio}
-                      onChange={(e) => setAnio(e.target.value)}
+                      onChange={e => setAnio(e.target.value)}
                       className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm"
                     >
-                      {getYearsRange().map((y) => (
+                      {getYearsRange().map(y => (
                         <option key={y.value} value={y.value}>
                           {y.label}
                         </option>
@@ -389,11 +389,11 @@ export default function RevisarPrecioComponent({
                   Confirmación de Cambios
                 </h3>
                 <p className="text-xs sm:text-sm text-muted-foreground">
-                  Registros seleccionados:{" "}
+                  Registros seleccionados:{' '}
                   <span className="font-medium text-primary">
                     {selectedCodigosCargo.length}
-                  </span>{" "}
-                  / Pendientes totales:{" "}
+                  </span>{' '}
+                  / Pendientes totales:{' '}
                   <span className="font-medium">{totalPendientesGlobal}</span>
                 </p>
               </div>
@@ -410,7 +410,7 @@ export default function RevisarPrecioComponent({
                 >
                   <CheckCircle className="w-4 h-4 mr-2" />
                   <span className="hidden sm:inline">
-                    {isConfirming ? "Procesando..." : "Confirmar"}
+                    {isConfirming ? 'Procesando...' : 'Confirmar'}
                   </span>
                   <span className="sm:hidden">Confirmar</span>
                 </Button>
@@ -430,7 +430,7 @@ export default function RevisarPrecioComponent({
                 data={precios}
                 enableSelection
                 selectedRowIds={selectedCodigosCargo.map(String)}
-                onRowSelectionChange={(ids) =>
+                onRowSelectionChange={ids =>
                   setSelectedCodigosCargo(ids.map(Number))
                 }
                 rowId="codigoCargo"
@@ -447,16 +447,16 @@ export default function RevisarPrecioComponent({
             <DialogTitle className="flex items-center gap-2 text-base sm:text-lg">
               <Lock className="h-4 w-4" />
               Confirmar {selectedCodigosCargo.length} registro
-              {selectedCodigosCargo.length === 1 ? "" : "s"}
+              {selectedCodigosCargo.length === 1 ? '' : 's'}
             </DialogTitle>
           </DialogHeader>
 
           <div className="space-y-3 py-2">
             <p className="text-sm text-muted-foreground">
-              Ingresa tu contraseña para confirmar la selección de{" "}
+              Ingresa tu contraseña para confirmar la selección de{' '}
               <strong>{pendientes.length}</strong> registro
-              {pendientes.length === 1 ? "" : "s"} pendiente
-              {pendientes.length === 1 ? "" : "s"}.
+              {pendientes.length === 1 ? '' : 's'} pendiente
+              {pendientes.length === 1 ? '' : 's'}.
             </p>
 
             <div className="space-y-1.5">
@@ -468,7 +468,7 @@ export default function RevisarPrecioComponent({
                 type="password"
                 autoComplete="current-password"
                 value={passwordConfirmacion}
-                onChange={(e) => setPasswordConfirmacion(e.target.value)}
+                onChange={e => setPasswordConfirmacion(e.target.value)}
                 placeholder="Tu contraseña"
                 className="h-9"
               />

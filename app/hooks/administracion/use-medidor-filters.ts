@@ -1,15 +1,15 @@
-import { useMemo } from "react";
+import { useMemo } from 'react';
 
-import type { MedidorFilters } from "~/components/administracion/medidores/medidor-filters";
-import type { MedidorListItem } from "~/components/administracion/medidores/medidores-types";
+import type { MedidorFilters } from '~/components/administracion/medidores/medidor-filters';
+import type { MedidorListItem } from '~/components/administracion/medidores/medidores-types';
 import {
   extractUniqueOptions,
   filterByDateRange,
   filterByNumberRange,
   filterByPresence,
-  filterByString,
-} from "./utils/filter-utilities";
-import { calculateFilterStats } from "./utils/stats-calculator";
+  filterByString
+} from './utils/filter-utilities';
+import { calculateFilterStats } from './utils/stats-calculator';
 
 export interface MedidorFilterOptions {
   marcas: string[];
@@ -22,19 +22,19 @@ export type FilterOptions = MedidorFilterOptions;
 
 export function useMedidorFilters(
   medidores: MedidorListItem[],
-  filters: MedidorFilters,
+  filters: MedidorFilters
 ) {
   const filterOptions = useMemo((): MedidorFilterOptions => {
     return {
-      marcas: extractUniqueOptions(medidores, (m) => m.marca),
-      tipos: extractUniqueOptions(medidores, (m) => m.tipo),
-      modelos: extractUniqueOptions(medidores, (m) => m.modelo),
-      estados: extractUniqueOptions(medidores, (m) => m.estado),
+      marcas: extractUniqueOptions(medidores, m => m.marca),
+      tipos: extractUniqueOptions(medidores, m => m.tipo),
+      modelos: extractUniqueOptions(medidores, m => m.modelo),
+      estados: extractUniqueOptions(medidores, m => m.estado)
     };
   }, [medidores]);
 
   const filteredMedidores = useMemo(() => {
-    return medidores.filter((medidor) => {
+    return medidores.filter(medidor => {
       if (!filterByString(medidor.marca, filters.marca)) return false;
       if (!filterByString(medidor.tipo, filters.tipo)) return false;
       if (!filterByString(medidor.modelo, filters.modelo)) return false;
@@ -44,7 +44,7 @@ export function useMedidorFilters(
         !filterByNumberRange(
           medidor.digitos,
           filters.digitosMin,
-          filters.digitosMax,
+          filters.digitosMax
         )
       ) {
         return false;
@@ -54,7 +54,7 @@ export function useMedidorFilters(
         !filterByNumberRange(
           medidor.multiplicador,
           filters.multiplicarMin,
-          filters.multiplicarMax,
+          filters.multiplicarMax
         )
       ) {
         return false;
@@ -63,7 +63,7 @@ export function useMedidorFilters(
       if (
         !filterByPresence(
           Boolean(medidor.ubicacion?.trim()),
-          filters.tieneUbicacion,
+          filters.tieneUbicacion
         )
       ) {
         return false;
@@ -72,7 +72,7 @@ export function useMedidorFilters(
       if (
         !filterByPresence(
           Boolean(medidor.codigoAcometida?.trim()),
-          filters.tieneAcometida,
+          filters.tieneAcometida
         )
       ) {
         return false;
@@ -82,7 +82,7 @@ export function useMedidorFilters(
         !filterByDateRange(
           medidor.fechaInicio,
           filters.fechaInicioDesde,
-          filters.fechaInicioHasta,
+          filters.fechaInicioHasta
         )
       ) {
         return false;
@@ -94,12 +94,12 @@ export function useMedidorFilters(
 
   const filterStats = useMemo(
     () => calculateFilterStats(medidores, filteredMedidores, filters),
-    [medidores.length, filteredMedidores.length, filters],
+    [medidores.length, filteredMedidores.length, filters]
   );
 
   return {
     filteredMedidores,
     filterStats,
-    filterOptions,
+    filterOptions
   };
 }

@@ -1,9 +1,9 @@
-import api from "~/lib/api";
+import api from '~/lib/api';
 import type {
   BuscarContrato,
   ConsolidadoConsultaContrato,
-  ExportarExcelProps,
-} from "~/types/reportes";
+  ExportarExcelProps
+} from '~/types/reportes';
 
 export interface ReportesServiceResponse<T> {
   data: T | null;
@@ -19,8 +19,8 @@ class ReportesService {
     // Si la respuesta tiene una propiedad 'data' que es array
     if (
       response.data &&
-      typeof response.data === "object" &&
-      "data" in response.data &&
+      typeof response.data === 'object' &&
+      'data' in response.data &&
       Array.isArray((response.data as { data: T[] }).data)
     ) {
       return (response.data as { data: T[] }).data;
@@ -29,7 +29,7 @@ class ReportesService {
     // Si la respuesta es un objeto único, convertirlo a array
     if (
       response.data &&
-      typeof response.data === "object" &&
+      typeof response.data === 'object' &&
       !Array.isArray(response.data)
     ) {
       return [response.data as T];
@@ -46,7 +46,7 @@ class ReportesService {
     nombrePropietario?: string,
     nroMedidor?: string,
     codigoContrato?: string,
-    acometida?: string,
+    acometida?: string
   ): Promise<
     ReportesServiceResponse<{
       buscarContratos: BuscarContrato[];
@@ -54,66 +54,66 @@ class ReportesService {
   > {
     try {
       const params = new URLSearchParams();
-      if (nroLocal) params.append("nroLocal", nroLocal);
-      if (rutCliente) params.append("rutCliente", rutCliente);
-      if (nombreCliente) params.append("nombreCliente", nombreCliente);
-      if (rutPropietario) params.append("rutPropietario", rutPropietario);
+      if (nroLocal) params.append('nroLocal', nroLocal);
+      if (rutCliente) params.append('rutCliente', rutCliente);
+      if (nombreCliente) params.append('nombreCliente', nombreCliente);
+      if (rutPropietario) params.append('rutPropietario', rutPropietario);
       if (nombrePropietario)
-        params.append("nombrePropietario", nombrePropietario);
-      if (nroMedidor) params.append("nroMedidor", nroMedidor);
-      if (codigoContrato) params.append("codigoContrato", codigoContrato);
-      if (acometida) params.append("acometida", acometida);
+        params.append('nombrePropietario', nombrePropietario);
+      if (nroMedidor) params.append('nroMedidor', nroMedidor);
+      if (codigoContrato) params.append('codigoContrato', codigoContrato);
+      if (acometida) params.append('acometida', acometida);
       const resBuscarContrato = await api.get(
-        `consultar-contrato/buscar?${params}`,
+        `consultar-contrato/buscar?${params}`
       );
       return {
         data: {
           buscarContratos:
-            this.processApiResponse<BuscarContrato>(resBuscarContrato),
+            this.processApiResponse<BuscarContrato>(resBuscarContrato)
         },
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
 
   // Exportar a Excel, se envía un JSON
   async exportaExcel(
-    request: ExportarExcelProps,
+    request: ExportarExcelProps
   ): Promise<ReportesServiceResponse<void>> {
     try {
-      await api.post("consultar-contrato/exportar-excel", request, {
-        responseType: "blob",
+      await api.post('consultar-contrato/exportar-excel', request, {
+        responseType: 'blob'
       });
       return {
         data: undefined,
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
 
   async getConsultaContratoById(
-    id: number,
+    id: number
   ): Promise<ReportesServiceResponse<ConsolidadoConsultaContrato>> {
     try {
       const res = await api.get(`consultar-contrato/${id}`);
       return {
         data: res.data as ConsolidadoConsultaContrato,
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -121,26 +121,26 @@ class ReportesService {
   //Generar PDF de factura
   async GeneraPDF(
     numeroFactura: string,
-    periodo: string,
+    periodo: string
   ): Promise<ReportesServiceResponse<void>> {
     try {
       const params = new URLSearchParams();
-      params.append("numeroFactura", numeroFactura);
-      params.append("periodo", periodo);
+      params.append('numeroFactura', numeroFactura);
+      params.append('periodo', periodo);
       await api.get(
         `consultar-contrato/factura/${numeroFactura}/${periodo}/pdf`,
         {
-          responseType: "blob",
-        },
+          responseType: 'blob'
+        }
       );
       return {
         data: undefined,
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -148,16 +148,16 @@ class ReportesService {
   async generaPDFHistorico(id: number): Promise<ReportesServiceResponse<void>> {
     try {
       await api.get(`consultar-contrato/${id}/historico-lecturas/pdf`, {
-        responseType: "blob",
+        responseType: 'blob'
       });
       return {
         data: undefined,
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }

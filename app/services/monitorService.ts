@@ -1,4 +1,4 @@
-import api from "~/lib/api";
+import api from '~/lib/api';
 import type {
   MonitorAceptarMasivoLecturas,
   MonitorClaves,
@@ -9,8 +9,8 @@ import type {
   MonitorPeriodos,
   MonitorProps,
   MonitorReabrirPeriodoProps,
-  MonitorSectores,
-} from "~/types/monitor";
+  MonitorSectores
+} from '~/types/monitor';
 
 export interface MonitorServiceResponse<T> {
   data: T | null;
@@ -25,7 +25,7 @@ export interface MonitorBasicData {
 class MonitorService {
   private buildEndpointWithQuery(
     basePath: string,
-    queryParams: Record<string, string | undefined>,
+    queryParams: Record<string, string | undefined>
   ): string {
     const searchParams = new URLSearchParams();
 
@@ -44,15 +44,15 @@ class MonitorService {
   > {
     try {
       // Verificar si hay token antes de hacer peticiones
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem('token');
       if (!token) {
-        throw new Error("No authentication token found");
+        throw new Error('No authentication token found');
       }
 
       // Carga paralela de datos básicos
       const [periodosRes, clavesRes] = await Promise.all([
-        api.get<MonitorPeriodos[]>("/monitor-lecturas/filtros/periodos"),
-        api.get<MonitorClaves[]>("/monitor-lecturas/filtros/claves"),
+        api.get<MonitorPeriodos[]>('/monitor-lecturas/filtros/periodos'),
+        api.get<MonitorClaves[]>('/monitor-lecturas/filtros/claves')
       ]);
 
       const periodosData = Array.isArray(periodosRes.data)
@@ -69,41 +69,41 @@ class MonitorService {
           data: {
             periodos: periodosData,
             claves: clavesData,
-            activePeriodoId,
+            activePeriodoId
           },
-          error: null,
+          error: null
         };
       }
       return {
         data: null,
-        error: "No active period found",
+        error: 'No active period found'
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
 
   // Sectores se obtienen agregando el periodo a la url
   async getSectoresByPeriodo(
-    periodo: string,
+    periodo: string
   ): Promise<MonitorServiceResponse<MonitorSectores[]>> {
     try {
       const params = new URLSearchParams({ periodo });
       const response = await api.get<MonitorSectores[]>(
-        `/monitor-lecturas/sectores?${params}`,
+        `/monitor-lecturas/sectores?${params}`
       );
       const sectoresData = Array.isArray(response.data) ? response.data : [];
       return {
         data: sectoresData,
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -111,18 +111,18 @@ class MonitorService {
   async getPeriodos(): Promise<MonitorServiceResponse<MonitorPeriodos[]>> {
     try {
       const response = await api.get<MonitorPeriodos[]>(
-        "/monitor-lecturas/filtros/periodos",
+        '/monitor-lecturas/filtros/periodos'
       );
       const periodosData = Array.isArray(response.data) ? response.data : [];
 
       return {
         data: periodosData,
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -130,18 +130,18 @@ class MonitorService {
   async getSectores(): Promise<MonitorServiceResponse<MonitorSectores[]>> {
     try {
       const response = await api.get<MonitorSectores[]>(
-        "/monitor-lecturas/filtros/sectores",
+        '/monitor-lecturas/filtros/sectores'
       );
       const sectoresData = Array.isArray(response.data) ? response.data : [];
 
       return {
         data: sectoresData,
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -149,25 +149,25 @@ class MonitorService {
   async getClaves(): Promise<MonitorServiceResponse<MonitorClaves[]>> {
     try {
       const response = await api.get<MonitorClaves[]>(
-        "/monitor-lecturas/filtros/claves",
+        '/monitor-lecturas/filtros/claves'
       );
       const clavesData = Array.isArray(response.data) ? response.data : [];
 
       return {
         data: clavesData,
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
 
   // Muestra la grilla de lecturas según los filtros seleccionados
   async postBuscarLecturas(
-    request: MonitorGrillaProps,
+    request: MonitorGrillaProps
   ): Promise<MonitorServiceResponse<MonitorNichosGet[]>> {
     const params = new URLSearchParams({
       periodo: request.periodo,
@@ -176,134 +176,134 @@ class MonitorService {
       fechaIni: request.fechaIni,
       fechaFin: request.fechaFin,
       clave: request.clave,
-      criterio: request.criterio,
+      criterio: request.criterio
     });
     if (request.periodo) {
-      params.append("periodo", request.periodo);
+      params.append('periodo', request.periodo);
     }
     if (request.sector) {
-      params.append("sector", request.sector);
+      params.append('sector', request.sector);
     }
     if (request.medidor) {
-      params.append("medidor", request.medidor);
+      params.append('medidor', request.medidor);
     }
     if (request.fechaIni) {
-      params.append("fechaIni", request.fechaIni);
+      params.append('fechaIni', request.fechaIni);
     }
     if (request.fechaFin) {
-      params.append("fechaFin", request.fechaFin);
+      params.append('fechaFin', request.fechaFin);
     }
     if (request.clave) {
-      params.append("clave", request.clave);
+      params.append('clave', request.clave);
     }
     if (request.criterio) {
-      params.append("criterio", request.criterio);
+      params.append('criterio', request.criterio);
     }
     try {
-      const response = await api.post("/monitor-lecturas/grilla", request);
+      const response = await api.post('/monitor-lecturas/grilla', request);
       return {
         data: response.data as MonitorNichosGet[],
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
 
   // Historial de lecturas para un medidor específico
   async getHistorialLectura(
-    id: number,
+    id: number
   ): Promise<MonitorServiceResponse<MonitorHistorialLectura>> {
     try {
       const response = await api.get(
-        `/monitor-lecturas/historial-lectura/${id}`,
+        `/monitor-lecturas/historial-lectura/${id}`
       );
       return {
         data: response.data as MonitorHistorialLectura,
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
 
   async getDetalleRegistro(
-    id: number,
+    id: number
   ): Promise<MonitorServiceResponse<unknown>> {
     try {
       const response = await api.get(
-        `/monitor-lecturas/detalle-registro/${id}`,
+        `/monitor-lecturas/detalle-registro/${id}`
       );
       return {
         data: response.data,
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
 
   // Registro de lectura manual
   async postRegistroLectura(
-    request: MonitorProps,
+    request: MonitorProps
   ): Promise<MonitorServiceResponse<unknown>> {
     try {
       const response = await api.post(
-        "/monitor-lecturas/registro-lectura",
-        request,
+        '/monitor-lecturas/registro-lectura',
+        request
       );
       return {
         data: response.data,
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
 
   // Aceptar lectura para facturación
   async postAceptarLectura(
-    id: number,
+    id: number
   ): Promise<MonitorServiceResponse<unknown>> {
     try {
       const response = await api.post(`/monitor-lecturas/aceptar/${id}`);
       return {
         data: response.data,
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
 
   async postCopiarUltimaLectura(
-    id: number,
+    id: number
   ): Promise<MonitorServiceResponse<unknown>> {
     try {
       const response = await api.post(`/monitor-lecturas/copiar-ultima/${id}`);
       return {
         data: response.data,
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -313,116 +313,116 @@ class MonitorService {
     periodos: string,
     sectores?: string,
     nichos?: string,
-    medidores?: string,
+    medidores?: string
   ): Promise<MonitorServiceResponse<Blob>> {
     try {
       const endpoint = this.buildEndpointWithQuery(
-        "/monitor-lecturas/exportar-excel",
+        '/monitor-lecturas/exportar-excel',
         {
           periodos,
           sectores,
           nichos,
-          medidores,
-        },
+          medidores
+        }
       );
 
       const response = await api.get(endpoint, {
-        responseType: "blob",
+        responseType: 'blob'
       });
       return {
         data: response.data as Blob,
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
 
   async getComparaConsumoAnual(
     numeroSerie: string,
-    periodoactual: string,
+    periodoactual: string
   ): Promise<MonitorServiceResponse<unknown>> {
     try {
       const endpoint = this.buildEndpointWithQuery(
-        "/monitor-lecturas/compara-consumo-anual",
+        '/monitor-lecturas/compara-consumo-anual',
         {
           numeroSerie,
-          periodoactual,
-        },
+          periodoactual
+        }
       );
 
       const response = await api.get(endpoint);
       return {
         data: response.data,
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
 
   async postReabrirPeriodo(
-    request: MonitorReabrirPeriodoProps,
+    request: MonitorReabrirPeriodoProps
   ): Promise<MonitorServiceResponse<unknown>> {
     try {
       const response = await api.post(
-        "/monitor-lecturas/reabrir-periodo",
-        request,
+        '/monitor-lecturas/reabrir-periodo',
+        request
       );
       return {
         data: response.data,
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
 
   async postHabilitarEdicionLectura(
-    request: MonitorHabilitarEdicionProps,
+    request: MonitorHabilitarEdicionProps
   ): Promise<MonitorServiceResponse<unknown>> {
     try {
       const response = await api.post(
-        "/monitor-lecturas/habilitar-edicion-lectura",
-        request,
+        '/monitor-lecturas/habilitar-edicion-lectura',
+        request
       );
       return {
         data: response.data,
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
 
   async postAceptarMasivoLecturas(
-    request: MonitorAceptarMasivoLecturas,
+    request: MonitorAceptarMasivoLecturas
   ): Promise<MonitorServiceResponse<unknown>> {
     try {
       const response = await api.post(
-        "/monitor-lecturas/aceptar-masivo",
-        request,
+        '/monitor-lecturas/aceptar-masivo',
+        request
       );
       return {
         data: response.data,
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -430,22 +430,22 @@ class MonitorService {
   async getAlertasAnomalias(periodo: string, sector?: string) {
     try {
       const endpoint = this.buildEndpointWithQuery(
-        "/monitor-lecturas/alertas-anomalias",
+        '/monitor-lecturas/alertas-anomalias',
         {
           periodo,
-          sector,
-        },
+          sector
+        }
       );
 
       const response = await api.get(endpoint);
       return {
         data: response.data,
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }

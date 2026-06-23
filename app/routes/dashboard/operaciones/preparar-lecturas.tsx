@@ -1,5 +1,3 @@
-/* eslint-disable no-empty-pattern */
-/** biome-ignore-all lint/correctness/noEmptyPattern: <explanation> */
 import { useCallback, useState } from "react";
 
 import { BreadcrumbSetter } from "~/components/breadcrumb-setter";

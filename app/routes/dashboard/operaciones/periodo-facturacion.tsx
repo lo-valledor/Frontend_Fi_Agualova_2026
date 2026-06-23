@@ -1,4 +1,3 @@
-/** biome-ignore-all lint/correctness/noEmptyPattern: <explanation> */
 import { BreadcrumbSetter } from "~/components/breadcrumb-setter";
 import AbrirPeriodoFacturacion from "~/components/operaciones/periodo-facturacion/periodo-facturacion-component";
 import { operacionesService } from "~/services/operacionesService";

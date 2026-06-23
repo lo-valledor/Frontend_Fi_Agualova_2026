@@ -49,12 +49,17 @@ const generarResumenProceso = (
   resultado: ResultadoProceso
 ): { tipo: 'success' | 'warning' | 'error'; mensaje: string } => {
   if (resultado.fallidos === 0 && resultado.exitosos > 0) {
-    return { tipo: 'success', mensaje: `${resultado.exitosos} nichos generados correctamente` };
+    return {
+      tipo: 'success',
+      mensaje: `${resultado.exitosos} nichos generados correctamente`
+    };
   }
   if (resultado.exitosos === 0 && resultado.fallidos > 0) {
     return {
       tipo: 'error',
-      mensaje: resultado.mensaje ?? `No se pudo procesar ningún nicho (${resultado.fallidos} errores)`
+      mensaje:
+        resultado.mensaje ??
+        `No se pudo procesar ningún nicho (${resultado.fallidos} errores)`
     };
   }
   return {
@@ -115,7 +120,11 @@ export default function TablaAsignacionSectores({
           fallidos: selectedIdsNichos.length,
           mensaje: result.error
         });
-        setResultado({ exitosos: 0, fallidos: selectedIdsNichos.length, mensaje: result.error });
+        setResultado({
+          exitosos: 0,
+          fallidos: selectedIdsNichos.length,
+          mensaje: result.error
+        });
         toast.error(resumen.mensaje);
         return;
       }
@@ -132,7 +141,11 @@ export default function TablaAsignacionSectores({
     } catch (err) {
       const mensaje =
         err instanceof Error ? err.message : 'Error al preparar lecturas';
-      setResultado({ exitosos: 0, fallidos: selectedIdsNichos.length, mensaje });
+      setResultado({
+        exitosos: 0,
+        fallidos: selectedIdsNichos.length,
+        mensaje
+      });
       toast.error(mensaje);
     } finally {
       setIsSubmitting(false);
@@ -295,8 +308,7 @@ export default function TablaAsignacionSectores({
                       : 'text-amber-700 dark:text-amber-300'
                 }`}
               >
-                {resultado.mensaje ??
-                  generarResumenProceso(resultado).mensaje}
+                {resultado.mensaje ?? generarResumenProceso(resultado).mensaje}
               </p>
             </div>
           </div>

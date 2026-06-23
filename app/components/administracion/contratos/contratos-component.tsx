@@ -1,65 +1,65 @@
-import { FileText, LayoutList, Plus } from "lucide-react";
-import { motion } from "motion/react";
+import { FileText, LayoutList, Plus } from 'lucide-react';
+import { motion } from 'motion/react';
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from 'react';
 
-import { useNavigate } from "react-router";
+import { useNavigate } from 'react-router';
 
-import { VirtualDataTable } from "~/components/data-table/virtual-data-table";
-import { ModernHeader } from "~/components/shared/modern-header";
-import { Button } from "~/components/ui/button";
+import { VirtualDataTable } from '~/components/data-table/virtual-data-table';
+import { ModernHeader } from '~/components/shared/modern-header';
+import { Button } from '~/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
-import { useContractFilters } from "~/hooks/administracion/use-contract-filters";
-import type { ContratoModalState, ContratosRow } from "~/types/administracion";
+  CardTitle
+} from '~/components/ui/card';
+import { useContractFilters } from '~/hooks/administracion/use-contract-filters';
+import type { ContratoModalState, ContratosRow } from '~/types/administracion';
 import {
   createInitialContratoModalState,
   getContratoCreateUrl,
   getContratoEditUrl,
-  isValidContratoForOperation,
-} from "~/utils/administracion";
+  isValidContratoForOperation
+} from '~/utils/administracion';
 
-import { columns } from "./columns";
-import { ContractDetailsModal } from "./contract-details-modal";
+import { columns } from './columns';
+import { ContractDetailsModal } from './contract-details-modal';
 import {
   type ContractFilters,
-  ContractFiltersComponent,
-} from "./contract-filters";
-import { DeleteConfirmationDialog } from "./delete-confirmation-dialog";
-import { ExportButtons } from "./export-buttons";
-import { FilterSummary } from "./filter-summary";
+  ContractFiltersComponent
+} from './contract-filters';
+import { DeleteConfirmationDialog } from './delete-confirmation-dialog';
+import { ExportButtons } from './export-buttons';
+import { FilterSummary } from './filter-summary';
 
 export default function ContratosComponent({
-  contratos,
+  contratos
 }: {
   readonly contratos: ContratosRow[];
 }) {
   // Estado de datos
   const [contracts, setContracts] = useState<ContratosRow[]>(contratos);
   const [selectedContract, setSelectedContract] = useState<ContratosRow | null>(
-    null,
+    null
   );
 
   // Estado unificado de modales
   const [modalsState, setModalsState] = useState<ContratoModalState>(
-    createInitialContratoModalState(),
+    createInitialContratoModalState()
   );
 
   // Estado de filtros
   const [filters, setFilters] = useState<ContractFilters>({
-    tipoContrato: "all",
-    cicloFacturacion: "all",
-    tarifa: "all",
-    comuna: "all",
-    liberadoCorte: "all",
-    fechaTerminoDesde: "",
-    fechaTerminoHasta: "",
-    activo: "all",
+    tipoContrato: 'all',
+    cicloFacturacion: 'all',
+    tarifa: 'all',
+    comuna: 'all',
+    liberadoCorte: 'all',
+    fechaTerminoDesde: '',
+    fechaTerminoHasta: '',
+    activo: 'all'
   });
 
   // Dependencias
@@ -67,7 +67,7 @@ export default function ContratosComponent({
 
   const { filteredContracts, filterStats, filterOptions } = useContractFilters(
     contracts,
-    filters,
+    filters
   );
 
   const handleFiltersChange = useCallback((newFilters: ContractFilters) => {
@@ -76,14 +76,14 @@ export default function ContratosComponent({
 
   const handleClearFilters = useCallback(() => {
     setFilters({
-      tipoContrato: "all",
-      cicloFacturacion: "all",
-      tarifa: "all",
-      comuna: "all",
-      liberadoCorte: "all",
-      fechaTerminoDesde: "",
-      fechaTerminoHasta: "",
-      activo: "all",
+      tipoContrato: 'all',
+      cicloFacturacion: 'all',
+      tarifa: 'all',
+      comuna: 'all',
+      liberadoCorte: 'all',
+      fechaTerminoDesde: '',
+      fechaTerminoHasta: '',
+      activo: 'all'
     });
   }, []);
 
@@ -95,42 +95,42 @@ export default function ContratosComponent({
     (contract: ContratosRow) => {
       navigate(getContratoEditUrl(contract.id));
     },
-    [navigate],
+    [navigate]
   );
 
   const handleDeleteContract = useCallback((contract: ContratosRow) => {
     setSelectedContract(contract);
-    setModalsState((prev) => ({
+    setModalsState(prev => ({
       ...prev,
-      delete: { isOpen: true },
+      delete: { isOpen: true }
     }));
   }, []);
 
   const handleViewDetails = useCallback((contract: ContratosRow) => {
     setSelectedContract(contract);
-    setModalsState((prev) => ({
+    setModalsState(prev => ({
       ...prev,
-      details: { isOpen: true },
+      details: { isOpen: true }
     }));
   }, []);
 
   const handleConfirmDelete = useCallback(() => {
     if (!isValidContratoForOperation(selectedContract)) {
-      setModalsState((prev) => ({
+      setModalsState(prev => ({
         ...prev,
-        delete: { isOpen: false },
+        delete: { isOpen: false }
       }));
       return;
     }
 
-    setContracts((prev) =>
-      prev.filter((contract) => contract.id !== selectedContract.id),
+    setContracts(prev =>
+      prev.filter(contract => contract.id !== selectedContract.id)
     );
     setSelectedContract(null);
 
-    setModalsState((prev) => ({
+    setModalsState(prev => ({
       ...prev,
-      delete: { isOpen: false },
+      delete: { isOpen: false }
     }));
   }, [selectedContract]);
 
@@ -139,9 +139,9 @@ export default function ContratosComponent({
       columns({
         onEdit: handleEditContract,
         onDelete: handleDeleteContract,
-        onViewDetails: handleViewDetails,
+        onViewDetails: handleViewDetails
       }),
-    [handleEditContract, handleDeleteContract, handleViewDetails],
+    [handleEditContract, handleDeleteContract, handleViewDetails]
   );
 
   const mechanicalEase = [0.25, 0.1, 0.25, 1] as const;
@@ -201,7 +201,7 @@ export default function ContratosComponent({
                   </CardTitle>
                   <CardDescription className="text-xs mt-0.5 text-muted-foreground">
                     {filteredContracts.length} contrato
-                    {filteredContracts.length !== 1 ? "s" : ""}
+                    {filteredContracts.length !== 1 ? 's' : ''}
                   </CardDescription>
                 </div>
               </div>
@@ -218,8 +218,8 @@ export default function ContratosComponent({
                   </p>
                   <p className="text-xs sm:text-sm text-center max-w-md px-4">
                     {filterStats.isFiltered
-                      ? "No hay contratos que coincidan con los filtros aplicados"
-                      : "No hay contratos registrados en el sistema"}
+                      ? 'No hay contratos que coincidan con los filtros aplicados'
+                      : 'No hay contratos registrados en el sistema'}
                   </p>
                 </div>
               ) : (
@@ -246,9 +246,9 @@ export default function ContratosComponent({
         <DeleteConfirmationDialog
           isOpen={modalsState.delete.isOpen}
           onClose={() =>
-            setModalsState((prev) => ({
+            setModalsState(prev => ({
               ...prev,
-              delete: { isOpen: false },
+              delete: { isOpen: false }
             }))
           }
           onConfirm={handleConfirmDelete}
@@ -259,9 +259,9 @@ export default function ContratosComponent({
         <ContractDetailsModal
           isOpen={modalsState.details.isOpen}
           onClose={() =>
-            setModalsState((prev) => ({
+            setModalsState(prev => ({
               ...prev,
-              details: { isOpen: false },
+              details: { isOpen: false }
             }))
           }
           contract={selectedContract}

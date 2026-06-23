@@ -1,38 +1,38 @@
-import type { AxiosError } from "axios";
+import type { AxiosError } from 'axios';
 import type {
   UsuarioErrorInfo,
   UsuarioModalMode,
   UsuarioModalState,
-  Usuarios,
-} from "~/types/administracion";
+  Usuarios
+} from '~/types/administracion';
 
-export const USUARIOS_ROUTE = "/dashboard/administracion/usuarios";
+export const USUARIOS_ROUTE = '/dashboard/administracion/usuarios';
 
 export const createInitialModalState = (): UsuarioModalState => ({
   userForm: {
     isOpen: false,
-    mode: "add",
+    mode: 'add'
   },
   deleteDialog: {
-    isOpen: false,
+    isOpen: false
   },
   permissions: {
-    isOpen: false,
+    isOpen: false
   },
   roles: {
-    isOpen: false,
-  },
+    isOpen: false
+  }
 });
 
 export const extractErrorMessage = (
   error: unknown,
-  defaultMessage: string,
+  defaultMessage: string
 ): UsuarioErrorInfo => {
   // Early return para errores de red sin respuesta
   if (isNetworkError(error)) {
     return {
-      message: "Error de conexión. Por favor, intenta nuevamente.",
-      isNetworkError: true,
+      message: 'Error de conexión. Por favor, intenta nuevamente.',
+      isNetworkError: true
     };
   }
 
@@ -41,14 +41,14 @@ export const extractErrorMessage = (
   if (serverMessage) {
     return {
       message: serverMessage,
-      isNetworkError: false,
+      isNetworkError: false
     };
   }
 
   // Fallback al mensaje por defecto
   return {
     message: defaultMessage,
-    isNetworkError: false,
+    isNetworkError: false
   };
 };
 
@@ -63,13 +63,13 @@ const extractServerErrorMessage = (error: unknown): string | null => {
 };
 
 export const isValidUserForOperation = (
-  user: Usuarios | null | undefined,
+  user: Usuarios | null | undefined
 ): user is Usuarios => {
   return (
     user !== null &&
     user !== undefined &&
     user.id !== undefined &&
-    user.id !== ""
+    user.id !== ''
   );
 };
 
@@ -78,26 +78,26 @@ export const isUsuariosListEmpty = (usuarios: Usuarios[]): boolean => {
 };
 
 export const getModalTitle = (mode: UsuarioModalMode): string => {
-  return mode === "add" ? "Crear Nuevo Usuario" : "Editar Usuario";
+  return mode === 'add' ? 'Crear Nuevo Usuario' : 'Editar Usuario';
 };
 
 export const getSuccessMessage = (mode: UsuarioModalMode): string => {
-  return mode === "add"
-    ? "Usuario creado exitosamente"
-    : "Usuario actualizado exitosamente";
+  return mode === 'add'
+    ? 'Usuario creado exitosamente'
+    : 'Usuario actualizado exitosamente';
 };
 
 export const createModalHandler = <T extends keyof UsuarioModalState>(
   modalKey: T,
-  modeForUserForm?: UsuarioModalMode,
+  modeForUserForm?: UsuarioModalMode
 ) => {
   return (user: Usuarios | null = null) => ({
     selectedUser: user,
     modalState: {
       [modalKey]: {
         isOpen: true,
-        ...(modeForUserForm && { mode: modeForUserForm }),
-      },
-    } as Partial<UsuarioModalState>,
+        ...(modeForUserForm && { mode: modeForUserForm })
+      }
+    } as Partial<UsuarioModalState>
   });
 };

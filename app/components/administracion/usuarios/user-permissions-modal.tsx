@@ -1,25 +1,35 @@
-import { Check, Eye, Shield, X } from "lucide-react";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
+import { Check, Eye, Shield, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
-import { Badge } from "~/components/ui/badge";
+import { Badge } from '~/components/ui/badge';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogTitle,
-} from "~/components/ui/dialog";
+  DialogTitle
+} from '~/components/ui/dialog';
 import {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
-} from "~/components/ui/table";
-import api from "~/lib/api";
-import type { PermisoUsuario, Usuarios } from "~/types/administracion";
+  TableRow
+} from '~/components/ui/table';
+import api from '~/lib/api';
+import type { Usuarios } from '~/types/administracion';
+
+type PermisoUsuario = {
+  idMenu: number;
+  nombreMenu: string;
+  ruta: string;
+  puedeVer: boolean;
+  puedeCrear: boolean;
+  puedeEditar: boolean;
+  puedeEliminar: boolean;
+};
 
 interface UserPermissionsModalProps {
   isOpen: boolean;
@@ -30,7 +40,7 @@ interface UserPermissionsModalProps {
 export function UserPermissionsModal({
   isOpen,
   onClose,
-  user,
+  user
 }: UserPermissionsModalProps) {
   const [permisos, setPermisos] = useState<PermisoUsuario[]>([]);
   const [loading, setLoading] = useState(false);
@@ -47,14 +57,14 @@ export function UserPermissionsModal({
     setLoading(true);
     try {
       const response = await api.get<PermisoUsuario[]>(
-        `/ObtenerPermisoUsuario/${user.id}`,
+        `/ObtenerPermisoUsuario/${user.id}`
       );
       setPermisos(response.data as PermisoUsuario[]);
     } catch (error: any) {
       toast.error(
         error.response?.data?.message ||
           error.message ||
-          "Error al obtener los permisos del usuario",
+          'Error al obtener los permisos del usuario'
       );
     } finally {
       setLoading(false);
@@ -86,11 +96,11 @@ export function UserPermissionsModal({
           <DialogDescription className="text-base text-muted-foreground">
             {user && (
               <span>
-                Visualizando permisos de{" "}
+                Visualizando permisos de{' '}
                 <span className="font-semibold">
-                  {user.nombres} {user.apellidos}
-                </span>{" "}
-                (@{user.username})
+                  {user.nombre_Usuario} {user.apellidos_Usuario}
+                </span>{' '}
+                (@{user.userName})
               </span>
             )}
           </DialogDescription>
@@ -130,7 +140,7 @@ export function UserPermissionsModal({
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {permisos.map((permiso) => (
+                  {permisos.map(permiso => (
                     <TableRow key={permiso.idMenu}>
                       <TableCell className="font-medium">
                         {permiso.nombreMenu}

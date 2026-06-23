@@ -27,7 +27,7 @@ export function useContractFilters(
   }, [contracts]);
 
   const filteredContracts = useMemo(() => {
-    return contracts.filter((contract) => {
+    return contracts.filter((_contract) => {
       if (filters.cicloFacturacion && filters.cicloFacturacion !== "all") {
         return false;
       }

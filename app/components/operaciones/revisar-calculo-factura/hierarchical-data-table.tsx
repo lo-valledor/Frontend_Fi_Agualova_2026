@@ -18,10 +18,21 @@ import {
   TableHeader,
   TableRow
 } from '~/components/ui/table';
-import {
-  type CalculoPrefacturaCargo,
-  type CalculoPrefacturaCompleto
-} from '~/types/operaciones';
+
+type CalculoPrefacturaCargo = {
+  contratoId?: number | string;
+  codigoAgualova?: string;
+  descripcion?: string;
+  cantidad?: number;
+  precioUnitario?: number;
+  subtotal?: number;
+};
+
+type CalculoPrefacturaCompleto = {
+  contratoId?: number | string;
+  cargos?: CalculoPrefacturaCargo[];
+  [key: string]: unknown;
+};
 
 interface HierarchicalDataTableProps {
   columns: ColumnDef<CalculoPrefacturaCompleto>[];

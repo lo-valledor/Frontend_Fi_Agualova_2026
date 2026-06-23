@@ -186,7 +186,9 @@ export default function DialogNuevoValorAgualova({
         const fechaFin = new Date(formValues.fecha_fin);
 
         if (fechaFin <= fechaInicio) {
-          errors.push('La fecha de fin debe ser posterior a la fecha de inicio');
+          errors.push(
+            'La fecha de fin debe ser posterior a la fecha de inicio'
+          );
         }
       }
     }
@@ -225,7 +227,10 @@ export default function DialogNuevoValorAgualova({
         valor: formValues.valor
       };
 
-      const response = await api.post('/ingresa-precio-cargo-agualova', payload);
+      const response = await api.post(
+        '/ingresa-precio-cargo-agualova',
+        payload
+      );
 
       if (response.status === 200) {
         toast.success('Precio agregado correctamente');
@@ -529,7 +534,9 @@ export default function DialogNuevoValorAgualova({
                         : 'text-red-600 dark:text-red-400'
                     }`}
                   >
-                    {diferenciaPorcentual && diferenciaPorcentual > 0 ? '+' : ''}
+                    {diferenciaPorcentual && diferenciaPorcentual > 0
+                      ? '+'
+                      : ''}
                     {diferenciaPorcentual?.toFixed(2)}%
                   </span>
                 </div>

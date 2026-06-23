@@ -1,4 +1,4 @@
-import { driver } from "driver.js";
+import { driver } from 'driver.js';
 import {
   AlertCircle,
   Calendar,
@@ -12,48 +12,45 @@ import {
   ListFilter,
   MapPin,
   Search,
-  Settings2,
-} from "lucide-react";
-import { motion } from "motion/react";
+  Settings2
+} from 'lucide-react';
+import { motion } from 'motion/react';
 
-import { Suspense, useEffect, useMemo, useState } from "react";
-import { toast } from "sonner";
-import { BreadcrumbSetter } from "~/components/breadcrumb-setter";
-import ResultadosBusqueda from "~/components/monitor/monitor-lecturas/resultados-busqueda";
-import { LoadingSpinner } from "~/components/loading-spinner";
-import { ModernHeader } from "~/components/shared/modern-header";
-import { Alert, AlertDescription, AlertTitle } from "~/components/ui/alert";
-import { Button } from "~/components/ui/button";
-import { Card, CardContent } from "~/components/ui/card";
-import {
-  Collapsible,
-  CollapsibleContent
-} from "~/components/ui/collapsible";
-import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
+import { Suspense, useEffect, useMemo, useState } from 'react';
+import { toast } from 'sonner';
+import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
+import { LoadingSpinner } from '~/components/loading-spinner';
+import ResultadosBusqueda from '~/components/monitor/monitor-lecturas/resultados-busqueda';
+import { ModernHeader } from '~/components/shared/modern-header';
+import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert';
+import { Button } from '~/components/ui/button';
+import { Card, CardContent } from '~/components/ui/card';
+import { Collapsible, CollapsibleContent } from '~/components/ui/collapsible';
+import { Input } from '~/components/ui/input';
+import { Label } from '~/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
-} from "~/components/ui/select";
-import { useMonitorKeyboardShortcuts } from "~/hooks/use-keyboard-shortcuts";
+  SelectValue
+} from '~/components/ui/select';
+import { useMonitorKeyboardShortcuts } from '~/hooks/use-keyboard-shortcuts';
 import {
   findActivePeriod,
   formatDateDDMMYYYY,
   getDefaultDates,
   getLastNPeriods,
-  validateSearchParams,
-} from "~/hooks/use-monitor";
-import { cn } from "~/lib/utils";
+  validateSearchParams
+} from '~/hooks/use-monitor';
+import { cn } from '~/lib/utils';
 import {
   type MonitorClaves,
   type MonitorGrillaProps,
   type MonitorPeriodos,
-  type MonitorSectores,
-} from "~/types/monitor";
-import "driver.js/dist/driver.css";
+  type MonitorSectores
+} from '~/types/monitor';
+import 'driver.js/dist/driver.css';
 
 interface MonitorLecturasComponentProps {
   periodos: MonitorPeriodos[];
@@ -67,26 +64,26 @@ const MonitorLecturasComponent = ({
   periodos,
   sectores,
   claves,
-  error,
+  error
 }: MonitorLecturasComponentProps) => {
   const pageBreadcrumbs = [
-    { label: "Monitor" },
-    { label: "Monitor de Lecturas" },
+    { label: 'Monitor' },
+    { label: 'Monitor de Lecturas' }
   ];
 
   // Form filter states with descriptive names
   const [selectedSector, setSelectedSector] = useState<MonitorSectores | null>(
-    null,
+    null
   );
   const [selectedPeriodo, setSelectedPeriodo] =
     useState<MonitorPeriodos | null>(null);
   const [selectedClave, setSelectedClave] = useState<MonitorClaves | null>(
-    null,
+    null
   );
-  const [meterSerial, setMeterSerial] = useState<string>("");
-  const [selectedStatusFilter, setSelectedStatusFilter] = useState<string>("");
-  const [fechaInicio, setFechaInicio] = useState<string>("");
-  const [fechaFin, setFechaFin] = useState<string>("");
+  const [meterSerial, setMeterSerial] = useState<string>('');
+  const [selectedStatusFilter, setSelectedStatusFilter] = useState<string>('');
+  const [fechaInicio, setFechaInicio] = useState<string>('');
+  const [fechaFin, setFechaFin] = useState<string>('');
 
   // Modal state
   const [isSearchActive, setIsSearchActive] = useState(false);
@@ -133,8 +130,8 @@ const MonitorLecturasComponent = ({
     const periodoActivo = findActivePeriod(periodos);
     setSelectedPeriodo(periodoActivo);
     setSelectedClave(null);
-    setMeterSerial("");
-    setSelectedStatusFilter("");
+    setMeterSerial('');
+    setSelectedStatusFilter('');
 
     const defaultDates = getDefaultDates(periodoActivo);
     setFechaInicio(defaultDates.fechaInicio);
@@ -163,12 +160,12 @@ const MonitorLecturasComponent = ({
 
       // Focus input after React renders
       setTimeout(() => {
-        const input = document.getElementById("meter-serial-input");
+        const input = document.getElementById('meter-serial-input');
         input?.focus();
       }, 100);
     },
     onRefresh: handleOpenMedidor,
-    onEscape: () => setIsFiltersOpen(false),
+    onEscape: () => setIsFiltersOpen(false)
   });
 
   // Early return for error state
@@ -180,7 +177,7 @@ const MonitorLecturasComponent = ({
           <AlertTitle>Error de Carga</AlertTitle>
           <AlertDescription>
             {error.message ||
-              "Ocurrió un error al cargar los datos iniciales. Por favor, intente recargar la página."}
+              'Ocurrió un error al cargar los datos iniciales. Por favor, intente recargar la página.'}
           </AlertDescription>
         </Alert>
       </div>
@@ -190,20 +187,20 @@ const MonitorLecturasComponent = ({
   const startTour = () => {
     const driverjs = driver({
       showProgress: true,
-      progressText: "Paso {{current}} de {{total}}",
+      progressText: 'Paso {{current}} de {{total}}',
       smoothScroll: true,
       stagePadding: 4,
       stageRadius: 6,
       animate: true,
       allowClose: true,
-      nextBtnText: "Siguiente",
-      prevBtnText: "Anterior",
-      doneBtnText: "Finalizar",
-      onHighlightStarted: (element) => {
+      nextBtnText: 'Siguiente',
+      prevBtnText: 'Anterior',
+      doneBtnText: 'Finalizar',
+      onHighlightStarted: element => {
         if (element) {
-          element.scrollIntoView({ behavior: "smooth", block: "center" });
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
-      },
+      }
     });
 
     driverjs.setSteps(tourSteps);
@@ -212,12 +209,12 @@ const MonitorLecturasComponent = ({
 
   const grillaParams = useMemo<MonitorGrillaProps>(
     () => ({
-      periodo: selectedPeriodo?.value ?? "",
-      sector: selectedSector?.secId.toString() ?? "",
+      periodo: selectedPeriodo?.value ?? '',
+      sector: selectedSector?.secId.toString() ?? '',
       medidor: meterSerial,
       fechaIni: fechaInicio,
       fechaFin: formatDateDDMMYYYY(fechaFin),
-      clave: selectedClave?.value ?? "",
+      clave: selectedClave?.value ?? '',
       criterio: selectedStatusFilter
     }),
     [
@@ -233,55 +230,55 @@ const MonitorLecturasComponent = ({
 
   const tourSteps = [
     {
-      element: "#sector-selector",
+      element: '#sector-selector',
       popover: {
-        title: "📍 Sector de Monitoreo (Obligatorio)",
+        title: '📍 Sector de Monitoreo (Obligatorio)',
         description:
-          "Debes seleccionar el <strong>área a monitorear</strong> para poder buscar lecturas. Este es un campo requerido.",
-        side: "bottom" as const,
-        align: "start" as const,
-      },
+          'Debes seleccionar el <strong>área a monitorear</strong> para poder buscar lecturas. Este es un campo requerido.',
+        side: 'bottom' as const,
+        align: 'start' as const
+      }
     },
     {
-      element: "#periodo-selector",
+      element: '#periodo-selector',
       popover: {
-        title: "📅 Periodo (Obligatorio)",
+        title: '📅 Periodo (Obligatorio)',
         description:
-          "Selecciona el <strong>periodo de monitoreo</strong>. Es necesario para realizar la búsqueda.",
-        side: "bottom" as const,
-        align: "start" as const,
-      },
+          'Selecciona el <strong>periodo de monitoreo</strong>. Es necesario para realizar la búsqueda.',
+        side: 'bottom' as const,
+        align: 'start' as const
+      }
     },
     {
-      element: "#fecha-fin-selector",
+      element: '#fecha-fin-selector',
       popover: {
-        title: "📆 Fecha Fin",
+        title: '📆 Fecha Fin',
         description:
-          "Puedes ajustar la <strong>fecha final</strong> del monitoreo si lo requieres para acotar el rango de búsqueda.",
-        side: "bottom" as const,
-        align: "start" as const,
-      },
+          'Puedes ajustar la <strong>fecha final</strong> del monitoreo si lo requieres para acotar el rango de búsqueda.',
+        side: 'bottom' as const,
+        align: 'start' as const
+      }
     },
     {
-      element: "#filtros-avanzados",
+      element: '#filtros-avanzados',
       popover: {
-        title: "🔧 Filtros Opcionales",
+        title: '🔧 Filtros Opcionales',
         description:
-          "Puedes filtrar por <strong>clave, estado o número de serie</strong> para refinar tu búsqueda y obtener resultados más específicos.",
-        side: "bottom" as const,
-        align: "start" as const,
-      },
+          'Puedes filtrar por <strong>clave, estado o número de serie</strong> para refinar tu búsqueda y obtener resultados más específicos.',
+        side: 'bottom' as const,
+        align: 'start' as const
+      }
     },
     {
-      element: "#search-button",
+      element: '#search-button',
       popover: {
-        title: "🔍 Buscar",
+        title: '🔍 Buscar',
         description:
-          "Haz clic aquí para <strong>iniciar la búsqueda</strong> una vez que hayas completado los filtros obligatorios (Sector y Periodo).",
-        side: "bottom" as const,
-        align: "center" as const,
-      },
-    },
+          'Haz clic aquí para <strong>iniciar la búsqueda</strong> una vez que hayas completado los filtros obligatorios (Sector y Periodo).',
+        side: 'bottom' as const,
+        align: 'center' as const
+      }
+    }
   ];
 
   return (
@@ -342,15 +339,15 @@ const MonitorLecturasComponent = ({
                         <Button
                           variant={
                             selectedSector?.secId === sector.secId
-                              ? "default"
-                              : "outline"
+                              ? 'default'
+                              : 'outline'
                           }
                           onClick={() => setSelectedSector(sector)}
                           className={cn(
-                            "h-auto p-3 transition-all duration-200 text-center w-full",
+                            'h-auto p-3 transition-all duration-200 text-center w-full',
                             selectedSector?.secId === sector.secId
-                              ? "bg-primary hover:bg-primary-700 shadow-md border-0"
-                              : "hover:border",
+                              ? 'bg-primary hover:bg-primary-700 shadow-md border-0'
+                              : 'hover:border'
                           )}
                         >
                           <div className="text-center w-full">
@@ -386,10 +383,10 @@ const MonitorLecturasComponent = ({
                     const periodosParaSelect = getLastNPeriods(periodos, 12);
                     return periodosParaSelect.length > 0 ? (
                       <Select
-                        value={selectedPeriodo?.value || ""}
-                        onValueChange={(value) => {
+                        value={selectedPeriodo?.value || ''}
+                        onValueChange={value => {
                           const periodo = periodosParaSelect.find(
-                            (p) => p.value === value,
+                            p => p.value === value
                           );
                           setSelectedPeriodo(periodo || null);
                         }}
@@ -398,7 +395,7 @@ const MonitorLecturasComponent = ({
                           <SelectValue placeholder="Seleccionar periodo..." />
                         </SelectTrigger>
                         <SelectContent>
-                          {periodosParaSelect.map((periodo) => (
+                          {periodosParaSelect.map(periodo => (
                             <SelectItem
                               key={periodo.value}
                               value={periodo.value}
@@ -423,7 +420,7 @@ const MonitorLecturasComponent = ({
                   </Label>
                   <Input
                     type="text"
-                    value={fechaInicio || "Definida por período"}
+                    value={fechaInicio || 'Definida por período'}
                     readOnly
                     className="w-full bg-muted text-muted-foreground cursor-not-allowed truncate"
                   />
@@ -441,7 +438,7 @@ const MonitorLecturasComponent = ({
                   <Input
                     type="date"
                     value={fechaFin}
-                    onChange={(e) => setFechaFin(e.target.value)}
+                    onChange={e => setFechaFin(e.target.value)}
                     className="w-full bg-background border-border"
                   />
                 </div>
@@ -470,7 +467,7 @@ const MonitorLecturasComponent = ({
 
                   {(selectedClave ||
                     meterSerial ||
-                    selectedStatusFilter !== "") && (
+                    selectedStatusFilter !== '') && (
                     <Button
                       variant="ghost"
                       size="sm"
@@ -509,13 +506,13 @@ const MonitorLecturasComponent = ({
                         </Label>
                         {claves && claves.length > 0 ? (
                           <Select
-                            value={selectedClave?.value || "ALL"}
-                            onValueChange={(value) => {
-                              if (value === "ALL") {
+                            value={selectedClave?.value || 'ALL'}
+                            onValueChange={value => {
+                              if (value === 'ALL') {
                                 setSelectedClave(null);
                               } else {
                                 const clave = claves?.find(
-                                  (c) => c.value === value,
+                                  c => c.value === value
                                 );
                                 setSelectedClave(clave || null);
                               }
@@ -528,7 +525,7 @@ const MonitorLecturasComponent = ({
                               <SelectItem value="ALL" className="truncate">
                                 Todas las claves
                               </SelectItem>
-                              {claves?.map((clave) => (
+                              {claves?.map(clave => (
                                 <SelectItem
                                   key={clave.value}
                                   value={clave.value}
@@ -552,8 +549,8 @@ const MonitorLecturasComponent = ({
                         </Label>
                         <Select
                           value={selectedStatusFilter}
-                          onValueChange={(value) =>
-                            setSelectedStatusFilter(value === "0" ? "" : value)
+                          onValueChange={value =>
+                            setSelectedStatusFilter(value === '0' ? '' : value)
                           }
                         >
                           <SelectTrigger className="w-full bg-background border-border">
@@ -593,7 +590,7 @@ const MonitorLecturasComponent = ({
                           type="text"
                           placeholder="Buscar medidor específico..."
                           value={meterSerial}
-                          onChange={(e) => setMeterSerial(e.target.value)}
+                          onChange={e => setMeterSerial(e.target.value)}
                           className="w-full bg-background border-border"
                           aria-label="Número de serie del medidor"
                         />

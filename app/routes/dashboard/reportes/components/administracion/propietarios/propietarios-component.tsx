@@ -1,38 +1,38 @@
-import { LayoutList, RefreshCw } from "lucide-react";
-import { motion } from "motion/react";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { toast } from "sonner";
+import { LayoutList, RefreshCw } from 'lucide-react';
+import { motion } from 'motion/react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { toast } from 'sonner';
 
-import { VirtualDataTable } from "~/components/data-table/virtual-data-table";
-import { ExportButton } from "~/components/shared/export-button";
-import { ModernHeader } from "~/components/shared/modern-header";
-import { Button } from "~/components/ui/button";
+import { VirtualDataTable } from '~/components/data-table/virtual-data-table';
+import { ExportButton } from '~/components/shared/export-button';
+import { ModernHeader } from '~/components/shared/modern-header';
+import { Button } from '~/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
-import { administracionService } from "~/services/administracionService";
+  CardTitle
+} from '~/components/ui/card';
+import { administracionService } from '~/services/administracionService';
 import type {
   GetContratante,
   PropietarioModalState,
-  PropietariosRow,
-} from "~/types/administracion";
+  PropietariosRow
+} from '~/types/administracion';
 import {
   createInitialPropietarioModalState,
   extractPropietarioErrorMessage,
-  getSyncStatusMessage,
-} from "~/utils/administracion";
+  getSyncStatusMessage
+} from '~/utils/administracion';
 
-import { columns } from "./columns";
-import { PropietarioDetailsModal } from "./detalles-propietario";
-import { FilterSummary } from "./filter-summary";
+import { columns } from './columns';
+import { PropietarioDetailsModal } from './detalles-propietario';
+import { FilterSummary } from './filter-summary';
 import {
   type PropietarioFilters,
-  PropietarioFiltersComponent,
-} from "./propietario-filters";
+  PropietarioFiltersComponent
+} from './propietario-filters';
 
 interface PropietariosComponentProps {
   propietarios: PropietariosRow[];
@@ -44,7 +44,7 @@ interface FilterOptions {
 }
 
 export default function PropietariosComponent({
-  propietarios,
+  propietarios
 }: Readonly<PropietariosComponentProps>) {
   // Estado de datos
   const [propietariosList] = useState<PropietariosRow[]>(propietarios);
@@ -53,7 +53,7 @@ export default function PropietariosComponent({
 
   // Estado unificado de modales
   const [modalsState, setModalsState] = useState<PropietarioModalState>(
-    createInitialPropietarioModalState(),
+    createInitialPropietarioModalState()
   );
 
   // Estado de sincronización
@@ -61,10 +61,10 @@ export default function PropietariosComponent({
 
   // Estado de filtros
   const [filters, setFilters] = useState<PropietarioFilters>({
-    comuna: "all",
-    tieneTelefono: "all",
-    tieneCelular: "all",
-    tieneEmail: "all",
+    comuna: 'all',
+    tieneTelefono: 'all',
+    tieneCelular: 'all',
+    tieneEmail: 'all'
   });
 
   // Dependencias
@@ -72,21 +72,21 @@ export default function PropietariosComponent({
   // Filter options from data
   const filterOptions = useMemo((): FilterOptions => {
     const comunas = [
-      ...new Set(propietariosList.map((p) => p.comuna).filter(Boolean)),
+      ...new Set(propietariosList.map(p => p.comuna).filter(Boolean))
     ].sort();
 
     return {
-      comunas,
+      comunas
     };
   }, [propietariosList]);
 
   // Filtered propietarios
   const filteredPropietarios = useMemo(() => {
-    return propietariosList.filter((propietario) => {
+    return propietariosList.filter(propietario => {
       // Filtro por comuna
       if (
         filters.comuna &&
-        filters.comuna !== "all" &&
+        filters.comuna !== 'all' &&
         propietario.comuna !== filters.comuna
       ) {
         return false;
@@ -95,9 +95,9 @@ export default function PropietariosComponent({
       // Filtro por teléfono
       if (
         filters.tieneTelefono &&
-        filters.tieneTelefono !== "all" &&
-        ((filters.tieneTelefono === "true" && !propietario.telefono) ||
-          (filters.tieneTelefono === "false" && propietario.telefono))
+        filters.tieneTelefono !== 'all' &&
+        ((filters.tieneTelefono === 'true' && !propietario.telefono) ||
+          (filters.tieneTelefono === 'false' && propietario.telefono))
       ) {
         return false;
       }
@@ -105,9 +105,9 @@ export default function PropietariosComponent({
       // Filtro por celular
       if (
         filters.tieneCelular &&
-        filters.tieneCelular !== "all" &&
-        ((filters.tieneCelular === "true" && !propietario.celular) ||
-          (filters.tieneCelular === "false" && propietario.celular))
+        filters.tieneCelular !== 'all' &&
+        ((filters.tieneCelular === 'true' && !propietario.celular) ||
+          (filters.tieneCelular === 'false' && propietario.celular))
       ) {
         return false;
       }
@@ -115,9 +115,9 @@ export default function PropietariosComponent({
       // Filtro por email
       if (
         filters.tieneEmail &&
-        filters.tieneEmail !== "all" &&
-        ((filters.tieneEmail === "true" && !propietario.email) ||
-          (filters.tieneEmail === "false" && propietario.email))
+        filters.tieneEmail !== 'all' &&
+        ((filters.tieneEmail === 'true' && !propietario.email) ||
+          (filters.tieneEmail === 'false' && propietario.email))
       ) {
         return false;
       }
@@ -131,36 +131,36 @@ export default function PropietariosComponent({
     const total = propietariosList.length;
     const filtered = filteredPropietarios.length;
     const activeFilters = Object.values(filters).filter(
-      (value) => value !== "" && value !== "all",
+      value => value !== '' && value !== 'all'
     ).length;
 
     return {
       total,
       filtered,
       activeFilters,
-      isFiltered: activeFilters > 0,
+      isFiltered: activeFilters > 0
     };
   }, [propietariosList.length, filteredPropietarios.length, filters]);
 
   // Export columns
   const propietarioColumns = [
-    { header: "RUT", key: "rut" },
-    { header: "Nombre", key: "nombre" },
-    { header: "Comuna", key: "comuna" },
-    { header: "Teléfono", key: "telefono" },
-    { header: "Celular", key: "celular" },
-    { header: "Email", key: "email" },
+    { header: 'RUT', key: 'rut' },
+    { header: 'Nombre', key: 'nombre' },
+    { header: 'Comuna', key: 'comuna' },
+    { header: 'Teléfono', key: 'telefono' },
+    { header: 'Celular', key: 'celular' },
+    { header: 'Email', key: 'email' }
   ];
 
   const handleDetailsPropietario = useCallback(
     (propietario: PropietariosRow) => {
       setDetailedPropietario(propietario);
-      setModalsState((prev) => ({
+      setModalsState(prev => ({
         ...prev,
-        details: { isOpen: true },
+        details: { isOpen: true }
       }));
     },
-    [],
+    []
   );
 
   const handleSyncPropietarios = useCallback(async () => {
@@ -177,14 +177,14 @@ export default function PropietariosComponent({
       // Mostrar éxito y recargar
       if (result.data) {
         toast.success(
-          `${result.data.mensaje} (${result.data.registrosAfectados} registros afectados)`,
+          `${result.data.mensaje} (${result.data.registrosAfectados} registros afectados)`
         );
         globalThis.location.reload();
       }
     } catch (error) {
       const errorInfo = extractPropietarioErrorMessage(
         error,
-        "Error al sincronizar propietarios",
+        'Error al sincronizar propietarios'
       );
       toast.error(errorInfo.message);
     } finally {
@@ -194,10 +194,10 @@ export default function PropietariosComponent({
 
   useEffect(() => {
     const alreadySynced =
-      sessionStorage.getItem("propietariosSyncDone") === "true";
+      sessionStorage.getItem('propietariosSyncDone') === 'true';
     if (!alreadySynced) {
       // Marcar antes de iniciar para evitar reentradas en caso de reload
-      sessionStorage.setItem("propietariosSyncDone", "true");
+      sessionStorage.setItem('propietariosSyncDone', 'true');
       void handleSyncPropietarios();
     }
   }, [handleSyncPropietarios]);
@@ -208,10 +208,10 @@ export default function PropietariosComponent({
 
   const handleClearFilters = useCallback(() => {
     setFilters({
-      comuna: "all",
-      tieneTelefono: "all",
-      tieneCelular: "all",
-      tieneEmail: "all",
+      comuna: 'all',
+      tieneTelefono: 'all',
+      tieneCelular: 'all',
+      tieneEmail: 'all'
     });
   }, []);
 
@@ -239,7 +239,7 @@ export default function PropietariosComponent({
                   disabled={isSyncing}
                 >
                   <RefreshCw
-                    className={`mr-2 h-4 w-4 ${isSyncing ? "animate-spin" : ""}`}
+                    className={`mr-2 h-4 w-4 ${isSyncing ? 'animate-spin' : ''}`}
                   />
                   {getSyncStatusMessage(isSyncing)}
                 </Button>
@@ -280,7 +280,7 @@ export default function PropietariosComponent({
                   </CardTitle>
                   <CardDescription className="text-xs mt-0.5 text-muted-foreground">
                     {filteredPropietarios.length} propietario
-                    {filteredPropietarios.length !== 1 ? "s" : ""}
+                    {filteredPropietarios.length !== 1 ? 's' : ''}
                   </CardDescription>
                 </div>
               </div>
@@ -290,7 +290,7 @@ export default function PropietariosComponent({
               <div className="overflow-x-auto -mx-1">
                 <VirtualDataTable
                   columns={columns({
-                    onDetails: handleDetailsPropietario,
+                    onDetails: handleDetailsPropietario
                   })}
                   data={filteredPropietarios}
                   searchPlaceholder="Buscar por RUT, nombre o email..."
@@ -306,9 +306,9 @@ export default function PropietariosComponent({
         <PropietarioDetailsModal
           isOpen={modalsState.details.isOpen}
           onClose={() =>
-            setModalsState((prev) => ({
+            setModalsState(prev => ({
               ...prev,
-              details: { isOpen: false },
+              details: { isOpen: false }
             }))
           }
           propietario={detailedPropietario}

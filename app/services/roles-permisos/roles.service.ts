@@ -1,6 +1,6 @@
-import type { ServiceResponse } from "~/services/core/api-response";
-import { BaseApiService } from "~/services/core/base-service";
-import type { Roles } from "~/types/roles-permisos";
+import type { ServiceResponse } from '~/services/core/api-response';
+import { BaseApiService } from '~/services/core/base-service';
+import type { Roles } from '~/types/roles-permisos';
 
 export interface CreateRoleRequest {
   nombreRol: string;
@@ -19,7 +19,7 @@ export class RolesService extends BaseApiService {
 
   async getAll(): Promise<ServiceResponse<Roles[]>> {
     return this.executeDataOperation(async () => {
-      const response = await this.httpClient.get("listarRoles");
+      const response = await this.httpClient.get('listarRoles');
       const roles = this.processResponseArray<Roles>(response);
 
       // Mapear los datos del backend al formato esperado
@@ -28,16 +28,16 @@ export class RolesService extends BaseApiService {
         idRol: rol.idRol || rol.id,
         nombreRol: rol.nombreRol,
         descripcion: rol.descripcion,
-        estadoRol: rol.estadoRol,
+        estadoRol: rol.estadoRol
       })) as Roles[];
-    }, "Error al obtener roles");
+    }, 'Error al obtener roles');
   }
 
   async getById(id: number): Promise<ServiceResponse<Roles | null>> {
     if (!id) {
       return this.handleError(
-        new Error("ID inválido"),
-        "El ID del rol es requerido",
+        new Error('ID inválido'),
+        'El ID del rol es requerido'
       );
     }
 
@@ -50,13 +50,13 @@ export class RolesService extends BaseApiService {
   async create(request: CreateRoleRequest): Promise<ServiceResponse<Roles>> {
     if (!request.nombreRol?.trim()) {
       return this.handleError(
-        new Error("Nombre vacío"),
-        "El nombre del rol es requerido",
+        new Error('Nombre vacío'),
+        'El nombre del rol es requerido'
       );
     }
 
     return this.executeDataOperation(async () => {
-      const response = await this.httpClient.post("crearRol", request);
+      const response = await this.httpClient.post('crearRol', request);
 
       // Respuesta 204 significa éxito sin contenido
       if (response.status === 204) {
@@ -64,31 +64,31 @@ export class RolesService extends BaseApiService {
           idRol: 0,
           nombreRol: request.nombreRol,
           descripcion: request.descripcion,
-          estadoRol: request.estadoRol,
+          estadoRol: request.estadoRol
         } as Roles;
       }
 
       return this.processResponseSingle<Roles>(response);
-    }, "Error al crear el rol") as Promise<ServiceResponse<Roles>>;
+    }, 'Error al crear el rol') as Promise<ServiceResponse<Roles>>;
   }
 
   async update(request: UpdateRoleRequest): Promise<ServiceResponse<Roles>> {
     if (!request.idRol) {
       return this.handleError(
-        new Error("ID inválido"),
-        "El ID del rol es requerido",
+        new Error('ID inválido'),
+        'El ID del rol es requerido'
       );
     }
 
     if (!request.nombreRol?.trim()) {
       return this.handleError(
-        new Error("Nombre vacío"),
-        "El nombre del rol es requerido",
+        new Error('Nombre vacío'),
+        'El nombre del rol es requerido'
       );
     }
 
     return this.executeDataOperation(async () => {
-      const response = await this.httpClient.put("actualizarRol", request);
+      const response = await this.httpClient.put('actualizarRol', request);
 
       // Respuesta 204 significa éxito sin contenido
       if (response.status === 204) {
@@ -96,19 +96,19 @@ export class RolesService extends BaseApiService {
           idRol: request.idRol,
           nombreRol: request.nombreRol,
           descripcion: request.descripcion,
-          estadoRol: request.estadoRol,
+          estadoRol: request.estadoRol
         } as Roles;
       }
 
       return this.processResponseSingle<Roles>(response);
-    }, "Error al actualizar el rol") as Promise<ServiceResponse<Roles>>;
+    }, 'Error al actualizar el rol') as Promise<ServiceResponse<Roles>>;
   }
 
   async delete(id: number): Promise<ServiceResponse<boolean>> {
     if (!id) {
       return this.handleError(
-        new Error("ID inválido"),
-        "El ID del rol es requerido",
+        new Error('ID inválido'),
+        'El ID del rol es requerido'
       );
     }
 
@@ -121,8 +121,8 @@ export class RolesService extends BaseApiService {
   async getByUsuario(codigoUsuario: string): Promise<ServiceResponse<Roles[]>> {
     if (!codigoUsuario?.trim()) {
       return this.handleError(
-        new Error("Código inválido"),
-        "El código del usuario es requerido",
+        new Error('Código inválido'),
+        'El código del usuario es requerido'
       );
     }
 

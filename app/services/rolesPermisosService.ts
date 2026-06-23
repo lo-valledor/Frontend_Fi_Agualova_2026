@@ -1,6 +1,6 @@
-import api from "~/lib/api";
-import type { Menus, Roles } from "~/types/roles-permisos";
-import { API_TEMPLATES, debugApi, logApiError } from "~/utils/api-debug";
+import api from '~/lib/api';
+import type { Menus, Roles } from '~/types/roles-permisos';
+import { API_TEMPLATES, debugApi, logApiError } from '~/utils/api-debug';
 
 export interface RolesPermisosServiceResponse<T> {
   data: T | null;
@@ -102,8 +102,8 @@ class RolesPermisosService {
 
     if (
       response.data &&
-      typeof response.data === "object" &&
-      "data" in response.data &&
+      typeof response.data === 'object' &&
+      'data' in response.data &&
       Array.isArray((response.data as { data: T[] }).data)
     ) {
       return (response.data as { data: T[] }).data;
@@ -111,7 +111,7 @@ class RolesPermisosService {
 
     if (
       response.data &&
-      typeof response.data === "object" &&
+      typeof response.data === 'object' &&
       !Array.isArray(response.data)
     ) {
       return [response.data as T];
@@ -122,7 +122,7 @@ class RolesPermisosService {
 
   private processSingleApiResponse<T>(response: any): T | null {
     if (response?.data) {
-      if (typeof response.data === "object" && "data" in response.data) {
+      if (typeof response.data === 'object' && 'data' in response.data) {
         return (response.data as { data: T }).data || null;
       }
       return response.data as T;
@@ -136,7 +136,7 @@ class RolesPermisosService {
 
   async getRoles(): Promise<RolesPermisosServiceResponse<Roles[]>> {
     try {
-      const response = await api.get("listarRoles");
+      const response = await api.get('listarRoles');
       const roles = this.processApiResponse<any>(response);
 
       // Mapear los datos del backend al formato esperado
@@ -145,17 +145,17 @@ class RolesPermisosService {
         idRol: rol.idRol || rol.id, // Usar idRol si existe, sino id
         nombreRol: rol.nombreRol,
         descripcion: rol.descripcion,
-        estadoRol: rol.estadoRol,
+        estadoRol: rol.estadoRol
       }));
 
       return {
         data: mappedRoles,
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -165,33 +165,33 @@ class RolesPermisosService {
       const response = await api.get(`ObtenerRolpor/${id}`);
       return {
         data: this.processSingleApiResponse<Roles>(response),
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
 
   async crearRol(
-    rolData: CrearRolData,
+    rolData: CrearRolData
   ): Promise<RolesPermisosServiceResponse<Roles>> {
     try {
-      const response = await api.post("crearRol", rolData);
+      const response = await api.post('crearRol', rolData);
 
       // Si la respuesta es 204 (No Content), la operación fue exitosa
       if (response.status === 204) {
         return {
           data: rolData as Roles,
-          error: null,
+          error: null
         };
       }
 
       return {
         data: this.processSingleApiResponse<Roles>(response),
-        error: null,
+        error: null
       };
     } catch (error: any) {
       return {
@@ -199,28 +199,28 @@ class RolesPermisosService {
         error:
           error.response?.data?.message ||
           error.message ||
-          "Error al crear el rol",
+          'Error al crear el rol'
       };
     }
   }
 
   async actualizarRol(
-    rolData: ActualizarRolData,
+    rolData: ActualizarRolData
   ): Promise<RolesPermisosServiceResponse<Roles>> {
     try {
-      const response = await api.put("actualizarRol", rolData);
+      const response = await api.put('actualizarRol', rolData);
 
       // Si la respuesta es 204 (No Content), la operación fue exitosa
       if (response.status === 204) {
         return {
           data: rolData as Roles,
-          error: null,
+          error: null
         };
       }
 
       return {
         data: this.processSingleApiResponse<Roles>(response),
-        error: null,
+        error: null
       };
     } catch (error: any) {
       return {
@@ -228,19 +228,19 @@ class RolesPermisosService {
         error:
           error.response?.data?.message ||
           error.message ||
-          "Error al actualizar el rol",
+          'Error al actualizar el rol'
       };
     }
   }
 
   async eliminarRol(
-    id: number,
+    id: number
   ): Promise<RolesPermisosServiceResponse<boolean>> {
     try {
       await api.delete(`eliminarRol/${id}`);
       return {
         data: true,
-        error: null,
+        error: null
       };
     } catch (error: any) {
       return {
@@ -248,7 +248,7 @@ class RolesPermisosService {
         error:
           error.response?.data?.message ||
           error.message ||
-          "Error al eliminar el rol",
+          'Error al eliminar el rol'
       };
     }
   }
@@ -258,13 +258,13 @@ class RolesPermisosService {
   // ============================================
 
   async getMenus(): Promise<RolesPermisosServiceResponse<Menus[]>> {
-    const endpoint = "ListarMenus";
+    const endpoint = 'ListarMenus';
 
     try {
       debugApi({
         endpoint,
-        method: "GET",
-        expectedTemplate: [API_TEMPLATES.menu],
+        method: 'GET',
+        expectedTemplate: [API_TEMPLATES.menu]
       });
 
       const response = await api.get(endpoint);
@@ -272,52 +272,52 @@ class RolesPermisosService {
 
       debugApi({
         endpoint,
-        method: "GET",
+        method: 'GET',
         response: data,
-        expectedTemplate: [API_TEMPLATES.menu],
+        expectedTemplate: [API_TEMPLATES.menu]
       });
 
       return {
         data,
-        error: null,
+        error: null
       };
     } catch (error) {
       logApiError(endpoint, error);
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
 
   async getMenuById(
-    idMenu: number,
+    idMenu: number
   ): Promise<RolesPermisosServiceResponse<Menus>> {
     try {
       const response = await api.get(`ObtenerMenu/${idMenu}`);
       return {
         data: this.processSingleApiResponse<Menus>(response),
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
 
   async crearMenu(
-    menuData: CrearMenuData,
+    menuData: CrearMenuData
   ): Promise<RolesPermisosServiceResponse<Menus>> {
-    const endpoint = "CrearMenu";
+    const endpoint = 'CrearMenu';
 
     try {
       debugApi({
         endpoint,
-        method: "POST",
+        method: 'POST',
         payload: menuData,
-        expectedTemplate: API_TEMPLATES.menu,
+        expectedTemplate: API_TEMPLATES.menu
       });
 
       const response = await api.post(endpoint, menuData);
@@ -326,13 +326,13 @@ class RolesPermisosService {
       if (response.status === 204) {
         debugApi({
           endpoint,
-          method: "POST",
-          response: { status: 204, message: "Success - No Content" },
+          method: 'POST',
+          response: { status: 204, message: 'Success - No Content' }
         });
 
         return {
           data: menuData as Menus,
-          error: null,
+          error: null
         };
       }
 
@@ -340,19 +340,19 @@ class RolesPermisosService {
 
       debugApi({
         endpoint,
-        method: "POST",
-        response: data,
+        method: 'POST',
+        response: data
       });
 
       return {
         data,
-        error: null,
+        error: null
       };
     } catch (error: any) {
       logApiError(endpoint, error, { menuData });
 
       // Intentar extraer el mensaje de error más descriptivo
-      let errorMessage = "Error al crear el menú";
+      let errorMessage = 'Error al crear el menú';
 
       if (error.response?.data) {
         // Si el error tiene un título (común en ASP.NET)
@@ -362,16 +362,16 @@ class RolesPermisosService {
         // Si tiene errores de validación
         else if (error.response.data.errors) {
           const validationErrors = Object.values(
-            error.response.data.errors,
+            error.response.data.errors
           ).flat();
-          errorMessage = validationErrors.join(", ");
+          errorMessage = validationErrors.join(', ');
         }
         // Si tiene un mensaje directo
         else if (error.response.data.message) {
           errorMessage = error.response.data.message;
         }
         // Si el data es un string
-        else if (typeof error.response.data === "string") {
+        else if (typeof error.response.data === 'string') {
           errorMessage = error.response.data;
         }
       } else if (error.message) {
@@ -380,22 +380,22 @@ class RolesPermisosService {
 
       return {
         data: null,
-        error: errorMessage,
+        error: errorMessage
       };
     }
   }
 
   async actualizarMenu(
-    menuData: ActualizarMenuData,
+    menuData: ActualizarMenuData
   ): Promise<RolesPermisosServiceResponse<Menus>> {
     const endpoint = `ActualizarMenu/${menuData.idMenu}`;
 
     try {
       debugApi({
         endpoint,
-        method: "PUT",
+        method: 'PUT',
         payload: menuData,
-        expectedTemplate: API_TEMPLATES.menu,
+        expectedTemplate: API_TEMPLATES.menu
       });
 
       const response = await api.put(endpoint, menuData);
@@ -404,13 +404,13 @@ class RolesPermisosService {
       if (response.status === 204) {
         debugApi({
           endpoint,
-          method: "PUT",
-          response: { status: 204, message: "Success - No Content" },
+          method: 'PUT',
+          response: { status: 204, message: 'Success - No Content' }
         });
 
         return {
           data: menuData as Menus,
-          error: null,
+          error: null
         };
       }
 
@@ -418,31 +418,31 @@ class RolesPermisosService {
 
       debugApi({
         endpoint,
-        method: "PUT",
-        response: data,
+        method: 'PUT',
+        response: data
       });
 
       return {
         data,
-        error: null,
+        error: null
       };
     } catch (error: any) {
       logApiError(endpoint, error, { menuData });
 
       // Intentar extraer el mensaje de error más descriptivo
-      let errorMessage = "Error al actualizar el menú";
+      let errorMessage = 'Error al actualizar el menú';
 
       if (error.response?.data) {
         if (error.response.data.title) {
           errorMessage = error.response.data.title;
         } else if (error.response.data.errors) {
           const validationErrors = Object.values(
-            error.response.data.errors,
+            error.response.data.errors
           ).flat();
-          errorMessage = validationErrors.join(", ");
+          errorMessage = validationErrors.join(', ');
         } else if (error.response.data.message) {
           errorMessage = error.response.data.message;
-        } else if (typeof error.response.data === "string") {
+        } else if (typeof error.response.data === 'string') {
           errorMessage = error.response.data;
         }
       } else if (error.message) {
@@ -451,19 +451,19 @@ class RolesPermisosService {
 
       return {
         data: null,
-        error: errorMessage,
+        error: errorMessage
       };
     }
   }
 
   async eliminarMenu(
-    idMenu: number,
+    idMenu: number
   ): Promise<RolesPermisosServiceResponse<boolean>> {
     try {
       await api.delete(`BorrarMenu/${idMenu}`);
       return {
         data: true,
-        error: null,
+        error: null
       };
     } catch (error: any) {
       return {
@@ -471,7 +471,7 @@ class RolesPermisosService {
         error:
           error.response?.data?.message ||
           error.message ||
-          "Error al eliminar el menú",
+          'Error al eliminar el menú'
       };
     }
   }
@@ -481,16 +481,16 @@ class RolesPermisosService {
   // ============================================
 
   async getMenusPorRol(
-    idRol: number,
+    idRol: number
   ): Promise<RolesPermisosServiceResponse<RolMenu[]>> {
     const endpoint = `ListarMenu/${idRol}`;
 
     try {
       debugApi({
         endpoint,
-        method: "GET",
+        method: 'GET',
         payload: { idRol },
-        expectedTemplate: [API_TEMPLATES.permisoRolMenu],
+        expectedTemplate: [API_TEMPLATES.permisoRolMenu]
       });
 
       const response = await api.get(endpoint);
@@ -498,47 +498,47 @@ class RolesPermisosService {
 
       debugApi({
         endpoint,
-        method: "GET",
+        method: 'GET',
         response: data,
-        expectedTemplate: [API_TEMPLATES.permisoRolMenu],
+        expectedTemplate: [API_TEMPLATES.permisoRolMenu]
       });
 
       return {
         data,
-        error: null,
+        error: null
       };
     } catch (error) {
       logApiError(endpoint, error, { idRol });
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
 
   async getRelacionRolMenu(
     idRol: number,
-    idMenu: number,
+    idMenu: number
   ): Promise<RolesPermisosServiceResponse<RelacionRolMenu>> {
     try {
       const response = await api.get(`ObtenerRelacion/${idRol}/${idMenu}`);
       return {
         data: this.processSingleApiResponse<RelacionRolMenu>(response),
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
 
   async asignarPermisos(
-    permisosData: AsignarPermisosData,
+    permisosData: AsignarPermisosData
   ): Promise<RolesPermisosServiceResponse<RelacionRolMenu>> {
     try {
-      const response = await api.post("AsignarPermisos", permisosData);
+      const response = await api.post('AsignarPermisos', permisosData);
 
       // Si la respuesta es 204 (No Content), la operación fue exitosa
       if (response.status === 204) {
@@ -551,16 +551,16 @@ class RolesPermisosService {
               lectura: permisosData.permisos.lectura || false,
               escritura: permisosData.permisos.escritura || false,
               edicion: permisosData.permisos.edicion || false,
-              eliminacion: permisosData.permisos.eliminacion || false,
-            },
+              eliminacion: permisosData.permisos.eliminacion || false
+            }
           } as RelacionRolMenu,
-          error: null,
+          error: null
         };
       }
 
       return {
         data: this.processSingleApiResponse<RelacionRolMenu>(response),
-        error: null,
+        error: null
       };
     } catch (error: any) {
       return {
@@ -568,20 +568,20 @@ class RolesPermisosService {
         error:
           error.response?.data?.message ||
           error.message ||
-          "Error al asignar permisos",
+          'Error al asignar permisos'
       };
     }
   }
 
   async asignarPermisoDirecto(
-    permisoData: AsignarPermisoDirecto,
+    permisoData: AsignarPermisoDirecto
   ): Promise<RolesPermisosServiceResponse<any>> {
-    const endpoint = "AsignarPermisos";
+    const endpoint = 'AsignarPermisos';
 
     try {
       // Formato de fecha sin milisegundos: YYYY-MM-DDTHH:mm:ss
       const fechaActual =
-        permisoData.fechaAsignacion || new Date().toISOString().split(".")[0];
+        permisoData.fechaAsignacion || new Date().toISOString().split('.')[0];
 
       const dataToSend = {
         idRol: permisoData.idRol,
@@ -590,14 +590,14 @@ class RolesPermisosService {
         puedeCrear: permisoData.puedeCrear,
         puedeEditar: permisoData.puedeEditar,
         puedeEliminar: permisoData.puedeEliminar,
-        fechaAsignacion: fechaActual,
+        fechaAsignacion: fechaActual
       };
 
       debugApi({
         endpoint,
-        method: "POST",
+        method: 'POST',
         payload: dataToSend,
-        expectedTemplate: API_TEMPLATES.permisoRolMenu,
+        expectedTemplate: API_TEMPLATES.permisoRolMenu
       });
 
       const response = await api.post(endpoint, dataToSend);
@@ -606,13 +606,13 @@ class RolesPermisosService {
       if (response.status === 204) {
         debugApi({
           endpoint,
-          method: "POST",
-          response: { status: 204, message: "Success - No Content" },
+          method: 'POST',
+          response: { status: 204, message: 'Success - No Content' }
         });
 
         return {
           data: dataToSend,
-          error: null,
+          error: null
         };
       }
 
@@ -620,13 +620,13 @@ class RolesPermisosService {
 
       debugApi({
         endpoint,
-        method: "POST",
-        response: responseData,
+        method: 'POST',
+        response: responseData
       });
 
       return {
         data: responseData,
-        error: null,
+        error: null
       };
     } catch (error: any) {
       logApiError(endpoint, error, { permisoData });
@@ -637,20 +637,20 @@ class RolesPermisosService {
           error.response?.data?.title ||
           error.response?.data?.message ||
           error.message ||
-          "Error al asignar permiso",
+          'Error al asignar permiso'
       };
     }
   }
 
   async eliminarRelacionRolMenu(
     idRol: number,
-    idMenu: number,
+    idMenu: number
   ): Promise<RolesPermisosServiceResponse<boolean>> {
     try {
       await api.delete(`EliminarRelacio/${idRol}/${idMenu}`);
       return {
         data: true,
-        error: null,
+        error: null
       };
     } catch (error: any) {
       return {
@@ -658,7 +658,7 @@ class RolesPermisosService {
         error:
           error.response?.data?.message ||
           error.message ||
-          "Error al eliminar la relación",
+          'Error al eliminar la relación'
       };
     }
   }
@@ -668,58 +668,58 @@ class RolesPermisosService {
   // ============================================
 
   async getRolesUsuario(
-    codigoUsuario: string,
+    codigoUsuario: string
   ): Promise<RolesPermisosServiceResponse<Roles[]>> {
     try {
       const response = await api.get(`${codigoUsuario}/roles`);
       return {
         data: this.processApiResponse<Roles>(response),
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
 
   async asignarRolesUsuario(
     codigoUsuario: string,
-    rolesData: AsignarRolesUsuarioData,
+    rolesData: AsignarRolesUsuarioData
   ): Promise<RolesPermisosServiceResponse<Roles[]>> {
     try {
       // El API espera un array directo, no un objeto con propiedad roles
       const rolesArray = rolesData.roles;
 
-      console.log("📤 API Request:", {
+      console.log('📤 API Request:', {
         endpoint: `${codigoUsuario}/roles`,
-        method: "POST",
-        body: rolesArray,
+        method: 'POST',
+        body: rolesArray
       });
 
       const response = await api.post(`${codigoUsuario}/roles`, rolesArray);
 
-      console.log("📥 API Response:", response);
+      console.log('📥 API Response:', response);
 
       // Si la respuesta es 204 (No Content), la operación fue exitosa
       if (response.status === 204) {
         // Devolvemos un array vacío ya que no tenemos datos específicos
         return {
           data: [],
-          error: null,
+          error: null
         };
       }
 
       return {
         data: this.processApiResponse<Roles>(response),
-        error: null,
+        error: null
       };
     } catch (error: any) {
-      console.error("❌ API Error:", {
+      console.error('❌ API Error:', {
         status: error.response?.status,
         statusText: error.response?.statusText,
-        data: error.response?.data,
+        data: error.response?.data
       });
 
       return {
@@ -728,34 +728,34 @@ class RolesPermisosService {
           error.response?.data?.title ||
           error.response?.data?.message ||
           error.message ||
-          "Error al asignar roles al usuario",
+          'Error al asignar roles al usuario'
       };
     }
   }
 
   async quitarRolUsuario(
     codigoUsuario: string,
-    idRol: number,
+    idRol: number
   ): Promise<RolesPermisosServiceResponse<boolean>> {
     try {
-      console.log("📤 API Request:", {
+      console.log('📤 API Request:', {
         endpoint: `${codigoUsuario}/roles/${idRol}`,
-        method: "DELETE",
+        method: 'DELETE'
       });
 
       await api.delete(`${codigoUsuario}/roles/${idRol}`);
 
-      console.log("📥 API Response: Success");
+      console.log('📥 API Response: Success');
 
       return {
         data: true,
-        error: null,
+        error: null
       };
     } catch (error: any) {
-      console.error("❌ API Error:", {
+      console.error('❌ API Error:', {
         status: error.response?.status,
         statusText: error.response?.statusText,
-        data: error.response?.data,
+        data: error.response?.data
       });
 
       return {
@@ -764,7 +764,7 @@ class RolesPermisosService {
           error.response?.data?.title ||
           error.response?.data?.message ||
           error.message ||
-          "Error al quitar el rol del usuario",
+          'Error al quitar el rol del usuario'
       };
     }
   }

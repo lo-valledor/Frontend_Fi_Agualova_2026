@@ -5,34 +5,47 @@ import {
   EyeOff,
   Loader2,
   Save,
-  User,
-} from "lucide-react";
-import type React from "react";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
-import { Alert, AlertDescription } from "~/components/ui/alert";
-import { Button } from "~/components/ui/button";
+  User
+} from 'lucide-react';
+import type React from 'react';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
+import { Alert, AlertDescription } from '~/components/ui/alert';
+import { Button } from '~/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
-import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
-import { PasswordStrengthIndicator } from "~/components/ui/password-strength-indicator";
+  CardTitle
+} from '~/components/ui/card';
+import { Input } from '~/components/ui/input';
+import { Label } from '~/components/ui/label';
+import { PasswordStrengthIndicator } from '~/components/ui/password-strength-indicator';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
-} from "~/components/ui/select";
-import { useAuth } from "~/context/AuthContext";
-import { useAdministracion } from "~/hooks/use-administracion";
-import type { ActualizarUsuarioProps, Usuarios } from "~/types/administracion";
-import { isPasswordSecure, passwordsMatch } from "~/utils/password-validation";
+  SelectValue
+} from '~/components/ui/select';
+import { useAuth } from '~/context/AuthContext';
+import { useAdministracion } from '~/hooks/use-administracion';
+import type { Usuarios } from '~/types/administracion';
+import { isPasswordSecure, passwordsMatch } from '~/utils/password-validation';
+
+type ActualizarUsuarioProps = {
+  username: string;
+  contrasena: string;
+  nombres: string;
+  apellidos: string;
+  departamento: number;
+  activo: boolean;
+  nombre?: string;
+  apellido?: string;
+  email?: string;
+  nuevaContrasena?: string;
+};
 
 export default function ProfileComponent() {
   const { user } = useAuth();
@@ -42,19 +55,19 @@ export default function ProfileComponent() {
   const [showPassword, setShowPassword] = useState(false);
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [passwordError, setPasswordError] = useState<string>("");
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordError, setPasswordError] = useState<string>('');
   const [isSaving, setIsSaving] = useState(false);
 
   const [formData, setFormData] = useState<ActualizarUsuarioProps>({
-    username: "",
-    contrasena: "",
-    nombres: "",
-    apellidos: "",
+    username: '',
+    contrasena: '',
+    nombres: '',
+    apellidos: '',
     departamento: 1,
-    activo: true,
+    activo: true
   });
 
   // Cargar datos completos del usuario
@@ -68,19 +81,21 @@ export default function ProfileComponent() {
       try {
         setLoadingUserData(true);
         const userData: Usuarios = await getUsuarioById(
-          Number.parseInt(user.id),
+          Number.parseInt(user.id)
         );
         setCurrentUserData(userData);
 
         // Inicializar formData con los datos del usuario
         setFormData({
           username: userData.userName,
-          contrasena: "",
+          contrasena: '',
           nombres: userData.nombre_Usuario,
           apellidos: userData.apellidos_Usuario,
+          departamento: 1,
+          activo: true
         });
       } catch (error) {
-        toast.error("Error al cargar los datos del perfil", error as any);
+        toast.error('Error al cargar los datos del perfil', error as any);
       } finally {
         setLoadingUserData(false);
       }
@@ -91,10 +106,10 @@ export default function ProfileComponent() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setPasswordError("");
+    setPasswordError('');
 
     if (!currentUserData) {
-      toast.error("No se encontró información del usuario");
+      toast.error('No se encontró información del usuario');
       return;
     }
 
@@ -102,9 +117,9 @@ export default function ProfileComponent() {
       // Validar que se haya ingresado la contraseña actual
       if (!currentPassword.trim()) {
         setPasswordError(
-          "Debe ingresar su contraseña actual para realizar cambios",
+          'Debe ingresar su contraseña actual para realizar cambios'
         );
-        toast.error("Contraseña actual requerida");
+        toast.error('Contraseña actual requerida');
         return;
       }
 
@@ -112,7 +127,7 @@ export default function ProfileComponent() {
 
       const updatePayload: ActualizarUsuarioProps = {
         ...restOfFormData,
-        contrasena: currentPassword, // Contraseña actual para validación
+        contrasena: currentPassword // Contraseña actual para validación
       };
 
       // Si se proporciona una nueva contraseña, validarla
@@ -122,25 +137,25 @@ export default function ProfileComponent() {
         if (!passwordCheck.isSecure) {
           setPasswordError(
             passwordCheck.reason ||
-              "La contraseña no cumple con los requisitos de seguridad",
+              'La contraseña no cumple con los requisitos de seguridad'
           );
-          toast.error("La nueva contraseña no es suficientemente segura");
+          toast.error('La nueva contraseña no es suficientemente segura');
           return;
         }
 
         // Validar que las contraseñas coincidan
         if (!passwordsMatch(newPassword, confirmPassword)) {
-          setPasswordError("Las contraseñas no coinciden");
-          toast.error("Las contraseñas no coinciden");
+          setPasswordError('Las contraseñas no coinciden');
+          toast.error('Las contraseñas no coinciden');
           return;
         }
 
         // Validar que la nueva contraseña sea diferente de la actual
         if (newPassword === currentPassword) {
           setPasswordError(
-            "La nueva contraseña debe ser diferente de la actual",
+            'La nueva contraseña debe ser diferente de la actual'
           );
-          toast.error("La nueva contraseña debe ser diferente de la actual");
+          toast.error('La nueva contraseña debe ser diferente de la actual');
           return;
         }
 
@@ -149,17 +164,17 @@ export default function ProfileComponent() {
 
       setIsSaving(true);
       await updateUsuario(currentUserData.id, updatePayload);
-      toast.success("Perfil actualizado exitosamente");
+      toast.success('Perfil actualizado exitosamente');
 
       // Limpiar campos de contraseña después de actualizar
-      setCurrentPassword("");
-      setNewPassword("");
-      setConfirmPassword("");
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
     } catch (error: any) {
       const errorMessage =
         error.response?.data?.message ||
         error.message ||
-        "Error al actualizar el perfil";
+        'Error al actualizar el perfil';
       toast.error(errorMessage);
     } finally {
       setIsSaving(false);
@@ -168,9 +183,9 @@ export default function ProfileComponent() {
 
   const handleInputChange = (
     field: keyof ActualizarUsuarioProps,
-    value: string | number | boolean,
+    value: string | number | boolean
   ) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    setFormData(prev => ({ ...prev, [field]: value }));
   };
 
   const isLoading = loadingState.updateUsuario.isLoading || isSaving;
@@ -229,7 +244,7 @@ export default function ProfileComponent() {
                 <Input
                   id="nombres"
                   value={formData.nombres}
-                  onChange={(e) => handleInputChange("nombres", e.target.value)}
+                  onChange={e => handleInputChange('nombres', e.target.value)}
                   placeholder="Ingresa tus nombres"
                   required
                   disabled={isLoading}
@@ -240,9 +255,7 @@ export default function ProfileComponent() {
                 <Input
                   id="apellidos"
                   value={formData.apellidos}
-                  onChange={(e) =>
-                    handleInputChange("apellidos", e.target.value)
-                  }
+                  onChange={e => handleInputChange('apellidos', e.target.value)}
                   placeholder="Ingresa tus apellidos"
                   required
                   disabled={isLoading}
@@ -255,7 +268,7 @@ export default function ProfileComponent() {
               <Input
                 id="username"
                 value={formData.username}
-                onChange={(e) => handleInputChange("username", e.target.value)}
+                onChange={e => handleInputChange('username', e.target.value)}
                 placeholder="Ingresa tu nombre de usuario"
                 required
                 disabled={isLoading}
@@ -266,8 +279,8 @@ export default function ProfileComponent() {
               <Label htmlFor="departamento">Departamento</Label>
               <Select
                 value={formData.departamento.toString()}
-                onValueChange={(value) =>
-                  handleInputChange("departamento", Number.parseInt(value))
+                onValueChange={value =>
+                  handleInputChange('departamento', Number.parseInt(value))
                 }
                 disabled={isLoading}
               >
@@ -308,11 +321,11 @@ export default function ProfileComponent() {
               <div className="relative">
                 <Input
                   id="currentPassword"
-                  type={showCurrentPassword ? "text" : "password"}
+                  type={showCurrentPassword ? 'text' : 'password'}
                   value={currentPassword}
-                  onChange={(e) => {
+                  onChange={e => {
                     setCurrentPassword(e.target.value);
-                    setPasswordError("");
+                    setPasswordError('');
                   }}
                   placeholder="Ingrese su contraseña actual"
                   required
@@ -344,11 +357,11 @@ export default function ProfileComponent() {
               <div className="relative">
                 <Input
                   id="newPassword"
-                  type={showPassword ? "text" : "password"}
+                  type={showPassword ? 'text' : 'password'}
                   value={newPassword}
-                  onChange={(e) => {
+                  onChange={e => {
                     setNewPassword(e.target.value);
-                    setPasswordError("");
+                    setPasswordError('');
                   }}
                   placeholder="Dejar vacío para mantener la actual"
                   disabled={isLoading}
@@ -387,11 +400,11 @@ export default function ProfileComponent() {
                 <div className="relative">
                   <Input
                     id="confirmPassword"
-                    type={showConfirmPassword ? "text" : "password"}
+                    type={showConfirmPassword ? 'text' : 'password'}
                     value={confirmPassword}
-                    onChange={(e) => {
+                    onChange={e => {
                       setConfirmPassword(e.target.value);
-                      setPasswordError("");
+                      setPasswordError('');
                     }}
                     placeholder="Confirma tu nueva contraseña"
                     required={newPassword.trim().length > 0}

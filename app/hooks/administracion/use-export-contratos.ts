@@ -1,20 +1,20 @@
-import { useExportData } from "~/hooks/shared/use-export-data";
-import type { ContratosRow } from "~/types/administracion";
-import { ExportColumnBuilder, getExportConfig } from "./utils/export-utilities";
+import { useExportData } from '~/hooks/shared/use-export-data';
+import type { ContratosRow } from '~/types/administracion';
+import { ExportColumnBuilder, getExportConfig } from './utils/export-utilities';
 
 export function useExportContratos() {
   const { isExporting, exportData } = useExportData<ContratosRow>();
 
   const contractColumns = new ExportColumnBuilder()
-    .addString("id", "ID")
-    .addString("codigo", "Código")
-    .addString("descripcion", "Descripción")
-    .addString("estado", "Estado")
+    .addString('id', 'ID')
+    .addString('codigo', 'Código')
+    .addString('descripcion', 'Descripción')
+    .addString('estado', 'Estado')
     .build();
 
   const exportAllContratos = async (
     allData: ContratosRow[],
-    format: "csv" | "xlsx" = "xlsx",
+    format: 'csv' | 'xlsx' = 'xlsx'
   ): Promise<void> => {
     // Early return si no hay datos
     if (!allData || allData.length === 0) {
@@ -23,7 +23,7 @@ export function useExportContratos() {
 
     const config = getExportConfig({
       format,
-      filename: "contratos_completos",
+      filename: 'contratos_completos'
     });
 
     await exportData(allData, contractColumns, config);
@@ -31,7 +31,7 @@ export function useExportContratos() {
 
   const exportFilteredContratos = async (
     filteredData: ContratosRow[],
-    format: "csv" | "xlsx" = "xlsx",
+    format: 'csv' | 'xlsx' = 'xlsx'
   ): Promise<void> => {
     // Early return si no hay datos
     if (!filteredData || filteredData.length === 0) {
@@ -40,7 +40,7 @@ export function useExportContratos() {
 
     const config = getExportConfig({
       format,
-      filename: "contratos_filtrados",
+      filename: 'contratos_filtrados'
     });
 
     await exportData(filteredData, contractColumns, config);
@@ -50,6 +50,6 @@ export function useExportContratos() {
     isExporting,
     exportAllContratos,
     exportFilteredContratos,
-    contractColumns,
+    contractColumns
   };
 }

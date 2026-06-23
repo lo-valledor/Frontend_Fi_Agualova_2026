@@ -6,8 +6,8 @@ export {
   extractErrorMessage as extractApiErrorMessage,
   hasData,
   processArrayResponse,
-  processSingleResponse,
-} from "./core/api-processing";
+  processSingleResponse
+} from './core/api-processing';
 export {
   errorResponse,
   errorResult,
@@ -17,10 +17,10 @@ export {
   type ServiceResponse,
   successResponse,
   successResult,
-  toErrorMessage,
-} from "./core/api-response";
+  toErrorMessage
+} from './core/api-response';
 
-export { BaseApiService, type HttpClient } from "./core/base-service";
+export { BaseApiService, type HttpClient } from './core/base-service';
 
 // ============================================================================
 // EXPORTACIONES DE SERVICIOS ESPECIALIZADOS
@@ -29,7 +29,7 @@ export { BaseApiService, type HttpClient } from "./core/base-service";
 // Servicios de administración especializados (REFACTORIZADOS)
 // Compatibilidad hacia atrás - administracionService ahora es un alias
 // Servicios de autenticación
-export { authService } from "./authService";
+export { authService } from './authService';
 // Servicios de inserción automática (REFACTORIZADOS)
 // Servicios de mantención (REFACTORIZADOS)
 // Compatibilidad hacia atrás - mantencionService ahora es un alias
@@ -39,10 +39,10 @@ export {
   mantencionServices,
   mantencionServices as mantencionService,
   nichosService,
-  referenceDataMantencionService,
-} from "./mantencion";
+  referenceDataMantencionService
+} from './mantencion';
 // Servicios de monitor
-export { monitorService } from "./monitorService";
+export { monitorService } from './monitorService';
 // Servicios de roles y permisos (REFACTORIZADOS)
 // Compatibilidad hacia atrás - rolesPermisosService ahora es un alias
 export {
@@ -51,10 +51,10 @@ export {
   rolesPermisosServices,
   rolesPermisosServices as rolesPermisosService,
   rolesService,
-  usuarioRolesService,
-} from "./roles-permisos";
+  usuarioRolesService
+} from './roles-permisos';
 // Servicios de usuario
-export { userService } from "./userService";
+export { userService } from './userService';
 
 // ============================================================================
 // EXPORTACIONES DE TIPOS
@@ -62,9 +62,9 @@ export { userService } from "./userService";
 
 export type {
   MonitorBasicData,
-  MonitorServiceResponse,
-} from "./monitorService";
-export type { OperacionesServiceResponse } from "./operacionesService";
+  MonitorServiceResponse
+} from './monitorService';
+export type { OperacionesServiceResponse } from './operacionesService';
 export type {
   AssignPermissionDirectRequest,
   AssignPermissionsRequest,
@@ -75,5 +75,5 @@ export type {
   RolePermissions,
   UpdateMenuRequest,
   UpdateRoleRequest,
-  UserPermissions,
-} from "./roles-permisos";
+  UserPermissions
+} from './roles-permisos';

@@ -471,4 +471,4 @@ export type UsuarioModalState = {
   roles: { isOpen: boolean };
 };
 
-export type UsuarioModalMode = "add" | "edit" | "view" | null;
+export type UsuarioModalMode = 'add' | 'edit' | 'view' | null;

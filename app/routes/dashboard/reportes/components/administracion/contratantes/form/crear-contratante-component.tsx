@@ -1,4 +1,4 @@
-import { zodResolver } from "@hookform/resolvers/zod";
+import { zodResolver } from '@hookform/resolvers/zod';
 import {
   ArrowLeft,
   Building2,
@@ -10,62 +10,62 @@ import {
   Phone,
   Save,
   User,
-  XCircle,
-} from "lucide-react";
-import { useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import { useNavigate } from "react-router";
-import Select from "react-select";
-import { toast } from "sonner";
-import { z } from "zod";
+  XCircle
+} from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router';
+import Select from 'react-select';
+import { toast } from 'sonner';
+import { z } from 'zod';
 
-import { ModernHeader } from "~/components/shared/modern-header";
-import { getReactSelectStyles } from "~/components/shared/react-select-styles";
-import { useTheme } from "~/components/theme-provider";
-import { Alert, AlertDescription } from "~/components/ui/alert";
-import { Button } from "~/components/ui/button";
-import { Checkbox } from "~/components/ui/checkbox";
+import { ModernHeader } from '~/components/shared/modern-header';
+import { getReactSelectStyles } from '~/components/shared/react-select-styles';
+import { useTheme } from '~/components/theme-provider';
+import { Alert, AlertDescription } from '~/components/ui/alert';
+import { Button } from '~/components/ui/button';
+import { Checkbox } from '~/components/ui/checkbox';
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
-} from "~/components/ui/form";
-import { Input } from "~/components/ui/input";
-import { administracionService } from "~/services/administracionService";
-import type { NombreComuna, NombreGiro } from "~/types/administracion";
-import { formatRut, isValidRutFormat } from "~/utils/rut-utils";
+  FormMessage
+} from '~/components/ui/form';
+import { Input } from '~/components/ui/input';
+import { administracionService } from '~/services/administracionService';
+import type { NombreComuna, NombreGiro } from '~/types/administracion';
+import { formatRut, isValidRutFormat } from '~/utils/rut-utils';
 
 const createContratanteSchema = (existingContratantes: string[]) =>
   z.object({
     rut: z
       .string()
-      .min(1, "El RUT es requerido")
+      .min(1, 'El RUT es requerido')
       .refine(isValidRutFormat, {
-        message: "El RUT debe tener el formato 12345678-9",
+        message: 'El RUT debe tener el formato 12345678-9'
       })
       .refine(
-        (rut) => {
+        rut => {
           return !existingContratantes.includes(rut);
         },
         {
-          message: "Este RUT ya está registrado en el sistema",
-        },
+          message: 'Este RUT ya está registrado en el sistema'
+        }
       ),
-    nombre: z.string().min(1, "El nombre es requerido"),
+    nombre: z.string().min(1, 'El nombre es requerido'),
     apellido: z.string().optional(),
     esEmpresa: z.boolean(),
-    direccion: z.string().min(1, "La dirección es requerida"),
-    codComuna: z.string().min(1, "La comuna es requerida"),
-    contacto: z.string().min(1, "El contacto es requerido"),
+    direccion: z.string().min(1, 'La dirección es requerida'),
+    codComuna: z.string().min(1, 'La comuna es requerida'),
+    contacto: z.string().min(1, 'El contacto es requerido'),
     telefono: z.string().optional(),
     correo: z
       .string()
-      .email("Debe ser un correo válido")
+      .email('Debe ser un correo válido')
       .optional()
-      .or(z.literal("")),
+      .or(z.literal(''))
   });
 
 type ContratanteFormData = z.infer<ReturnType<typeof createContratanteSchema>>;
@@ -77,28 +77,28 @@ export default function CrearContratanteComponent() {
   const [, setGiros] = useState<NombreGiro[]>([]);
   const [comunas, setComunas] = useState<NombreComuna[]>([]);
   const [existingContratantes, setExistingContratantes] = useState<string[]>(
-    [],
+    []
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [rutValidationStatus, setRutValidationStatus] = useState<
-    "idle" | "checking" | "valid" | "invalid"
-  >("idle");
+    'idle' | 'checking' | 'valid' | 'invalid'
+  >('idle');
 
   const contratanteSchema = createContratanteSchema(existingContratantes);
 
   const form = useForm<ContratanteFormData>({
     resolver: zodResolver(contratanteSchema),
     defaultValues: {
-      rut: "",
-      nombre: "",
-      apellido: "",
+      rut: '',
+      nombre: '',
+      apellido: '',
       esEmpresa: false,
-      direccion: "",
-      codComuna: "",
-      contacto: "",
-      telefono: "",
-      correo: "",
-    },
+      direccion: '',
+      codComuna: '',
+      contacto: '',
+      telefono: '',
+      correo: ''
+    }
   });
 
   const selectStyles = getReactSelectStyles(theme);
@@ -118,11 +118,11 @@ export default function CrearContratanteComponent() {
           setGiros(contratantesDataResult.data.giros);
           setComunas(contratantesDataResult.data.comunas);
           setExistingContratantes(
-            contratantesDataResult.data.contratantes.map((c) => c.rut),
+            contratantesDataResult.data.contratantes.map(c => c.rut)
           );
         }
       } catch (error) {
-        toast.error("Error al cargar datos del formulario", error as any);
+        toast.error('Error al cargar datos del formulario', error as any);
       }
     };
 
@@ -131,28 +131,28 @@ export default function CrearContratanteComponent() {
 
   const validateRut = (rut: string) => {
     if (!rut) {
-      setRutValidationStatus("idle");
+      setRutValidationStatus('idle');
       return;
     }
 
     // Validar formato
     if (!isValidRutFormat(rut)) {
-      setRutValidationStatus("invalid");
+      setRutValidationStatus('invalid');
       return;
     }
 
     // Validar si ya existe
     if (existingContratantes.includes(rut)) {
-      setRutValidationStatus("invalid");
+      setRutValidationStatus('invalid');
     } else {
-      setRutValidationStatus("valid");
+      setRutValidationStatus('valid');
     }
   };
 
   useEffect(() => {
-    const rutValue = form.watch("rut");
+    const rutValue = form.watch('rut');
     validateRut(rutValue);
-  }, [form.watch("rut"), existingContratantes]);
+  }, [form.watch('rut'), existingContratantes]);
 
   const onSubmit = async (data: ContratanteFormData) => {
     setIsSubmitting(true);
@@ -160,7 +160,7 @@ export default function CrearContratanteComponent() {
       // Asegurar que el RUT esté correctamente formateado antes de enviar
       const formattedData = {
         ...data,
-        rut: formatRut(data.rut),
+        rut: formatRut(data.rut)
       };
 
       const result =
@@ -171,10 +171,10 @@ export default function CrearContratanteComponent() {
         return;
       }
 
-      toast.success("Contratante creado exitosamente");
-      navigate("/dashboard/administracion/contratantes");
+      toast.success('Contratante creado exitosamente');
+      navigate('/dashboard/administracion/contratantes');
     } catch (error) {
-      toast.error("Error al crear el contratante", error as any);
+      toast.error('Error al crear el contratante', error as any);
     } finally {
       setIsSubmitting(false);
     }
@@ -192,7 +192,7 @@ export default function CrearContratanteComponent() {
                 <Button
                   variant="ghost"
                   onClick={() =>
-                    navigate("/dashboard/administracion/contratantes")
+                    navigate('/dashboard/administracion/contratantes')
                   }
                   disabled={isSubmitting}
                   className="gap-2"
@@ -203,7 +203,7 @@ export default function CrearContratanteComponent() {
                 <Button
                   variant="outline"
                   onClick={() =>
-                    navigate("/dashboard/administracion/contratantes")
+                    navigate('/dashboard/administracion/contratantes')
                   }
                   disabled={isSubmitting}
                 >
@@ -215,7 +215,7 @@ export default function CrearContratanteComponent() {
                   disabled={isSubmitting}
                 >
                   <Save className="h-4 w-4" />
-                  {isSubmitting ? "Creando..." : "Crear Contratante"}
+                  {isSubmitting ? 'Creando...' : 'Crear Contratante'}
                 </Button>
               </>
             }
@@ -229,7 +229,7 @@ export default function CrearContratanteComponent() {
           <Info className="h-4 w-4 " />
           <AlertDescription className="text-blue-800 dark:text-blue-200">
             <strong>Información:</strong> Al crear un contratante, este
-            aparecerá automáticamente en el submódulo de{" "}
+            aparecerá automáticamente en el submódulo de{' '}
             <strong>Propietarios</strong> para su consulta y gestión.
           </AlertDescription>
         </Alert>
@@ -261,24 +261,24 @@ export default function CrearContratanteComponent() {
                             <Input
                               placeholder="12345678-9"
                               {...field}
-                              onBlur={(e) => {
+                              onBlur={e => {
                                 const formatted = formatRut(e.target.value);
                                 field.onChange(formatted);
                               }}
                               className={`h-11 pr-10 ${
-                                rutValidationStatus === "valid"
-                                  ? "border-green-500 focus:border-green-500"
-                                  : rutValidationStatus === "invalid"
-                                    ? "border-red-500 focus:border-red-500"
-                                    : ""
+                                rutValidationStatus === 'valid'
+                                  ? 'border-green-500 focus:border-green-500'
+                                  : rutValidationStatus === 'invalid'
+                                    ? 'border-red-500 focus:border-red-500'
+                                    : ''
                               }`}
                             />
-                            {rutValidationStatus === "valid" && (
+                            {rutValidationStatus === 'valid' && (
                               <div className="absolute inset-y-0 right-0 flex items-center pr-3">
                                 <CheckCircle2 className="h-5 w-5 text-green-500" />
                               </div>
                             )}
-                            {rutValidationStatus === "invalid" && (
+                            {rutValidationStatus === 'invalid' && (
                               <div className="absolute inset-y-0 right-0 flex items-center pr-3">
                                 <XCircle className="h-5 w-5 text-red-500" />
                               </div>
@@ -286,11 +286,11 @@ export default function CrearContratanteComponent() {
                           </div>
                         </FormControl>
                         <FormMessage />
-                        {rutValidationStatus === "invalid" && (
+                        {rutValidationStatus === 'invalid' && (
                           <p className="text-sm text-red-600 dark:text-red-400 mt-1">
-                            {!isValidRutFormat(form.watch("rut"))
-                              ? "El RUT debe tener el formato 12345678-9"
-                              : "Este RUT ya está registrado en el sistema"}
+                            {!isValidRutFormat(form.watch('rut'))
+                              ? 'El RUT debe tener el formato 12345678-9'
+                              : 'Este RUT ya está registrado en el sistema'}
                           </p>
                         )}
                       </FormItem>
@@ -325,9 +325,7 @@ export default function CrearContratanteComponent() {
                       <FormItem>
                         <FormLabel className="flex items-center gap-2">
                           <User className="h-4 w-4" />
-                          {form.watch("esEmpresa")
-                            ? "Razón Social"
-                            : "Nombre"}{" "}
+                          {form.watch('esEmpresa') ? 'Razón Social' : 'Nombre'}{' '}
                           <span className="text-red-500">*</span>
                         </FormLabel>
                         <FormControl>
@@ -335,9 +333,9 @@ export default function CrearContratanteComponent() {
                             {...field}
                             className="h-11"
                             placeholder={
-                              form.watch("esEmpresa")
-                                ? "Nombre de la empresa"
-                                : "Nombre completo"
+                              form.watch('esEmpresa')
+                                ? 'Nombre de la empresa'
+                                : 'Nombre completo'
                             }
                           />
                         </FormControl>
@@ -346,7 +344,7 @@ export default function CrearContratanteComponent() {
                     )}
                   />
 
-                  {!form.watch("esEmpresa") && (
+                  {!form.watch('esEmpresa') && (
                     <FormField
                       control={form.control}
                       name="apellido"
@@ -406,7 +404,7 @@ export default function CrearContratanteComponent() {
                     name="codComuna"
                     render={({ field }) => {
                       const comunaActual = comunas.find(
-                        (c) => c.codigo === field.value,
+                        c => c.codigo === field.value
                       );
 
                       return (
@@ -418,20 +416,20 @@ export default function CrearContratanteComponent() {
                           <FormControl>
                             <Select
                               instanceId="comuna-select"
-                              options={comunas.map((comuna) => ({
+                              options={comunas.map(comuna => ({
                                 value: comuna.codigo,
-                                label: `${comuna.nombre} (${comuna.codigo})`,
+                                label: `${comuna.nombre} (${comuna.codigo})`
                               }))}
                               value={
                                 comunaActual
                                   ? {
                                       value: comunaActual.codigo,
-                                      label: `${comunaActual.nombre} (${comunaActual.codigo})`,
+                                      label: `${comunaActual.nombre} (${comunaActual.codigo})`
                                     }
                                   : null
                               }
                               onChange={(option: any) =>
-                                field.onChange(option ? option.value : "")
+                                field.onChange(option ? option.value : '')
                               }
                               placeholder="Seleccione la comuna"
                               isClearable

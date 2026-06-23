@@ -1,4 +1,3 @@
-/** biome-ignore-all lint/correctness/noEmptyPattern: <explanation> */
 import { BreadcrumbSetter } from "~/components/breadcrumb-setter";
 import AnularFacturaImpresaComponent from "~/components/operaciones/anular-factura-impresa/anular-factura-impresa-component";
 

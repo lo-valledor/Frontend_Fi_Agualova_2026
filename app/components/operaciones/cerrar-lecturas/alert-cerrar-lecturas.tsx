@@ -64,9 +64,7 @@ export default function AlertCerrarLecturas({
       }
     } catch (err) {
       const mensaje =
-        err instanceof Error
-          ? err.message
-          : 'Error al cerrar las lecturas';
+        err instanceof Error ? err.message : 'Error al cerrar las lecturas';
       toast.error(mensaje);
     } finally {
       setIsLoading(false);
@@ -89,8 +87,7 @@ export default function AlertCerrarLecturas({
                   {idsNichos.length} nicho
                   {idsNichos.length === 1 ? '' : 's'}
                 </strong>{' '}
-                del ciclo{' '}
-                <strong>{cicloId}</strong> del período{' '}
+                del ciclo <strong>{cicloId}</strong> del período{' '}
                 <strong>{periodoId}</strong>.
               </p>
               <p className="text-red-700 dark:text-red-300 mt-2 text-xs">

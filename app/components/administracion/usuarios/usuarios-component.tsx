@@ -202,7 +202,7 @@ export default function UsuariosComponent({
           }
           onSuccess={handleUserSuccess}
           user={selectedUser}
-          mode={modalsState.userForm.mode}
+          mode={modalsState.userForm.mode === 'edit' ? 'edit' : 'add'}
         />
         <UserPermissionsModal
           isOpen={modalsState.permissions.isOpen}

@@ -10,22 +10,22 @@ import {
   Phone,
   User,
   UserCheck,
-  XCircle,
-} from "lucide-react";
+  XCircle
+} from 'lucide-react';
 
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
-import { Badge } from "~/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { Badge } from '~/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogTitle,
-} from "~/components/ui/dialog";
-import { Skeleton } from "~/components/ui/skeleton";
-import type { GetContratante, NombreComuna } from "~/types/administracion";
+  DialogTitle
+} from '~/components/ui/dialog';
+import { Skeleton } from '~/components/ui/skeleton';
+import type { GetContratante, NombreComuna } from '~/types/administracion';
 
 interface ContratanteDetailsModalProps {
   isOpen: boolean;
@@ -37,7 +37,7 @@ interface ContratanteDetailsModalProps {
 const InfoItem = ({
   icon,
   label,
-  value,
+  value
 }: {
   icon: React.ReactNode;
   label: string;
@@ -62,7 +62,7 @@ export function ContratanteDetailsModal({
   isOpen,
   onClose,
   contratante,
-  comunas,
+  comunas
 }: Readonly<ContratanteDetailsModalProps>) {
   const [detailsData, setDetailsData] = useState<GetContratante | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -82,13 +82,20 @@ export function ContratanteDetailsModal({
 
   const nombreCompleto = detailsData?.esEmpresa
     ? detailsData.nombre
-    : `${detailsData?.nombre || ""} ${detailsData?.apellido || ""}`.trim();
+    : `${detailsData?.nombre || ''} ${detailsData?.apellido || ''}`.trim();
 
-  const comunaNombre = detailsData?.comunaNombre
-    ? comunas
-        .find((c) => c.valueOf() === detailsData.comunaNombre)
-        ?.valueOf() || detailsData.comuna
+  const comunaMatch = detailsData?.comunaNombre
+    ? comunas.find(c => {
+        if (typeof c === 'string') return c === detailsData.comunaNombre;
+        return c.nombre === detailsData.comunaNombre;
+      })
     : undefined;
+  const comunaNombre =
+    comunaMatch === undefined
+      ? undefined
+      : typeof comunaMatch === 'string'
+        ? comunaMatch
+        : comunaMatch.nombre || detailsData?.comuna;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -107,7 +114,7 @@ export function ContratanteDetailsModal({
                 Detalles del Contratante
               </DialogTitle>
               <DialogDescription className="text-base text-muted-foreground mt-1">
-                Información completa de {nombreCompleto || "..."}
+                Información completa de {nombreCompleto || '...'}
               </DialogDescription>
             </div>
           </div>
@@ -124,7 +131,7 @@ export function ContratanteDetailsModal({
               </div>
             </div>
             <div className="space-y-4">
-              {[1, 2, 3].map((i) => (
+              {[1, 2, 3].map(i => (
                 <Card key={i} className="animate-pulse">
                   <CardHeader>
                     <Skeleton className="h-4 w-32" />
@@ -178,9 +185,9 @@ export function ContratanteDetailsModal({
                   label="Tipo"
                   value={
                     <Badge
-                      variant={detailsData.esEmpresa ? "default" : "secondary"}
+                      variant={detailsData.esEmpresa ? 'default' : 'secondary'}
                     >
-                      {detailsData.esEmpresa ? "Empresa" : "Persona Natural"}
+                      {detailsData.esEmpresa ? 'Empresa' : 'Persona Natural'}
                     </Badge>
                   }
                   icon={
@@ -190,7 +197,7 @@ export function ContratanteDetailsModal({
                   }
                 />
                 <InfoItem
-                  label={detailsData.esEmpresa ? "Razón Social" : "Nombre"}
+                  label={detailsData.esEmpresa ? 'Razón Social' : 'Nombre'}
                   value={detailsData.nombre}
                   icon={
                     <div className="p-2 bg-background rounded-xl">

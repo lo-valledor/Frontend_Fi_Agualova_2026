@@ -11,26 +11,26 @@ import {
   Shield,
   User,
   XCircle,
-  Zap,
-} from "lucide-react";
+  Zap
+} from 'lucide-react';
 
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
-import { Badge } from "~/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { Badge } from '~/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogTitle,
-} from "~/components/ui/dialog";
-import { Separator } from "~/components/ui/separator";
-import { Skeleton } from "~/components/ui/skeleton";
+  DialogTitle
+} from '~/components/ui/dialog';
+import { Separator } from '~/components/ui/separator';
+import { Skeleton } from '~/components/ui/skeleton';
 import type {
   ContratosDisponiblesPorId,
-  ContratosRow,
-} from "~/types/administracion";
+  ContratosRow
+} from '~/types/administracion';
 
 interface ContractDetailsModalProps {
   isOpen: boolean;
@@ -41,7 +41,7 @@ interface ContractDetailsModalProps {
 export function ContractDetailsModal({
   isOpen,
   onClose,
-  contract,
+  contract
 }: ContractDetailsModalProps) {
   const [detailsData, setDetailsData] =
     useState<ContratosDisponiblesPorId | null>(null);
@@ -56,37 +56,37 @@ export function ContractDetailsModal({
         setIsLoading(true);
         setError(null);
         // Simulate API call - replace with actual API call
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 1000));
 
         // Mock detailed data based on contract
         const mockDetails: ContratosDisponiblesPorId = {
           tipoContrato: contract.tipoContrato,
           tarifa: contract.tarifa,
           nombrePropietario: contract.nombrePropietario,
-          rutPropietario: "12.345.678-9",
+          rutPropietario: '12.345.678-9',
           nombreCliente: contract.nombreCliente,
-          rutCliente: "98.765.432-1",
-          localId: "LOC001",
+          rutCliente: '98.765.432-1',
+          localId: 'LOC001',
           codigoLocal: contract.local,
           fechaInicio: contract.fechaInicio,
-          activoTexto: contract.activo ? "Activo" : "Inactivo",
+          activoTexto: contract.activo ? 'Activo' : 'Inactivo',
           fechaTermino: contract.fechaTermino,
           direccion: contract.direccionEnvio,
-          codigoComuna: "001",
+          codigoComuna: '001',
           limiteInvierno: contract.limiteInvierno,
           cicloFacturacion: contract.cicloFacturacion,
           potenciaContratada: contract.potenciaContratada,
           comunaNombre: contract.comunaEnvio,
-          esMadreTexto: "No",
-          codigoContratoMadre: "",
+          esMadreTexto: 'No',
+          codigoContratoMadre: '',
           lugarEntrega: contract.direccionEnvio,
-          liberadoCorteTexto: contract.liberadoCorte ? "Sí" : "No",
+          liberadoCorteTexto: contract.liberadoCorte ? 'Sí' : 'No'
         };
 
         setDetailsData(mockDetails);
       } catch (err) {
-        console.error("Error al cargar los detalles del contrato:", err);
-        setError("Error al cargar los detalles del contrato");
+        console.error('Error al cargar los detalles del contrato:', err);
+        setError('Error al cargar los detalles del contrato');
       } finally {
         setIsLoading(false);
       }
@@ -98,12 +98,12 @@ export function ContractDetailsModal({
   }, [isOpen, contract]);
 
   const formatDate = (dateString: string) => {
-    if (!dateString) return "No especificada";
+    if (!dateString) return 'No especificada';
     try {
-      return new Date(dateString).toLocaleDateString("es-CL", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
+      return new Date(dateString).toLocaleDateString('es-CL', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
       });
     } catch {
       return dateString;
@@ -111,13 +111,13 @@ export function ContractDetailsModal({
   };
 
   const formatRut = (rut: string) => {
-    if (!rut) return "No especificado";
-    const cleanRut = rut.replace(/[^\dKk]/g, "");
+    if (!rut) return 'No especificado';
+    const cleanRut = rut.replace(/[^\dKk]/g, '');
     if (cleanRut.length < 2) return rut;
 
     const body = cleanRut.slice(0, -1);
     const dv = cleanRut.slice(-1);
-    const formattedBody = body.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    const formattedBody = body.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 
     return `${formattedBody}-${dv}`;
   };
@@ -135,7 +135,7 @@ export function ContractDetailsModal({
             </div>
           </div>
           <div className="space-y-4">
-            {[1, 2, 3].map((i) => (
+            {[1, 2, 3].map(i => (
               <Card key={i} className="animate-pulse">
                 <CardHeader>
                   <Skeleton className="h-4 w-32" />
@@ -222,14 +222,14 @@ export function ContractDetailsModal({
                   <p className="text-xs font-medium">Estado</p>
                   <Badge
                     variant={
-                      detailsData.activoTexto === "Activo"
-                        ? "default"
-                        : "secondary"
+                      detailsData.activoTexto === 'Activo'
+                        ? 'default'
+                        : 'secondary'
                     }
                     className={
-                      detailsData.activoTexto === "Activo"
-                        ? "bg-emerald-100 text-emerald-800 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-300 dark:border-emerald-800"
-                        : "bg-rose-100 text-rose-800 border-rose-200 dark:bg-rose-900/20 dark:text-rose-300 dark:border-rose-800"
+                      detailsData.activoTexto === 'Activo'
+                        ? 'bg-emerald-100 text-emerald-800 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-300 dark:border-emerald-800'
+                        : 'bg-rose-100 text-rose-800 border-rose-200 dark:bg-rose-900/20 dark:text-rose-300 dark:border-rose-800'
                     }
                   >
                     {detailsData.activoTexto}
@@ -442,7 +442,7 @@ export function ContractDetailsModal({
                 <div>
                   <p className="text-xs font-medium">Límite Invierno</p>
                   <p className="font-medium text-slate-800 dark:text-slate-200">
-                    {detailsData.limiteInvierno.toLocaleString("es-CL")} kWh
+                    {detailsData.limiteInvierno.toLocaleString('es-CL')} kWh
                   </p>
                 </div>
               </div>
@@ -459,14 +459,14 @@ export function ContractDetailsModal({
                   <p className="text-xs font-medium">Liberado de Corte</p>
                   <Badge
                     variant={
-                      detailsData.liberadoCorteTexto === "Sí"
-                        ? "default"
-                        : "secondary"
+                      detailsData.liberadoCorteTexto === 'Sí'
+                        ? 'default'
+                        : 'secondary'
                     }
                     className={
-                      detailsData.liberadoCorteTexto === "Sí"
-                        ? "bg-green-100 text-green-800 border-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800"
-                        : "bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-900/20 dark:text-gray-300 dark:border-gray-800"
+                      detailsData.liberadoCorteTexto === 'Sí'
+                        ? 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800'
+                        : 'bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-900/20 dark:text-gray-300 dark:border-gray-800'
                     }
                   >
                     {detailsData.liberadoCorteTexto}
@@ -482,9 +482,9 @@ export function ContractDetailsModal({
                   <p className="text-xs font-medium">¿Es Madre?</p>
                   <Badge
                     variant={
-                      detailsData.esMadreTexto === "Sí"
-                        ? "default"
-                        : "secondary"
+                      detailsData.esMadreTexto === 'Sí'
+                        ? 'default'
+                        : 'secondary'
                     }
                   >
                     {detailsData.esMadreTexto}

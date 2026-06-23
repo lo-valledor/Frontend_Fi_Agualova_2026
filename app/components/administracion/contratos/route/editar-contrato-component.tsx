@@ -1,41 +1,41 @@
-import { ArrowLeft, Save } from "lucide-react";
-import { useState } from "react";
-import { useNavigate } from "react-router";
-import { toast } from "sonner";
+import { ArrowLeft, Save } from 'lucide-react';
+import { useState } from 'react';
+import { useNavigate } from 'react-router';
+import { toast } from 'sonner';
 
-import { BreadcrumbSetter } from "~/components/breadcrumb-setter";
-import { Button } from "~/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
-import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
-import { Switch } from "~/components/ui/switch";
-import { administracionService } from "~/services/administracionService";
-import type { ContratoFormValues } from "~/types/administracion";
+import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
+import { Button } from '~/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
+import { Input } from '~/components/ui/input';
+import { Label } from '~/components/ui/label';
+import { Switch } from '~/components/ui/switch';
+import { administracionService } from '~/services/administracionService';
+import type { ContratoFormValues } from '~/types/administracion';
 
 const emptyContrato: ContratoFormValues = {
   idTipoContrato: 0,
   idTarifa: 0,
-  rutPropietario: "",
-  rutCliente: "",
-  idLocal: "",
-  fechaInicio: "",
+  rutPropietario: '',
+  rutCliente: '',
+  idLocal: '',
+  fechaInicio: '',
   activo: true,
-  direccion: "",
-  codigoComuna: "",
+  direccion: '',
+  codigoComuna: '',
   limiteInvierno: 0,
   idCiclo: 0,
-  potencia: "",
+  potencia: '',
   crearClienteDesdePropietario: false,
   esMadre: false,
-  idContratoMadre: "",
-  lugarEntrega: "",
+  idContratoMadre: '',
+  lugarEntrega: '',
   liberadoCorte: false,
-  idContrato: "",
-  fechaTermino: "",
+  idContrato: '',
+  fechaTermino: ''
 };
 
 export default function EditarContratoComponent({
-  id,
+  id
 }: {
   readonly id: string;
 }) {
@@ -45,16 +45,16 @@ export default function EditarContratoComponent({
 
   const handleInputChange = (
     field: keyof ContratoFormValues,
-    value: string | number | boolean,
+    value: string | number | boolean
   ) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    setFormData(prev => ({ ...prev, [field]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!id) {
-      toast.error("Falta el identificador del contrato");
+      toast.error('Falta el identificador del contrato');
       return;
     }
 
@@ -62,12 +62,12 @@ export default function EditarContratoComponent({
     try {
       await administracionService.putDataActualizarContrato({
         ...formData,
-        idContrato: id,
+        idContrato: id
       });
-      toast.success("Contrato actualizado exitosamente");
-      navigate("/dashboard/administracion/contratos");
-    } catch (error) {
-      toast.error("No fue posible actualizar el contrato");
+      toast.success('Contrato actualizado exitosamente');
+      navigate('/dashboard/administracion/contratos');
+    } catch (_error) {
+      toast.error('No fue posible actualizar el contrato');
     } finally {
       setIsSubmitting(false);
     }
@@ -76,7 +76,7 @@ export default function EditarContratoComponent({
   return (
     <div>
       <BreadcrumbSetter
-        items={[{ label: "Administración" }, { label: "Editar contrato" }]}
+        items={[{ label: 'Administración' }, { label: 'Editar contrato' }]}
       />
       <form onSubmit={handleSubmit} className="space-y-4 p-6">
         <Card>
@@ -90,8 +90,8 @@ export default function EditarContratoComponent({
                 id="idTipoContrato"
                 type="number"
                 value={formData.idTipoContrato}
-                onChange={(e) =>
-                  handleInputChange("idTipoContrato", Number(e.target.value))
+                onChange={e =>
+                  handleInputChange('idTipoContrato', Number(e.target.value))
                 }
               />
             </div>
@@ -101,8 +101,8 @@ export default function EditarContratoComponent({
                 id="idTarifa"
                 type="number"
                 value={formData.idTarifa}
-                onChange={(e) =>
-                  handleInputChange("idTarifa", Number(e.target.value))
+                onChange={e =>
+                  handleInputChange('idTarifa', Number(e.target.value))
                 }
               />
             </div>
@@ -112,8 +112,8 @@ export default function EditarContratoComponent({
                 id="idCiclo"
                 type="number"
                 value={formData.idCiclo}
-                onChange={(e) =>
-                  handleInputChange("idCiclo", Number(e.target.value))
+                onChange={e =>
+                  handleInputChange('idCiclo', Number(e.target.value))
                 }
               />
             </div>
@@ -122,7 +122,7 @@ export default function EditarContratoComponent({
               <Input
                 id="idLocal"
                 value={formData.idLocal}
-                onChange={(e) => handleInputChange("idLocal", e.target.value)}
+                onChange={e => handleInputChange('idLocal', e.target.value)}
               />
             </div>
             <div className="space-y-2">
@@ -130,8 +130,8 @@ export default function EditarContratoComponent({
               <Input
                 id="rutPropietario"
                 value={formData.rutPropietario}
-                onChange={(e) =>
-                  handleInputChange("rutPropietario", e.target.value)
+                onChange={e =>
+                  handleInputChange('rutPropietario', e.target.value)
                 }
                 required
               />
@@ -141,9 +141,7 @@ export default function EditarContratoComponent({
               <Input
                 id="rutCliente"
                 value={formData.rutCliente}
-                onChange={(e) =>
-                  handleInputChange("rutCliente", e.target.value)
-                }
+                onChange={e => handleInputChange('rutCliente', e.target.value)}
                 required
               />
             </div>
@@ -152,8 +150,8 @@ export default function EditarContratoComponent({
               <Input
                 id="idContratoMadre"
                 value={formData.idContratoMadre}
-                onChange={(e) =>
-                  handleInputChange("idContratoMadre", e.target.value)
+                onChange={e =>
+                  handleInputChange('idContratoMadre', e.target.value)
                 }
               />
             </div>
@@ -162,8 +160,8 @@ export default function EditarContratoComponent({
               <Input
                 id="codigoComuna"
                 value={formData.codigoComuna}
-                onChange={(e) =>
-                  handleInputChange("codigoComuna", e.target.value)
+                onChange={e =>
+                  handleInputChange('codigoComuna', e.target.value)
                 }
               />
             </div>
@@ -173,9 +171,7 @@ export default function EditarContratoComponent({
                 id="fechaInicio"
                 type="date"
                 value={formData.fechaInicio}
-                onChange={(e) =>
-                  handleInputChange("fechaInicio", e.target.value)
-                }
+                onChange={e => handleInputChange('fechaInicio', e.target.value)}
                 required
               />
             </div>
@@ -185,8 +181,8 @@ export default function EditarContratoComponent({
                 id="fechaTermino"
                 type="date"
                 value={formData.fechaTermino}
-                onChange={(e) =>
-                  handleInputChange("fechaTermino", e.target.value)
+                onChange={e =>
+                  handleInputChange('fechaTermino', e.target.value)
                 }
               />
             </div>
@@ -195,7 +191,7 @@ export default function EditarContratoComponent({
               <Input
                 id="direccion"
                 value={formData.direccion}
-                onChange={(e) => handleInputChange("direccion", e.target.value)}
+                onChange={e => handleInputChange('direccion', e.target.value)}
               />
             </div>
             <div className="space-y-2">
@@ -203,8 +199,8 @@ export default function EditarContratoComponent({
               <Input
                 id="lugarEntrega"
                 value={formData.lugarEntrega}
-                onChange={(e) =>
-                  handleInputChange("lugarEntrega", e.target.value)
+                onChange={e =>
+                  handleInputChange('lugarEntrega', e.target.value)
                 }
               />
             </div>
@@ -213,7 +209,7 @@ export default function EditarContratoComponent({
               <Input
                 id="potencia"
                 value={formData.potencia}
-                onChange={(e) => handleInputChange("potencia", e.target.value)}
+                onChange={e => handleInputChange('potencia', e.target.value)}
               />
             </div>
             <div className="space-y-2">
@@ -222,8 +218,8 @@ export default function EditarContratoComponent({
                 id="limiteInvierno"
                 type="number"
                 value={formData.limiteInvierno}
-                onChange={(e) =>
-                  handleInputChange("limiteInvierno", Number(e.target.value))
+                onChange={e =>
+                  handleInputChange('limiteInvierno', Number(e.target.value))
                 }
               />
             </div>
@@ -231,7 +227,7 @@ export default function EditarContratoComponent({
               <Switch
                 id="activo"
                 checked={formData.activo}
-                onCheckedChange={(value) => handleInputChange("activo", value)}
+                onCheckedChange={value => handleInputChange('activo', value)}
               />
               <Label htmlFor="activo">Contrato activo</Label>
             </div>
@@ -239,8 +235,8 @@ export default function EditarContratoComponent({
               <Switch
                 id="liberadoCorte"
                 checked={formData.liberadoCorte}
-                onCheckedChange={(value) =>
-                  handleInputChange("liberadoCorte", value)
+                onCheckedChange={value =>
+                  handleInputChange('liberadoCorte', value)
                 }
               />
               <Label htmlFor="liberadoCorte">Liberado de corte</Label>
@@ -249,7 +245,7 @@ export default function EditarContratoComponent({
               <Switch
                 id="esMadre"
                 checked={formData.esMadre}
-                onCheckedChange={(value) => handleInputChange("esMadre", value)}
+                onCheckedChange={value => handleInputChange('esMadre', value)}
               />
               <Label htmlFor="esMadre">Es contrato madre</Label>
             </div>
@@ -257,8 +253,8 @@ export default function EditarContratoComponent({
               <Switch
                 id="crearClienteDesdePropietario"
                 checked={formData.crearClienteDesdePropietario}
-                onCheckedChange={(value) =>
-                  handleInputChange("crearClienteDesdePropietario", value)
+                onCheckedChange={value =>
+                  handleInputChange('crearClienteDesdePropietario', value)
                 }
               />
               <Label htmlFor="crearClienteDesdePropietario">
@@ -272,7 +268,7 @@ export default function EditarContratoComponent({
           <Button
             type="button"
             variant="outline"
-            onClick={() => navigate("/dashboard/administracion/contratos")}
+            onClick={() => navigate('/dashboard/administracion/contratos')}
             disabled={isSubmitting}
             className="gap-2"
           >
@@ -281,7 +277,7 @@ export default function EditarContratoComponent({
           </Button>
           <Button type="submit" disabled={isSubmitting} className="gap-2">
             <Save className="h-4 w-4" />
-            {isSubmitting ? "Guardando..." : "Guardar cambios"}
+            {isSubmitting ? 'Guardando...' : 'Guardar cambios'}
           </Button>
         </div>
       </form>

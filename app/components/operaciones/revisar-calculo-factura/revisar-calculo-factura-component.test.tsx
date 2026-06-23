@@ -82,6 +82,7 @@ describe('RevisarCalculoFacturaComponent', () => {
   const mockProps = {
     periodoAbierto: [
       {
+        id: '012024',
         mes: 1,
         anio: 2024,
         descripcion: 'Enero 2024'
@@ -89,8 +90,8 @@ describe('RevisarCalculoFacturaComponent', () => {
     ],
     ciclosFacturacionActivos: [
       {
-        descripcion: 'Ciclo día 15',
-        diaFacturacion: '15'
+        id: '15',
+        descripcion: 'Ciclo día 15'
       }
     ],
     estadoCierreLecturas: null
@@ -249,15 +250,9 @@ describe('RevisarCalculoFacturaComponent', () => {
           {...mockProps}
           estadoCierreLecturas={[
             {
-              sectorId: 1,
-              nichoDescripcion: 'Sector 1',
-              cantidadSinLectura: 0,
-              cantidadLecturasOK: 10,
-              cantidadClaveRoja: 0,
-              cantidadClaveNaranja: 0,
-              cantidadCorregidas: 0,
-              cantidadTotal: 10,
-              nichoId: 1
+              id: '1',
+              descripcion: 'Sector 1',
+              cerrado: true
             }
           ]}
         />

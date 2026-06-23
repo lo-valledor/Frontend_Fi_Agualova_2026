@@ -1,23 +1,23 @@
-import { LayoutList, Plus } from "lucide-react";
-import { motion } from "motion/react";
-import { useMemo, useState } from "react";
-import { useRevalidator } from "react-router";
-import { toast } from "sonner";
+import { LayoutList, Plus } from 'lucide-react';
+import { motion } from 'motion/react';
+import { useMemo, useState } from 'react';
+import { useRevalidator } from 'react-router';
+import { toast } from 'sonner';
 
-import { DataTable } from "~/components/data-table/data-table";
-import { ModernHeader } from "~/components/shared/modern-header";
-import { Button } from "~/components/ui/button";
+import { DataTable } from '~/components/data-table/data-table';
+import { ModernHeader } from '~/components/shared/modern-header';
+import { Button } from '~/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
-import type { TipoContrato } from "~/types/mantencion";
+  CardTitle
+} from '~/components/ui/card';
+import type { TipoContrato } from '~/types/mantencion';
 
-import { createColumns } from "./columns";
-import TipoContratoFormModal from "./tipo-contrato-form-modal";
+import { createColumns } from './columns';
+import TipoContratoFormModal from './tipo-contrato-form-modal';
 
 const mechanicalEase = [0.25, 0.1, 0.25, 1] as const;
 
@@ -26,52 +26,52 @@ interface TiposContratosComponentProps {
 }
 
 export default function TiposContratosComponent({
-  tiposContratos,
+  tiposContratos
 }: Readonly<TiposContratosComponentProps>) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTipoContrato, setSelectedTipoContrato] = useState<
     TipoContrato | undefined
   >(undefined);
-  const [modalMode, setModalMode] = useState<"add" | "edit">("add");
+  const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
 
   const revalidator = useRevalidator();
 
   const handleAdd = () => {
     setSelectedTipoContrato(undefined);
-    setModalMode("add");
+    setModalMode('add');
     setIsModalOpen(true);
   };
 
   const handleEdit = (tipoContrato: TipoContrato) => {
     setSelectedTipoContrato(tipoContrato);
-    setModalMode("edit");
+    setModalMode('edit');
     setIsModalOpen(true);
   };
 
   const handleDelete = async (tipoContrato: TipoContrato) => {
     if (
       globalThis.confirm(
-        `¿Está seguro de que desea eliminar el tipo de contrato "${tipoContrato.nombre}"?`,
+        `¿Está seguro de que desea eliminar el tipo de contrato "${tipoContrato.nombre}"?`
       )
     ) {
       try {
-        const { default: api } = await import("~/lib/api");
+        const { default: api } = await import('~/lib/api');
         await api.delete(`/eliminarTipoContrato/${tipoContrato.id}`);
 
-        toast.success("Tipo de contrato eliminado exitosamente");
+        toast.success('Tipo de contrato eliminado exitosamente');
         revalidator.revalidate();
       } catch (error) {
-        console.error("Error al eliminar el tipo de contrato:", error);
-        toast.error("Error al eliminar el tipo de contrato");
+        console.error('Error al eliminar el tipo de contrato:', error);
+        toast.error('Error al eliminar el tipo de contrato');
       }
     }
   };
 
   const handleSuccess = () => {
     toast.success(
-      modalMode === "add"
-        ? "Tipo de contrato creado exitosamente"
-        : "Tipo de contrato actualizado exitosamente",
+      modalMode === 'add'
+        ? 'Tipo de contrato creado exitosamente'
+        : 'Tipo de contrato actualizado exitosamente'
     );
     revalidator.revalidate();
   };
@@ -80,9 +80,9 @@ export default function TiposContratosComponent({
     () =>
       createColumns({
         onEdit: handleEdit,
-        onDelete: handleDelete,
+        onDelete: handleDelete
       }),
-    [handleEdit, handleDelete],
+    [handleEdit, handleDelete]
   );
 
   return (
@@ -119,7 +119,7 @@ export default function TiposContratosComponent({
                   </CardTitle>
                   <CardDescription className="text-xs mt-0.5 text-muted-foreground">
                     {tiposContratos.length} tipo
-                    {tiposContratos.length !== 1 ? "s" : ""}
+                    {tiposContratos.length !== 1 ? 's' : ''}
                   </CardDescription>
                 </div>
               </div>

@@ -3,7 +3,11 @@ import { ChevronDown, ChevronRight } from 'lucide-react';
 
 import { Button } from '~/components/ui/button';
 import { Checkbox } from '~/components/ui/checkbox';
-import { type CalculoPrefacturaCompleto } from '~/types/operaciones';
+
+type CalculoPrefacturaCompleto = Record<string, unknown> & {
+  contratoId?: number | string;
+  cargos?: Record<string, unknown>[];
+};
 
 export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
   {

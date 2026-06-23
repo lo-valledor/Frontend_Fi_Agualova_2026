@@ -3,39 +3,39 @@ import {
   CheckCircle,
   Clock,
   History,
-  PlusCircleIcon,
-} from "lucide-react";
+  PlusCircleIcon
+} from 'lucide-react';
 
-import { useMemo, useState } from "react";
+import { useMemo, useState } from 'react';
 
-import { BreadcrumbSetter } from "~/components/breadcrumb-setter";
-import { DataTable } from "~/components/data-table/data-table";
-import { ModernHeader } from "~/components/shared/modern-header";
-import { AlertDescription, AlertTitle } from "~/components/ui/alert";
-import { Button } from "~/components/ui/button";
+import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
+import { DataTable } from '~/components/data-table/data-table';
+import { ModernHeader } from '~/components/shared/modern-header';
+import { AlertDescription, AlertTitle } from '~/components/ui/alert';
+import { Button } from '~/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
+  CardTitle
+} from '~/components/ui/card';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
-  TooltipTrigger,
-} from "~/components/ui/tooltip";
-import api from "~/lib/api";
-import type { Anio, Periodos } from "~/types/operaciones";
-import CerrarPeriodo from "./cerrar-periodo";
-import { columns } from "./columns";
-import DialogNuevoPeriodo from "./dialog-nuevo-periodo";
+  TooltipTrigger
+} from '~/components/ui/tooltip';
+import api from '~/lib/api';
+import type { Anio, Periodos } from '~/types/operaciones';
+import CerrarPeriodo from './cerrar-periodo';
+import { columns } from './columns';
+import DialogNuevoPeriodo from './dialog-nuevo-periodo';
 
 export default function AbrirPeriodoFacturacion({
   years,
   periodos,
-  error,
+  error
 }: Readonly<{
   years: Anio[];
   periodos: Periodos[];
@@ -43,18 +43,18 @@ export default function AbrirPeriodoFacturacion({
 }>) {
   const [isOpenDialog, setIsOpenDialog] = useState(false);
   const [periodosData, setPeriodosData] = useState<Periodos[]>(
-    Array.isArray(periodos) ? periodos : [],
+    Array.isArray(periodos) ? periodos : []
   );
 
   const pageBreadcrumbs = [
-    { label: "Operaciones" },
-    { label: "Período Facturación" },
+    { label: 'Operaciones' },
+    { label: 'Período Facturación' }
   ];
 
   // Se ejecuta cuando se crea o cierra un periodo
   const fetchPeriodos = async () => {
     try {
-      const res = await api.get("/periodos/buscar");
+      const res = await api.get('/periodos/buscar');
 
       // Early return si no hay datos
       if (!res.data || !Array.isArray(res.data)) {
@@ -64,7 +64,7 @@ export default function AbrirPeriodoFacturacion({
 
       setPeriodosData(res.data as Periodos[]);
     } catch (error) {
-      console.error("Error al obtener periodos:", error);
+      console.error('Error al obtener periodos:', error);
       setPeriodosData([]);
     }
   };
@@ -72,7 +72,7 @@ export default function AbrirPeriodoFacturacion({
   // Encontrar período abierto
   const periodoAbierto = useMemo(() => {
     return Array.isArray(periodosData)
-      ? periodosData.find((p) => p.estado === "Abierto")
+      ? periodosData.find(p => p.estado === 'Abierto')
       : undefined;
   }, [periodosData]);
 
@@ -120,7 +120,7 @@ export default function AbrirPeriodoFacturacion({
                     <CardDescription className="mt-1 text-xs">
                       <span className="font-medium text-primary">
                         {periodoAbierto.descripcion}
-                      </span>{" "}
+                      </span>{' '}
                       está abierto
                     </CardDescription>
                   </div>
@@ -243,7 +243,7 @@ export default function AbrirPeriodoFacturacion({
                 <DataTable
                   columns={columns}
                   data={periodosData}
-                  initialSorting={[{ id: "fechaInicio", desc: true }]}
+                  initialSorting={[{ id: 'fechaInicio', desc: true }]}
                   searchPlaceholder="Buscar por descripción o ID..."
                   defaultPageSize={10}
                 />

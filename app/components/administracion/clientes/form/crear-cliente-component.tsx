@@ -1,4 +1,4 @@
-import { zodResolver } from "@hookform/resolvers/zod";
+import { zodResolver } from '@hookform/resolvers/zod';
 import {
   ArrowLeft,
   Building2,
@@ -9,66 +9,66 @@ import {
   Phone,
   Save,
   User,
-  XCircle,
-} from "lucide-react";
-import { useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import { useNavigate } from "react-router";
-import Select from "react-select";
-import { toast } from "sonner";
-import { z } from "zod";
+  XCircle
+} from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router';
+import Select from 'react-select';
+import { toast } from 'sonner';
+import { z } from 'zod';
 
-import { ModernHeader } from "~/components/shared/modern-header";
-import { getReactSelectStyles } from "~/components/shared/react-select-styles";
-import { useTheme } from "~/components/theme-provider";
-import { Button } from "~/components/ui/button";
-import { Checkbox } from "~/components/ui/checkbox";
+import { ModernHeader } from '~/components/shared/modern-header';
+import { getReactSelectStyles } from '~/components/shared/react-select-styles';
+import { useTheme } from '~/components/theme-provider';
+import { Button } from '~/components/ui/button';
+import { Checkbox } from '~/components/ui/checkbox';
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
-} from "~/components/ui/form";
-import { Input } from "~/components/ui/input";
-import api from "~/lib/api";
-import { administracionService } from "~/services/administracionService";
-import type { NombreComuna, NombreGiro } from "~/types/administracion";
-import { formatRut, isValidRut, isValidRutFormat } from "~/utils/rut-utils";
+  FormMessage
+} from '~/components/ui/form';
+import { Input } from '~/components/ui/input';
+import api from '~/lib/api';
+import { administracionService } from '~/services/administracionService';
+import type { NombreComuna, NombreGiro } from '~/types/administracion';
+import { formatRut, isValidRut, isValidRutFormat } from '~/utils/rut-utils';
 
 const createClienteSchema = (existingClients: string[]) =>
   z.object({
     rut: z
       .string()
-      .min(1, "El RUT es requerido")
+      .min(1, 'El RUT es requerido')
       .refine(isValidRutFormat, {
-        message: "El RUT debe tener el formato 12345678-9",
+        message: 'El RUT debe tener el formato 12345678-9'
       })
       .refine(isValidRut, {
-        message: "El dígito verificador del RUT no corresponde",
+        message: 'El dígito verificador del RUT no corresponde'
       })
       .refine(
-        (rut) => {
+        rut => {
           return !existingClients.includes(rut);
         },
         {
-          message: "Este RUT ya está registrado en el sistema",
-        },
+          message: 'Este RUT ya está registrado en el sistema'
+        }
       ),
-    nombre: z.string().min(1, "El nombre es requerido"),
+    nombre: z.string().min(1, 'El nombre es requerido'),
     apellido: z.string().optional(),
     esEmpresa: z.boolean(),
-    direccion: z.string().min(1, "La dirección es requerida"),
-    codComuna: z.string().min(1, "La comuna es requerida"),
-    contacto: z.string().min(1, "El contacto es requerido"),
+    direccion: z.string().min(1, 'La dirección es requerida'),
+    codComuna: z.string().min(1, 'La comuna es requerida'),
+    contacto: z.string().min(1, 'El contacto es requerido'),
     telefono: z.string().optional(),
     correo: z
       .string()
-      .email("Debe ser un correo válido")
+      .email('Debe ser un correo válido')
       .optional()
-      .or(z.literal("")),
-    codigoGiro: z.string().min(1, "El código de giro es requerido"),
+      .or(z.literal('')),
+    codigoGiro: z.string().min(1, 'El código de giro es requerido')
   });
 
 type ClienteFormData = z.infer<ReturnType<typeof createClienteSchema>>;
@@ -82,25 +82,25 @@ export default function CrearClienteComponent() {
   const [existingClients, setExistingClients] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [rutValidationStatus, setRutValidationStatus] = useState<
-    "idle" | "checking" | "valid" | "invalid"
-  >("idle");
+    'idle' | 'checking' | 'valid' | 'invalid'
+  >('idle');
 
   const clienteSchema = createClienteSchema(existingClients);
 
   const form = useForm<ClienteFormData>({
     resolver: zodResolver(clienteSchema),
     defaultValues: {
-      rut: "",
-      nombre: "",
-      apellido: "",
+      rut: '',
+      nombre: '',
+      apellido: '',
       esEmpresa: false,
-      direccion: "",
-      codComuna: "",
-      contacto: "",
-      telefono: "",
-      correo: "",
-      codigoGiro: "",
-    },
+      direccion: '',
+      codComuna: '',
+      contacto: '',
+      telefono: '',
+      correo: '',
+      codigoGiro: ''
+    }
   });
 
   const selectStyles = getReactSelectStyles(theme);
@@ -119,12 +119,10 @@ export default function CrearClienteComponent() {
         if (clientesDataResult.data) {
           setGiros(clientesDataResult.data.giros);
           setComunas(clientesDataResult.data.comunas);
-          setExistingClients(
-            clientesDataResult.data.clientes.map((c) => c.rut),
-          );
+          setExistingClients(clientesDataResult.data.clientes.map(c => c.rut));
         }
       } catch (error) {
-        toast.error("Error al cargar datos del formulario", error as any);
+        toast.error('Error al cargar datos del formulario', error as any);
       }
     };
 
@@ -133,34 +131,34 @@ export default function CrearClienteComponent() {
 
   const validateRut = (rut: string) => {
     if (!rut) {
-      setRutValidationStatus("idle");
+      setRutValidationStatus('idle');
       return;
     }
 
     // Validar formato
     if (!isValidRutFormat(rut)) {
-      setRutValidationStatus("invalid");
+      setRutValidationStatus('invalid');
       return;
     }
 
     // Validar dígito verificador
     if (!isValidRut(rut)) {
-      setRutValidationStatus("invalid");
+      setRutValidationStatus('invalid');
       return;
     }
 
     // Validar si ya existe
     if (existingClients.includes(rut)) {
-      setRutValidationStatus("invalid");
+      setRutValidationStatus('invalid');
     } else {
-      setRutValidationStatus("valid");
+      setRutValidationStatus('valid');
     }
   };
 
   useEffect(() => {
-    const rutValue = form.watch("rut");
+    const rutValue = form.watch('rut');
     validateRut(rutValue);
-  }, [form.watch("rut"), existingClients]);
+  }, [form.watch('rut'), existingClients]);
 
   const onSubmit = async (data: ClienteFormData) => {
     setIsSubmitting(true);
@@ -168,14 +166,14 @@ export default function CrearClienteComponent() {
       // Asegurar que el RUT esté correctamente formateado antes de enviar
       const formattedData = {
         ...data,
-        rut: formatRut(data.rut),
+        rut: formatRut(data.rut)
       };
 
-      await api.post("/cliente/crear", formattedData);
-      toast.success("Cliente creado exitosamente");
-      navigate("/dashboard/administracion/clientes");
+      await api.post('/cliente/crear', formattedData);
+      toast.success('Cliente creado exitosamente');
+      navigate('/dashboard/administracion/clientes');
     } catch (error) {
-      toast.error("Error al crear el cliente", error as any);
+      toast.error('Error al crear el cliente', error as any);
     } finally {
       setIsSubmitting(false);
     }
@@ -192,7 +190,7 @@ export default function CrearClienteComponent() {
               <>
                 <Button
                   variant="ghost"
-                  onClick={() => navigate("/dashboard/administracion/clientes")}
+                  onClick={() => navigate('/dashboard/administracion/clientes')}
                   disabled={isSubmitting}
                   className="gap-2"
                 >
@@ -201,7 +199,7 @@ export default function CrearClienteComponent() {
                 </Button>
                 <Button
                   variant="outline"
-                  onClick={() => navigate("/dashboard/administracion/clientes")}
+                  onClick={() => navigate('/dashboard/administracion/clientes')}
                   disabled={isSubmitting}
                 >
                   Cancelar
@@ -213,7 +211,7 @@ export default function CrearClienteComponent() {
                   disabled={isSubmitting}
                 >
                   <Save className="h-4 w-4" />
-                  {isSubmitting ? "Creando..." : "Crear Cliente"}
+                  {isSubmitting ? 'Creando...' : 'Crear Cliente'}
                 </Button>
               </>
             }
@@ -249,26 +247,26 @@ export default function CrearClienteComponent() {
                             <Input
                               placeholder="12345678-9"
                               {...field}
-                              onBlur={(e) => {
+                              onBlur={e => {
                                 const formatted = formatRut(e.target.value);
                                 field.onChange(formatted);
                               }}
                               className={`h-11 pr-10 ${(() => {
-                                if (rutValidationStatus === "valid") {
-                                  return "border-green-500 focus:border-green-500";
+                                if (rutValidationStatus === 'valid') {
+                                  return 'border-green-500 focus:border-green-500';
                                 }
-                                if (rutValidationStatus === "invalid") {
-                                  return "border-red-500 focus:border-red-500";
+                                if (rutValidationStatus === 'invalid') {
+                                  return 'border-red-500 focus:border-red-500';
                                 }
-                                return "";
+                                return '';
                               })()}`}
                             />
-                            {rutValidationStatus === "valid" && (
+                            {rutValidationStatus === 'valid' && (
                               <div className="absolute inset-y-0 right-0 flex items-center pr-3">
                                 <CheckCircle2 className="h-5 w-5 text-green-500" />
                               </div>
                             )}
-                            {rutValidationStatus === "invalid" && (
+                            {rutValidationStatus === 'invalid' && (
                               <div className="absolute inset-y-0 right-0 flex items-center pr-3">
                                 <XCircle className="h-5 w-5 text-red-500" />
                               </div>
@@ -276,17 +274,17 @@ export default function CrearClienteComponent() {
                           </div>
                         </FormControl>
                         <FormMessage />
-                        {rutValidationStatus === "invalid" && (
+                        {rutValidationStatus === 'invalid' && (
                           <p className="text-sm text-red-600 dark:text-red-400 mt-1">
                             {(() => {
-                              const currentRut = form.watch("rut");
+                              const currentRut = form.watch('rut');
                               if (!isValidRutFormat(currentRut)) {
-                                return "El RUT debe tener el formato 12345678-9";
+                                return 'El RUT debe tener el formato 12345678-9';
                               }
                               if (existingClients.includes(currentRut)) {
-                                return "Este RUT ya está registrado en el sistema";
+                                return 'Este RUT ya está registrado en el sistema';
                               }
-                              return "El dígito verificador no corresponde";
+                              return 'El dígito verificador no corresponde';
                             })()}
                           </p>
                         )}
@@ -322,9 +320,7 @@ export default function CrearClienteComponent() {
                       <FormItem>
                         <FormLabel className="flex items-center gap-2">
                           <User className="h-4 w-4" />
-                          {form.watch("esEmpresa")
-                            ? "Razón Social"
-                            : "Nombre"}{" "}
+                          {form.watch('esEmpresa') ? 'Razón Social' : 'Nombre'}{' '}
                           <span className="text-red-500">*</span>
                         </FormLabel>
                         <FormControl>
@@ -332,9 +328,9 @@ export default function CrearClienteComponent() {
                             {...field}
                             className="h-11"
                             placeholder={
-                              form.watch("esEmpresa")
-                                ? "Nombre de la empresa"
-                                : "Nombre completo"
+                              form.watch('esEmpresa')
+                                ? 'Nombre de la empresa'
+                                : 'Nombre completo'
                             }
                           />
                         </FormControl>
@@ -343,7 +339,7 @@ export default function CrearClienteComponent() {
                     )}
                   />
 
-                  {!form.watch("esEmpresa") && (
+                  {!form.watch('esEmpresa') && (
                     <FormField
                       control={form.control}
                       name="apellido"
@@ -402,14 +398,17 @@ export default function CrearClienteComponent() {
                     control={form.control}
                     name="codComuna"
                     render={({ field }) => {
-                      const comunaOptions = comunas.map((c) => {
-                        if (typeof c === "string") {
+                      const comunaOptions = comunas.map(c => {
+                        if (typeof c === 'string') {
                           return { value: c, label: c };
                         }
-                        return { value: c.codigo, label: `${c.nombre} (${c.codigo})` };
+                        return {
+                          value: c.codigo,
+                          label: `${c.nombre} (${c.codigo})`
+                        };
                       });
                       const comunaActual = comunaOptions.find(
-                        (option) => option.value === field.value,
+                        option => option.value === field.value
                       );
 
                       return (
@@ -424,7 +423,7 @@ export default function CrearClienteComponent() {
                               options={comunaOptions}
                               value={comunaActual ?? null}
                               onChange={(option: any) =>
-                                field.onChange(option ? option.value : "")
+                                field.onChange(option ? option.value : '')
                               }
                               placeholder="Seleccione la comuna"
                               isClearable
@@ -526,21 +525,24 @@ export default function CrearClienteComponent() {
                     control={form.control}
                     name="codigoGiro"
                     render={({ field }) => {
-                      const giroOptions = giros.map((g) => {
-                        if (typeof g === "string") {
+                      const giroOptions = giros.map(g => {
+                        if (typeof g === 'string') {
                           return { value: g, label: g };
                         }
-                        return { value: g.codigo, label: `${g.codigo} - ${g.actividad}` };
+                        return {
+                          value: g.codigo,
+                          label: `${g.codigo} - ${g.actividad}`
+                        };
                       });
                       const giroActual = giroOptions.find(
-                        (option) => option.value === field.value,
+                        option => option.value === field.value
                       );
 
                       return (
                         <FormItem>
                           <FormLabel className="flex items-center gap-2">
                             <Building2 className="h-4 w-4" />
-                            Código de Giro{" "}
+                            Código de Giro{' '}
                             <span className="text-red-500">*</span>
                           </FormLabel>
                           <FormControl>
@@ -549,7 +551,7 @@ export default function CrearClienteComponent() {
                               options={giroOptions}
                               value={giroActual ?? null}
                               onChange={(option: any) =>
-                                field.onChange(option ? option.value : "")
+                                field.onChange(option ? option.value : '')
                               }
                               placeholder="Seleccione el giro"
                               isClearable

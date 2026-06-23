@@ -1,17 +1,16 @@
-import { FileText, Loader2, XCircle } from "lucide-react";
-import { useEffect, useState } from "react";
+import { FileText, Loader2, XCircle } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
-import { Badge } from "~/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { Badge } from '~/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogTitle,
-} from "~/components/ui/dialog";
-import { Skeleton } from "~/components/ui/skeleton";
-import type { ContratosRow } from "~/types/administracion";
+  DialogTitle
+} from '~/components/ui/dialog';
+import type { ContratosRow } from '~/types/administracion';
 
 interface ContractDetailsModalProps {
   isOpen: boolean;
@@ -22,7 +21,7 @@ interface ContractDetailsModalProps {
 export function ContractDetailsModal({
   isOpen,
   onClose,
-  contract,
+  contract
 }: Readonly<ContractDetailsModalProps>) {
   const [detailsData, setDetailsData] = useState<ContratosRow | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -35,11 +34,11 @@ export function ContractDetailsModal({
       try {
         setIsLoading(true);
         setError(null);
-        await new Promise((resolve) => setTimeout(resolve, 300));
+        await new Promise(resolve => setTimeout(resolve, 300));
         setDetailsData(contract);
       } catch (err) {
-        console.error("Error al cargar los detalles del contrato:", err);
-        setError("Error al cargar los detalles del contrato");
+        console.error('Error al cargar los detalles del contrato:', err);
+        setError('Error al cargar los detalles del contrato');
       } finally {
         setIsLoading(false);
       }
@@ -93,9 +92,7 @@ export function ContractDetailsModal({
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Descripción</span>
-                <span className="text-right">
-                  {detailsData.descripcion}
-                </span>
+                <span className="text-right">{detailsData.descripcion}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Estado</span>

@@ -1,23 +1,23 @@
-import { LayoutList, Plus } from "lucide-react";
-import { motion } from "motion/react";
-import { useCallback, useState } from "react";
-import { useRevalidator } from "react-router";
-import { toast } from "sonner";
+import { LayoutList, Plus } from 'lucide-react';
+import { motion } from 'motion/react';
+import { useCallback, useState } from 'react';
+import { useRevalidator } from 'react-router';
+import { toast } from 'sonner';
 
-import { DataTable } from "~/components/data-table/data-table";
-import { ModernHeader } from "~/components/shared/modern-header";
-import { Button } from "~/components/ui/button";
+import { DataTable } from '~/components/data-table/data-table';
+import { ModernHeader } from '~/components/shared/modern-header';
+import { Button } from '~/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
-import type { Sector } from "~/types/mantencion";
+  CardTitle
+} from '~/components/ui/card';
+import type { Sector } from '~/types/mantencion';
 
-import { columns } from "./columns";
-import SectorFormModal from "./sector-form-modal";
+import { columns } from './columns';
+import SectorFormModal from './sector-form-modal';
 
 const mechanicalEase = [0.25, 0.1, 0.25, 1] as const;
 
@@ -28,24 +28,24 @@ interface SectorComponentProps {
 export default function SectorComponent({ sectores }: SectorComponentProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedSector, setSelectedSector] = useState<Sector | null>(null);
-  const [modalMode, setModalMode] = useState<"add" | "edit">("add");
+  const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
   const revalidator = useRevalidator();
 
   const handleAddSector = useCallback(() => {
     setSelectedSector(null);
-    setModalMode("add");
+    setModalMode('add');
     setIsModalOpen(true);
   }, []);
 
   const handleEditSector = useCallback((sector: Sector) => {
     setSelectedSector(sector);
-    setModalMode("edit");
+    setModalMode('edit');
     setIsModalOpen(true);
   }, []);
 
   const handleDeleteSector = useCallback((sector: Sector) => {
     setSelectedSector(sector);
-    toast.warning("Sector eliminado exitosamente");
+    toast.warning('Sector eliminado exitosamente');
     setIsModalOpen(true);
   }, []);
 
@@ -54,9 +54,9 @@ export default function SectorComponent({ sectores }: SectorComponentProps) {
     revalidator.revalidate();
     setIsModalOpen(false);
     toast.success(
-      modalMode === "add"
-        ? "Sector creado exitosamente"
-        : "Sector actualizado exitosamente",
+      modalMode === 'add'
+        ? 'Sector creado exitosamente'
+        : 'Sector actualizado exitosamente'
     );
   }, [modalMode, revalidator]);
 
@@ -93,7 +93,7 @@ export default function SectorComponent({ sectores }: SectorComponentProps) {
                     Listado de Sector
                   </CardTitle>
                   <CardDescription className="text-xs mt-0.5 text-muted-foreground">
-                    {sectores.length} sector{sectores.length !== 1 ? "es" : ""}
+                    {sectores.length} sector{sectores.length !== 1 ? 'es' : ''}
                   </CardDescription>
                 </div>
               </div>
@@ -104,7 +104,7 @@ export default function SectorComponent({ sectores }: SectorComponentProps) {
                 <DataTable
                   columns={columns({
                     onEdit: handleEditSector,
-                    onDelete: handleDeleteSector,
+                    onDelete: handleDeleteSector
                   })}
                   data={sectores}
                 />

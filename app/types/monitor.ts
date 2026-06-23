@@ -116,14 +116,14 @@ export interface StatsData {
 }
 
 export type MeterStatusType =
-  | "SINLEC" // Sin Lectura
-  | "SINCLA" // Lectura Normal
-  | "CLAINF" // Clave Informativa
-  | "CLAREL" // Clave Relevante
-  | "CLACRI" // Clave Crítica
-  | "LECCER" // Lectura Cerrada
-  | "LECIMP" // En Facturación
-  | "IMPORT"; // Lecturas Importadas
+  | 'SINLEC' // Sin Lectura
+  | 'SINCLA' // Lectura Normal
+  | 'CLAINF' // Clave Informativa
+  | 'CLAREL' // Clave Relevante
+  | 'CLACRI' // Clave Crítica
+  | 'LECCER' // Lectura Cerrada
+  | 'LECIMP' // En Facturación
+  | 'IMPORT'; // Lecturas Importadas
 
 export interface MeterStatusInfo {
   color: string;

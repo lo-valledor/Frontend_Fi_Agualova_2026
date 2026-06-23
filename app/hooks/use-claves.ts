@@ -1,8 +1,13 @@
 import { useEffect, useState } from 'react';
 
 import api from '~/lib/api';
-import type { Clave } from '~/types/monitor';
 import { handleDataLoad } from './utils/data-loader';
+
+type Clave = {
+  IdClave: number;
+  DescripcionClave: string;
+  IdentificadorDeAgrupacion: string;
+};
 
 interface ClaveOption {
   value: string;

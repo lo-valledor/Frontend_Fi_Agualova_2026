@@ -8,21 +8,21 @@ import {
   Smartphone,
   User,
   UserCheck,
-  XCircle,
-} from "lucide-react";
+  XCircle
+} from 'lucide-react';
 
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
-import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogTitle,
-} from "~/components/ui/dialog";
-import { Skeleton } from "~/components/ui/skeleton";
-import type { PropietariosRow } from "~/types/administracion";
+  DialogTitle
+} from '~/components/ui/dialog';
+import { Skeleton } from '~/components/ui/skeleton';
+import type { PropietariosRow } from '~/types/administracion';
 
 interface PropietarioDetailsModalProps {
   isOpen: boolean;
@@ -33,7 +33,7 @@ interface PropietarioDetailsModalProps {
 const InfoItem = ({
   icon,
   label,
-  value,
+  value
 }: {
   icon: React.ReactNode;
   label: string;
@@ -57,7 +57,7 @@ const InfoItem = ({
 export function PropietarioDetailsModal({
   isOpen,
   onClose,
-  propietario,
+  propietario
 }: PropietarioDetailsModalProps) {
   const [detailsData, setDetailsData] = useState<PropietariosRow | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -88,7 +88,7 @@ export function PropietarioDetailsModal({
                 Detalles del Propietario
               </DialogTitle>
               <DialogDescription className="text-base text-muted-foreground mt-1">
-                Información completa de {detailsData?.nombre || "..."}
+                Información completa de {detailsData?.nombre || '...'}
               </DialogDescription>
             </div>
           </div>
@@ -105,7 +105,7 @@ export function PropietarioDetailsModal({
               </div>
             </div>
             <div className="space-y-4">
-              {[1, 2].map((i) => (
+              {[1, 2].map(i => (
                 <Card key={i} className="animate-pulse">
                   <CardHeader>
                     <Skeleton className="h-4 w-32" />

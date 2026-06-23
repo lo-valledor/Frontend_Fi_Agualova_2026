@@ -1,12 +1,12 @@
-import type { ColumnDef } from "@tanstack/react-table";
+import type { ColumnDef } from '@tanstack/react-table';
 
-import { DataTableColumnHeader } from "~/components/data-table/data-table-column-header";
+import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
 import {
   EstadoBadge,
-  TableActions,
-} from "~/components/data-table/table-helpers";
-import { Badge } from "~/components/ui/badge";
-import { type ContratosRow } from "~/types/administracion";
+  TableActions
+} from '~/components/data-table/table-helpers';
+import { Badge } from '~/components/ui/badge';
+import { type ContratosRow } from '~/types/administracion';
 
 interface TableColumnsProps {
   onEdit: (contract: ContratosRow) => void;
@@ -16,7 +16,7 @@ interface TableColumnsProps {
 
 // Función para convertir string de fecha a objeto Date (para ordenamiento)
 const parseDateString = (
-  dateValue: string | Date | null | undefined,
+  dateValue: string | Date | null | undefined
 ): Date | null => {
   if (!dateValue) return null;
 
@@ -24,20 +24,20 @@ const parseDateString = (
     return dateValue;
   }
 
-  if (typeof dateValue === "string") {
+  if (typeof dateValue === 'string') {
     const dateString = dateValue.trim();
 
     // Formato DD-MM-YYYY HH:mm:ss (del backend)
     if (/^\d{2}-\d{2}-\d{4}(\s+\d{2}:\d{2}:\d{2})?$/.test(dateString)) {
-      const [fechaParte] = dateString.split(" ");
-      const [dia, mes, año] = fechaParte.split("-");
+      const [fechaParte] = dateString.split(' ');
+      const [dia, mes, año] = fechaParte.split('-');
       const date = new Date(`${año}-${mes}-${dia}`);
       return Number.isNaN(date.getTime()) ? null : date;
     }
 
     // Formato DD/MM/YYYY (con barra)
     if (/^\d{2}\/\d{2}\/\d{4}$/.test(dateString)) {
-      const [dia, mes, año] = dateString.split("/");
+      const [dia, mes, año] = dateString.split('/');
       const date = new Date(`${año}-${mes}-${dia}`);
       return Number.isNaN(date.getTime()) ? null : date;
     }
@@ -54,28 +54,28 @@ const parseDateString = (
 
 // Función robusta para formatear fechas en formato español
 const formatDateToSpanish = (
-  dateValue: string | Date | null | undefined,
+  dateValue: string | Date | null | undefined
 ): string => {
-  if (!dateValue) return "N/A";
+  if (!dateValue) return 'N/A';
 
   let date: Date;
 
   // Si es un string, intentar parsearlo
-  if (typeof dateValue === "string") {
+  if (typeof dateValue === 'string') {
     const dateString = dateValue.trim();
 
     // Formato DD-MM-YYYY HH:mm:ss (del backend)
     // Ejemplo: "31-01-2014 00:00:00" o "24-10-2025"
     if (/^\d{2}-\d{2}-\d{4}(\s+\d{2}:\d{2}:\d{2})?$/.test(dateString)) {
-      const [fechaParte] = dateString.split(" "); // Separar fecha de hora
-      const [dia, mes, año] = fechaParte.split("-");
+      const [fechaParte] = dateString.split(' '); // Separar fecha de hora
+      const [dia, mes, año] = fechaParte.split('-');
 
       // Crear fecha en formato ISO para evitar ambigüedad
       date = new Date(`${año}-${mes}-${dia}`);
 
       // Verificar si la fecha es válida
       if (Number.isNaN(date.getTime())) {
-        return "Fecha inválida";
+        return 'Fecha inválida';
       }
 
       // Retornar en formato DD/MM/YYYY
@@ -84,13 +84,13 @@ const formatDateToSpanish = (
 
     // Formato DD/MM/YYYY (con barra)
     if (/^\d{2}\/\d{2}\/\d{4}$/.test(dateString)) {
-      const [dia, mes, año] = dateString.split("/");
+      const [dia, mes, año] = dateString.split('/');
 
       // Crear fecha en formato ISO
       date = new Date(`${año}-${mes}-${dia}`);
 
       if (Number.isNaN(date.getTime())) {
-        return "Fecha inválida";
+        return 'Fecha inválida';
       }
 
       return `${dia}/${mes}/${año}`;
@@ -101,42 +101,42 @@ const formatDateToSpanish = (
       date = new Date(dateString);
 
       if (Number.isNaN(date.getTime())) {
-        return "Fecha inválida";
+        return 'Fecha inválida';
       }
 
-      return date.toLocaleDateString("es-ES", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
+      return date.toLocaleDateString('es-ES', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
       });
     }
 
     // Si no coincide con ningún formato conocido
-    return "Fecha inválida";
+    return 'Fecha inválida';
   } else {
     date = dateValue;
   }
 
   // Verificar si la fecha es válida
   if (Number.isNaN(date.getTime())) {
-    return "Fecha inválida";
+    return 'Fecha inválida';
   }
 
   // Formatear en español
-  return date.toLocaleDateString("es-ES", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
+  return date.toLocaleDateString('es-ES', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
   });
 };
 
 export const columns = ({
   onEdit,
   onDelete,
-  onViewDetails,
+  onViewDetails
 }: TableColumnsProps): ColumnDef<ContratosRow>[] => [
   {
-    accessorKey: "codigoContrato",
+    accessorKey: 'codigoContrato',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Contrato" />
     ),
@@ -149,10 +149,10 @@ export const columns = ({
         </div>
       );
     },
-    size: 80,
+    size: 80
   },
   {
-    accessorKey: "nombreCliente",
+    accessorKey: 'nombreCliente',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Cliente / Propietario" />
     ),
@@ -176,10 +176,10 @@ export const columns = ({
         </div>
       </div>
     ),
-    size: 250,
+    size: 250
   },
   {
-    accessorKey: "tipoContrato",
+    accessorKey: 'tipoContrato',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Tipo" />
     ),
@@ -196,10 +196,10 @@ export const columns = ({
         </Badge>
       );
     },
-    size: 150,
+    size: 150
   },
   {
-    accessorKey: "tarifa",
+    accessorKey: 'tarifa',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Tarifa" />
     ),
@@ -216,11 +216,11 @@ export const columns = ({
         </Badge>
       );
     },
-    size: 150,
+    size: 150
   },
 
   {
-    accessorKey: "local",
+    accessorKey: 'local',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Local" />
     ),
@@ -236,10 +236,10 @@ export const columns = ({
         </div>
       );
     },
-    size: 100,
+    size: 100
   },
   {
-    accessorKey: "fechaInicio",
+    accessorKey: 'fechaInicio',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="F. Inicio" />
     ),
@@ -264,26 +264,26 @@ export const columns = ({
       // Comparar timestamps
       return dateA.getTime() - dateB.getTime();
     },
-    size: 120,
+    size: 120
   },
   {
-    accessorKey: "activo",
+    accessorKey: 'activo',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Estado" />
     ),
     cell: ({ row }) => {
       return <EstadoBadge estado={row.original.activo} />;
     },
-    size: 80,
+    size: 80
   },
   {
-    accessorKey: "fechaTermino",
+    accessorKey: 'fechaTermino',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="F. Término" />
     ),
     cell: ({ row }) => {
       const fechaTermino = formatDateToSpanish(row.original.fechaTermino);
-      if (fechaTermino === "N/A" || fechaTermino === "Fecha inválida") {
+      if (fechaTermino === 'N/A' || fechaTermino === 'Fecha inválida') {
         return (
           <Badge variant="outline" className="text-xs px-1 sm:px-2">
             Indefinido
@@ -308,10 +308,10 @@ export const columns = ({
       // Comparar timestamps
       return dateA.getTime() - dateB.getTime();
     },
-    size: 120,
+    size: 120
   },
   {
-    accessorKey: "cicloFacturacion",
+    accessorKey: 'cicloFacturacion',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Ciclo" />
     ),
@@ -328,10 +328,10 @@ export const columns = ({
         </Badge>
       );
     },
-    size: 130,
+    size: 130
   },
   {
-    accessorKey: "potenciaContratada",
+    accessorKey: 'potenciaContratada',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Potencia" />
     ),
@@ -344,10 +344,10 @@ export const columns = ({
         </div>
       );
     },
-    size: 110,
+    size: 110
   },
   {
-    accessorKey: "liberadoCorte",
+    accessorKey: 'liberadoCorte',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Lib. Corte" />
     ),
@@ -368,10 +368,10 @@ export const columns = ({
         </Badge>
       );
     },
-    size: 120,
+    size: 120
   },
   {
-    id: "actions",
+    id: 'actions',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Acciones" />
     ),
@@ -388,6 +388,6 @@ export const columns = ({
         </div>
       );
     },
-    size: 90,
-  },
+    size: 90
+  }
 ];

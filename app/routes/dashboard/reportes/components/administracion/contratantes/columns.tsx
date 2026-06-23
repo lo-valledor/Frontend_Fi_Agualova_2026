@@ -1,9 +1,9 @@
-import type { ColumnDef } from "@tanstack/react-table";
-import { format } from "rut.js";
-import { DataTableColumnHeader } from "~/components/data-table/data-table-column-header";
-import { TableActions } from "~/components/data-table/table-helpers";
-import { Badge } from "~/components/ui/badge";
-import type { GetContratante, NombreComuna } from "~/types/administracion";
+import type { ColumnDef } from '@tanstack/react-table';
+import { format } from 'rut.js';
+import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
+import { TableActions } from '~/components/data-table/table-helpers';
+import { Badge } from '~/components/ui/badge';
+import type { GetContratante, NombreComuna } from '~/types/administracion';
 
 interface ContratantesColumnsProps {
   onDetails: (contratante: GetContratante) => void;
@@ -14,17 +14,17 @@ interface ContratantesColumnsProps {
 export const columns = ({
   onDetails,
   detailingContratanteRut,
-  comunas,
+  comunas
 }: ContratantesColumnsProps): ColumnDef<GetContratante>[] => [
   {
-    accessorKey: "rut",
+    accessorKey: 'rut',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="RUT" />
     ),
     cell: ({ row }) => {
       const nombreCompleto = row.original.esEmpresa
         ? row.original.nombre
-        : `${row.original.nombre} ${row.original.apellido || ""}`.trim();
+        : `${row.original.nombre} ${row.original.apellido || ''}`.trim();
 
       return (
         <div className="flex items-center gap-2 sm:gap-3 min-w-0">
@@ -36,7 +36,7 @@ export const columns = ({
               {nombreCompleto}
             </div>
             <div className="text-xs font-mono truncate">
-              {format(row.getValue("rut"))}
+              {format(row.getValue('rut'))}
             </div>
           </div>
         </div>
@@ -44,10 +44,10 @@ export const columns = ({
     },
     size: 190,
     minSize: 160,
-    maxSize: 220,
+    maxSize: 220
   },
   {
-    accessorKey: "nombre",
+    accessorKey: 'nombre',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Tipo" />
     ),
@@ -56,10 +56,10 @@ export const columns = ({
         <div className="flex items-center gap-2 sm:gap-3 min-w-0">
           <div className="min-w-0 flex-1">
             <Badge
-              variant={row.original.esEmpresa ? "default" : "secondary"}
+              variant={row.original.esEmpresa ? 'default' : 'secondary'}
               className="text-xs"
             >
-              {row.original.esEmpresa ? "Empresa" : "Persona"}
+              {row.original.esEmpresa ? 'Empresa' : 'Persona'}
             </Badge>
           </div>
         </div>
@@ -67,17 +67,17 @@ export const columns = ({
     },
     size: 100,
     minSize: 90,
-    maxSize: 110,
+    maxSize: 110
   },
   {
-    accessorKey: "direccion",
+    accessorKey: 'direccion',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Dirección" />
     ),
     cell: ({ row }) => {
       // Buscar el nombre de la comuna por su código
       const comunaNombre =
-        comunas.find((c) => c.codigo === row.original.comuna)?.nombre ||
+        comunas.find(c => c.codigo === row.original.comuna)?.nombre ||
         row.original.comuna;
 
       return (
@@ -85,9 +85,9 @@ export const columns = ({
           <div className="min-w-0 flex-1">
             <div
               className="font-medium truncate text-xs sm:text-sm"
-              title={row.original.direccion || "No especificada"}
+              title={row.original.direccion || 'No especificada'}
             >
-              {row.original.direccion || "No especificada"}
+              {row.original.direccion || 'No especificada'}
             </div>
             <div className="text-xs truncate">{comunaNombre}</div>
           </div>
@@ -96,10 +96,10 @@ export const columns = ({
     },
     size: 175,
     minSize: 150,
-    maxSize: 200,
+    maxSize: 200
   },
   {
-    accessorKey: "contacto",
+    accessorKey: 'contacto',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Contacto" />
     ),
@@ -109,12 +109,12 @@ export const columns = ({
           <div className="min-w-0 flex-1">
             <div
               className="font-medium truncate text-xs sm:text-sm"
-              title={row.original.contacto || "No especificado"}
+              title={row.original.contacto || 'No especificado'}
             >
-              {row.original.contacto || "No especificado"}
+              {row.original.contacto || 'No especificado'}
             </div>
             <div className="text-xs truncate">
-              {row.original.telefono || "Sin teléfono"}
+              {row.original.telefono || 'Sin teléfono'}
             </div>
           </div>
         </div>
@@ -122,10 +122,10 @@ export const columns = ({
     },
     size: 150,
     minSize: 130,
-    maxSize: 170,
+    maxSize: 170
   },
   {
-    accessorKey: "email",
+    accessorKey: 'email',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Email" />
     ),
@@ -135,9 +135,9 @@ export const columns = ({
           <div className="min-w-0 flex-1">
             <div
               className="font-medium truncate text-xs sm:text-sm"
-              title={row.original.email || "No especificado"}
+              title={row.original.email || 'No especificado'}
             >
-              {row.original.email || "No especificado"}
+              {row.original.email || 'No especificado'}
             </div>
           </div>
         </div>
@@ -145,10 +145,10 @@ export const columns = ({
     },
     size: 165,
     minSize: 140,
-    maxSize: 190,
+    maxSize: 190
   },
   {
-    id: "actions",
+    id: 'actions',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Acciones" />
     ),
@@ -169,6 +169,6 @@ export const columns = ({
     size: 90,
     minSize: 80,
     maxSize: 100,
-    enableSorting: false,
-  },
+    enableSorting: false
+  }
 ];

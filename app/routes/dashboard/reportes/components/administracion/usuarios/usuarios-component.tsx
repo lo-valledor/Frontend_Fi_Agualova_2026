@@ -1,40 +1,40 @@
-import { LayoutList, Plus } from "lucide-react";
-import { motion } from "motion/react";
-import { useCallback, useEffect, useState } from "react";
-import { useRevalidator } from "react-router";
-import { toast } from "sonner";
+import { LayoutList, Plus } from 'lucide-react';
+import { motion } from 'motion/react';
+import { useCallback, useEffect, useState } from 'react';
+import { useRevalidator } from 'react-router';
+import { toast } from 'sonner';
 
-import { DataTable } from "~/components/data-table/data-table";
-import { ModernHeader } from "~/components/shared/modern-header";
-import { Button } from "~/components/ui/button";
+import { DataTable } from '~/components/data-table/data-table';
+import { ModernHeader } from '~/components/shared/modern-header';
+import { Button } from '~/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
-import { useAdministracion } from "~/hooks/use-administracion";
-import type { UsuarioModalState, Usuarios } from "~/types/administracion";
+  CardTitle
+} from '~/components/ui/card';
+import { useAdministracion } from '~/hooks/use-administracion';
+import type { UsuarioModalState, Usuarios } from '~/types/administracion';
 import {
   createInitialModalState,
   extractErrorMessage,
   getSuccessMessage,
-  isValidUserForOperation,
-} from "~/utils/administracion";
+  isValidUserForOperation
+} from '~/utils/administracion';
 
-import { columns } from "./columns";
-import { DeleteConfirmationDialog } from "./delete-confirmation-dialog";
-import { UserFormModal } from "./user-form-modal";
-import { UserPermissionsModal } from "./user-permissions-modal";
-import { UserRolesModal } from "./user-roles-modal";
+import { columns } from './columns';
+import { DeleteConfirmationDialog } from './delete-confirmation-dialog';
+import { UserFormModal } from './user-form-modal';
+import { UserPermissionsModal } from './user-permissions-modal';
+import { UserRolesModal } from './user-roles-modal';
 
 interface UsuariosComponentProps {
   readonly usuarios: Usuarios[];
 }
 
 export default function UsuariosComponent({
-  usuarios: initialUsuarios,
+  usuarios: initialUsuarios
 }: UsuariosComponentProps) {
   // Estado de datos
   const [usuarios, setUsuarios] = useState<Usuarios[]>(initialUsuarios);
@@ -42,7 +42,7 @@ export default function UsuariosComponent({
 
   // Estado unificado de modales
   const [modalsState, setModalsState] = useState<UsuarioModalState>(
-    createInitialModalState(),
+    createInitialModalState()
   );
 
   // Dependencias
@@ -55,41 +55,41 @@ export default function UsuariosComponent({
 
   const handleAddUser = useCallback(() => {
     setSelectedUser(null);
-    setModalsState((prev) => ({
+    setModalsState(prev => ({
       ...prev,
-      userForm: { isOpen: true, mode: "add" },
+      userForm: { isOpen: true, mode: 'add' }
     }));
   }, []);
 
   const handleEditUser = useCallback((user: Usuarios) => {
     setSelectedUser(user);
-    setModalsState((prev) => ({
+    setModalsState(prev => ({
       ...prev,
-      userForm: { isOpen: true, mode: "edit" },
+      userForm: { isOpen: true, mode: 'edit' }
     }));
   }, []);
 
   const handleDeleteUser = useCallback((user: Usuarios) => {
     setSelectedUser(user);
-    setModalsState((prev) => ({
+    setModalsState(prev => ({
       ...prev,
-      deleteDialog: { isOpen: true },
+      deleteDialog: { isOpen: true }
     }));
   }, []);
 
   const handleViewPermissions = useCallback((user: Usuarios) => {
     setSelectedUser(user);
-    setModalsState((prev) => ({
+    setModalsState(prev => ({
       ...prev,
-      permissions: { isOpen: true },
+      permissions: { isOpen: true }
     }));
   }, []);
 
   const handleManageRoles = useCallback((user: Usuarios) => {
     setSelectedUser(user);
-    setModalsState((prev) => ({
+    setModalsState(prev => ({
       ...prev,
-      roles: { isOpen: true },
+      roles: { isOpen: true }
     }));
   }, []);
 
@@ -97,9 +97,9 @@ export default function UsuariosComponent({
     const successMessage = getSuccessMessage(modalsState.userForm.mode);
 
     revalidator.revalidate();
-    setModalsState((prev) => ({
+    setModalsState(prev => ({
       ...prev,
-      userForm: { isOpen: false, mode: "add" },
+      userForm: { isOpen: false, mode: 'add' }
     }));
     toast.success(successMessage);
   }, [modalsState.userForm.mode, revalidator]);
@@ -107,29 +107,29 @@ export default function UsuariosComponent({
   const handleConfirmDelete = useCallback(async () => {
     // Early return: validar que exista usuario seleccionado
     if (!isValidUserForOperation(selectedUser)) {
-      setModalsState((prev) => ({
+      setModalsState(prev => ({
         ...prev,
-        deleteDialog: { isOpen: false },
+        deleteDialog: { isOpen: false }
       }));
       return;
     }
 
     try {
       await deleteUsuario(selectedUser.id);
-      toast.success("Usuario eliminado exitosamente");
+      toast.success('Usuario eliminado exitosamente');
       revalidator.revalidate();
       setSelectedUser(null);
     } catch (error) {
       const errorInfo = extractErrorMessage(
         error,
-        "Error al eliminar el usuario",
+        'Error al eliminar el usuario'
       );
       toast.error(errorInfo.message);
     } finally {
       // Cerrar diálogo sin importar el resultado
-      setModalsState((prev) => ({
+      setModalsState(prev => ({
         ...prev,
-        deleteDialog: { isOpen: false },
+        deleteDialog: { isOpen: false }
       }));
     }
   }, [selectedUser, deleteUsuario, revalidator]);
@@ -169,7 +169,7 @@ export default function UsuariosComponent({
                     Listado de Usuarios
                   </CardTitle>
                   <CardDescription className="text-xs mt-0.5 text-muted-foreground">
-                    {usuarios.length} usuario{usuarios.length !== 1 ? "s" : ""}
+                    {usuarios.length} usuario{usuarios.length !== 1 ? 's' : ''}
                   </CardDescription>
                 </div>
               </div>
@@ -182,7 +182,7 @@ export default function UsuariosComponent({
                     onEdit: handleEditUser,
                     onDelete: handleDeleteUser,
                     onViewPermissions: handleViewPermissions,
-                    onManageRoles: handleManageRoles,
+                    onManageRoles: handleManageRoles
                   })}
                   data={usuarios}
                 />
@@ -195,9 +195,9 @@ export default function UsuariosComponent({
         <UserFormModal
           isOpen={modalsState.userForm.isOpen}
           onClose={() =>
-            setModalsState((prev) => ({
+            setModalsState(prev => ({
               ...prev,
-              userForm: { isOpen: false, mode: "add" },
+              userForm: { isOpen: false, mode: 'add' }
             }))
           }
           onSuccess={handleUserSuccess}
@@ -207,9 +207,9 @@ export default function UsuariosComponent({
         <UserPermissionsModal
           isOpen={modalsState.permissions.isOpen}
           onClose={() =>
-            setModalsState((prev) => ({
+            setModalsState(prev => ({
               ...prev,
-              permissions: { isOpen: false },
+              permissions: { isOpen: false }
             }))
           }
           user={selectedUser}
@@ -217,9 +217,9 @@ export default function UsuariosComponent({
         <UserRolesModal
           isOpen={modalsState.roles.isOpen}
           onClose={() =>
-            setModalsState((prev) => ({
+            setModalsState(prev => ({
               ...prev,
-              roles: { isOpen: false },
+              roles: { isOpen: false }
             }))
           }
           onSuccess={() => revalidator.revalidate()}
@@ -228,9 +228,9 @@ export default function UsuariosComponent({
         <DeleteConfirmationDialog
           isOpen={modalsState.deleteDialog.isOpen}
           onClose={() =>
-            setModalsState((prev) => ({
+            setModalsState(prev => ({
               ...prev,
-              deleteDialog: { isOpen: false },
+              deleteDialog: { isOpen: false }
             }))
           }
           onConfirm={handleConfirmDelete}

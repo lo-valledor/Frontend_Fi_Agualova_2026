@@ -30,8 +30,8 @@ export const columns = ({
           <div className="flex-1">
             <div
               className="font-medium text-xs sm:text-sm"
-               title={row.original.razonSocialNombre}
-             >
+              title={row.original.razonSocialNombre}
+            >
               {row.original.razonSocialNombre}
             </div>
             <div className="text-xs font-mono">

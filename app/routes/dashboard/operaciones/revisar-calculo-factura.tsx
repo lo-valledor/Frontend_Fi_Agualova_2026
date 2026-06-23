@@ -1,4 +1,3 @@
-/** biome-ignore-all lint/correctness/noEmptyPattern: <explanation> */
 import { BreadcrumbSetter } from "~/components/breadcrumb-setter";
 import RevisarCalculoFacturaComponent from "~/components/operaciones/revisar-calculo-factura/revisar-calculo-factura-component";
 import { operacionesService } from "~/services/operacionesService";
@@ -22,7 +21,7 @@ export async function clientLoader() {
     periodoResult.error || !periodoResult.data
       ? []
       : periodoResult.data.map((periodo) => {
-          const digits = periodo.id.replace(/\D/g, '');
+          const digits = periodo.id.replace(/\D/g, "");
 
           return {
             ...periodo,

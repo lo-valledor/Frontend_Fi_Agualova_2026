@@ -1,4 +1,4 @@
-import { useVirtualizer } from "@tanstack/react-virtual";
+import { useVirtualizer } from '@tanstack/react-virtual';
 import {
   ArrowLeft,
   Building2,
@@ -9,61 +9,61 @@ import {
   Save,
   Search,
   User,
-  X,
-} from "lucide-react";
+  X
+} from 'lucide-react';
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { useNavigate } from "react-router";
-import { toast } from "sonner";
+import { useNavigate } from 'react-router';
+import { toast } from 'sonner';
 
-import { ModernHeader } from "~/components/shared/modern-header";
-import { Alert, AlertDescription, AlertTitle } from "~/components/ui/alert";
-import { Button } from "~/components/ui/button";
+import { ModernHeader } from '~/components/shared/modern-header';
+import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert';
+import { Button } from '~/components/ui/button';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogTitle,
-} from "~/components/ui/dialog";
-import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
+  DialogTitle
+} from '~/components/ui/dialog';
+import { Input } from '~/components/ui/input';
+import { Label } from '~/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
-} from "~/components/ui/select";
-import { Switch } from "~/components/ui/switch";
+  SelectValue
+} from '~/components/ui/select';
+import { Switch } from '~/components/ui/switch';
 import {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
-} from "~/components/ui/table";
-import { Textarea } from "~/components/ui/textarea";
-import { administracionService } from "~/services/administracionService";
-import { mantencionService } from "~/services/mantencionService";
+  TableRow
+} from '~/components/ui/table';
+import { Textarea } from '~/components/ui/textarea';
+import { administracionService } from '~/services/administracionService';
+import { mantencionService } from '~/services/mantencionService';
 import type {
   ContratoFormData,
   GetClienteContrato,
   GetLocal,
   GetMadres,
   NombreComuna,
-  PropietariosRow,
-} from "~/types/administracion";
-import type { Tarifas, TiposContrato } from "~/types/mantencion";
+  PropietariosRow
+} from '~/types/administracion';
+import type { Tarifas, TiposContrato } from '~/types/mantencion';
 
 export default function CrearContratoComponent({
   propietarios,
   locales,
   comunas,
   madres,
-  clientes: _clientes,
+  clientes: _clientes
 }: {
   readonly propietarios: PropietariosRow[];
   readonly locales: GetLocal[];
@@ -89,11 +89,11 @@ export default function CrearContratoComponent({
   } | null>(null);
 
   // Estados para las búsquedas
-  const [busquedaPropietario, setBusquedaPropietario] = useState("");
-  const [busquedaCliente, setBusquedaCliente] = useState("");
-  const [busquedaLocal, setBusquedaLocal] = useState("");
-  const [busquedaMadres, setBusquedaMadres] = useState("");
-  const [busquedaComuna, setBusquedaComuna] = useState("");
+  const [busquedaPropietario, setBusquedaPropietario] = useState('');
+  const [busquedaCliente, setBusquedaCliente] = useState('');
+  const [busquedaLocal, setBusquedaLocal] = useState('');
+  const [busquedaMadres, setBusquedaMadres] = useState('');
+  const [busquedaComuna, setBusquedaComuna] = useState('');
 
   // Refs para virtualización de modales
   const propietariosTableRef = useRef<HTMLDivElement>(null);
@@ -107,22 +107,22 @@ export default function CrearContratoComponent({
   const [tarifas, setTarifas] = useState<Tarifas[]>([]);
 
   const [formData, setFormData] = useState<ContratoFormData>({
-    tipoContrato: "",
-    tarifa: "",
-    nombrePropietario: "",
-    nombreCliente: "",
-    local: "",
-    fechaInicio: "",
+    tipoContrato: '',
+    tarifa: '',
+    nombrePropietario: '',
+    nombreCliente: '',
+    local: '',
+    fechaInicio: '',
     activo: true,
-    fechaTermino: "",
-    comunaEnvio: "",
-    direccionEnvio: "",
+    fechaTermino: '',
+    comunaEnvio: '',
+    direccionEnvio: '',
     limiteInvierno: 0,
-    promedioAnual: "",
-    cicloFacturacion: "Ciclo Día 15",
-    potenciaContratada: "",
+    promedioAnual: '',
+    cicloFacturacion: 'Ciclo Día 15',
+    potenciaContratada: '',
     liberadoCorte: false,
-    madre: "",
+    madre: ''
   });
 
   // Cargar datos adicionales al montar el componente
@@ -141,7 +141,7 @@ export default function CrearContratoComponent({
           setTarifas(tarifasResult.data);
         }
       } catch (error) {
-        toast.error("Error al cargar datos del formulario", error as any);
+        toast.error('Error al cargar datos del formulario', error as any);
       }
     };
 
@@ -151,7 +151,7 @@ export default function CrearContratoComponent({
   // Helper para obtener el nombre del cliente
   const getClienteDisplayName = (cliente: any) => {
     if (!cliente.nombreCompleto) {
-      return `${cliente.nombre || "sin RUT"}`;
+      return `${cliente.nombre || 'sin RUT'}`;
     }
 
     return cliente.nombreCompleto;
@@ -161,27 +161,27 @@ export default function CrearContratoComponent({
   const copiarCodigoContrato = async (codigo: string | number) => {
     try {
       await navigator.clipboard.writeText(codigo.toString());
-      toast.success("ID del contrato copiado al portapapeles", {
-        duration: 2000,
+      toast.success('ID del contrato copiado al portapapeles', {
+        duration: 2000
       });
     } catch (error) {
-      console.error("Error al copiar:", error);
-      toast.error("Error al copiar. Intente seleccionar manualmente el ID.");
+      console.error('Error al copiar:', error);
+      toast.error('Error al copiar. Intente seleccionar manualmente el ID.');
     }
   };
 
   // Función utilitaria para trim seguro
   // Previene errores "Cannot read properties of undefined (reading 'trim')"
   const safeTrim = (value: string | undefined | null): string => {
-    return value && typeof value === "string" ? value.trim() : "";
+    return value && typeof value === 'string' ? value.trim() : '';
   };
 
   // Funciones de filtrado
   const propietariosFiltrados = useMemo(() => {
     return propietarios.filter(
-      (p) =>
+      p =>
         p.nombre.toLowerCase().includes(busquedaPropietario.toLowerCase()) ||
-        p.rut.toLowerCase().includes(busquedaPropietario.toLowerCase()),
+        p.rut.toLowerCase().includes(busquedaPropietario.toLowerCase())
     );
   }, [propietarios, busquedaPropietario]);
 
@@ -195,33 +195,33 @@ export default function CrearContratoComponent({
         c.nombreCompleto
           ?.toLowerCase()
           .includes(busquedaCliente.toLowerCase()) ||
-        c.rut?.toLowerCase().includes(busquedaCliente.toLowerCase()),
+        c.rut?.toLowerCase().includes(busquedaCliente.toLowerCase())
     );
   }, [_clientes, busquedaCliente]);
 
   const localesFiltrados = useMemo(() => {
     return locales.filter(
-      (l) =>
+      l =>
         l.numeroLocal?.toLowerCase().includes(busquedaLocal.toLowerCase()) ||
-        l.empresa?.toLowerCase().includes(busquedaLocal.toLowerCase()),
+        l.empresa?.toLowerCase().includes(busquedaLocal.toLowerCase())
     );
   }, [locales, busquedaLocal]);
 
   const madresFiltradas = useMemo(() => {
     return madres.filter(
-      (m) =>
+      m =>
         m.nombrePropietario
           ?.toLowerCase()
           .includes(busquedaMadres.toLowerCase()) ||
-        m.codigoContrato?.toLowerCase().includes(busquedaMadres.toLowerCase()),
+        m.codigoContrato?.toLowerCase().includes(busquedaMadres.toLowerCase())
     );
   }, [madres, busquedaMadres]);
 
   const comunasFiltradas = useMemo(() => {
     return comunas.filter(
-      (c) =>
+      c =>
         c.nombre?.toLowerCase().includes(busquedaComuna.toLowerCase()) ||
-        c.codigo?.toLowerCase().includes(busquedaComuna.toLowerCase()),
+        c.codigo?.toLowerCase().includes(busquedaComuna.toLowerCase())
     );
   }, [comunas, busquedaComuna]);
 
@@ -230,35 +230,35 @@ export default function CrearContratoComponent({
     count: propietariosFiltrados.length,
     getScrollElement: () => propietariosTableRef.current,
     estimateSize: () => 50,
-    overscan: 10,
+    overscan: 10
   });
 
   const clientesVirtualizer = useVirtualizer({
     count: clientesFiltrados.length,
     getScrollElement: () => clientesTableRef.current,
     estimateSize: () => 60,
-    overscan: 10,
+    overscan: 10
   });
 
   const localesVirtualizer = useVirtualizer({
     count: localesFiltrados.length,
     getScrollElement: () => localesTableRef.current,
     estimateSize: () => 50,
-    overscan: 10,
+    overscan: 10
   });
 
   const madresVirtualizer = useVirtualizer({
     count: madresFiltradas.length,
     getScrollElement: () => madresTableRef.current,
     estimateSize: () => 50,
-    overscan: 10,
+    overscan: 10
   });
 
   const comunasVirtualizer = useVirtualizer({
     count: comunasFiltradas.length,
     getScrollElement: () => comunasTableRef.current,
     estimateSize: () => 50,
-    overscan: 10,
+    overscan: 10
   });
 
   // Forzar medición del virtualizador cuando se abren los modales
@@ -315,82 +315,82 @@ export default function CrearContratoComponent({
 
   // Funciones de selección
   const handleSelectPropietario = (propietarioRut: string) => {
-    const prop = propietarios.find((p) => p.rut === propietarioRut);
+    const prop = propietarios.find(p => p.rut === propietarioRut);
     if (prop) {
-      setFormData((prev) => ({ ...prev, nombrePropietario: prop.nombre }));
+      setFormData(prev => ({ ...prev, nombrePropietario: prop.nombre }));
     }
     setModalPropietario(false);
-    setBusquedaPropietario("");
+    setBusquedaPropietario('');
   };
 
   const handleSelectCliente = (clienteRut: string) => {
-    const cliente = _clientes.find((c) => c.rut === clienteRut);
+    const cliente = _clientes.find(c => c.rut === clienteRut);
     if (cliente) {
       const nombreCompleto = getClienteDisplayName(cliente);
-      setFormData((prev) => ({ ...prev, nombreCliente: nombreCompleto }));
+      setFormData(prev => ({ ...prev, nombreCliente: nombreCompleto }));
     }
     setModalCliente(false);
-    setBusquedaCliente("");
+    setBusquedaCliente('');
   };
 
   const handleSelectLocal = (localNumero: string) => {
-    const loc = locales.find((l) => l.numeroLocal === localNumero);
+    const loc = locales.find(l => l.numeroLocal === localNumero);
     if (loc) {
-      setFormData((prev) => ({ ...prev, local: loc.numeroLocal }));
+      setFormData(prev => ({ ...prev, local: loc.numeroLocal }));
     }
     setModalLocal(false);
-    setBusquedaLocal("");
+    setBusquedaLocal('');
   };
 
   const handleSelectMadre = (madreCodigo: string) => {
-    const mad = madres.find((m) => m.codigoContrato === madreCodigo);
+    const mad = madres.find(m => m.codigoContrato === madreCodigo);
     if (mad) {
-      setFormData((prev) => ({ ...prev, madre: mad.nombrePropietario }));
+      setFormData(prev => ({ ...prev, madre: mad.nombrePropietario }));
     }
     setModalMadres(false);
-    setBusquedaMadres("");
+    setBusquedaMadres('');
   };
 
   const handleSelectComuna = (comunaCodigo: string) => {
-    const com = comunas.find((c) => c.codigo === comunaCodigo);
+    const com = comunas.find(c => c.codigo === comunaCodigo);
     if (com) {
-      setFormData((prev) => ({ ...prev, comunaEnvio: com.codigo }));
+      setFormData(prev => ({ ...prev, comunaEnvio: com.codigo }));
     }
     setModalComuna(false);
-    setBusquedaComuna("");
+    setBusquedaComuna('');
   };
 
   const handleInputChange = (
     field: keyof ContratoFormData,
-    value: string | number | boolean,
+    value: string | number | boolean
   ) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    setFormData(prev => ({ ...prev, [field]: value }));
   };
 
   // Funciones para deseleccionar
   const handleClearPropietario = () => {
-    setFormData((prev) => ({ ...prev, nombrePropietario: "" }));
+    setFormData(prev => ({ ...prev, nombrePropietario: '' }));
   };
 
   const handleClearCliente = () => {
-    setFormData((prev) => ({ ...prev, nombreCliente: "" }));
+    setFormData(prev => ({ ...prev, nombreCliente: '' }));
   };
 
   const handleClearLocal = () => {
-    setFormData((prev) => ({ ...prev, local: "" }));
+    setFormData(prev => ({ ...prev, local: '' }));
   };
 
   const handleClearComuna = () => {
-    setFormData((prev) => ({ ...prev, comunaEnvio: "" }));
+    setFormData(prev => ({ ...prev, comunaEnvio: '' }));
   };
 
   const handleClearMadre = () => {
-    setFormData((prev) => ({ ...prev, madre: "" }));
+    setFormData(prev => ({ ...prev, madre: '' }));
   };
 
   // Helper para mostrar el nombre de la comuna en el input
   const getComunaDisplayName = () => {
-    const comuna = comunas.find((c) => c.codigo === formData.comunaEnvio);
+    const comuna = comunas.find(c => c.codigo === formData.comunaEnvio);
     return comuna ? comuna.nombre : formData.comunaEnvio;
   };
 
@@ -399,29 +399,29 @@ export default function CrearContratoComponent({
     const validations = [
       {
         field: formData.fechaInicio,
-        message: "La fecha de inicio es obligatoria",
+        message: 'La fecha de inicio es obligatoria'
       },
       {
         field: formData.tipoContrato,
-        message: "El tipo de contrato es obligatorio",
+        message: 'El tipo de contrato es obligatorio'
       },
-      { field: formData.tarifa, message: "La tarifa es obligatoria" },
+      { field: formData.tarifa, message: 'La tarifa es obligatoria' },
       {
         field: formData.nombrePropietario,
-        message: "El nombre del propietario es obligatorio",
+        message: 'El nombre del propietario es obligatorio'
       },
       {
         field: formData.nombreCliente,
-        message: "El nombre del cliente es obligatorio",
+        message: 'El nombre del cliente es obligatorio'
       },
       {
         field: formData.comunaEnvio,
-        message: "La comuna de envío es obligatoria",
+        message: 'La comuna de envío es obligatoria'
       },
       {
         field: formData.direccionEnvio,
-        message: "La dirección de envío es obligatoria",
-      },
+        message: 'La dirección de envío es obligatoria'
+      }
     ];
 
     for (const validation of validations) {
@@ -436,49 +436,47 @@ export default function CrearContratoComponent({
   // Validación de entidades existentes
   const validateEntities = () => {
     const propietarioSeleccionado = propietarios.find(
-      (p) => safeTrim(p.nombre) === safeTrim(formData.nombrePropietario),
+      p => safeTrim(p.nombre) === safeTrim(formData.nombrePropietario)
     );
     if (!propietarioSeleccionado) {
       toast.error(
-        "El propietario seleccionado no es válido. Por favor, selecciona uno de la lista.",
+        'El propietario seleccionado no es válido. Por favor, selecciona uno de la lista.'
       );
       return null;
     }
 
     // El local es opcional: solo validar si se ingresó alguno
     const localSeleccionado = formData.local
-      ? locales.find((l) => l.numeroLocal === formData.local)
+      ? locales.find(l => l.numeroLocal === formData.local)
       : null;
     if (formData.local && !localSeleccionado) {
       toast.error(
-        "El local ingresado no existe en la lista. Selecciona uno válido o deja el campo vacío.",
+        'El local ingresado no existe en la lista. Selecciona uno válido o deja el campo vacío.'
       );
       return null;
     }
 
     const comunaSeleccionada = comunas.find(
-      (c) => c.codigo === formData.comunaEnvio,
+      c => c.codigo === formData.comunaEnvio
     );
     if (!comunaSeleccionada) {
       toast.error(
-        "La comuna seleccionada no es válida. Por favor, selecciona una de la lista.",
+        'La comuna seleccionada no es válida. Por favor, selecciona una de la lista.'
       );
       return null;
     }
 
     const tipoContratoValido = tipoContrato.find(
-      (tc) => tc.id.toString() === formData.tipoContrato,
+      tc => tc.id.toString() === formData.tipoContrato
     );
     if (!tipoContratoValido) {
-      toast.error("El tipo de contrato seleccionado no es válido.");
+      toast.error('El tipo de contrato seleccionado no es válido.');
       return null;
     }
 
-    const tarifaValida = tarifas.find(
-      (t) => t.id.toString() === formData.tarifa,
-    );
+    const tarifaValida = tarifas.find(t => t.id.toString() === formData.tarifa);
     if (!tarifaValida) {
-      toast.error("La tarifa seleccionada no es válida.");
+      toast.error('La tarifa seleccionada no es válida.');
       return null;
     }
 
@@ -487,19 +485,19 @@ export default function CrearContratoComponent({
       localSeleccionado,
       comunaSeleccionada,
       tipoContratoValido,
-      tarifaValida,
+      tarifaValida
     };
   };
 
   // Validación de contrato madre
   const validateMadreContract = () => {
-    if (!formData.madre) return "";
+    if (!formData.madre) return '';
 
     const madreSeleccionada = madres.find(
-      (m) => m.nombrePropietario === formData.madre,
+      m => m.nombrePropietario === formData.madre
     );
     if (!madreSeleccionada) {
-      toast.error("El contrato madre seleccionado no es válido.");
+      toast.error('El contrato madre seleccionado no es válido.');
       return null;
     }
     return madreSeleccionada.codigoContrato;
@@ -507,8 +505,8 @@ export default function CrearContratoComponent({
 
   // Helper para formatear fechas
   const formatDateForSP = (dateString: string): string => {
-    if (!dateString) return "";
-    const [year, month, day] = dateString.split("-");
+    if (!dateString) return '';
+    const [year, month, day] = dateString.split('-');
     return `${day}-${month}-${year}`;
   };
 
@@ -525,7 +523,7 @@ export default function CrearContratoComponent({
     if (_clientes && _clientes.length > 0) {
       const clienteEncontrado = _clientes.find(
         (c: any) =>
-          safeTrim(c.nombreCliente) === safeTrim(formData.nombreCliente),
+          safeTrim(c.nombreCliente) === safeTrim(formData.nombreCliente)
       );
       if (clienteEncontrado) {
         return clienteEncontrado.rut;
@@ -534,7 +532,7 @@ export default function CrearContratoComponent({
 
     // Si no se encuentra en clientes, buscar en propietarios
     const propietarioCliente = propietarios.find(
-      (p) => safeTrim(p.nombre) === safeTrim(formData.nombreCliente),
+      p => safeTrim(p.nombre) === safeTrim(formData.nombreCliente)
     );
     if (propietarioCliente) {
       return propietarioCliente.rut;
@@ -549,11 +547,11 @@ export default function CrearContratoComponent({
     const tarifaNum = Number.parseInt(formData.tarifa);
 
     if (Number.isNaN(tipoContratoNum) || tipoContratoNum <= 0) {
-      throw new Error("Tipo de contrato no válido");
+      throw new Error('Tipo de contrato no válido');
     }
 
     if (Number.isNaN(tarifaNum) || tarifaNum <= 0) {
-      throw new Error("Tarifa no válida");
+      throw new Error('Tarifa no válida');
     }
 
     return { tipoContratoNum, tarifaNum };
@@ -570,7 +568,7 @@ export default function CrearContratoComponent({
       tarifa: tarifaNum,
       propietario: propietarioSeleccionado.rut,
       cliente: clienteRut,
-      localId: formData.local || "",
+      localId: formData.local || '',
       fechaInicio: formatDateForSP(formData.fechaInicio),
       activo: formData.activo,
       direccion: safeTrim(formData.direccionEnvio),
@@ -578,30 +576,30 @@ export default function CrearContratoComponent({
       limite: Math.max(0, formData.limiteInvierno || 0),
       ciclo: 1,
       potencia: safeTrim(formData.potenciaContratada),
-      guardaCliente: "1",
-      esMadre: formData.madre ? "1" : "0",
+      guardaCliente: '1',
+      esMadre: formData.madre ? '1' : '0',
       madre: madreCodigoContrato,
-      lugar: formData.local || "",
-      sinCorte: formData.liberadoCorte ? 1 : 0,
+      lugar: formData.local || '',
+      sinCorte: formData.liberadoCorte ? 1 : 0
     };
   };
 
   // Manejo de errores HTTP
   const handleHttpError = (error: any) => {
     const errorMessages: Record<number, string> = {
-      500: "Error interno del servidor. Verifica que todos los datos sean válidos.",
-      400: "Datos inválidos. Revisa la información ingresada.",
-      401: "No tienes permisos para realizar esta acción.",
+      500: 'Error interno del servidor. Verifica que todos los datos sean válidos.',
+      400: 'Datos inválidos. Revisa la información ingresada.',
+      401: 'No tienes permisos para realizar esta acción.'
     };
 
     const status = error.response?.status;
     const serverMessage = error.response?.data?.message || error.response?.data;
     const message =
       errorMessages[status] ||
-      "Error inesperado al crear el contrato. Contacta al administrador.";
+      'Error inesperado al crear el contrato. Contacta al administrador.';
 
     // Mostrar mensaje del servidor si está disponible
-    if (serverMessage && typeof serverMessage === "string") {
+    if (serverMessage && typeof serverMessage === 'string') {
       toast.error(`${message}\n\nDetalle: ${serverMessage}`);
     } else {
       toast.error(message);
@@ -625,7 +623,7 @@ export default function CrearContratoComponent({
         submitData = prepareSubmitData(entities, madreCodigoContrato);
       } catch (validationError: any) {
         toast.error(
-          validationError.message || "Error en la validación de datos",
+          validationError.message || 'Error en la validación de datos'
         );
         return;
       }
@@ -633,7 +631,7 @@ export default function CrearContratoComponent({
       const result = await administracionService.crearContrato(submitData);
 
       if (result.error) {
-        toast.error(result.error || "Error al crear el contrato");
+        toast.error(result.error || 'Error al crear el contrato');
         return;
       }
 
@@ -642,7 +640,7 @@ export default function CrearContratoComponent({
 
       if (result.data?.idContrato) {
         contratoId = result.data.idContrato;
-      } else if (result.data && typeof result.data === "number") {
+      } else if (result.data && typeof result.data === 'number') {
         contratoId = result.data;
       } else if (result.data?.id) {
         contratoId = result.data.id;
@@ -651,17 +649,17 @@ export default function CrearContratoComponent({
       }
 
       // Preparar datos del contrato creado y mostrar modal
-      const fechaActual = new Date().toLocaleDateString("es-ES", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
+      const fechaActual = new Date().toLocaleDateString('es-ES', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
       });
 
       setContratoCreado({
         id: contratoId,
-        fecha: fechaActual,
+        fecha: fechaActual
       });
       setModalExito(true);
 
@@ -686,7 +684,7 @@ export default function CrearContratoComponent({
                 <Button
                   variant="ghost"
                   onClick={() =>
-                    navigate("/dashboard/administracion/contratos")
+                    navigate('/dashboard/administracion/contratos')
                   }
                   disabled={isSubmitting}
                   className="gap-2"
@@ -697,7 +695,7 @@ export default function CrearContratoComponent({
                 <Button
                   variant="outline"
                   onClick={() =>
-                    navigate("/dashboard/administracion/contratos")
+                    navigate('/dashboard/administracion/contratos')
                   }
                   disabled={isSubmitting}
                 >
@@ -710,7 +708,7 @@ export default function CrearContratoComponent({
                   disabled={isSubmitting}
                 >
                   <Save className="h-4 w-4" />
-                  {isSubmitting ? "Creando..." : "Crear Contrato"}
+                  {isSubmitting ? 'Creando...' : 'Crear Contrato'}
                 </Button>
               </>
             }
@@ -734,15 +732,15 @@ export default function CrearContratoComponent({
                   </Label>
                   <Select
                     value={formData.tipoContrato}
-                    onValueChange={(value) =>
-                      handleInputChange("tipoContrato", value)
+                    onValueChange={value =>
+                      handleInputChange('tipoContrato', value)
                     }
                   >
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Seleccionar tipo" />
                     </SelectTrigger>
                     <SelectContent>
-                      {tipoContrato.map((tipo) => (
+                      {tipoContrato.map(tipo => (
                         <SelectItem key={tipo.id} value={tipo.id.toString()}>
                           {tipo.nombre}
                         </SelectItem>
@@ -757,15 +755,13 @@ export default function CrearContratoComponent({
                   </Label>
                   <Select
                     value={formData.tarifa}
-                    onValueChange={(value) =>
-                      handleInputChange("tarifa", value)
-                    }
+                    onValueChange={value => handleInputChange('tarifa', value)}
                   >
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Seleccionar tarifa" />
                     </SelectTrigger>
                     <SelectContent>
-                      {tarifas.map((tarifa) => (
+                      {tarifas.map(tarifa => (
                         <SelectItem
                           key={tarifa.id}
                           value={tarifa.id.toString()}
@@ -793,8 +789,8 @@ export default function CrearContratoComponent({
                     <Input
                       id="nombrePropietario"
                       value={formData.nombrePropietario}
-                      onChange={(e) =>
-                        handleInputChange("nombrePropietario", e.target.value)
+                      onChange={e =>
+                        handleInputChange('nombrePropietario', e.target.value)
                       }
                       placeholder="Nombre del propietario"
                       className="w-full"
@@ -834,8 +830,8 @@ export default function CrearContratoComponent({
                     <Input
                       id="nombreCliente"
                       value={formData.nombreCliente}
-                      onChange={(e) =>
-                        handleInputChange("nombreCliente", e.target.value)
+                      onChange={e =>
+                        handleInputChange('nombreCliente', e.target.value)
                       }
                       placeholder="Nombre del cliente"
                       className="w-full"
@@ -881,9 +877,7 @@ export default function CrearContratoComponent({
                     <Input
                       id="local"
                       value={formData.local}
-                      onChange={(e) =>
-                        handleInputChange("local", e.target.value)
-                      }
+                      onChange={e => handleInputChange('local', e.target.value)}
                       placeholder="Número del local"
                       className="w-full"
                       required
@@ -922,8 +916,8 @@ export default function CrearContratoComponent({
                     <Input
                       id="comunaEnvio"
                       value={getComunaDisplayName()}
-                      onChange={(e) =>
-                        handleInputChange("comunaEnvio", e.target.value)
+                      onChange={e =>
+                        handleInputChange('comunaEnvio', e.target.value)
                       }
                       placeholder="Comuna de envío"
                       className="w-full"
@@ -962,8 +956,8 @@ export default function CrearContratoComponent({
                 <Textarea
                   id="direccionEnvio"
                   value={formData.direccionEnvio}
-                  onChange={(e) =>
-                    handleInputChange("direccionEnvio", e.target.value)
+                  onChange={e =>
+                    handleInputChange('direccionEnvio', e.target.value)
                   }
                   placeholder="Dirección completa de envío"
                   className="w-full resize-none"
@@ -987,8 +981,8 @@ export default function CrearContratoComponent({
                     id="fechaInicio"
                     type="date"
                     value={formData.fechaInicio}
-                    onChange={(e) =>
-                      handleInputChange("fechaInicio", e.target.value)
+                    onChange={e =>
+                      handleInputChange('fechaInicio', e.target.value)
                     }
                     className="w-full"
                     required
@@ -1001,8 +995,8 @@ export default function CrearContratoComponent({
                     id="fechaTermino"
                     type="date"
                     value={formData.fechaTermino}
-                    onChange={(e) =>
-                      handleInputChange("fechaTermino", e.target.value)
+                    onChange={e =>
+                      handleInputChange('fechaTermino', e.target.value)
                     }
                     className="w-full"
                   />
@@ -1015,10 +1009,10 @@ export default function CrearContratoComponent({
                     id="limiteInvierno"
                     type="number"
                     value={formData.limiteInvierno}
-                    onChange={(e) =>
+                    onChange={e =>
                       handleInputChange(
-                        "limiteInvierno",
-                        Number.parseInt(e.target.value) || 0,
+                        'limiteInvierno',
+                        Number.parseInt(e.target.value) || 0
                       )
                     }
                     placeholder="0"
@@ -1031,8 +1025,8 @@ export default function CrearContratoComponent({
                   <Input
                     id="promedioAnual"
                     value={formData.promedioAnual}
-                    onChange={(e) =>
-                      handleInputChange("promedioAnual", e.target.value)
+                    onChange={e =>
+                      handleInputChange('promedioAnual', e.target.value)
                     }
                     placeholder="Promedio anual"
                     className="w-full"
@@ -1046,8 +1040,8 @@ export default function CrearContratoComponent({
                   <Input
                     id="potenciaContratada"
                     value={formData.potenciaContratada}
-                    onChange={(e) =>
-                      handleInputChange("potenciaContratada", e.target.value)
+                    onChange={e =>
+                      handleInputChange('potenciaContratada', e.target.value)
                     }
                     placeholder="Potencia contratada"
                     className="w-full"
@@ -1059,8 +1053,8 @@ export default function CrearContratoComponent({
                   <Switch
                     id="activo"
                     checked={formData.activo}
-                    onCheckedChange={(checked) =>
-                      handleInputChange("activo", checked)
+                    onCheckedChange={checked =>
+                      handleInputChange('activo', checked)
                     }
                   />
                   <Label htmlFor="activo" className="text-sm font-medium">
@@ -1072,8 +1066,8 @@ export default function CrearContratoComponent({
                   <Switch
                     id="liberadoCorte"
                     checked={formData.liberadoCorte}
-                    onCheckedChange={(checked) =>
-                      handleInputChange("liberadoCorte", checked)
+                    onCheckedChange={checked =>
+                      handleInputChange('liberadoCorte', checked)
                     }
                   />
                   <Label
@@ -1090,7 +1084,7 @@ export default function CrearContratoComponent({
                   <Input
                     id="madre"
                     value={formData.madre}
-                    onChange={(e) => handleInputChange("madre", e.target.value)}
+                    onChange={e => handleInputChange('madre', e.target.value)}
                     placeholder="Contrato madre (opcional)"
                     className="w-full"
                     readOnly
@@ -1147,7 +1141,7 @@ export default function CrearContratoComponent({
                 <Input
                   placeholder="Buscar por nombre o RUT..."
                   value={busquedaPropietario}
-                  onChange={(e) => setBusquedaPropietario(e.target.value)}
+                  onChange={e => setBusquedaPropietario(e.target.value)}
                   className="h-11 pl-10"
                 />
               </div>
@@ -1157,24 +1151,24 @@ export default function CrearContratoComponent({
                 className="border rounded-xl bg-background h-[45vh] sm:h-[50vh] overflow-auto"
               >
                 <div className="min-w-[500px]">
-                  <Table style={{ width: "100%" }}>
+                  <Table style={{ width: '100%' }}>
                     <TableHeader className="sticky top-0 bg-background z-10 border-b">
                       <TableRow>
                         <TableHead
                           className="text-xs sm:text-sm"
-                          style={{ width: "140px", minWidth: "140px" }}
+                          style={{ width: '140px', minWidth: '140px' }}
                         >
                           RUT
                         </TableHead>
                         <TableHead
                           className="text-xs sm:text-sm"
-                          style={{ width: "auto", minWidth: "200px" }}
+                          style={{ width: 'auto', minWidth: '200px' }}
                         >
                           Nombre
                         </TableHead>
                         <TableHead
                           className="text-center text-xs sm:text-sm"
-                          style={{ width: "120px", minWidth: "120px" }}
+                          style={{ width: '120px', minWidth: '120px' }}
                         >
                           Acción
                         </TableHead>
@@ -1183,7 +1177,7 @@ export default function CrearContratoComponent({
                     <TableBody
                       style={{
                         height: `${propietariosVirtualizer.getTotalSize()}px`,
-                        position: "relative",
+                        position: 'relative'
                       }}
                     >
                       {propietariosFiltrados.length === 0 ? (
@@ -1208,7 +1202,7 @@ export default function CrearContratoComponent({
                       ) : (
                         propietariosVirtualizer
                           .getVirtualItems()
-                          .map((virtualRow) => {
+                          .map(virtualRow => {
                             const prop =
                               propietariosFiltrados[virtualRow.index];
                             return (
@@ -1216,25 +1210,25 @@ export default function CrearContratoComponent({
                                 key={prop.rut}
                                 data-index={virtualRow.index}
                                 style={{
-                                  position: "absolute",
+                                  position: 'absolute',
                                   top: 0,
                                   left: 0,
-                                  width: "100%",
-                                  height: "50px",
+                                  width: '100%',
+                                  height: '50px',
                                   transform: `translateY(${virtualRow.start}px)`,
-                                  display: "table",
+                                  display: 'table'
                                 }}
                                 className="hover:bg-muted/50 transition-colors"
                               >
                                 <TableCell
                                   className="font-mono text-xs sm:text-sm font-medium h-[50px]"
-                                  style={{ width: "140px", minWidth: "140px" }}
+                                  style={{ width: '140px', minWidth: '140px' }}
                                 >
                                   {prop.rut}
                                 </TableCell>
                                 <TableCell
                                   className="text-xs sm:text-sm h-[50px]"
-                                  style={{ width: "auto", minWidth: "200px" }}
+                                  style={{ width: 'auto', minWidth: '200px' }}
                                 >
                                   <div
                                     className="truncate max-w-[200px]"
@@ -1245,7 +1239,7 @@ export default function CrearContratoComponent({
                                 </TableCell>
                                 <TableCell
                                   className="text-center h-[50px]"
-                                  style={{ width: "120px", minWidth: "120px" }}
+                                  style={{ width: '120px', minWidth: '120px' }}
                                 >
                                   <Button
                                     size="sm"
@@ -1292,7 +1286,7 @@ export default function CrearContratoComponent({
                 <Input
                   placeholder="Buscar por número de local o empresa..."
                   value={busquedaLocal}
-                  onChange={(e) => setBusquedaLocal(e.target.value)}
+                  onChange={e => setBusquedaLocal(e.target.value)}
                   className="h-11 pl-10"
                 />
               </div>
@@ -1302,24 +1296,24 @@ export default function CrearContratoComponent({
                 className="border rounded-xl bg-background h-[45vh] sm:h-[50vh] overflow-auto"
               >
                 <div className="min-w-[450px]">
-                  <Table style={{ width: "100%" }}>
+                  <Table style={{ width: '100%' }}>
                     <TableHeader className="sticky top-0 bg-background z-10 border-b">
                       <TableRow>
                         <TableHead
                           className="text-xs sm:text-sm"
-                          style={{ width: "120px", minWidth: "120px" }}
+                          style={{ width: '120px', minWidth: '120px' }}
                         >
                           Número
                         </TableHead>
                         <TableHead
                           className="text-xs sm:text-sm"
-                          style={{ width: "auto", minWidth: "200px" }}
+                          style={{ width: 'auto', minWidth: '200px' }}
                         >
                           Empresa
                         </TableHead>
                         <TableHead
                           className="text-center text-xs sm:text-sm"
-                          style={{ width: "120px", minWidth: "120px" }}
+                          style={{ width: '120px', minWidth: '120px' }}
                         >
                           Acción
                         </TableHead>
@@ -1328,7 +1322,7 @@ export default function CrearContratoComponent({
                     <TableBody
                       style={{
                         height: `${localesVirtualizer.getTotalSize()}px`,
-                        position: "relative",
+                        position: 'relative'
                       }}
                     >
                       {localesFiltrados.length === 0 ? (
@@ -1351,59 +1345,57 @@ export default function CrearContratoComponent({
                           </TableCell>
                         </TableRow>
                       ) : (
-                        localesVirtualizer
-                          .getVirtualItems()
-                          .map((virtualRow) => {
-                            const loc = localesFiltrados[virtualRow.index];
-                            return (
-                              <TableRow
-                                key={loc.numeroLocal}
-                                data-index={virtualRow.index}
-                                style={{
-                                  position: "absolute",
-                                  top: 0,
-                                  left: 0,
-                                  width: "100%",
-                                  height: "50px",
-                                  transform: `translateY(${virtualRow.start}px)`,
-                                  display: "table",
-                                }}
-                                className="hover:bg-muted/50 transition-colors"
+                        localesVirtualizer.getVirtualItems().map(virtualRow => {
+                          const loc = localesFiltrados[virtualRow.index];
+                          return (
+                            <TableRow
+                              key={loc.numeroLocal}
+                              data-index={virtualRow.index}
+                              style={{
+                                position: 'absolute',
+                                top: 0,
+                                left: 0,
+                                width: '100%',
+                                height: '50px',
+                                transform: `translateY(${virtualRow.start}px)`,
+                                display: 'table'
+                              }}
+                              className="hover:bg-muted/50 transition-colors"
+                            >
+                              <TableCell
+                                className="font-mono text-xs sm:text-sm font-medium h-[50px]"
+                                style={{ width: '120px', minWidth: '120px' }}
                               >
-                                <TableCell
-                                  className="font-mono text-xs sm:text-sm font-medium h-[50px]"
-                                  style={{ width: "120px", minWidth: "120px" }}
+                                {loc.numeroLocal}
+                              </TableCell>
+                              <TableCell
+                                className="text-xs sm:text-sm h-[50px]"
+                                style={{ width: 'auto', minWidth: '200px' }}
+                              >
+                                <div
+                                  className="truncate max-w-[200px]"
+                                  title={loc.empresa}
                                 >
-                                  {loc.numeroLocal}
-                                </TableCell>
-                                <TableCell
-                                  className="text-xs sm:text-sm h-[50px]"
-                                  style={{ width: "auto", minWidth: "200px" }}
+                                  {loc.empresa}
+                                </div>
+                              </TableCell>
+                              <TableCell
+                                className="text-center h-[50px]"
+                                style={{ width: '120px', minWidth: '120px' }}
+                              >
+                                <Button
+                                  size="sm"
+                                  variant="default"
+                                  onClick={() =>
+                                    handleSelectLocal(loc.numeroLocal)
+                                  }
                                 >
-                                  <div
-                                    className="truncate max-w-[200px]"
-                                    title={loc.empresa}
-                                  >
-                                    {loc.empresa}
-                                  </div>
-                                </TableCell>
-                                <TableCell
-                                  className="text-center h-[50px]"
-                                  style={{ width: "120px", minWidth: "120px" }}
-                                >
-                                  <Button
-                                    size="sm"
-                                    variant="default"
-                                    onClick={() =>
-                                      handleSelectLocal(loc.numeroLocal)
-                                    }
-                                  >
-                                    Seleccionar
-                                  </Button>
-                                </TableCell>
-                              </TableRow>
-                            );
-                          })
+                                  Seleccionar
+                                </Button>
+                              </TableCell>
+                            </TableRow>
+                          );
+                        })
                       )}
                     </TableBody>
                   </Table>
@@ -1436,7 +1428,7 @@ export default function CrearContratoComponent({
                 <Input
                   placeholder="Buscar por propietario o código de contrato..."
                   value={busquedaMadres}
-                  onChange={(e) => setBusquedaMadres(e.target.value)}
+                  onChange={e => setBusquedaMadres(e.target.value)}
                   className="h-11 pl-10"
                 />
               </div>
@@ -1446,24 +1438,24 @@ export default function CrearContratoComponent({
                 className="border rounded-xl bg-background h-[45vh] sm:h-[50vh] overflow-auto"
               >
                 <div className="min-w-[450px]">
-                  <Table style={{ width: "100%" }}>
+                  <Table style={{ width: '100%' }}>
                     <TableHeader className="sticky top-0 bg-background z-10 border-b">
                       <TableRow>
                         <TableHead
                           className="text-xs sm:text-sm"
-                          style={{ width: "140px", minWidth: "140px" }}
+                          style={{ width: '140px', minWidth: '140px' }}
                         >
                           Código
                         </TableHead>
                         <TableHead
                           className="text-xs sm:text-sm"
-                          style={{ width: "auto", minWidth: "200px" }}
+                          style={{ width: 'auto', minWidth: '200px' }}
                         >
                           Propietario
                         </TableHead>
                         <TableHead
                           className="text-center text-xs sm:text-sm"
-                          style={{ width: "120px", minWidth: "120px" }}
+                          style={{ width: '120px', minWidth: '120px' }}
                         >
                           Acción
                         </TableHead>
@@ -1472,7 +1464,7 @@ export default function CrearContratoComponent({
                     <TableBody
                       style={{
                         height: `${madresVirtualizer.getTotalSize()}px`,
-                        position: "relative",
+                        position: 'relative'
                       }}
                     >
                       {madresFiltradas.length === 0 ? (
@@ -1495,59 +1487,57 @@ export default function CrearContratoComponent({
                           </TableCell>
                         </TableRow>
                       ) : (
-                        madresVirtualizer
-                          .getVirtualItems()
-                          .map((virtualRow) => {
-                            const mad = madresFiltradas[virtualRow.index];
-                            return (
-                              <TableRow
-                                key={mad.codigoContrato}
-                                data-index={virtualRow.index}
-                                style={{
-                                  position: "absolute",
-                                  top: 0,
-                                  left: 0,
-                                  width: "100%",
-                                  height: "50px",
-                                  transform: `translateY(${virtualRow.start}px)`,
-                                  display: "table",
-                                }}
-                                className="hover:bg-muted/50 transition-colors"
+                        madresVirtualizer.getVirtualItems().map(virtualRow => {
+                          const mad = madresFiltradas[virtualRow.index];
+                          return (
+                            <TableRow
+                              key={mad.codigoContrato}
+                              data-index={virtualRow.index}
+                              style={{
+                                position: 'absolute',
+                                top: 0,
+                                left: 0,
+                                width: '100%',
+                                height: '50px',
+                                transform: `translateY(${virtualRow.start}px)`,
+                                display: 'table'
+                              }}
+                              className="hover:bg-muted/50 transition-colors"
+                            >
+                              <TableCell
+                                className="font-mono text-xs sm:text-sm font-medium h-[50px]"
+                                style={{ width: '140px', minWidth: '140px' }}
                               >
-                                <TableCell
-                                  className="font-mono text-xs sm:text-sm font-medium h-[50px]"
-                                  style={{ width: "140px", minWidth: "140px" }}
+                                {mad.codigoContrato}
+                              </TableCell>
+                              <TableCell
+                                className="text-xs sm:text-sm h-[50px]"
+                                style={{ width: 'auto', minWidth: '200px' }}
+                              >
+                                <div
+                                  className="truncate max-w-[200px]"
+                                  title={mad.nombrePropietario}
                                 >
-                                  {mad.codigoContrato}
-                                </TableCell>
-                                <TableCell
-                                  className="text-xs sm:text-sm h-[50px]"
-                                  style={{ width: "auto", minWidth: "200px" }}
+                                  {mad.nombrePropietario}
+                                </div>
+                              </TableCell>
+                              <TableCell
+                                className="text-center h-[50px]"
+                                style={{ width: '120px', minWidth: '120px' }}
+                              >
+                                <Button
+                                  size="sm"
+                                  variant="default"
+                                  onClick={() =>
+                                    handleSelectMadre(mad.codigoContrato)
+                                  }
                                 >
-                                  <div
-                                    className="truncate max-w-[200px]"
-                                    title={mad.nombrePropietario}
-                                  >
-                                    {mad.nombrePropietario}
-                                  </div>
-                                </TableCell>
-                                <TableCell
-                                  className="text-center h-[50px]"
-                                  style={{ width: "120px", minWidth: "120px" }}
-                                >
-                                  <Button
-                                    size="sm"
-                                    variant="default"
-                                    onClick={() =>
-                                      handleSelectMadre(mad.codigoContrato)
-                                    }
-                                  >
-                                    Seleccionar
-                                  </Button>
-                                </TableCell>
-                              </TableRow>
-                            );
-                          })
+                                  Seleccionar
+                                </Button>
+                              </TableCell>
+                            </TableRow>
+                          );
+                        })
                       )}
                     </TableBody>
                   </Table>
@@ -1581,7 +1571,7 @@ export default function CrearContratoComponent({
                 <Input
                   placeholder="Buscar por nombre, apellido o RUT..."
                   value={busquedaCliente}
-                  onChange={(e) => setBusquedaCliente(e.target.value)}
+                  onChange={e => setBusquedaCliente(e.target.value)}
                   className="h-11 pl-10"
                 />
               </div>
@@ -1591,24 +1581,24 @@ export default function CrearContratoComponent({
                 className="border rounded-xl bg-background h-[45vh] sm:h-[50vh] overflow-auto"
               >
                 <div className="min-w-[600px]">
-                  <Table style={{ width: "100%" }}>
+                  <Table style={{ width: '100%' }}>
                     <TableHeader className="sticky top-0 bg-background z-10 border-b">
                       <TableRow>
                         <TableHead
                           className="text-xs sm:text-sm"
-                          style={{ width: "auto", minWidth: "180px" }}
+                          style={{ width: 'auto', minWidth: '180px' }}
                         >
                           Nombre
                         </TableHead>
                         <TableHead
                           className="text-xs sm:text-sm"
-                          style={{ width: "140px", minWidth: "140px" }}
+                          style={{ width: '140px', minWidth: '140px' }}
                         >
                           RUT
                         </TableHead>
                         <TableHead
                           className="text-center text-xs sm:text-sm"
-                          style={{ width: "120px", minWidth: "120px" }}
+                          style={{ width: '120px', minWidth: '120px' }}
                         >
                           Acción
                         </TableHead>
@@ -1617,7 +1607,7 @@ export default function CrearContratoComponent({
                     <TableBody
                       style={{
                         height: `${clientesVirtualizer.getTotalSize()}px`,
-                        position: "relative",
+                        position: 'relative'
                       }}
                     >
                       {clientesFiltrados.length === 0 ? (
@@ -1642,43 +1632,43 @@ export default function CrearContratoComponent({
                       ) : (
                         clientesVirtualizer
                           .getVirtualItems()
-                          .map((virtualRow) => {
+                          .map(virtualRow => {
                             const cliente = clientesFiltrados[virtualRow.index];
                             return (
                               <TableRow
                                 key={cliente.rut}
                                 data-index={virtualRow.index}
                                 style={{
-                                  position: "absolute",
+                                  position: 'absolute',
                                   top: 0,
                                   left: 0,
-                                  width: "100%",
-                                  height: "60px",
+                                  width: '100%',
+                                  height: '60px',
                                   transform: `translateY(${virtualRow.start}px)`,
-                                  display: "table",
+                                  display: 'table'
                                 }}
                                 className="hover:bg-muted/50 transition-colors"
                               >
                                 <TableCell
                                   className="text-xs sm:text-sm h-[60px]"
-                                  style={{ width: "auto", minWidth: "180px" }}
+                                  style={{ width: 'auto', minWidth: '180px' }}
                                 >
                                   <div
                                     className="truncate max-w-[200px]"
                                     title={cliente.nombre}
                                   >
-                                    {cliente.nombre || ""}
+                                    {cliente.nombre || ''}
                                   </div>
                                 </TableCell>
                                 <TableCell
                                   className="font-mono text-xs sm:text-sm font-medium h-[60px]"
-                                  style={{ width: "140px", minWidth: "140px" }}
+                                  style={{ width: '140px', minWidth: '140px' }}
                                 >
                                   {cliente.rut}
                                 </TableCell>
                                 <TableCell
                                   className="text-center h-[60px]"
-                                  style={{ width: "120px", minWidth: "120px" }}
+                                  style={{ width: '120px', minWidth: '120px' }}
                                 >
                                   <Button
                                     size="sm"
@@ -1725,7 +1715,7 @@ export default function CrearContratoComponent({
                 <Input
                   placeholder="Buscar por nombre o código de comuna..."
                   value={busquedaComuna}
-                  onChange={(e) => setBusquedaComuna(e.target.value)}
+                  onChange={e => setBusquedaComuna(e.target.value)}
                   className="h-11 pl-10"
                 />
               </div>
@@ -1735,24 +1725,24 @@ export default function CrearContratoComponent({
                 className="border rounded-xl bg-background h-[45vh] sm:h-[50vh] overflow-auto"
               >
                 <div className="min-w-[400px]">
-                  <Table style={{ width: "100%" }}>
+                  <Table style={{ width: '100%' }}>
                     <TableHeader className="sticky top-0 bg-background z-10 border-b">
                       <TableRow>
                         <TableHead
                           className="text-xs sm:text-sm"
-                          style={{ width: "100px", minWidth: "100px" }}
+                          style={{ width: '100px', minWidth: '100px' }}
                         >
                           Código
                         </TableHead>
                         <TableHead
                           className="text-xs sm:text-sm"
-                          style={{ width: "auto", minWidth: "200px" }}
+                          style={{ width: 'auto', minWidth: '200px' }}
                         >
                           Nombre
                         </TableHead>
                         <TableHead
                           className="text-center text-xs sm:text-sm"
-                          style={{ width: "120px", minWidth: "120px" }}
+                          style={{ width: '120px', minWidth: '120px' }}
                         >
                           Acción
                         </TableHead>
@@ -1761,7 +1751,7 @@ export default function CrearContratoComponent({
                     <TableBody
                       style={{
                         height: `${comunasVirtualizer.getTotalSize()}px`,
-                        position: "relative",
+                        position: 'relative'
                       }}
                     >
                       {comunasFiltradas.length === 0 ? (
@@ -1784,59 +1774,55 @@ export default function CrearContratoComponent({
                           </TableCell>
                         </TableRow>
                       ) : (
-                        comunasVirtualizer
-                          .getVirtualItems()
-                          .map((virtualRow) => {
-                            const com = comunasFiltradas[virtualRow.index];
-                            return (
-                              <TableRow
-                                key={com.codigo}
-                                data-index={virtualRow.index}
-                                style={{
-                                  position: "absolute",
-                                  top: 0,
-                                  left: 0,
-                                  width: "100%",
-                                  height: "50px",
-                                  transform: `translateY(${virtualRow.start}px)`,
-                                  display: "table",
-                                }}
-                                className="hover:bg-muted/50 transition-colors"
+                        comunasVirtualizer.getVirtualItems().map(virtualRow => {
+                          const com = comunasFiltradas[virtualRow.index];
+                          return (
+                            <TableRow
+                              key={com.codigo}
+                              data-index={virtualRow.index}
+                              style={{
+                                position: 'absolute',
+                                top: 0,
+                                left: 0,
+                                width: '100%',
+                                height: '50px',
+                                transform: `translateY(${virtualRow.start}px)`,
+                                display: 'table'
+                              }}
+                              className="hover:bg-muted/50 transition-colors"
+                            >
+                              <TableCell
+                                className="font-mono text-xs sm:text-sm font-medium h-[50px]"
+                                style={{ width: '100px', minWidth: '100px' }}
                               >
-                                <TableCell
-                                  className="font-mono text-xs sm:text-sm font-medium h-[50px]"
-                                  style={{ width: "100px", minWidth: "100px" }}
+                                {com.codigo}
+                              </TableCell>
+                              <TableCell
+                                className="text-xs sm:text-sm h-[50px]"
+                                style={{ width: 'auto', minWidth: '200px' }}
+                              >
+                                <div
+                                  className="truncate max-w-[200px]"
+                                  title={com.nombre}
                                 >
-                                  {com.codigo}
-                                </TableCell>
-                                <TableCell
-                                  className="text-xs sm:text-sm h-[50px]"
-                                  style={{ width: "auto", minWidth: "200px" }}
+                                  {com.nombre}
+                                </div>
+                              </TableCell>
+                              <TableCell
+                                className="text-center h-[50px]"
+                                style={{ width: '120px', minWidth: '120px' }}
+                              >
+                                <Button
+                                  size="sm"
+                                  onClick={() => handleSelectComuna(com.codigo)}
+                                  variant="default"
                                 >
-                                  <div
-                                    className="truncate max-w-[200px]"
-                                    title={com.nombre}
-                                  >
-                                    {com.nombre}
-                                  </div>
-                                </TableCell>
-                                <TableCell
-                                  className="text-center h-[50px]"
-                                  style={{ width: "120px", minWidth: "120px" }}
-                                >
-                                  <Button
-                                    size="sm"
-                                    onClick={() =>
-                                      handleSelectComuna(com.codigo)
-                                    }
-                                    variant="default"
-                                  >
-                                    Seleccionar
-                                  </Button>
-                                </TableCell>
-                              </TableRow>
-                            );
-                          })
+                                  Seleccionar
+                                </Button>
+                              </TableCell>
+                            </TableRow>
+                          );
+                        })
                       )}
                     </TableBody>
                   </Table>
@@ -1936,7 +1922,7 @@ export default function CrearContratoComponent({
                   onClick={() => {
                     setModalExito(false);
                     setContratoCreado(null);
-                    navigate("/dashboard/administracion/contratos");
+                    navigate('/dashboard/administracion/contratos');
                   }}
                   className="flex-1 gap-2 bg-green-600 hover:bg-green-700"
                 >

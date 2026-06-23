@@ -1,9 +1,9 @@
 import {
   ExportAllButton,
-  ExportFilteredButton,
-} from "~/components/shared/export-button";
-import { useExportContratos } from "~/hooks/administracion/use-export-contratos";
-import type { ContratosRow } from "~/types/administracion";
+  ExportFilteredButton
+} from '~/components/shared/export-button';
+import { useExportContratos } from '~/hooks/administracion/use-export-contratos';
+import type { ContratosRow } from '~/types/administracion';
 
 interface ExportButtonsProps {
   allContratos: ContratosRow[];
@@ -14,7 +14,7 @@ interface ExportButtonsProps {
 export function ExportButtons({
   allContratos,
   filteredContratos,
-  isFiltered,
+  isFiltered
 }: ExportButtonsProps) {
   const { contractColumns } = useExportContratos();
 

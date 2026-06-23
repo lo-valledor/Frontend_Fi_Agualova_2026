@@ -2,14 +2,22 @@ import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 import api from '~/lib/api';
-import type {
-  CalculoPrefacturaCargoResponse,
-  CalculoPrefacturaCompleto,
-  CalculoPrefacturaDetalle
-} from '~/types/operaciones';
 import { convertirCicloParaAPI } from './utils/cycle-utilities';
-import { combinarPrefactura } from './utils/data-combiner';
 import { es404, extraerErrorMessage } from './utils/error-handler';
+
+type CalculoPrefacturaDetalle = {
+  contratoId?: number | string;
+  [key: string]: unknown;
+};
+
+type CalculoPrefacturaCargo = {
+  contratoId?: number | string;
+  [key: string]: unknown;
+};
+
+type CalculoPrefacturaCompleto = CalculoPrefacturaDetalle & {
+  cargos?: CalculoPrefacturaCargo[];
+};
 
 interface UseCalculoFacturaProps {
   periodoFormateado: string;
@@ -82,11 +90,28 @@ export function useCalculoFactura({
         params: requestParams
       });
 
-      const cargosData =
-        cargosResponse.data as CalculoPrefacturaCargoResponse[];
+      const cargosData = cargosResponse.data as CalculoPrefacturaCargo[];
 
       // Combinar datos
-      const datosCombinados = combinarPrefactura(encabezados, cargosData);
+      const cargosByContrato = new Map<
+        string | number,
+        CalculoPrefacturaCargo[]
+      >();
+      for (const cargo of cargosData) {
+        if (cargo.contratoId === undefined) continue;
+        const list = cargosByContrato.get(cargo.contratoId) ?? [];
+        list.push(cargo);
+        cargosByContrato.set(cargo.contratoId, list);
+      }
+      const datosCombinados: CalculoPrefacturaCompleto[] = encabezados.map(
+        encabezado => ({
+          ...encabezado,
+          cargos:
+            encabezado.contratoId !== undefined
+              ? (cargosByContrato.get(encabezado.contratoId) ?? [])
+              : []
+        })
+      );
 
       setData(datosCombinados);
       toast.success(`Se encontraron ${datosCombinados.length} registros`);

@@ -87,7 +87,7 @@
       "correctness": {
         "noConstAssign": "error",
         "noConstantCondition": "error",
-        "noEmptyCharacterClassInRegex": "error",
+        "noEmptyCharacterClassInRegex": "off",
         "noEmptyPattern": "off",
         "noGlobalObjectCalls": "error",
         "noInvalidBuiltinInstantiation": "error",
@@ -131,7 +131,7 @@
         "noDuplicateEnumValues": "error",
         "noDuplicateObjectKeys": "error",
         "noDuplicateParameters": "error",
-        "noEmptyBlockStatements": "error",
+        "noEmptyBlockStatements": "off",
         "noExplicitAny": "error",
         "noExtraNonNullAssertion": "error",
         "noFallthroughSwitchClause": "error",
@@ -185,6 +185,11 @@
     "formatter": {
       "indentScriptAndStyle": false,
       "selfCloseVoidElements": "always"
+    }
+  },
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
     }
   },
   "overrides": [

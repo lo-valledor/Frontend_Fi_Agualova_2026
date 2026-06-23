@@ -1,4 +1,3 @@
-/** biome-ignore-all lint/correctness/noEmptyPattern: <explanation> */
 import { BreadcrumbSetter } from "~/components/breadcrumb-setter";
 import CerrarLecturasComponent from "~/components/operaciones/cerrar-lecturas/cerrar-lecturas-component";
 import { operacionesService } from "~/services/operacionesService";

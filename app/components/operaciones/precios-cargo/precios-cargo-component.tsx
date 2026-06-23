@@ -1,47 +1,46 @@
-import { driver } from "driver.js";
-import "driver.js/dist/driver.css";
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
 import {
   Building2,
   Calendar,
   ChevronDown,
   Eraser,
   HelpCircle,
-  Info,
   Search,
-  TrendingUp,
-} from "lucide-react";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
+  TrendingUp
+} from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
-import { ModernHeader } from "~/components/shared/modern-header";
-import { Badge } from "~/components/ui/badge";
-import { Button } from "~/components/ui/button";
-import { Card, CardContent } from "~/components/ui/card";
-import { Collapsible, CollapsibleContent } from "~/components/ui/collapsible";
-import { Label } from "~/components/ui/label";
+import { ModernHeader } from '~/components/shared/modern-header';
+import { Badge } from '~/components/ui/badge';
+import { Button } from '~/components/ui/button';
+import { Card, CardContent } from '~/components/ui/card';
+import { Collapsible, CollapsibleContent } from '~/components/ui/collapsible';
+import { Label } from '~/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
-} from "~/components/ui/select";
-import { operacionesService } from "~/services/operacionesService";
+  SelectValue
+} from '~/components/ui/select';
+import { operacionesService } from '~/services/operacionesService';
 import type {
   PreciosConsultarRequest,
-  PrepararLecturasFiltrosPeriodosResponse,
-} from "~/types/operaciones";
+  PrepararLecturasFiltrosPeriodosResponse
+} from '~/types/operaciones';
 import {
   getCurrentMonth,
   getCurrentYear,
   getMonthLabel,
   getYearsRange,
   MONTHS,
-  validatePeriod,
-} from "~/utils/operaciones";
+  validatePeriod
+} from '~/utils/operaciones';
 
-import { columns as columnsEnel } from "./columns-enel";
-import { DataTablePreciosVirtualized } from "./data-table-precios-virtualized";
+import { columns as columnsEnel } from './columns-enel';
+import { DataTablePreciosVirtualized } from './data-table-precios-virtualized';
 
 interface PreciosCargoComponentProps {
   precios: PreciosConsultarRequest[];
@@ -54,7 +53,7 @@ export default function PreciosCargoComponent({
   precios: initialPrecios,
   initialMes,
   initialAnio,
-  error,
+  error
 }: Readonly<PreciosCargoComponentProps>) {
   const [mes, setMes] = useState(initialMes);
   const [anio, setAnio] = useState(initialAnio);
@@ -89,15 +88,15 @@ export default function PreciosCargoComponent({
       const response = await operacionesService.getPreciosCargoData(mes, anio);
 
       if (response.error || !response.data) {
-        toast.error(response.error || "Error al buscar precios de cargo");
+        toast.error(response.error || 'Error al buscar precios de cargo');
         return;
       }
 
       setPrecios(response.data);
-      toast.success("Búsqueda completada exitosamente");
+      toast.success('Búsqueda completada exitosamente');
     } catch (err) {
-      toast.error("Error al buscar precios de cargo", {
-        description: String(err),
+      toast.error('Error al buscar precios de cargo', {
+        description: String(err)
       });
     } finally {
       setIsLoading(false);
@@ -107,7 +106,7 @@ export default function PreciosCargoComponent({
   const handleClearFilters = (): void => {
     setMes(getCurrentMonth());
     setAnio(getCurrentYear());
-    toast.success("Filtros reiniciados");
+    toast.success('Filtros reiniciados');
   };
 
   const handleDataUpdate = async (): Promise<void> => {
@@ -116,74 +115,74 @@ export default function PreciosCargoComponent({
 
   const tourSteps = [
     {
-      element: "#filtros-periodo",
+      element: '#filtros-periodo',
       popover: {
-        title: "📅 Filtros de Período",
+        title: '📅 Filtros de Período',
         description:
-          "Este panel te permite <strong>seleccionar el período</strong> (mes y año) para consultar los precios de cargo históricos o actuales.",
-        side: "bottom" as const,
-        align: "start" as const,
-      },
+          'Este panel te permite <strong>seleccionar el período</strong> (mes y año) para consultar los precios de cargo históricos o actuales.',
+        side: 'bottom' as const,
+        align: 'start' as const
+      }
     },
     {
-      element: "#periodo-actual",
+      element: '#periodo-actual',
       popover: {
-        title: "📌 Período Activo",
+        title: '📌 Período Activo',
         description:
-          "Aquí se muestra el <strong>período abierto actualmente</strong> en el sistema.",
-        side: "bottom" as const,
-        align: "start" as const,
-      },
+          'Aquí se muestra el <strong>período abierto actualmente</strong> en el sistema.',
+        side: 'bottom' as const,
+        align: 'start' as const
+      }
     },
     {
-      element: "#buscar-btn",
+      element: '#buscar-btn',
       popover: {
-        title: "🔍 Buscar Precios",
+        title: '🔍 Buscar Precios',
         description:
-          "Una vez seleccionado el período deseado, haz clic en <strong>Buscar</strong> para cargar los precios de cargo.",
-        side: "bottom" as const,
-        align: "center" as const,
-      },
+          'Una vez seleccionado el período deseado, haz clic en <strong>Buscar</strong> para cargar los precios de cargo.',
+        side: 'bottom' as const,
+        align: 'center' as const
+      }
     },
     {
-      element: "#limpiar-btn",
+      element: '#limpiar-btn',
       popover: {
-        title: "🧹 Limpiar Filtros",
+        title: '🧹 Limpiar Filtros',
         description:
-          "Este botón <strong>restablece los filtros</strong> al mes y año actual del sistema.",
-        side: "bottom" as const,
-        align: "center" as const,
-      },
+          'Este botón <strong>restablece los filtros</strong> al mes y año actual del sistema.',
+        side: 'bottom' as const,
+        align: 'center' as const
+      }
     },
     {
-      element: "#tabla-precios",
+      element: '#tabla-precios',
       popover: {
-        title: "💰 Tabla de Precios",
+        title: '💰 Tabla de Precios',
         description:
-          "Aquí se muestran los <strong>precios de cargo publicados por la distribuidora</strong>.",
-        side: "top" as const,
-        align: "start" as const,
-      },
-    },
+          'Aquí se muestran los <strong>precios de cargo publicados por la distribuidora</strong>.',
+        side: 'top' as const,
+        align: 'start' as const
+      }
+    }
   ];
 
   const startTour = (): void => {
     const driverjs = driver({
       showProgress: true,
-      progressText: "Paso {{current}} de {{total}}",
+      progressText: 'Paso {{current}} de {{total}}',
       smoothScroll: true,
       stagePadding: 4,
       stageRadius: 6,
       animate: true,
       allowClose: true,
-      nextBtnText: "Siguiente",
-      prevBtnText: "Anterior",
-      doneBtnText: "Finalizar",
-      onHighlightStarted: (element) => {
+      nextBtnText: 'Siguiente',
+      prevBtnText: 'Anterior',
+      doneBtnText: 'Finalizar',
+      onHighlightStarted: element => {
         if (element) {
-          element.scrollIntoView({ behavior: "smooth", block: "center" });
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
-      },
+      }
     });
     driverjs.setSteps(tourSteps);
     driverjs.drive();
@@ -247,7 +246,7 @@ export default function PreciosCargoComponent({
                 </div>
                 <ChevronDown
                   className={`h-4 w-4 transition-transform duration-200 ${
-                    isFiltersOpen ? "rotate-180" : ""
+                    isFiltersOpen ? 'rotate-180' : ''
                   }`}
                 />
               </div>
@@ -277,7 +276,7 @@ export default function PreciosCargoComponent({
                         <SelectValue placeholder="Selecciona un mes" />
                       </SelectTrigger>
                       <SelectContent className="w-full">
-                        {MONTHS.map((month) => (
+                        {MONTHS.map(month => (
                           <SelectItem key={month.value} value={month.value}>
                             {month.label}
                           </SelectItem>
@@ -293,7 +292,7 @@ export default function PreciosCargoComponent({
                         <SelectValue placeholder="Selecciona un año" />
                       </SelectTrigger>
                       <SelectContent className="w-full">
-                        {getYearsRange().map((year) => (
+                        {getYearsRange().map(year => (
                           <SelectItem key={year.value} value={year.value}>
                             {year.label}
                           </SelectItem>

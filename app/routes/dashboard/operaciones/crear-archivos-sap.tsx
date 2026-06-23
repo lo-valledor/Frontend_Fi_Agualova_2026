@@ -1,4 +1,3 @@
-/** biome-ignore-all lint/correctness/noEmptyPattern: <explanation> */
 import { BreadcrumbSetter } from "~/components/breadcrumb-setter";
 import CrearArchivosSapComponent from "~/components/operaciones/crear-archivos-sap/crear-archivos-sap-component";
 

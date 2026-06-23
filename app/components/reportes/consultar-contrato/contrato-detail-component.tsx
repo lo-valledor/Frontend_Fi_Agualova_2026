@@ -1,4 +1,11 @@
-import { ArrowLeft, Building2, FileText, Gauge, MapPin, User } from 'lucide-react';
+import {
+  ArrowLeft,
+  Building2,
+  FileText,
+  Gauge,
+  MapPin,
+  User
+} from 'lucide-react';
 import { useNavigate } from 'react-router';
 
 import { Button } from '~/components/ui/button';
