@@ -46,12 +46,8 @@ export async function clientLoader({ request }: Route.ClientLoaderArgs) {
     } satisfies RevisarPrecioLoaderData;
   }
 
-  const precios = Array.isArray(result.data)
-    ? (result.data as RevisionPreciosBuscarRequest[])
-    : [];
-
   return {
-    precios,
+    precios: result.data,
     initialMes: mes,
     initialAnio: anio,
     error: null,

@@ -19,8 +19,12 @@ import type {
   RevisarCalculosFiltrosCiclosResponse,
   RevisarCalculosFiltrosPeriodosResponse,
   RevisarCalculosLanzarCalculoRequest,
+  RevisionPreciosBuscarRequest,
   RevisionPreciosConfirmarRequest,
   RevisionPreciosCorregirRequest,
+  RevisionPreciosDetalleCorreccionResponse,
+  SAPEmpresas,
+  SAPSugeridos,
 } from "~/types/operaciones";
 
 export interface OperacionesServiceResponse<T> {
@@ -29,6 +33,21 @@ export interface OperacionesServiceResponse<T> {
 }
 
 class OperacionesService {
+  /**
+   * Algunos endpoints del backend devuelven status 200 con un body
+   * `{ message: "Error: ..." }` para señalar fallos. Este helper extrae ese
+   * mensaje para que el llamador lo trate como error.
+   */
+  private extractErrorFromResponse(data: unknown): string | null {
+    if (data && typeof data === "object" && "message" in data) {
+      const message = String((data as { message: unknown }).message);
+      if (message.toLowerCase().startsWith("error:")) {
+        return message;
+      }
+    }
+    return null;
+  }
+
   private processApiResponse<T>(response: unknown): T[] {
     if (
       typeof response === "object" &&
@@ -64,7 +83,9 @@ class OperacionesService {
     try {
       const response = await api.get("/preparar-lecturas/filtros/periodos");
       return {
-        data: response.data as PrepararLecturasFiltrosPeriodosResponse[],
+        data: this.processApiResponse<PrepararLecturasFiltrosPeriodosResponse>(
+          response,
+        ),
         error: null,
       };
     } catch (error) {
@@ -152,13 +173,42 @@ class OperacionesService {
     }
   }
 
+  async getPeriodoFacturacionByLimitAndOffset(
+    mes?: string,
+    anio?: string,
+    limit?: number,
+    offset?: number,
+  ): Promise<OperacionesServiceResponse<PeriodosBuscarRequest[]>> {
+    try {
+      const params = new URLSearchParams();
+      if (mes) params.append("mes", mes);
+      if (anio) params.append("anio", anio);
+      if (limit) params.append("limit", limit.toString());
+      if (offset) params.append("offset", offset.toString());
+      const response = await api.get("/periodos/buscar", {
+        params,
+      });
+      return {
+        data: this.processApiResponse<PeriodosBuscarRequest>(response),
+        error: null,
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : "Error desconocido",
+      };
+    }
+  }
+
   async getCiclosFacturacion(): Promise<
     OperacionesServiceResponse<PrepararLecturasFiltrosCiclosResponse[]>
   > {
     try {
       const response = await api.get("/preparar-lecturas/filtros/ciclos");
       return {
-        data: response.data as PrepararLecturasFiltrosCiclosResponse[],
+        data: this.processApiResponse<PrepararLecturasFiltrosCiclosResponse>(
+          response,
+        ),
         error: null,
       };
     } catch (error) {
@@ -225,8 +275,13 @@ class OperacionesService {
       return {
         data: {
           periodoAbierto:
-            periodoAbierto.data as PrepararLecturasFiltrosPeriodosResponse[],
-          ciclos: ciclos.data as PrepararLecturasFiltrosCiclosResponse[],
+            this.processApiResponse<PrepararLecturasFiltrosPeriodosResponse>(
+              periodoAbierto,
+            ),
+          ciclos:
+            this.processApiResponse<PrepararLecturasFiltrosCiclosResponse>(
+              ciclos,
+            ),
         },
         error: null,
       };
@@ -243,6 +298,10 @@ class OperacionesService {
   ): Promise<OperacionesServiceResponse<any>> {
     try {
       const response = await api.post("/preparar-lecturas/generar", request);
+      const errorFromBody = this.extractErrorFromResponse(response.data);
+      if (errorFromBody) {
+        return { data: null, error: errorFromBody };
+      }
       return {
         data: response.data,
         error: null,
@@ -269,7 +328,9 @@ class OperacionesService {
         params,
       });
       return {
-        data: response.data as PrepararLecturasBuscarNichosRequest[],
+        data: this.processApiResponse<PrepararLecturasBuscarNichosRequest>(
+          response,
+        ),
         error: null,
       };
     } catch (error) {
@@ -330,7 +391,10 @@ class OperacionesService {
 
   /** Revisar Precios */
 
-  async getRevisarPreciosData(mes: string, anio: string) {
+  async getRevisarPreciosData(
+    mes: string,
+    anio: string,
+  ): Promise<OperacionesServiceResponse<RevisionPreciosBuscarRequest[]>> {
     try {
       const params = new URLSearchParams();
       params.append("mes", mes);
@@ -341,7 +405,7 @@ class OperacionesService {
       });
 
       return {
-        data: response.data,
+        data: this.processApiResponse<RevisionPreciosBuscarRequest>(response),
         error: null,
       };
     } catch (error) {
@@ -357,6 +421,10 @@ class OperacionesService {
   ): Promise<OperacionesServiceResponse<any>> {
     try {
       const response = await api.post("/revision-precios/confirmar", request);
+      const errorFromBody = this.extractErrorFromResponse(response.data);
+      if (errorFromBody) {
+        return { data: null, error: errorFromBody };
+      }
       return {
         data: response.data,
         error: null,
@@ -370,16 +438,16 @@ class OperacionesService {
   }
 
   async getDetalleCorreccionCodigoCargo(
-    codigo: number,
-  ): Promise<OperacionesServiceResponse<any>> {
+    indice: number,
+  ): Promise<
+    OperacionesServiceResponse<RevisionPreciosDetalleCorreccionResponse>
+  > {
     try {
-      const params = new URLSearchParams();
-      params.append("codigo", codigo.toString());
-      const response = await api.get("/revision-precios/detalle-correccion", {
-        params,
-      });
+      const response = await api.get(
+        `/revision-precios/detalle-correccion/${indice}`,
+      );
       return {
-        data: response.data,
+        data: response.data as RevisionPreciosDetalleCorreccionResponse,
         error: null,
       };
     } catch (error) {
@@ -390,9 +458,15 @@ class OperacionesService {
     }
   }
 
-  async postCorregirPrecioCargo(request: RevisionPreciosCorregirRequest) {
+  async postCorregirPrecioCargo(
+    request: RevisionPreciosCorregirRequest,
+  ): Promise<OperacionesServiceResponse<any>> {
     try {
       const response = await api.post("/revision-precios/corregir", request);
+      const errorFromBody = this.extractErrorFromResponse(response.data);
+      if (errorFromBody) {
+        return { data: null, error: errorFromBody };
+      }
       return {
         data: response.data,
         error: null,
@@ -752,6 +826,83 @@ class OperacionesService {
       );
       return {
         data: response.data,
+        error: null,
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : "Error desconocido",
+      };
+    }
+  }
+
+  /**
+   * Archivos SAP
+   */
+  async getArchivoSAPEmpresas() {
+    try {
+      const response = await api.get("archivo-sap/empresas");
+      return {
+        data: response.data as SAPEmpresas,
+        error: null,
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : "Error desconocido",
+      };
+    }
+  }
+
+  async getNombresSugeridos() {
+    try {
+      const response = await api.get("archivo-sap/empresas");
+      return {
+        data: response.data as SAPSugeridos,
+        error: null,
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : "Error desconocido",
+      };
+    }
+  }
+
+  async getDescargarEnacabezado(empresaId: string, nombreArchivo: string) {
+    const params = new URLSearchParams();
+    params.append("empresaId", empresaId);
+    params.append("nombreArchivo", nombreArchivo);
+
+    try {
+      const response = await api.get("/archivo-sap/descargar-encabezado", {
+        params,
+        responseType: "blob",
+      });
+      return {
+        data: response.data as Blob,
+        error: null,
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : "Error desconocido",
+      };
+    }
+  }
+
+  async getDescargarDetalle(empresaId: string, nombreArchivo: string) {
+    const params = new URLSearchParams();
+    params.append("empresaId", empresaId);
+    params.append("nombreArchivo", nombreArchivo);
+
+    try {
+      const response = await api.get("/archivo-sap/descargar-detalle", {
+        params,
+        responseType: "blob",
+      });
+      return {
+        data: response.data as Blob,
         error: null,
       };
     } catch (error) {

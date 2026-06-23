@@ -27,20 +27,11 @@ import {
   CardHeader,
   CardTitle
 } from '~/components/ui/card';
-import { Checkbox } from '~/components/ui/checkbox';
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger
 } from '~/components/ui/collapsible';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle
-} from '~/components/ui/dialog';
-import { Input } from '~/components/ui/input';
 import { ResultadoProcesamientoModal } from './resultado-procesamiento-modal';
 
 interface EstadoProcesamiento {

@@ -66,14 +66,7 @@ export default function PrepararLecturas({ loaderData }: Route.ComponentProps) {
           periodoId,
         );
 
-        if (result.error || !result.data) {
-          setNichos([]);
-        } else {
-          const data = Array.isArray(result.data)
-            ? (result.data as PrepararLecturasBuscarNichosRequest[])
-            : [];
-          setNichos(data);
-        }
+        setNichos(result.error || !result.data ? [] : result.data);
       } catch (err) {
         console.error("Error al obtener nichos:", err);
         setNichos([]);

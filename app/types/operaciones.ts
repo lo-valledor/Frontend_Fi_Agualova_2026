@@ -150,12 +150,14 @@ export type PreciosConsultarRequest = {
 };
 
 // POST /precios/guardar-masivo
-export type PreciosGuardarMasivoRequest = {
+export type PrecioMasivoItem = {
   mes: string;
   anio: string;
   codigoCargo: number;
   nuevoValor: number;
 };
+
+export type PreciosGuardarMasivoRequest = PrecioMasivoItem[];
 
 /**
  * Preparar Lecturas
@@ -243,7 +245,16 @@ export type RevisionPreciosConfirmarRequest = {
   passwordConfirmacion: string;
 };
 
-//Todo: GET /revision-precios/detalle-correccion
+// GET /revision-precios/detalle-correccion/:indice
+export type RevisionPreciosDetalleCorreccionParams = {
+  indice: number;
+};
+
+export type RevisionPreciosDetalleCorreccionResponse = {
+  codigoCargo: number;
+  descripcion?: string;
+  valorActual?: string;
+};
 
 // POST /revision-precios/corregir
 export type RevisionPreciosCorregirRequest = {
@@ -251,4 +262,17 @@ export type RevisionPreciosCorregirRequest = {
   nuevoValor: number;
   motivo: string;
   passwordConfirmacion: string;
+};
+
+/**
+ * SAP
+ */
+export type SAPEmpresas = {
+  id: string;
+  nombre: string;
+};
+
+export type SAPSugeridos = {
+  nombreEncabezado: string;
+  nombreDetalle: string;
 };

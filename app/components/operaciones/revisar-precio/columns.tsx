@@ -10,7 +10,9 @@ import DialogModificarPrecio from './dialog-modificar-precio';
 
 type PrecioRevisado = RevisionPreciosBuscarRequest;
 
-export const columns: ColumnDef<PrecioRevisado>[] = [
+export const columns = (
+  onModificado: () => void
+): ColumnDef<PrecioRevisado>[] => [
   {
     id: 'select',
     header: ({ table }) => (
@@ -202,6 +204,7 @@ export const columns: ColumnDef<PrecioRevisado>[] = [
             codigoCargo={row.original.codigoCargo}
             descripcion={row.original.descripcion}
             valorActual={String(row.original.valorActual ?? '')}
+            onSuccess={onModificado}
           />
         </div>
       );

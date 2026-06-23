@@ -89,11 +89,7 @@ export default function RevisarPrecioComponent({
         return;
       }
 
-      const data = Array.isArray(result.data)
-        ? (result.data as RevisionPreciosBuscarRequest[])
-        : [];
-
-      setPrecios(data);
+      setPrecios(result.data);
       setSelectedCodigosCargo([]);
       toast.success('Búsqueda completada');
     } catch (err) {
@@ -115,10 +111,7 @@ export default function RevisarPrecioComponent({
   const refreshData = async (): Promise<void> => {
     const result = await operacionesService.getRevisarPreciosData(mes, anio);
     if (result.error || !result.data) return;
-    const data = Array.isArray(result.data)
-      ? (result.data as RevisionPreciosBuscarRequest[])
-      : [];
-    setPrecios(data);
+    setPrecios(result.data);
   };
 
   const pendientes = useMemo(
@@ -426,7 +419,7 @@ export default function RevisarPrecioComponent({
               className="rounded-xl border border-border overflow-hidden bg-card"
             >
               <DataTableVirtualized
-                columns={columns}
+                columns={columns(refreshData)}
                 data={precios}
                 enableSelection
                 selectedRowIds={selectedCodigosCargo.map(String)}

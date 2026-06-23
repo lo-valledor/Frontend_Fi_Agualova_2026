@@ -6,11 +6,62 @@ import type { PreciosConsultarRequest } from '~/types/operaciones';
 
 import DialogAgregarPrecios from './dialog-agregar-precios';
 
-export const columns = (
-  mes: string,
-  anio: string,
-  onSuccess: () => void
-): ColumnDef<PreciosConsultarRequest>[] => [
+const normalizarValorActual = (valor: string | number): number | null => {
+  if (typeof valor === 'number') {
+    return valor > 0 ? valor : null;
+  }
+
+  const valorNormalizado = valor.trim();
+  if (!valorNormalizado || valorNormalizado.toLowerCase() === 'sin valor') {
+    return null;
+  }
+
+  const numero = Number.parseFloat(valorNormalizado.replace(',', '.'));
+  return Number.isFinite(numero) && numero > 0 ? numero : null;
+};
+
+const parsearValorMesAnterior = (valor: string): number | null => {
+  if (!valor) return null;
+  const trimmed = valor.trim();
+  if (!trimmed || trimmed.toLowerCase() === 'sin valor') return null;
+
+  const numero = Number.parseFloat(trimmed.replace(/\./g, '').replace(',', '.'));
+  return Number.isFinite(numero) && numero > 0 ? numero : null;
+};
+
+export interface PrecioPendiente {
+  codigo: number;
+  valor: number;
+  descripcion: string;
+  codigoEnerlova: string;
+}
+
+interface ColumnsParams {
+  onAgregarPendiente: (pendiente: PrecioPendiente) => void;
+  onQuitarPendiente: (codigo: number) => void;
+  pendientes: ReadonlyMap<number, PrecioPendiente>;
+}
+
+export const columns = ({
+  onAgregarPendiente,
+  onQuitarPendiente,
+  pendientes
+}: ColumnsParams): ColumnDef<PreciosConsultarRequest>[] => [
+  {
+    accessorKey: 'indice',
+    header: ({ column }) => (
+      <DataTableColumnHeader
+        column={column}
+        title="Índice"
+        className="text-slate-700 dark:text-slate-300 font-semibold"
+      />
+    ),
+    cell: ({ row }) => (
+      <div className="font-mono text-xs sm:text-sm font-medium">
+        {row.getValue('indice')}
+      </div>
+    )
+  },
   {
     accessorKey: 'codigoInterno',
     header: ({ column }) => (
@@ -24,8 +75,7 @@ export const columns = (
       <div className="font-mono text-xs sm:text-sm font-medium">
         {row.getValue('codigoInterno')}
       </div>
-    ),
-    size: 100
+    )
   },
   {
     accessorKey: 'codigoEnerlova',
@@ -40,8 +90,7 @@ export const columns = (
       <div className="font-mono text-xs sm:text-sm text-slate-700 dark:text-slate-400">
         {row.getValue('codigoEnerlova')}
       </div>
-    ),
-    size: 120
+    )
   },
   {
     accessorKey: 'descripcion',
@@ -56,37 +105,21 @@ export const columns = (
       <div className="text-xs sm:text-sm max-w-37.5 sm:max-w-xs truncate">
         {row.getValue('descripcion')}
       </div>
-    ),
-    size: 200
-  },
-  {
-    accessorKey: 'valorMesAnterior',
-    header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title="Ant. 1"
-        className="text-orange-700 dark:text-orange-300 font-semibold justify-end"
-      />
-    ),
-    cell: ({ row }) => (
-      <div className="text-xs sm:text-sm font-mono text-orange-600 dark:text-orange-400 text-right pr-1">
-        {row.getValue('valorMesAnterior')}
-      </div>
-    ),
-    size: 80
+    )
   },
   {
     accessorKey: 'valorActual',
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title="Act. 1"
+        title="Valor Actual"
         className="text-green-700 dark:text-green-300 font-semibold justify-end"
       />
     ),
     cell: ({ row }) => {
-      const value = row.getValue('valorActual') as number;
-      const isNoValue = !value || value <= 0;
+      const rawValue = row.getValue('valorActual') as string | number;
+      const value = normalizarValorActual(rawValue);
+      const isNoValue = value === null;
       const formatted = isNoValue
         ? 'Sin Valor'
         : value.toLocaleString('es-CL', {
@@ -105,27 +138,73 @@ export const columns = (
           {formatted}
         </div>
       );
-    },
-    size: 90
+    }
   },
+  {
+    accessorKey: 'confirmacion',
+    header: ({ column }) => (
+      <DataTableColumnHeader
+        column={column}
+        title="Confirmación"
+        className="text-slate-700 dark:text-slate-300 font-semibold"
+      />
+    ),
+    cell: ({ row }) => (
+      <div className="font-mono text-xs sm:text-sm font-medium">
+        {row.getValue('confirmacion')}
+      </div>
+    )
+  },
+
   {
     id: 'actions',
     header: () => (
       <div className="text-center font-semibold text-xs sm:text-sm">Estado</div>
     ),
     cell: ({ row }) => {
-      const { codigoInterno, valorMesAnterior, valorActual } = row.original;
-      const hasNoValues =
-        valorMesAnterior === 'Sin Valor' || !valorActual || valorActual <= 0;
+      const { codigoInterno, valorActual, descripcion, codigoEnerlova } =
+        row.original;
+      const valorMesAnterior = row.original.valorMesAnterior;
+      const hasNoValue = normalizarValorActual(valorActual) === null;
+      const valorMesAnteriorNumero = parsearValorMesAnterior(valorMesAnterior);
+      const pendiente = pendientes.get(codigoInterno);
 
       return (
         <div className="flex justify-center">
-          {hasNoValues ? (
+          {pendiente ? (
+            <Badge
+              variant="outline"
+              className="bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800 text-xs px-1.5 py-0 gap-1"
+            >
+              <span className="font-mono">
+                ${pendiente.valor.toLocaleString('es-CL', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2
+                })}
+              </span>
+              <button
+                type="button"
+                onClick={() => onQuitarPendiente(codigoInterno)}
+                className="ml-1 text-amber-700 dark:text-amber-300 hover:text-amber-900 dark:hover:text-amber-100"
+                aria-label="Quitar de la cola"
+                title="Quitar de la cola"
+              >
+                ×
+              </button>
+            </Badge>
+          ) : hasNoValue ? (
             <DialogAgregarPrecios
               codigo={codigoInterno}
-              mes={mes}
-              anio={anio}
-              onSuccess={onSuccess}
+              descripcion={descripcion}
+              valorAnterior={valorMesAnteriorNumero}
+              onConfirm={valor =>
+                onAgregarPendiente({
+                  codigo: codigoInterno,
+                  valor,
+                  descripcion,
+                  codigoEnerlova
+                })
+              }
             />
           ) : (
             <Badge
@@ -138,7 +217,7 @@ export const columns = (
         </div>
       );
     },
-    size: 100,
+    size: 140,
     enableSorting: false
   }
 ];

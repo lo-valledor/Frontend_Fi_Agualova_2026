@@ -1,138 +1,245 @@
+import type { PaginationState } from "@tanstack/react-table";
 import {
   AlertTriangle,
   CheckCircle,
   Clock,
   Filter,
   History,
+  Loader2,
   PlusCircleIcon,
-  X
-} from 'lucide-react';
-
-import { useCallback, useEffect, useMemo, useState } from 'react';
-
-import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
-import { DataTable } from '~/components/data-table/data-table';
-import { ModernHeader } from '~/components/shared/modern-header';
-import { AlertDescription, AlertTitle } from '~/components/ui/alert';
-import { Button } from '~/components/ui/button';
+  X,
+} from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { BreadcrumbSetter } from "~/components/breadcrumb-setter";
+import { DataTable } from "~/components/data-table/data-table";
+import { ModernHeader } from "~/components/shared/modern-header";
+import { AlertDescription, AlertTitle } from "~/components/ui/alert";
+import { Button } from "~/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle
-} from '~/components/ui/card';
-import { Label } from '~/components/ui/label';
+  CardTitle,
+} from "~/components/ui/card";
+import { Label } from "~/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
-} from '~/components/ui/select';
+  SelectValue,
+} from "~/components/ui/select";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
-  TooltipTrigger
-} from '~/components/ui/tooltip';
-import { operacionesService } from '~/services/operacionesService';
-import type { Anio, Periodos } from '~/types/operaciones';
-import CerrarPeriodo from './cerrar-periodo';
-import { columns } from './columns';
-import DialogNuevoPeriodo from './dialog-nuevo-periodo';
+  TooltipTrigger,
+} from "~/components/ui/tooltip";
+import { monitorService } from "~/services/monitorService";
+import { operacionesService } from "~/services/operacionesService";
+import type { MonitorPeriodos } from "~/types/monitor";
+import type { Anio, Periodos } from "~/types/operaciones";
+import CerrarPeriodo from "./cerrar-periodo";
+import { columns } from "./columns";
+import DialogNuevoPeriodo from "./dialog-nuevo-periodo";
 
 const MESES = [
-  { value: '01', label: 'Enero' },
-  { value: '02', label: 'Febrero' },
-  { value: '03', label: 'Marzo' },
-  { value: '04', label: 'Abril' },
-  { value: '05', label: 'Mayo' },
-  { value: '06', label: 'Junio' },
-  { value: '07', label: 'Julio' },
-  { value: '08', label: 'Agosto' },
-  { value: '09', label: 'Septiembre' },
-  { value: '10', label: 'Octubre' },
-  { value: '11', label: 'Noviembre' },
-  { value: '12', label: 'Diciembre' }
+  { value: "01", label: "Enero" },
+  { value: "02", label: "Febrero" },
+  { value: "03", label: "Marzo" },
+  { value: "04", label: "Abril" },
+  { value: "05", label: "Mayo" },
+  { value: "06", label: "Junio" },
+  { value: "07", label: "Julio" },
+  { value: "08", label: "Agosto" },
+  { value: "09", label: "Septiembre" },
+  { value: "10", label: "Octubre" },
+  { value: "11", label: "Noviembre" },
+  { value: "12", label: "Diciembre" },
 ];
-
-// Ordena cronológicamente ASC por fechaInicio (formato DD-MM-YYYY).
-// Centralizado acá porque el backend de periodos no garantiza el orden
-// en sus respuestas y el sortFn del cliente no aplica cuando hay filtro.
-const sortPeriodosAsc = (data: Periodos[]): Periodos[] =>
-  [...data].sort((a, b) => {
-    // fechaInicio viene como "DD-MM-YYYY" — convertir a comparable
-    const parseDate = (s: string): number => {
-      const [d, m, y] = s.split('-').map(Number);
-      return new Date(y, m - 1, d).getTime();
-    };
-    return parseDate(a.fechaInicio) - parseDate(b.fechaInicio);
-  });
 
 export default function AbrirPeriodoFacturacion({
   years,
   periodos,
-  error
+  error,
 }: Readonly<{
   years: Anio[];
   periodos: Periodos[];
   error: string | null;
 }>) {
   const [isOpenDialog, setIsOpenDialog] = useState(false);
-  const [periodosData, setPeriodosData] = useState<Periodos[]>(
+
+  // ─── Filtros server-side (mes / año) ──────────────────────────────────
+  const [mesFilter, setMesFilter] = useState<string>("");
+  const [anioFilter, setAnioFilter] = useState<string>("");
+
+  // ─── Estado de paginación/búsqueda server-side de la tabla ─────────
+  const DEFAULT_PAGE_SIZE = 10;
+  const [tableData, setTableData] = useState<Periodos[]>(
     Array.isArray(periodos) ? periodos : [],
   );
-
-  // ─── Filtros server-side ─────────────────────────────────────────────
-  const [mesFilter, setMesFilter] = useState<string>('');
-  const [anioFilter, setAnioFilter] = useState<string>('');
+  const [tableLoading, setTableLoading] = useState(false);
   const [tableError, setTableError] = useState<string | null>(null);
-  const [isFetching, setIsFetching] = useState(false);
+  const [tablePagination, setTablePagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: DEFAULT_PAGE_SIZE,
+  });
+  // Heurística: si la respuesta trae menos filas que pageSize, sabemos
+  // que es la última página. Si trae la cantidad completa, asumimos más.
+  const [hasMore, setHasMore] = useState(true);
+  const requestIdRef = useRef(0);
+
+  // ─── Search client-side ─────────────────────────────────────────────
+  // La búsqueda libre no la pasamos al backend (no hay un parámetro
+  // `descripcion` o `q` en /periodos/buscar). Filtramos en memoria sobre
+  // la página actual. Si el dataset crece, conviene agregarlo al backend.
+  const [searchValue, setSearchValue] = useState("");
+
+  // ─── Periodo activo desde el monitor ─────────────────────────────────
+  // El endpoint /periodos/buscar devuelve todos los periodos, pero el
+  // "periodo activo" real (el que se está facturando ahora) lo expone el
+  // monitor en /monitor-lecturas/filtros/periodos con formato
+  // { value: "092025", text: "Septiembre 2025", ... }. Usamos esa fuente
+  // para mostrar el periodo activo y poder cerrarlo.
+  const [monitorPeriodo, setMonitorPeriodo] = useState<MonitorPeriodos | null>(
+    null,
+  );
+  const [monitorLoading, setMonitorLoading] = useState(false);
+  const [monitorError, setMonitorError] = useState<string | null>(null);
 
   const pageBreadcrumbs = [
-    { label: 'Operaciones' },
-    { label: 'Período Facturación' },
+    { label: "Operaciones" },
+    { label: "Período Facturación" },
   ];
 
-  // ─── Fetch server-side (filter por mes/anio, sin paginación) ────────
-  const fetchPeriodos = useCallback(async () => {
-    setIsFetching(true);
-    setTableError(null);
-    const result = await operacionesService.getPeriodoFacturacionData(
-      mesFilter || undefined,
-      anioFilter || undefined,
-    );
-    setIsFetching(false);
+  // ─── Fetch server-side: limit + offset + filtros mes/anio ──────────
+  const fetchPeriodosPage = useCallback(
+    async ({
+      pageIndex,
+      pageSize,
+    }: {
+      pageIndex: number;
+      pageSize: number;
+    }) => {
+      const requestId = ++requestIdRef.current;
+      setTableLoading(true);
+      setTableError(null);
+      const result =
+        await operacionesService.getPeriodoFacturacionByLimitAndOffset(
+          mesFilter || undefined,
+          anioFilter || undefined,
+          pageSize,
+          pageIndex * pageSize,
+        );
 
-    if (result.error) {
-      setTableError(result.error);
-      setPeriodosData([]);
-      return;
-    }
-    const raw = Array.isArray(result.data) ? result.data : [];
-    // Orden ASC siempre — el backend no lo garantiza y la paginación
-    // client-side necesita datos estables para el sort.
-    setPeriodosData(sortPeriodosAsc(raw));
+      // Descartar respuesta si el usuario ya disparó otra request
+      if (requestId !== requestIdRef.current) return;
+
+      if (result.error || !result.data) {
+        setTableData([]);
+        setHasMore(false);
+        setTableError(result.error ?? "Error desconocido");
+      } else {
+        setTableData(result.data);
+        setHasMore(result.data.length >= pageSize);
+      }
+      setTableLoading(false);
+    },
+    [mesFilter, anioFilter],
+  );
+
+  // Carga inicial + refetch cuando cambian filtros (resetea a página 0)
+  useEffect(() => {
+    setTablePagination((prev) => ({ ...prev, pageIndex: 0 }));
+    fetchPeriodosPage({
+      pageIndex: 0,
+      pageSize: tablePagination.pageSize,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mesFilter, anioFilter]);
 
+  // Refetch cuando cambia pageSize (no pageIndex — ese lo cubre el handler)
   useEffect(() => {
-    fetchPeriodos();
-  }, [fetchPeriodos]);
+    fetchPeriodosPage({
+      pageIndex: tablePagination.pageIndex,
+      pageSize: tablePagination.pageSize,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tablePagination.pageSize]);
 
-  // Encontrar período abierto dentro de la data cargada
-  const periodoAbierto = useMemo(() => {
-    return Array.isArray(periodosData)
-      ? periodosData.find(p => p.estado === 'Abierto')
-      : undefined;
-  }, [periodosData]);
+  const handleTablePaginationChange = useCallback(
+    (next: PaginationState) => {
+      setTablePagination(next);
+      fetchPeriodosPage({
+        pageIndex: next.pageIndex,
+        pageSize: next.pageSize,
+      });
+    },
+    [fetchPeriodosPage],
+  );
 
-  const hasActiveFilters = mesFilter !== '' || anioFilter !== '';
+  const handleTableSearchChange = useCallback(
+    ({ value }: { field: string; value: string }) => {
+      setSearchValue(value);
+    },
+    [],
+  );
+
+  // ─── Filtrado client-side sobre la página actual ───────────────────
+  const visiblePeriodos = useMemo(() => {
+    const q = searchValue.trim().toLowerCase();
+    if (!q) return tableData;
+    return tableData.filter(
+      (p) =>
+        p.codigo.toLowerCase().includes(q) ||
+        p.descripcion.toLowerCase().includes(q),
+    );
+  }, [tableData, searchValue]);
+
+  const hasActiveFilters = mesFilter !== "" || anioFilter !== "";
 
   const clearFilters = useCallback(() => {
-    setMesFilter('');
-    setAnioFilter('');
+    setMesFilter("");
+    setAnioFilter("");
   }, []);
+
+  // Refetch helper que también respeta el filtro actual (usado por
+  // CerrarPeriodo y DialogNuevoPeriodo tras crear/cerrar)
+  const refetchPeriodos = useCallback(() => {
+    fetchPeriodosPage({
+      pageIndex: tablePagination.pageIndex,
+      pageSize: tablePagination.pageSize,
+    });
+  }, [fetchPeriodosPage, tablePagination.pageIndex, tablePagination.pageSize]);
+
+  // ─── Fetch del periodo activo desde el monitor ─────────────────────
+  const fetchMonitorPeriodo = useCallback(async () => {
+    setMonitorLoading(true);
+    setMonitorError(null);
+    const result = await monitorService.getPeriodos();
+    setMonitorLoading(false);
+
+    if (result.error) {
+      // No es crítico — sólo mostramos "no hay periodos activos"
+      setMonitorPeriodo(null);
+      setMonitorError(result.error);
+      return;
+    }
+    // El monitor expone un único periodo activo (o ninguno). Tomamos el
+    // primero si existe.
+    const first = Array.isArray(result.data) ? result.data[0] : null;
+    setMonitorPeriodo(first ?? null);
+  }, []);
+
+  useEffect(() => {
+    fetchMonitorPeriodo();
+  }, [fetchMonitorPeriodo]);
+
+  const refetchAll = useCallback(() => {
+    refetchPeriodos();
+    fetchMonitorPeriodo();
+  }, [refetchPeriodos, fetchMonitorPeriodo]);
 
   // Early return para error state
   if (error) {
@@ -165,7 +272,16 @@ export default function AbrirPeriodoFacturacion({
         />
 
         {/* Status Card */}
-        {periodoAbierto ? (
+        {monitorLoading && !monitorPeriodo ? (
+          <Card className="border border-border shadow-sm">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3 text-muted-foreground">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <p className="text-sm">Buscando período activo…</p>
+              </div>
+            </CardContent>
+          </Card>
+        ) : monitorPeriodo ? (
           <Card className="border border-border shadow-sm">
             <CardHeader className="">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
@@ -177,8 +293,8 @@ export default function AbrirPeriodoFacturacion({
                     <CardTitle className="text-base">Período Activo</CardTitle>
                     <CardDescription className="mt-1 text-xs">
                       <span className="font-medium text-primary">
-                        {periodoAbierto.descripcion}
-                      </span>{' '}
+                        {monitorPeriodo.text}
+                      </span>{" "}
                       está abierto
                     </CardDescription>
                   </div>
@@ -189,24 +305,22 @@ export default function AbrirPeriodoFacturacion({
                       <div className="inline-block w-full sm:w-auto">
                         <Button
                           onClick={() => setIsOpenDialog(true)}
-                          disabled={!!periodoAbierto}
                           variant="outline"
                           size="sm"
                           className="gap-2 w-full sm:w-auto"
+                          disabled={!!monitorPeriodo}
                         >
                           <PlusCircleIcon className="h-4 w-4" />
                           <span className="text-sm">Nuevo Período</span>
                         </Button>
                       </div>
                     </TooltipTrigger>
-                    {periodoAbierto && (
-                      <TooltipContent>
-                        <p>
-                          Debe cerrar el período vigente para poder crear uno
-                          nuevo.
-                        </p>
-                      </TooltipContent>
-                    )}
+                    <TooltipContent>
+                      <p>
+                        Debe cerrar el período vigente para poder crear uno
+                        nuevo.
+                      </p>
+                    </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
               </div>
@@ -227,8 +341,8 @@ export default function AbrirPeriodoFacturacion({
                   </p>
                 </div>
                 <CerrarPeriodo
-                  periodoId={periodoAbierto.codigo}
-                  onSuccess={fetchPeriodos}
+                  periodoId={monitorPeriodo.value}
+                  onSuccess={refetchAll}
                   className="w-full lg:w-auto min-w-32"
                 />
               </div>
@@ -244,12 +358,12 @@ export default function AbrirPeriodoFacturacion({
                   </div>
                   <div>
                     <AlertTitle className="text-base text-foreground font-medium">
-                      Sistema Disponible
+                      No hay períodos activos
                     </AlertTitle>
                     <AlertDescription className="text-muted-foreground mt-1 text-xs">
-                      No hay períodos abiertos. Puede crear un nuevo período de
-                      facturación. Todas las operaciones se registrarán en el
-                      nuevo período.
+                      {monitorError
+                        ? "No se pudo consultar el período activo del monitor."
+                        : "El sistema está disponible. Puede crear un nuevo período de facturación y todas las operaciones se registrarán en él."}
                     </AlertDescription>
                   </div>
                 </div>
@@ -290,7 +404,7 @@ export default function AbrirPeriodoFacturacion({
                 <Filter className="h-4 w-4" />
                 <span className="text-sm font-medium">Filtros</span>
               </div>
-              <div className="flex flex-1 flex-col gap-1 sm:max-w-[180px]">
+              <div className="flex flex-1 flex-col gap-1 sm:max-w-45">
                 <Label htmlFor="mes-filter" className="text-xs">
                   Mes
                 </Label>
@@ -299,7 +413,7 @@ export default function AbrirPeriodoFacturacion({
                     <SelectValue placeholder="Todos" />
                   </SelectTrigger>
                   <SelectContent>
-                    {MESES.map(m => (
+                    {MESES.map((m) => (
                       <SelectItem key={m.value} value={m.value}>
                         {m.label}
                       </SelectItem>
@@ -307,7 +421,7 @@ export default function AbrirPeriodoFacturacion({
                   </SelectContent>
                 </Select>
               </div>
-              <div className="flex flex-1 flex-col gap-1 sm:max-w-[180px]">
+              <div className="flex flex-1 flex-col gap-1 sm:max-w-45">
                 <Label htmlFor="anio-filter" className="text-xs">
                   Año
                 </Label>
@@ -316,7 +430,7 @@ export default function AbrirPeriodoFacturacion({
                     <SelectValue placeholder="Todos" />
                   </SelectTrigger>
                   <SelectContent>
-                    {years.map(y => (
+                    {years.map((y) => (
                       <SelectItem key={y.idAnio} value={String(y.anio)}>
                         {y.anio}
                       </SelectItem>
@@ -346,12 +460,12 @@ export default function AbrirPeriodoFacturacion({
                   variant="outline"
                   size="sm"
                   className="mt-3"
-                  onClick={fetchPeriodos}
+                  onClick={refetchPeriodos}
                 >
                   Reintentar
                 </Button>
               </div>
-            ) : periodosData.length === 0 && !isFetching ? (
+            ) : visiblePeriodos.length === 0 && !tableLoading ? (
               <div className="flex flex-col items-center justify-center py-8">
                 <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-muted mb-3">
                   <History className="h-6 w-6 text-muted-foreground" />
@@ -360,21 +474,33 @@ export default function AbrirPeriodoFacturacion({
                   No se encontraron períodos
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  {hasActiveFilters
-                    ? 'No hay períodos que coincidan con los filtros aplicados'
-                    : 'No hay períodos de facturación registrados'}
+                  {searchValue.trim()
+                    ? `Sin resultados para "${searchValue.trim()}"`
+                    : hasActiveFilters
+                      ? "No hay períodos que coincidan con los filtros aplicados"
+                      : "No hay períodos de facturación registrados"}
                 </p>
               </div>
             ) : (
               <div className="rounded-xl border border-border overflow-hidden">
                 <DataTable
                   columns={columns}
-                  data={periodosData}
-                  // Orden inicial ASC — coincide con el orden del array.
-                  // El sortFn de las columnas de fecha mantiene el formato DD-MM-YYYY.
-                  initialSorting={[{ id: 'fechaInicio', desc: false }]}
+                  data={visiblePeriodos}
                   searchPlaceholder="Buscar por descripción o ID..."
-                  defaultPageSize={10}
+                  manualPagination
+                  manualFiltering
+                  pageCount={-1}
+                  onPaginationChange={handleTablePaginationChange}
+                  onSearchChange={handleTableSearchChange}
+                  isLoading={tableLoading}
+                  hasMore={hasMore}
+                  error={tableError}
+                  onRetry={refetchPeriodos}
+                  emptyMessage={
+                    searchValue.trim()
+                      ? `Sin resultados para "${searchValue.trim()}"`
+                      : "No hay períodos registrados"
+                  }
                 />
               </div>
             )}
@@ -387,7 +513,7 @@ export default function AbrirPeriodoFacturacion({
           onOpenChange={setIsOpenDialog}
           onPeriodoCreated={() => {
             setIsOpenDialog(false);
-            fetchPeriodos();
+            refetchAll();
           }}
           years={years}
         />

@@ -1,22 +1,22 @@
-import { ChevronDown, Download, FileArchive, Loader2 } from 'lucide-react';
-import { useState } from 'react';
-import { toast } from 'sonner';
+import { ChevronDown, Download, FileArchive, Loader2 } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
 
-import { ModernHeader } from '~/components/shared/modern-header';
-import { Button } from '~/components/ui/button';
+import { ModernHeader } from "~/components/shared/modern-header";
+import { Button } from "~/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
-  CardTitle
-} from '~/components/ui/card';
+  CardTitle,
+} from "~/components/ui/card";
 import {
   Collapsible,
   CollapsibleContent,
-  CollapsibleTrigger
-} from '~/components/ui/collapsible';
-import { Label } from '~/components/ui/label';
-import api from '~/lib/api';
+  CollapsibleTrigger,
+} from "~/components/ui/collapsible";
+import { Label } from "~/components/ui/label";
+import api from "~/lib/api";
 
 export default function CrearArchivosSapComponent() {
   const [isConfigOpen, setIsConfigOpen] = useState(true);
@@ -25,26 +25,26 @@ export default function CrearArchivosSapComponent() {
 
   // Helper function to extract filename from Content-Disposition header
   const extractFilenameFromHeaders = (headers: any): string => {
-    const contentDisposition = headers['content-disposition'];
+    const contentDisposition = headers["content-disposition"];
     if (contentDisposition) {
       const filenameMatch = contentDisposition.match(
-        /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/
+        /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/,
       );
       if (filenameMatch && filenameMatch[1]) {
-        return filenameMatch[1].replace(/['"]/g, '');
+        return filenameMatch[1].replace(/['"]/g, "");
       }
     }
-    return ''; // empty string to use custom fallback
+    return ""; // empty string to use custom fallback
   };
 
   // Helper function to generate filename with proper format
-  const generateFallbackFilename = (type: 'FAC' | 'DET'): string => {
+  const generateFallbackFilename = (type: "FAC" | "DET"): string => {
     const now = new Date();
-    const day = now.getDate().toString().padStart(2, '0');
-    const month = (now.getMonth() + 1).toString().padStart(2, '0');
+    const day = now.getDate().toString().padStart(2, "0");
+    const month = (now.getMonth() + 1).toString().padStart(2, "0");
     const year = now.getFullYear();
-    const hours = now.getHours().toString().padStart(2, '0');
-    const minutes = now.getMinutes().toString().padStart(2, '0');
+    const hours = now.getHours().toString().padStart(2, "0");
+    const minutes = now.getMinutes().toString().padStart(2, "0");
 
     return `${type}-${day}${month}${year}-${hours}${minutes}.csv`;
   };
@@ -52,28 +52,28 @@ export default function CrearArchivosSapComponent() {
   const handleDescargarEncabezado = async () => {
     setIsDownloadingEncabezado(true);
     try {
-      toast.info('Generando archivo de encabezado...');
+      toast.info("Generando archivo de encabezado...");
 
-      const response = await api.get('/exportar-encabezado', {
-        responseType: 'blob'
+      const response = await api.get("/exportar-encabezado", {
+        responseType: "blob",
       });
 
       // Extract filename from headers or use fallback with proper format
       const filename =
         extractFilenameFromHeaders(response.headers) ||
-        generateFallbackFilename('FAC');
+        generateFallbackFilename("FAC");
 
       // Create blob with explicit CSV type and charset
       const blob = new Blob([response.data as BlobPart], {
-        type: 'text/csv;charset=utf-8;'
+        type: "text/csv;charset=utf-8;",
       });
 
       // Create download link
       const url = globalThis.URL.createObjectURL(blob);
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = url;
       link.download = filename;
-      link.style.display = 'none';
+      link.style.display = "none";
 
       // Trigger download
       document.body.appendChild(link);
@@ -90,7 +90,7 @@ export default function CrearArchivosSapComponent() {
       const errorMessage =
         error.response?.data?.message ||
         error.message ||
-        'Error al descargar el archivo';
+        "Error al descargar el archivo";
       toast.error(`Error: ${errorMessage}`);
     } finally {
       setIsDownloadingEncabezado(false);
@@ -100,28 +100,28 @@ export default function CrearArchivosSapComponent() {
   const handleDescargarDetalle = async () => {
     setIsDownloadingDetalle(true);
     try {
-      toast.info('Generando archivo de detalle...');
+      toast.info("Generando archivo de detalle...");
 
-      const response = await api.get('/exportar-detalle', {
-        responseType: 'blob'
+      const response = await api.get("/exportar-detalle", {
+        responseType: "blob",
       });
 
       // Extract filename from headers or use fallback with proper format
       const filename =
         extractFilenameFromHeaders(response.headers) ||
-        generateFallbackFilename('DET');
+        generateFallbackFilename("DET");
 
       // Create blob with explicit CSV type and charset
       const blob = new Blob([response.data as BlobPart], {
-        type: 'text/csv;charset=utf-8;'
+        type: "text/csv;charset=utf-8;",
       });
 
       // Create download link
       const url = globalThis.URL.createObjectURL(blob);
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = url;
       link.download = filename;
-      link.style.display = 'none';
+      link.style.display = "none";
 
       // Trigger download
       document.body.appendChild(link);
@@ -138,7 +138,7 @@ export default function CrearArchivosSapComponent() {
       const errorMessage =
         error.response?.data?.message ||
         error.message ||
-        'Error al descargar el archivo';
+        "Error al descargar el archivo";
       toast.error(`Error: ${errorMessage}`);
     } finally {
       setIsDownloadingDetalle(false);
@@ -176,7 +176,7 @@ export default function CrearArchivosSapComponent() {
                     </div>
                     <ChevronDown
                       className={`h-5 w-5 transition-transform duration-200 ${
-                        isConfigOpen ? 'rotate-180' : ''
+                        isConfigOpen ? "rotate-180" : ""
                       }`}
                     />
                   </div>

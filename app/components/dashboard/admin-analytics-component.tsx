@@ -125,9 +125,9 @@ function procesarMedidores(data: Array<{
 }
 
 function procesarAcometidasPorSector(
-  response: { data: Array<{ sector?: string }> }
+  data: Array<{ sector?: string }>
 ): { [key: string]: number } {
-  return (response.data ?? []).reduce(
+  return data.reduce(
     (acc, curr) => {
       const sector = curr.sector ?? 'Sin sector';
       acc[sector] = (acc[sector] ?? 0) + 1;
@@ -138,29 +138,26 @@ function procesarAcometidasPorSector(
 }
 
 function renderDonutLabel(total: number) {
-  return function LabelContent({
-    viewBox
-  }: {
-    viewBox?: { cx: number; cy: number };
-  }) {
-    if (!viewBox) return null;
+  return function LabelContent({ viewBox }: { viewBox?: unknown }) {
+    const vb = viewBox as { cx?: number; cy?: number } | undefined;
+    if (!vb || vb.cx === undefined || vb.cy === undefined) return null;
     return (
       <text
-        x={viewBox.cx}
-        y={viewBox.cy}
+        x={vb.cx}
+        y={vb.cy}
         textAnchor="middle"
         dominantBaseline="middle"
       >
         <tspan
-          x={viewBox.cx}
-          y={viewBox.cy}
+          x={vb.cx}
+          y={vb.cy}
           className="fill-foreground text-xl sm:text-2xl font-bold font-mono"
         >
           {total}
         </tspan>
         <tspan
-          x={viewBox.cx}
-          y={(viewBox.cy ?? 0) + 18}
+          x={vb.cx}
+          y={(vb.cy ?? 0) + 18}
           className="fill-muted-foreground text-[0.6rem] sm:text-xs"
         >
           Total
@@ -223,7 +220,9 @@ export const AdminAnalyticsComponent = React.memo(function AdminAnalyticsCompone
               estado?: string;
             }>
           );
-        const acometidasPorSector = procesarAcometidasPorSector(acometidasRes);
+        const acometidasPorSector = procesarAcometidasPorSector(
+          (acometidasRes.data ?? []) as Array<{ sector?: string }>
+        );
 
         setAnalyticsData({
           contratosPorTipo,

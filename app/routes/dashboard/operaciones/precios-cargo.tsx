@@ -64,7 +64,7 @@ export default function PreciosCargo({ loaderData }: Route.ComponentProps) {
   return (
     <div className="min-h-screen">
       <BreadcrumbSetter items={pageBreadcrumbs} />
-      <Suspense fallback={<DataTableSkeleton columns={8} rows={12} />}>
+      <Suspense fallback={<DataTableSkeleton columns={7} rows={12} />}>
         <PreciosCargoComponent {...loaderData} />
       </Suspense>
     </div>
@@ -72,5 +72,5 @@ export default function PreciosCargo({ loaderData }: Route.ComponentProps) {
 }
 
 export function hydrateFallback() {
-  return <DataTableSkeleton columns={8} rows={12} />;
+  return <DataTableSkeleton columns={7} rows={12} />;
 }
