@@ -122,6 +122,7 @@ export default function MarcasComponent({
           onSuccess={handleMarcaSuccess}
           marca={selectedMarca}
           mode={modalMode}
+          existingCodes={marcas.map(m => m.id)}
         />
       </div>
     </div>

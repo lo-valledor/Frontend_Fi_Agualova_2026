@@ -3,10 +3,8 @@ import {
   AlertCircle,
   AlertTriangle,
   BarChart3,
-  Calendar,
   ChevronDown,
   ChevronUp,
-  Eye,
   FileUp,
   Grid3X3,
   History,
@@ -22,7 +20,6 @@ import 'react-loading-skeleton/dist/skeleton.css';
 import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
-import DetallesMedidor from '~/components/monitor/monitor-lecturas/detalles-medidor';
 import { MeterCard } from '~/components/monitor/monitor-lecturas/meter-card';
 import { MeterRowDetailed } from '~/components/monitor/monitor-lecturas/meter-row-detailed';
 import { StatusIndicator } from '~/components/monitor/monitor-lecturas/status-indicator';
@@ -51,7 +48,6 @@ import {
 } from '~/components/ui/dropdown-menu';
 import { EmptyState } from '~/components/ui/empty-state';
 import { ScrollArea } from '~/components/ui/scroll-area';
-import { Separator } from '~/components/ui/separator';
 import {
   Tooltip,
   TooltipContent,
@@ -74,7 +70,6 @@ import {
 } from '~/utils/monitor/monitor-calculations';
 import {
   getMeterStatus,
-  isImportedReading
 } from '~/utils/monitor/monitor-status';
 
 // Type para el estado de resultados

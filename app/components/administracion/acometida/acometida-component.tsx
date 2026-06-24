@@ -17,7 +17,6 @@ import {
   CardTitle,
 } from "~/components/ui/card";
 import { useExportAcometidas } from "~/hooks/administracion/use-export-acometidas";
-import api from "~/lib/api";
 import { administracionService } from "~/services/administracionService";
 import type {
   AcometidaFormValues,
@@ -166,6 +165,13 @@ export default function AcometidaComponent({
     setModalMode("add");
     setEditingAcometidaId(null);
     revalidator.revalidate();
+    // Refetchear la página actual de la tabla server-side para reflejar
+    // el cambio inmediatamente (crear/actualizar).
+    fetchAcometidasPage({
+      pageIndex: tablePagination.pageIndex,
+      pageSize: tablePagination.pageSize,
+      value: searchValue,
+    });
     toast.success(
       modalMode === "add"
         ? "Acometida creada exitosamente"
@@ -178,12 +184,13 @@ export default function AcometidaComponent({
   ) => {
     try {
       if (modalMode === "add") {
-        await api.post("/acometidas/crear", data as AcometidaProps);
+        await administracionService.createAcometida(data as AcometidaProps);
       } else {
-        await api.put("/acometidas/editar", {
-          idAcometida: selectedAcometida?.idAcometida,
-          ...data,
-        });
+        // En edición, el form ya envía el payload con idAcometida incluido
+        // y los ids como string (AcometidaFormValues). No sobrescribimos campos.
+        await administracionService.updateAcometida(
+          data as AcometidaFormValues,
+        );
       }
       handleSuccess();
     } catch {

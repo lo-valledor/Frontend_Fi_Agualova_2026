@@ -1,6 +1,6 @@
 import { LayoutList, Plus } from 'lucide-react';
 import { motion } from 'motion/react';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useRevalidator } from 'react-router';
 import { toast } from 'sonner';
 
@@ -14,6 +14,7 @@ import {
   CardHeader,
   CardTitle
 } from '~/components/ui/card';
+import { mantencionService } from '~/services/mantencionService';
 import type { Tarifa } from '~/types/mantencion';
 
 import { createColumns } from './columns';
@@ -29,52 +30,56 @@ export default function TarifasComponent({
   tarifas
 }: Readonly<TarifasComponentProps>) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedTarifa, setSelectedTarifa] = useState<Tarifa | undefined>(
-    undefined
-  );
+  const [selectedTarifa, setSelectedTarifa] = useState<Tarifa | null>(null);
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
 
   const revalidator = useRevalidator();
 
-  const handleAdd = () => {
-    setSelectedTarifa(undefined);
+  const handleAdd = useCallback(() => {
+    setSelectedTarifa(null);
     setModalMode('add');
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const handleEdit = (tarifa: Tarifa) => {
+  const handleEdit = useCallback((tarifa: Tarifa) => {
     setSelectedTarifa(tarifa);
     setModalMode('edit');
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const handleDelete = async (tarifa: Tarifa) => {
-    if (
-      globalThis.confirm(
-        `¿Está seguro de que desea eliminar la tarifa "${tarifa.nombre}"?`
-      )
-    ) {
-      try {
-        const { default: api } = await import('~/lib/api');
-        await api.delete(`/eliminarTarifa/${tarifa.id}`);
+  const handleDelete = useCallback(
+    async (tarifa: Tarifa) => {
+      if (
+        globalThis.confirm(
+          `¿Está seguro de que desea eliminar la tarifa "${tarifa.nombre}"?`
+        )
+      ) {
+        try {
+          const result = await mantencionService.deleteTarifa(tarifa.id);
+          if (result.error) {
+            throw new Error(result.error);
+          }
 
-        toast.success('Tarifa eliminada exitosamente');
-        revalidator.revalidate();
-      } catch (error) {
-        console.error('Error al eliminar la tarifa:', error);
-        toast.error('Error al eliminar la tarifa');
+          toast.success('Tarifa eliminada exitosamente');
+          revalidator.revalidate();
+        } catch (error) {
+          console.error('Error al eliminar la tarifa:', error);
+          toast.error('Error al eliminar la tarifa');
+        }
       }
-    }
-  };
+    },
+    [revalidator]
+  );
 
-  const handleSuccess = () => {
+  const handleSuccess = useCallback(() => {
+    revalidator.revalidate();
+    setIsModalOpen(false);
     toast.success(
       modalMode === 'add'
         ? 'Tarifa creada exitosamente'
         : 'Tarifa actualizada exitosamente'
     );
-    revalidator.revalidate();
-  };
+  }, [modalMode, revalidator]);
 
   const columns = useMemo(
     () =>

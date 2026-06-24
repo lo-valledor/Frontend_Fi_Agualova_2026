@@ -141,7 +141,7 @@ const ConsumptionDetailsTable = memo(function ConsumptionDetailsTable({
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-[120px]">
+                  <TableHead className="w-30">
                     <SortButton field="periodo">Periodo</SortButton>
                   </TableHead>
                   <TableHead>

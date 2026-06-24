@@ -1,10 +1,13 @@
 import api from "~/lib/api";
 import type {
   AcometidaDetail,
+  AcometidaFormValues,
+  AcometidaProps,
   AcometidaRow,
   BuscarAcometidas,
   BuscarContratosLibres,
   CargoFacturableConceptos,
+  CargoFacturableFormValues,
   CargoFacturableProps,
   CargoFacturableRow,
   CargoFacturableTarifas,
@@ -135,6 +138,40 @@ class AdministracionService {
       const response = await api.get(`/acometidas/${id}`);
       return {
         data: response.data as AcometidaDetail,
+        error: null,
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : "Error desconocido",
+      };
+    }
+  }
+
+  async createAcometida(
+    data: AcometidaProps
+  ): Promise<AdministracionServiceResponse<AcometidaProps>> {
+    try {
+      const response = await api.post("/acometidas/crear", data);
+      return {
+        data: response.data as AcometidaProps,
+        error: null,
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : "Error desconocido",
+      };
+    }
+  }
+
+  async updateAcometida(
+    data: AcometidaFormValues
+  ): Promise<AdministracionServiceResponse<AcometidaFormValues>> {
+    try {
+      const response = await api.put("/acometidas/editar", data);
+      return {
+        data: response.data as AcometidaFormValues,
         error: null,
       };
     } catch (error) {
@@ -651,6 +688,23 @@ class AdministracionService {
     }
   }
 
+  async getCondicionesContratoById(
+    id: number,
+  ): Promise<AdministracionServiceResponse<CondicionContrato>> {
+    try {
+      const response = await api.get(`/condiciones-contrato/${id}`);
+      return {
+        data: response.data as CondicionContrato,
+        error: null,
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : "Error desconocido",
+      };
+    }
+  }
+
   async getCargoFacturableData(): Promise<
     AdministracionServiceResponse<{
       cargos: CargoFacturableRow[];
@@ -708,12 +762,12 @@ class AdministracionService {
   }
 
   async createCondicionContrato(
-    data: CondicionContratoFormValues | Record<string, unknown>,
-  ): Promise<AdministracionServiceResponse<unknown>> {
+    data: CondicionContratoFormValues
+  ): Promise<AdministracionServiceResponse<CondicionContratoFormValues>> {
     try {
       const response = await api.post("/condiciones-contrato/crear", data);
       return {
-        data: response.data,
+        data: response.data as CondicionContratoFormValues,
         error: null,
       };
     } catch (error) {
@@ -725,12 +779,12 @@ class AdministracionService {
   }
 
   async updateCondicionContrato(
-    data: CondicionContratoFormValues | Record<string, unknown>,
-  ): Promise<AdministracionServiceResponse<unknown>> {
+    data: CondicionContratoFormValues
+  ): Promise<AdministracionServiceResponse<CondicionContratoFormValues>> {
     try {
       const response = await api.put("/condiciones-contrato/editar", data);
       return {
-        data: response.data,
+        data: response.data as CondicionContratoFormValues,
         error: null,
       };
     } catch (error) {
@@ -759,12 +813,12 @@ class AdministracionService {
   }
 
   async createCargoFacturable(
-    data: Record<string, unknown>,
-  ): Promise<AdministracionServiceResponse<unknown>> {
+    data: CargoFacturableProps
+  ): Promise<AdministracionServiceResponse<CargoFacturableProps>> {
     try {
       const response = await api.post("/cargos-facturables/crear", data);
       return {
-        data: response.data,
+        data: response.data as CargoFacturableProps,
         error: null,
       };
     } catch (error) {
@@ -776,12 +830,12 @@ class AdministracionService {
   }
 
   async updateCargoFacturable(
-    data: Record<string, unknown>,
-  ): Promise<AdministracionServiceResponse<unknown>> {
+    data: CargoFacturableFormValues
+  ): Promise<AdministracionServiceResponse<CargoFacturableFormValues>> {
     try {
       const response = await api.put("/cargos-facturables/editar", data);
       return {
-        data: response.data,
+        data: response.data as CargoFacturableFormValues,
         error: null,
       };
     } catch (error) {
@@ -1068,6 +1122,78 @@ class AdministracionService {
           error.response?.data?.message ||
           error.message ||
           "Error al crear el contratante",
+      };
+    }
+  }
+
+  async modificarContratante(
+    contratanteData: any,
+  ): Promise<AdministracionServiceResponse<any>> {
+    try {
+      const response = await api.put(
+        "/contratante/modificar",
+        contratanteData,
+      );
+      return {
+        data: response.data,
+        error: null,
+      };
+    } catch (error: any) {
+      return {
+        data: null,
+        error:
+          error.response?.data?.message ||
+          error.message ||
+          "Error al modificar el contratante",
+      };
+    }
+  }
+
+  async getMedidorSubempalmes(): Promise<AdministracionServiceResponse<any[]>> {
+    try {
+      const response = await api.get("/MedidorSubempalmes");
+      return {
+        data: response.data as any[],
+        error: null,
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : "Error desconocido",
+      };
+    }
+  }
+
+  async modificarSubempalme(
+    payload: any,
+  ): Promise<AdministracionServiceResponse<any>> {
+    try {
+      const response = await api.put("/modificar-subempalme", payload);
+      return {
+        data: response.data,
+        error: null,
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : "Error desconocido",
+      };
+    }
+  }
+
+  async getCargosTiposContrato(): Promise<
+    AdministracionServiceResponse<CargoTipoContrato[]>
+  > {
+    try {
+      const response = await api.get("/cargos-tipos-contrato/buscar");
+      return {
+        data: this.processApiResponse<CargoTipoContrato>(response),
+        error: null,
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : "Error desconocido",
       };
     }
   }

@@ -18,7 +18,7 @@ import {
   TableHeader,
   TableRow
 } from '~/components/ui/table';
-import api from '~/lib/api';
+import { permisosService } from '~/services/roles-permisos/permisos.service';
 import type { Usuarios } from '~/types/administracion';
 
 type PermisoUsuario = {
@@ -56,16 +56,19 @@ export function UserPermissionsModal({
 
     setLoading(true);
     try {
-      const response = await api.get<PermisoUsuario[]>(
-        `/ObtenerPermisoUsuario/${user.id}`
-      );
-      setPermisos(response.data as PermisoUsuario[]);
-    } catch (error: any) {
-      toast.error(
-        error.response?.data?.message ||
-          error.message ||
-          'Error al obtener los permisos del usuario'
-      );
+      const result = await permisosService.getUsuarioPermisos(user.id);
+      if (result.error) {
+        throw new Error(result.error);
+      }
+      if (result.data) {
+        setPermisos(result.data as unknown as PermisoUsuario[]);
+      }
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : 'Error al obtener los permisos del usuario';
+      toast.error(message);
     } finally {
       setLoading(false);
     }

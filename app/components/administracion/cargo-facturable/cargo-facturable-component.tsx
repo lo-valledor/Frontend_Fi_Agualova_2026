@@ -1,6 +1,6 @@
 import { LayoutList, Plus } from 'lucide-react';
 import { motion } from 'motion/react';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useRevalidator } from 'react-router';
 import { toast } from 'sonner';
 
@@ -16,10 +16,8 @@ import {
   CardTitle
 } from '~/components/ui/card';
 import { useCargoFilters } from '~/hooks/administracion/use-cargo-filters';
-import api from '~/lib/api';
 import type {
   CargoFacturableConceptos,
-  CargoFacturableProps,
   CargoFacturableRow,
   CargoFacturableTarifas,
   CargoFacturableTiposMedidor
@@ -44,9 +42,9 @@ export default function CargoFacturableComponent({
   tiposMedidor
 }: Readonly<CargoFacturableComponentProps>) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedCargo, setSelectedCargo] = useState<
-    CargoFacturableRow | undefined
-  >(undefined);
+  const [selectedCargo, setSelectedCargo] = useState<CargoFacturableRow | null>(
+    null
+  );
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
   const [editingCargoId, setEditingCargoId] = useState<number | null>(null);
   const [filters, setFilters] = useState<CargoFilters>({
@@ -62,35 +60,22 @@ export default function CargoFacturableComponent({
 
   const { filteredCargos, filterStats } = useCargoFilters(cargos, filters);
 
-  const handleAddCargo = () => {
-    setSelectedCargo(undefined);
+  const handleAddCargo = useCallback(() => {
+    setSelectedCargo(null);
     setModalMode('add');
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const handleEditCargo = (cargo: CargoFacturableRow) => {
+  const handleEditCargo = useCallback((cargo: CargoFacturableRow) => {
     setEditingCargoId(cargo.id);
     setSelectedCargo(cargo);
     setModalMode('edit');
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const handleSubmit = async (data: CargoFacturableProps) => {
-    try {
-      if (modalMode === 'add') {
-        await api.post('cargos-facturables/crear', data);
-      } else {
-        await api.put('cargos-facturables/editar', data);
-      }
-      handleSuccess();
-    } catch (error) {
-      toast.error('Error al guardar el cargo facturable.', error as any);
-    }
-  };
-
-  const handleSuccess = () => {
+  const handleSuccess = useCallback(() => {
     setIsModalOpen(false);
-    setSelectedCargo(undefined);
+    setSelectedCargo(null);
     setModalMode('add');
     setEditingCargoId(null);
     revalidator.revalidate();
@@ -99,13 +84,13 @@ export default function CargoFacturableComponent({
         ? 'Cargo facturable creado exitosamente'
         : 'Cargo facturable actualizado exitosamente'
     );
-  };
+  }, [modalMode, revalidator]);
 
-  const handleFiltersChange = (newFilters: CargoFilters) => {
+  const handleFiltersChange = useCallback((newFilters: CargoFilters) => {
     setFilters(newFilters);
-  };
+  }, []);
 
-  const handleClearFilters = () => {
+  const handleClearFilters = useCallback(() => {
     setFilters({
       tipo: 'all',
       fijoVariable: 'all',
@@ -114,7 +99,7 @@ export default function CargoFacturableComponent({
       tarifa: 'all',
       tipoMedidor: 'all'
     });
-  };
+  }, []);
 
   const cargoColumns = [
     { key: 'id', header: 'ID' },
@@ -220,7 +205,6 @@ export default function CargoFacturableComponent({
             setIsModalOpen(false);
             setEditingCargoId(null);
           }}
-          onSubmit={handleSubmit}
           onSuccess={handleSuccess}
           cargo={selectedCargo}
           mode={modalMode}

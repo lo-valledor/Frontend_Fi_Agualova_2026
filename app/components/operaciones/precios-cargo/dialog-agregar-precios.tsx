@@ -1,6 +1,5 @@
 import {
   AlertTriangle,
-  Loader2,
   PlusCircle,
   TrendingDown,
   TrendingUp
@@ -251,7 +250,7 @@ export default function DialogAgregarPrecios({
               variant="default"
               className="gap-1 sm:gap-2 w-full sm:w-auto text-xs sm:text-sm order-1 sm:order-2"
             >
-              <PlusCircle className="h-3 w-3 sm:h-4 sm:h-4" />
+              <PlusCircle className="h-3 w-3 sm:h-4" />
               <span className="hidden sm:inline">Agregar a la cola</span>
               <span className="sm:hidden">Agregar</span>
             </Button>

@@ -33,7 +33,6 @@ import {
   FormMessage
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
-import api from '~/lib/api';
 import { administracionService } from '~/services/administracionService';
 import type { NombreComuna, NombreGiro } from '~/types/administracion';
 import { formatRut, isValidRut, isValidRutFormat } from '~/utils/rut-utils';
@@ -170,7 +169,7 @@ export default function CrearClienteComponent() {
         rut: formatRut(data.rut)
       };
 
-      await api.post('/cliente/crear', formattedData);
+      await administracionService.createCliente(formattedData);
       toast.success('Cliente creado exitosamente');
       navigate('/dashboard/administracion/clientes');
     } catch (error) {

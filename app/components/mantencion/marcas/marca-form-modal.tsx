@@ -24,21 +24,34 @@ import {
   FormMessage
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
-import api from '~/lib/api';
-import type { Marca } from '~/types/mantencion';
+import { mantencionService } from '~/services/mantencionService';
+import type { Marca, MarcaFormValues } from '~/types/mantencion';
 
-const marcaFormSchema = z.object({
-  id: z
-    .number()
-    .min(1, { message: 'El código es requerido.' })
-    .max(20, { message: 'El código no puede exceder 20 caracteres.' }),
-  nombre: z
-    .string()
-    .min(1, { message: 'El nombre es requerido.' })
-    .max(100, { message: 'El nombre no puede exceder 100 caracteres.' })
-});
+const createMarcaSchema = (existingCodes: string[], currentCode?: string) =>
+  z.object({
+    id: z
+      .string()
+      .min(1, { message: 'El código es requerido.' })
+      .max(20, { message: 'El código no puede exceder 20 caracteres.' })
+      .regex(/^[A-Z0-9]+$/, {
+        message: 'Solo se permiten letras mayúsculas y números.'
+      })
+      .refine(
+        codigo => {
+          if (currentCode && codigo === currentCode) return true;
+          return !existingCodes.includes(codigo);
+        },
+        {
+          message: 'Este código ya está registrado en el sistema'
+        }
+      ),
+    nombre: z
+      .string()
+      .min(1, { message: 'El nombre es requerido.' })
+      .max(100, { message: 'El nombre no puede exceder 100 caracteres.' })
+  });
 
-type MarcaFormValues = z.infer<typeof marcaFormSchema>;
+type MarcaFormSchemaValues = z.infer<ReturnType<typeof createMarcaSchema>>;
 
 interface MarcaFormModalProps {
   isOpen: boolean;
@@ -46,6 +59,7 @@ interface MarcaFormModalProps {
   onSuccess: () => void;
   marca: Marca | null;
   mode: 'add' | 'edit';
+  existingCodes: string[];
 }
 
 export default function MarcaFormModal({
@@ -53,14 +67,16 @@ export default function MarcaFormModal({
   onClose,
   onSuccess,
   marca,
-  mode
+  mode,
+  existingCodes
 }: Readonly<MarcaFormModalProps>) {
   const [isLoading, setIsLoading] = useState(false);
 
-  const form = useForm<MarcaFormValues>({
-    resolver: zodResolver(marcaFormSchema),
+  const marcaSchema = createMarcaSchema(existingCodes, marca?.id);
+  const form = useForm<MarcaFormSchemaValues>({
+    resolver: zodResolver(marcaSchema),
     defaultValues: {
-      id: 0,
+      id: '',
       nombre: ''
     }
   });
@@ -74,20 +90,52 @@ export default function MarcaFormModal({
         });
       } else {
         form.reset({
-          id: 0,
+          id: '',
           nombre: ''
         });
       }
     }
   }, [isOpen, mode, marca, form]);
 
-  const handleSubmit = async (data: MarcaFormValues) => {
+  const handleGenerateSigla = () => {
+    const nombre = form.getValues('nombre').trim();
+    if (!nombre) {
+      toast.error('Ingrese un nombre para generar la sigla.');
+      return;
+    }
+    const palabras = nombre
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .split(/\s+/)
+      .filter(Boolean);
+    const sigla =
+      palabras.length === 1
+        ? palabras[0].slice(0, 4).toUpperCase()
+        : palabras
+            .slice(0, 4)
+            .map(p => p.charAt(0))
+            .join('')
+            .toUpperCase();
+    form.setValue('id', sigla, { shouldValidate: true, shouldDirty: true });
+  };
+
+  const handleSubmit = async (data: MarcaFormSchemaValues) => {
     setIsLoading(true);
     try {
+      const payload: MarcaFormValues = {
+        id: data.id,
+        nombre: data.nombre
+      };
+
+      let result;
       if (mode === 'add') {
-        await api.post('/marcas/crear', data);
+        result = await mantencionService.createMarca(payload);
       } else if (mode === 'edit' && marca) {
-        await api.put('/marcas/editar', { ...data, id: marca.id });
+        result = await mantencionService.updateMarca(payload);
+      }
+
+      if (result?.error) {
+        throw new Error(result.error);
       }
 
       onSuccess();
@@ -133,18 +181,39 @@ export default function MarcaFormModal({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Código</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Ej: ABC123"
-                      {...field}
-                      disabled={mode === 'edit'}
-                      className={mode === 'edit' ? 'bg-muted' : ''}
-                    />
-                  </FormControl>
+                  <div className="flex items-center gap-2">
+                    <FormControl>
+                      <Input
+                        placeholder="Ej: AGRE"
+                        disabled={mode === 'edit'}
+                        value={field.value ?? ''}
+                        onChange={event =>
+                          field.onChange(
+                            event.target.value.toUpperCase().replace(/\s/g, '')
+                          )
+                        }
+                        onBlur={field.onBlur}
+                        name={field.name}
+                        ref={field.ref}
+                        maxLength={20}
+                      />
+                    </FormControl>
+                    {mode !== 'edit' && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={handleGenerateSigla}
+                        disabled={isLoading}
+                      >
+                        Generar sigla
+                      </Button>
+                    )}
+                  </div>
                   <FormDescription>
                     {mode === 'edit'
                       ? 'El código no se puede modificar'
-                      : 'Máximo 20 caracteres'}
+                      : 'Ingrese un código alfabético en mayúsculas o genere la sigla desde el nombre'}
                   </FormDescription>
                   <FormMessage />
                 </FormItem>

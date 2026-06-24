@@ -2,13 +2,24 @@ import api from '~/lib/api';
 import type {
   BuscarContrato,
   ConsolidadoConsultaContrato,
-  ExportarExcelProps
+  EmpalmesDisponibles,
+  ExportarExcelProps,
+  PeriodosDisponibles,
+  ResumenNotadeCobro,
+  VerFacturasProps
 } from '~/types/reportes';
 
 export interface ReportesServiceResponse<T> {
   data: T | null;
   error: string | null;
 }
+
+export interface ReportesDownloadFile {
+  blob: Blob;
+  filename: string | null;
+  contentType: string | null;
+}
+
 class ReportesService {
   private processApiResponse<T>(response: any): T[] {
     // Si ya es un array, devolverlo directamente
@@ -36,6 +47,60 @@ class ReportesService {
     }
 
     return [];
+  }
+
+  private extractFilenameFromHeaders(headers: unknown): string | null {
+    if (!headers || typeof headers !== 'object') {
+      return null;
+    }
+
+    const contentDisposition =
+      'content-disposition' in headers
+        ? String(
+            (headers as Record<string, unknown>)['content-disposition'] ?? ''
+          )
+        : '';
+
+    if (!contentDisposition) {
+      return null;
+    }
+
+    const utf8Match = contentDisposition.match(/filename\*=UTF-8''([^;]+)/i);
+    if (utf8Match?.[1]) {
+      return decodeURIComponent(utf8Match[1]);
+    }
+
+    const filenameMatch = contentDisposition.match(
+      /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/
+    );
+
+    if (filenameMatch?.[1]) {
+      return filenameMatch[1].replace(/['"]/g, '');
+    }
+
+    return null;
+  }
+
+  private async extractErrorMessageFromBlob(
+    blob: Blob
+  ): Promise<string | null> {
+    try {
+      const text = await blob.text();
+
+      if (!text) {
+        return null;
+      }
+
+      const parsed = JSON.parse(text) as { message?: unknown };
+
+      if (typeof parsed.message === 'string' && parsed.message.trim()) {
+        return parsed.message;
+      }
+
+      return null;
+    } catch {
+      return null;
+    }
   }
 
   async getBuscarContrato(
@@ -152,6 +217,118 @@ class ReportesService {
       });
       return {
         data: undefined,
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  /**
+   * Nota de Cobro
+   */
+  async getListadoPeriodos(): Promise<
+    ReportesServiceResponse<PeriodosDisponibles[]>
+  > {
+    try {
+      const response = await api.get('resumen-nota-cobro/periodos');
+      return {
+        data: response.data as PeriodosDisponibles[],
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  async getListadoEmpalmes(): Promise<
+    ReportesServiceResponse<EmpalmesDisponibles[]>
+  > {
+    try {
+      const response = await api.get('resumen-nota-cobro/empalmes');
+      return {
+        data: response.data as EmpalmesDisponibles[],
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  async getGenerarNotaCobro(
+    periodo: string,
+    idEmpalme: number
+  ): Promise<ReportesServiceResponse<ResumenNotadeCobro[]>> {
+    try {
+      const params = new URLSearchParams({
+        periodo,
+        idEmpalme: idEmpalme.toString()
+      });
+      const response = await api.get(
+        `resumen-nota-cobro/generar?${params.toString()}`
+      );
+      return {
+        data: response.data as ResumenNotadeCobro[],
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  /**
+   * Ver Facturas
+   */
+  // Descarga lote en PDF
+  async getVerFacturas(
+    request: VerFacturasProps
+  ): Promise<ReportesServiceResponse<ReportesDownloadFile>> {
+    try {
+      const response = await api.post(
+        'ver-facturas/descargar-lote-pdf',
+        request,
+        {
+          responseType: 'blob'
+        }
+      );
+
+      const contentType =
+        typeof response.headers?.['content-type'] === 'string'
+          ? response.headers['content-type']
+          : null;
+
+      const blob = response.data as Blob;
+      const errorMessage =
+        contentType?.includes('application/json') ||
+        contentType?.includes('text/plain')
+          ? await this.extractErrorMessageFromBlob(blob)
+          : null;
+
+      if (errorMessage) {
+        return {
+          data: null,
+          error: errorMessage
+        };
+      }
+
+      return {
+        data: {
+          blob,
+          filename: this.extractFilenameFromHeaders(response.headers),
+          contentType
+        },
         error: null
       };
     } catch (error) {

@@ -32,7 +32,6 @@ import {
   FormMessage
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
-import api from '~/lib/api';
 import { administracionService } from '~/services/administracionService';
 import type { Cliente, NombreComuna, NombreGiro } from '~/types/administracion';
 import { formatRut, isValidRutFormat } from '~/utils/rut-utils';
@@ -200,7 +199,7 @@ export default function EditarClienteComponent() {
         rut: formatRut(data.rut)
       };
 
-      await api.put('/cliente/modificar', {
+      await administracionService.updateCliente({
         ...formattedData,
         id: cliente?.rut
       });

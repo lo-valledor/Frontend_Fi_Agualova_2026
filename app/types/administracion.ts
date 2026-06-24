@@ -102,6 +102,19 @@ export type CargoFacturableProps = {
   tipoCargo: number;
   codigoEnerlova: string;
   muestraValorCero: boolean;
+};
+
+export type CargoFacturableFormValues = {
+  cuenta: string;
+  descripcion: string;
+  fijoVariable: string;
+  periodicoEventual: string;
+  idConcepto: number;
+  idTarifa: number;
+  idTipoMedidor: number;
+  tipoCargo: number;
+  codigoEnerlova: string;
+  muestraValorCero: boolean;
   id: number;
 };
 

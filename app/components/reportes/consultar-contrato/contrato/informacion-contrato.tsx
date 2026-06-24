@@ -95,7 +95,7 @@ const InformacionContrato = memo(function InformacionContrato({
             />
             <InfoRow
               label="Potencia"
-              value={`${contratoInfo.potenciaContratada} kW`}
+              value={`${contratoInfo.potenciaContratada} m³`}
             />
             <InfoRow
               label="Estado"

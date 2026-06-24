@@ -30,17 +30,6 @@ export { BaseApiService, type HttpClient } from './core/base-service';
 // Compatibilidad hacia atrás - administracionService ahora es un alias
 // Servicios de autenticación
 export { authService } from './authService';
-// Servicios de inserción automática (REFACTORIZADOS)
-// Servicios de mantención (REFACTORIZADOS)
-// Compatibilidad hacia atrás - mantencionService ahora es un alias
-export {
-  classificationsService,
-  conceptsService,
-  mantencionServices,
-  mantencionServices as mantencionService,
-  nichosService,
-  referenceDataMantencionService
-} from './mantencion';
 // Servicios de monitor
 export { monitorService } from './monitorService';
 // Servicios de roles y permisos (REFACTORIZADOS)

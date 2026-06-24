@@ -49,6 +49,15 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Typecheck
+        run: pnpm run typecheck
+
+      - name: Quality check
+        run: pnpm run check
+
+      - name: Unit tests
+        run: pnpm run test:run
+
       - name: Build (Vite)
         env:
           VITE_API_URL: ${{ secrets.PRODUCTION_API_URL || 'http://localhost:8080/Agualova' }}

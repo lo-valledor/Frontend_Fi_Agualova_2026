@@ -1,5 +1,5 @@
-import type { AxiosError } from 'axios';
 import type { Cliente, ClientesRow } from '~/types/administracion';
+import { extractApiErrorMessage } from './api-error';
 
 export const CLIENTES_ROUTE = '/dashboard/administracion/clientes';
 export const CLIENTES_CREAR_ROUTE = '/dashboard/administracion/clientes/crear';
@@ -18,40 +18,7 @@ export const createInitialLoadingState = () => ({
 export const extractClienteErrorMessage = (
   error: unknown,
   defaultMessage: string
-) => {
-  // Early return para errores de red
-  if (isNetworkError(error)) {
-    return {
-      message: 'Error de conexión. Por favor, intenta nuevamente.',
-      isNetworkError: true
-    };
-  }
-
-  // Intentar extraer mensaje del servidor
-  const serverMessage = extractServerMessage(error);
-  if (serverMessage) {
-    return {
-      message: serverMessage,
-      isNetworkError: false
-    };
-  }
-
-  // Fallback
-  return {
-    message: defaultMessage,
-    isNetworkError: false
-  };
-};
-
-const isNetworkError = (error: unknown): boolean => {
-  const axiosError = error as AxiosError;
-  return !axiosError?.response;
-};
-
-const extractServerMessage = (error: unknown): string | null => {
-  const axiosError = error as AxiosError<{ message?: string }>;
-  return axiosError?.response?.data?.message || null;
-};
+) => extractApiErrorMessage(error, defaultMessage);
 
 export const isValidClienteForOperation = (
   cliente: ClientesRow | null | undefined

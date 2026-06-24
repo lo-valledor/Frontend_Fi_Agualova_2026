@@ -14,6 +14,7 @@ import {
   CardHeader,
   CardTitle
 } from '~/components/ui/card';
+import { mantencionService } from '~/services/mantencionService';
 import type { Clave } from '~/types/mantencion';
 
 import ClaveFormModal from './clave-form-modal';
@@ -56,8 +57,10 @@ export default function ClavesComponent({
         )
       ) {
         try {
-          const { default: api } = await import('~/lib/api');
-          await api.delete(`/eliminarClaves/${clave.id}`);
+          const result = await mantencionService.deleteClave(clave.id);
+          if (result.error) {
+            throw new Error(result.error);
+          }
 
           toast.success('Clave eliminada exitosamente');
           revalidator.revalidate();

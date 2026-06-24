@@ -24,7 +24,7 @@ import {
   TableHeader,
   TableRow
 } from '~/components/ui/table';
-import api from '~/lib/api';
+import { administracionService } from '~/services/administracionService';
 
 interface AsociarSubempalmeModalProps {
   isOpen: boolean;
@@ -53,9 +53,12 @@ export function AsociarSubempalmeModal({
   const cargarSubempalmes = async () => {
     setIsLoadingSubempalmes(true);
     try {
-      const response = await api.get('/MedidorSubempalmes');
-      if (response.data) {
-        setSubempalmes(response.data as SubempalmeOption[]);
+      const result = await administracionService.getMedidorSubempalmes();
+      if (result.error) {
+        throw new Error(result.error);
+      }
+      if (result.data) {
+        setSubempalmes(result.data as SubempalmeOption[]);
       }
     } catch (error) {
       toast.error('Error al cargar subempalmes', error as any);
@@ -80,9 +83,10 @@ export function AsociarSubempalmeModal({
         subempalmeId
       };
 
-      const response = await api.put('/modificar-subempalme', payload);
+      const result =
+        await administracionService.modificarSubempalme(payload);
 
-      if (response.status === 200) {
+      if (!result.error) {
         toast.success('Subempalme asociado correctamente');
         onSuccess(subempalmeCodigo);
         onClose();

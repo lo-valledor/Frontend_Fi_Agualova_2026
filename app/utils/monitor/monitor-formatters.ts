@@ -55,7 +55,7 @@ export function formatEnergyValue(
 
 export function formatPowerDemand(
   demand: number | string | null | undefined,
-  unit = 'kW',
+  unit = 'm³',
   decimals = 2,
   fallback = '-'
 ): string {

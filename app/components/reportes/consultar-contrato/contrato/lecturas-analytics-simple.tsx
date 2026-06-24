@@ -699,7 +699,7 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
               <TabsContent value="evolution" className="mt-0">
                 <ChartContainer
                   config={chartConfig}
-                  className="h-[350px] w-full"
+                  className="h-87.5 w-full"
                 >
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={analyticsData.filteredLecturas}>
@@ -761,7 +761,7 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
               <TabsContent value="comparison" className="mt-0">
                 <ChartContainer
                   config={chartConfig}
-                  className="h-[350px] w-full"
+                  className="h-87.5 w-full"
                 >
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={analyticsData.filteredLecturas}>
@@ -804,7 +804,7 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
               <TabsContent value="analysis" className="mt-0">
                 <ChartContainer
                   config={chartConfig}
-                  className="h-[350px] w-full"
+                  className="h-87.5 w-full"
                 >
                   <ResponsiveContainer width="100%" height="100%">
                     <ComposedChart data={analyticsData.filteredLecturas}>
@@ -887,7 +887,7 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
                           return (
                             <TableHead
                               key={header.id}
-                              className="h-[50px] px-3 text-xs font-medium border-b border-border"
+                              className="h-12.5 px-3 text-xs font-medium border-b border-border"
                               style={{
                                 width: `${width}px`,
                                 minWidth: `${width}px`,
@@ -935,7 +935,7 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
                             return (
                               <TableCell
                                 key={cell.id}
-                                className="h-[50px] px-3 py-1 text-sm"
+                                className="h-12.5 px-3 py-1 text-sm"
                                 style={{
                                   width: `${width}px`,
                                   minWidth: `${width}px`,

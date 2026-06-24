@@ -12,11 +12,11 @@ import {
   TrendingUp,
   XCircle
 } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 import { Badge } from '~/components/ui/badge';
-import api from '~/lib/api';
+import { administracionService } from '~/services/administracionService';
 import type { CondicionContrato } from '~/types/administracion';
 
 interface DetallesCondicionesContratoProps {
@@ -99,10 +99,16 @@ export default function DetallesCondicionesContrato({
     const fetchCondicion = async () => {
       try {
         setLoading(true);
-        const response = await api.get(
-          `condicion-contrato/obtieneDatosEdicion/${condicionId}`
-        );
-        setCondicion(response.data as CondicionContrato);
+        const response =
+          await administracionService.getCondicionContratoById(condicionId);
+
+        if (response.error || !response.data) {
+          throw new Error(
+            response.error || 'No se encontraron datos de la condición.'
+          );
+        }
+
+        setCondicion(response.data);
         setError(null);
       } catch (err) {
         console.error(

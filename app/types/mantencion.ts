@@ -9,6 +9,16 @@ export type CicloFacturacion = {
   estado: boolean;
 };
 
+export type CicloFacturacionFormValues = {
+  nombre: string;
+  diaFacturacion: number;
+  diaInicioLectura: number;
+  diasVencimientoFactura: number;
+  estado: boolean;
+  id: number;
+};
+
+
 /* Claves */
 // claves/buscar, claves/{id}, claves/crear, claves/editar
 export type Clave = {
@@ -90,13 +100,13 @@ export type EmpalmeFormValues = {
 /* Marca */
 // marcas/buscar, marcas/{id}, marcas/crear, marcas/editar
 export type Marca = {
-  id: number;
+  id: string;
   nombre: string;
 };
 
 export type MarcaFormValues = {
   nombre: string;
-  id: number;
+  id: string;
 };
 
 /* Nichos */

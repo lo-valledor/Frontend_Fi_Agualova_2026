@@ -1,6 +1,5 @@
-import axios from 'axios';
-
 import type { PropietariosRow } from '~/types/administracion';
+import { extractApiErrorMessage, type ApiErrorInfo } from './api-error';
 
 type PropietarioModalState = {
   details: {
@@ -8,10 +7,7 @@ type PropietarioModalState = {
   };
 };
 
-type PropietarioErrorInfo = {
-  message: string;
-  isNetworkError: boolean;
-};
+type PropietarioErrorInfo = ApiErrorInfo;
 
 export function createInitialPropietarioModalState(): PropietarioModalState {
   return {
@@ -25,27 +21,7 @@ export function extractPropietarioErrorMessage(
   error: unknown,
   defaultMessage: string = 'Error al procesar propietario'
 ): PropietarioErrorInfo {
-  const isNetworkError = axios.isAxiosError(error) && !error.response;
-
-  if (axios.isAxiosError(error) && error.response?.data) {
-    const responseData = error.response.data as Record<string, any>;
-    return {
-      message: responseData.message || responseData.error || defaultMessage,
-      isNetworkError: false
-    };
-  }
-
-  if (error instanceof Error) {
-    return {
-      message: error.message || defaultMessage,
-      isNetworkError
-    };
-  }
-
-  return {
-    message: defaultMessage,
-    isNetworkError
-  };
+  return extractApiErrorMessage(error, defaultMessage);
 }
 
 export function isValidPropietarioForOperation(

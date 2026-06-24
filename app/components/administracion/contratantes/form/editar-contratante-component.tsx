@@ -9,7 +9,6 @@ import { z } from 'zod';
 import { ModernHeader } from '~/components/shared/modern-header';
 import { Button } from '~/components/ui/button';
 import { Form } from '~/components/ui/form';
-import api from '~/lib/api';
 import { administracionService } from '~/services/administracionService';
 import type {
   GetContratante,
@@ -178,7 +177,7 @@ export default function EditarContratanteComponent() {
         rut: formatRut(data.rut)
       };
 
-      await api.put('/contratante/modificar', {
+      await administracionService.modificarContratante({
         ...formattedData,
         id: contratante?.rut
       });

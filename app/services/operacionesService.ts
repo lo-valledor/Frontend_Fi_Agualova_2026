@@ -1,4 +1,4 @@
-import api from "~/lib/api";
+import api from '~/lib/api';
 import type {
   CambioMedidorBuscarAntiguoRequest,
   CambioMedidorBuscarNuevoRequest,
@@ -24,12 +24,18 @@ import type {
   RevisionPreciosCorregirRequest,
   RevisionPreciosDetalleCorreccionResponse,
   SAPEmpresas,
-  SAPSugeridos,
-} from "~/types/operaciones";
+  SAPSugeridos
+} from '~/types/operaciones';
 
 export interface OperacionesServiceResponse<T> {
   data: T | null;
   error: string | null;
+}
+
+export interface SAPDownloadFile {
+  blob: Blob;
+  filename: string | null;
+  contentType: string | null;
 }
 
 class OperacionesService {
@@ -39,9 +45,9 @@ class OperacionesService {
    * mensaje para que el llamador lo trate como error.
    */
   private extractErrorFromResponse(data: unknown): string | null {
-    if (data && typeof data === "object" && "message" in data) {
+    if (data && typeof data === 'object' && 'message' in data) {
       const message = String((data as { message: unknown }).message);
-      if (message.toLowerCase().startsWith("error:")) {
+      if (message.toLowerCase().startsWith('error:')) {
         return message;
       }
     }
@@ -50,16 +56,16 @@ class OperacionesService {
 
   private processApiResponse<T>(response: unknown): T[] {
     if (
-      typeof response === "object" &&
+      typeof response === 'object' &&
       response !== null &&
-      "data" in response
+      'data' in response
     ) {
       const data = (response as { data?: unknown }).data;
 
       if (
-        typeof data === "object" &&
+        typeof data === 'object' &&
         data !== null &&
-        "data" in data &&
+        'data' in data &&
         Array.isArray((data as { data?: unknown }).data)
       ) {
         return (data as { data: T[] }).data;
@@ -73,6 +79,87 @@ class OperacionesService {
     return [];
   }
 
+  private normalizeSapEmpresas(response: unknown): SAPEmpresas[] {
+    const empresas = this.processApiResponse<SAPEmpresas>(response);
+
+    if (empresas.length > 0) {
+      return empresas;
+    }
+
+    if (
+      typeof response === 'object' &&
+      response !== null &&
+      'data' in response &&
+      typeof (response as { data?: unknown }).data === 'object' &&
+      (response as { data?: unknown }).data !== null
+    ) {
+      const data = (response as { data: unknown }).data;
+
+      if (Array.isArray(data)) {
+        return data as SAPEmpresas[];
+      }
+
+      if ('id' in (data as object) && 'nombre' in (data as object)) {
+        return [data as SAPEmpresas];
+      }
+    }
+
+    return [];
+  }
+
+  private normalizeSapSugeridos(response: unknown): SAPSugeridos | null {
+    if (
+      typeof response === 'object' &&
+      response !== null &&
+      'data' in response &&
+      typeof (response as { data?: unknown }).data === 'object' &&
+      (response as { data?: unknown }).data !== null
+    ) {
+      const data = (response as { data: unknown }).data;
+
+      if (
+        'nombreEncabezado' in (data as object) &&
+        'nombreDetalle' in (data as object)
+      ) {
+        return data as SAPSugeridos;
+      }
+    }
+
+    return null;
+  }
+
+  private extractFilenameFromHeaders(headers: unknown): string | null {
+    if (!headers || typeof headers !== 'object') {
+      return null;
+    }
+
+    const contentDisposition =
+      'content-disposition' in headers
+        ? String(
+            (headers as Record<string, unknown>)['content-disposition'] ?? ''
+          )
+        : '';
+
+    if (!contentDisposition) {
+      return null;
+    }
+
+    const utf8Match = contentDisposition.match(/filename\*=UTF-8''([^;]+)/i);
+    if (utf8Match?.[1]) {
+      return decodeURIComponent(utf8Match[1]);
+    }
+
+    const filenameMatch = contentDisposition.match(
+      /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/
+    );
+
+    if (filenameMatch?.[1]) {
+      return filenameMatch[1].replace(/['"]/g, '');
+    }
+
+    return null;
+  }
+
   /**
    * Periodos Facturacion
    * @returns
@@ -81,17 +168,17 @@ class OperacionesService {
     OperacionesServiceResponse<PrepararLecturasFiltrosPeriodosResponse[]>
   > {
     try {
-      const response = await api.get("/preparar-lecturas/filtros/periodos");
+      const response = await api.get('/preparar-lecturas/filtros/periodos');
       return {
         data: this.processApiResponse<PrepararLecturasFiltrosPeriodosResponse>(
-          response,
+          response
         ),
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -100,25 +187,25 @@ class OperacionesService {
     mes?: string,
     anio?: string,
     limit?: number,
-    offset?: number,
+    offset?: number
   ): Promise<OperacionesServiceResponse<PeriodosBuscarRequest[]>> {
     try {
       const params = new URLSearchParams();
-      if (mes) params.append("mes", mes);
-      if (anio) params.append("anio", anio);
-      if (limit) params.append("limit", limit.toString());
-      if (offset) params.append("offset", offset.toString());
-      const response = await api.get("/periodos/buscar", {
-        params,
+      if (mes) params.append('mes', mes);
+      if (anio) params.append('anio', anio);
+      if (limit) params.append('limit', limit.toString());
+      if (offset) params.append('offset', offset.toString());
+      const response = await api.get('/periodos/buscar', {
+        params
       });
       return {
         data: this.processApiResponse<PeriodosBuscarRequest>(response),
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -127,17 +214,17 @@ class OperacionesService {
     OperacionesServiceResponse<PeriodosAniosDisponiblesResponse[]>
   > {
     try {
-      const response = await api.get("/periodos/anios-disponibles");
+      const response = await api.get('/periodos/anios-disponibles');
       return {
         data: this.processApiResponse<PeriodosAniosDisponiblesResponse>(
-          response,
+          response
         ),
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -150,25 +237,25 @@ class OperacionesService {
   > {
     try {
       const [yearsResponse, periodosResponse] = await Promise.all([
-        api.get("/periodos/anios-disponibles"),
-        api.get("/periodos/buscar"),
+        api.get('/periodos/anios-disponibles'),
+        api.get('/periodos/buscar')
       ]);
 
       return {
         data: {
           years:
             this.processApiResponse<PeriodosAniosDisponiblesResponse>(
-              yearsResponse,
+              yearsResponse
             ),
           periodos:
-            this.processApiResponse<PeriodosBuscarRequest>(periodosResponse),
+            this.processApiResponse<PeriodosBuscarRequest>(periodosResponse)
         },
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -177,25 +264,25 @@ class OperacionesService {
     mes?: string,
     anio?: string,
     limit?: number,
-    offset?: number,
+    offset?: number
   ): Promise<OperacionesServiceResponse<PeriodosBuscarRequest[]>> {
     try {
       const params = new URLSearchParams();
-      if (mes) params.append("mes", mes);
-      if (anio) params.append("anio", anio);
-      if (limit) params.append("limit", limit.toString());
-      if (offset) params.append("offset", offset.toString());
-      const response = await api.get("/periodos/buscar", {
-        params,
+      if (mes) params.append('mes', mes);
+      if (anio) params.append('anio', anio);
+      if (limit) params.append('limit', limit.toString());
+      if (offset) params.append('offset', offset.toString());
+      const response = await api.get('/periodos/buscar', {
+        params
       });
       return {
         data: this.processApiResponse<PeriodosBuscarRequest>(response),
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -204,32 +291,32 @@ class OperacionesService {
     OperacionesServiceResponse<PrepararLecturasFiltrosCiclosResponse[]>
   > {
     try {
-      const response = await api.get("/preparar-lecturas/filtros/ciclos");
+      const response = await api.get('/preparar-lecturas/filtros/ciclos');
       return {
         data: this.processApiResponse<PrepararLecturasFiltrosCiclosResponse>(
-          response,
+          response
         ),
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
 
   async postCrearPeriodoFacturacion(request: PeriodosCrearRequest) {
     try {
-      const response = await api.post("/periodos/crear", request);
+      const response = await api.post('/periodos/crear', request);
       return {
         data: response.data,
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -237,20 +324,20 @@ class OperacionesService {
   async postCerrarPeriodoFacturacion(codigo: string) {
     try {
       const params = new URLSearchParams();
-      params.append("codigo", codigo);
+      params.append('codigo', codigo);
       const response = await api.post(
         `/periodos/cerrar/${codigo}`,
         {},
-        { params },
+        { params }
       );
       return {
         data: response.data,
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -268,75 +355,75 @@ class OperacionesService {
   > {
     try {
       const [periodoAbierto, ciclos] = await Promise.all([
-        api.get("/preparar-lecturas/filtros/periodos"),
-        api.get("/preparar-lecturas/filtros/ciclos"),
+        api.get('/preparar-lecturas/filtros/periodos'),
+        api.get('/preparar-lecturas/filtros/ciclos')
       ]);
 
       return {
         data: {
           periodoAbierto:
             this.processApiResponse<PrepararLecturasFiltrosPeriodosResponse>(
-              periodoAbierto,
+              periodoAbierto
             ),
           ciclos:
             this.processApiResponse<PrepararLecturasFiltrosCiclosResponse>(
-              ciclos,
-            ),
+              ciclos
+            )
         },
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
 
   async postGenerarLecturas(
-    request: PrepararLecturasGenerarRequest,
+    request: PrepararLecturasGenerarRequest
   ): Promise<OperacionesServiceResponse<any>> {
     try {
-      const response = await api.post("/preparar-lecturas/generar", request);
+      const response = await api.post('/preparar-lecturas/generar', request);
       const errorFromBody = this.extractErrorFromResponse(response.data);
       if (errorFromBody) {
         return { data: null, error: errorFromBody };
       }
       return {
         data: response.data,
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
 
   async getBuscarNichos(
     cicloId: number,
-    periodoId: string,
+    periodoId: string
   ): Promise<
     OperacionesServiceResponse<PrepararLecturasBuscarNichosRequest[]>
   > {
     try {
       const params = new URLSearchParams();
-      params.append("cicloId", cicloId.toString());
-      params.append("periodoId", periodoId);
-      const response = await api.get("/preparar-lecturas/buscar-nichos", {
-        params,
+      params.append('cicloId', cicloId.toString());
+      params.append('periodoId', periodoId);
+      const response = await api.get('/preparar-lecturas/buscar-nichos', {
+        params
       });
       return {
         data: this.processApiResponse<PrepararLecturasBuscarNichosRequest>(
-          response,
+          response
         ),
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -350,41 +437,41 @@ class OperacionesService {
 
   async getPreciosCargoData(
     mes: string,
-    anio: string,
+    anio: string
   ): Promise<OperacionesServiceResponse<PreciosConsultarRequest[]>> {
     try {
       const params = new URLSearchParams();
-      params.append("mes", mes);
-      params.append("anio", anio);
+      params.append('mes', mes);
+      params.append('anio', anio);
 
-      const response = await api.get("/precios/consultar", {
-        params,
+      const response = await api.get('/precios/consultar', {
+        params
       });
       return {
         data: response.data as PreciosConsultarRequest[],
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
 
   async postGuardarPreciosCargoMasivo(
-    request: PreciosGuardarMasivoRequest,
+    request: PreciosGuardarMasivoRequest
   ): Promise<OperacionesServiceResponse<any>> {
     try {
-      const response = await api.post("/precios/guardar-masivo", request);
+      const response = await api.post('/precios/guardar-masivo', request);
       return {
         data: response.data,
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -393,88 +480,88 @@ class OperacionesService {
 
   async getRevisarPreciosData(
     mes: string,
-    anio: string,
+    anio: string
   ): Promise<OperacionesServiceResponse<RevisionPreciosBuscarRequest[]>> {
     try {
       const params = new URLSearchParams();
-      params.append("mes", mes);
-      params.append("anio", anio);
+      params.append('mes', mes);
+      params.append('anio', anio);
 
-      const response = await api.get("/revision-precios/buscar", {
-        params,
+      const response = await api.get('/revision-precios/buscar', {
+        params
       });
 
       return {
         data: this.processApiResponse<RevisionPreciosBuscarRequest>(response),
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
 
   async postConfirmarRevisionPrecios(
-    request: RevisionPreciosConfirmarRequest,
+    request: RevisionPreciosConfirmarRequest
   ): Promise<OperacionesServiceResponse<any>> {
     try {
-      const response = await api.post("/revision-precios/confirmar", request);
+      const response = await api.post('/revision-precios/confirmar', request);
       const errorFromBody = this.extractErrorFromResponse(response.data);
       if (errorFromBody) {
         return { data: null, error: errorFromBody };
       }
       return {
         data: response.data,
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
 
   async getDetalleCorreccionCodigoCargo(
-    indice: number,
+    indice: number
   ): Promise<
     OperacionesServiceResponse<RevisionPreciosDetalleCorreccionResponse>
   > {
     try {
       const response = await api.get(
-        `/revision-precios/detalle-correccion/${indice}`,
+        `/revision-precios/detalle-correccion/${indice}`
       );
       return {
         data: response.data as RevisionPreciosDetalleCorreccionResponse,
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
 
   async postCorregirPrecioCargo(
-    request: RevisionPreciosCorregirRequest,
+    request: RevisionPreciosCorregirRequest
   ): Promise<OperacionesServiceResponse<any>> {
     try {
-      const response = await api.post("/revision-precios/corregir", request);
+      const response = await api.post('/revision-precios/corregir', request);
       const errorFromBody = this.extractErrorFromResponse(response.data);
       if (errorFromBody) {
         return { data: null, error: errorFromBody };
       }
       return {
         data: response.data,
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -489,25 +576,25 @@ class OperacionesService {
   > {
     try {
       const [resResumen, ResData] = await Promise.all([
-        api.get("/corte-reposicion/resumen"),
-        api.get("/corte-reposicion/buscar"),
+        api.get('/corte-reposicion/resumen'),
+        api.get('/corte-reposicion/buscar')
       ]);
 
       return {
         data: {
           resumen:
             this.processApiResponse<CorteReposicionResumenResponse>(
-              resResumen,
+              resResumen
             )[0],
           mantenedorCorteData:
-            this.processApiResponse<CorteReposicionBuscarRequest>(ResData),
+            this.processApiResponse<CorteReposicionBuscarRequest>(ResData)
         },
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -516,50 +603,50 @@ class OperacionesService {
     try {
       const params = new URLSearchParams();
       if (acomedita) {
-        params.append("acometida", acomedita);
+        params.append('acometida', acomedita);
       }
 
-      const response = await api.get("/corte-reposicion/buscar", {
-        params,
+      const response = await api.get('/corte-reposicion/buscar', {
+        params
       });
       return {
         data: response.data,
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
 
   async postIniciarProcesoCorteReposicion() {
     try {
-      const response = await api.post("/corte-reposicion/iniciar", {});
+      const response = await api.post('/corte-reposicion/iniciar', {});
       return {
         data: response.data,
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
 
   async postFinalizarProcesoCorteReposicion() {
     try {
-      const response = await api.post("/corte-reposicion/finalizar", {});
+      const response = await api.post('/corte-reposicion/finalizar', {});
       return {
         data: response.data,
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -567,17 +654,17 @@ class OperacionesService {
   async postActualizarProcesoCorteReposicion() {
     try {
       const response = await api.post(
-        "/corte-reposicion/actualizar-estados",
-        {},
+        '/corte-reposicion/actualizar-estados',
+        {}
       );
       return {
         data: response.data,
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -585,33 +672,33 @@ class OperacionesService {
   async getConsultarDeuda(acometida: string) {
     try {
       const params = new URLSearchParams();
-      params.append("acometida", acometida);
-      const response = await api.get("/corte-reposicion/consultar-deuda", {
-        params,
+      params.append('acometida', acometida);
+      const response = await api.get('/corte-reposicion/consultar-deuda', {
+        params
       });
       return {
         data: response.data,
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
 
   async postLiberarAcometida(request: CorteReposicionLiberarRequest) {
     try {
-      const response = await api.post("/corte-reposicion/liberar", request);
+      const response = await api.post('/corte-reposicion/liberar', request);
       return {
         data: response.data,
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -619,17 +706,17 @@ class OperacionesService {
   async postRegistrarCorte(request: CorteReposicionRegistrarCorteRequest) {
     try {
       const response = await api.post(
-        "/corte-reposicion/registrar-corte",
-        request,
+        '/corte-reposicion/registrar-corte',
+        request
       );
       return {
         data: response.data,
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -637,17 +724,17 @@ class OperacionesService {
   async postSolicitarReposicion(contratoId: number, acometida: string) {
     try {
       const response = await api.post(
-        "/corte-reposicion/solicitar-reposicion",
-        { contratoId, acometida },
+        '/corte-reposicion/solicitar-reposicion',
+        { contratoId, acometida }
       );
       return {
         data: response.data,
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -658,22 +745,22 @@ class OperacionesService {
   async getRevisarCalculosData() {
     try {
       const [filtrosCiclos, filtrosPeriodos] = await Promise.all([
-        api.get("/revisar-calculos/filtros/ciclos"),
-        api.get("/revisar-calculos/filtros/periodos"),
+        api.get('/revisar-calculos/filtros/ciclos'),
+        api.get('/revisar-calculos/filtros/periodos')
       ]);
       return {
         data: {
           filtrosCiclos:
             filtrosCiclos.data as RevisarCalculosFiltrosCiclosResponse,
           filtrosPeriodos:
-            filtrosPeriodos.data as RevisarCalculosFiltrosPeriodosResponse,
+            filtrosPeriodos.data as RevisarCalculosFiltrosPeriodosResponse
         },
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -681,39 +768,39 @@ class OperacionesService {
   async getRevisarCalculosEstadoProceso(cicloId: number, periodoId: string) {
     try {
       const params = new URLSearchParams();
-      params.append("cicloId", cicloId.toString());
-      params.append("periodoId", periodoId);
-      const response = await api.get("/revisar-calculos/estado-proceso", {
-        params,
+      params.append('cicloId', cicloId.toString());
+      params.append('periodoId', periodoId);
+      const response = await api.get('/revisar-calculos/estado-proceso', {
+        params
       });
       return {
         data: response.data as [],
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
 
   async postRevisarCalculosLanzarCalculo(
-    request: RevisarCalculosLanzarCalculoRequest,
+    request: RevisarCalculosLanzarCalculoRequest
   ) {
     try {
       const response = await api.post(
-        "/revisar-calculos/lanzar-calculo",
-        request,
+        '/revisar-calculos/lanzar-calculo',
+        request
       );
       return {
         data: response.data,
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -726,46 +813,46 @@ class OperacionesService {
     sector?: string,
     local?: string,
     modo?: string,
-    procesoId?: number,
+    procesoId?: number
   ) {
     try {
       const params = new URLSearchParams();
-      params.append("cicloId", cicloId.toString());
-      params.append("periodoId", periodoId);
-      if (rut) params.append("rut", rut);
-      if (nombre) params.append("nombre", nombre);
-      if (sector) params.append("sector", sector);
-      if (local) params.append("local", local);
-      if (modo) params.append("modo", modo);
-      if (procesoId) params.append("procesoId", procesoId.toString());
-      const response = await api.get("/revisar-calculos/buscar-prefacturas", {
-        params,
+      params.append('cicloId', cicloId.toString());
+      params.append('periodoId', periodoId);
+      if (rut) params.append('rut', rut);
+      if (nombre) params.append('nombre', nombre);
+      if (sector) params.append('sector', sector);
+      if (local) params.append('local', local);
+      if (modo) params.append('modo', modo);
+      if (procesoId) params.append('procesoId', procesoId.toString());
+      const response = await api.get('/revisar-calculos/buscar-prefacturas', {
+        params
       });
       return {
         data: response.data,
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
 
   async postRevisarCalculosAceptar(periodoId: string) {
     try {
-      const response = await api.post("/revisar-calculos/aceptar", {
-        periodoId,
+      const response = await api.post('/revisar-calculos/aceptar', {
+        periodoId
       });
       return {
         data: response.data,
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -777,24 +864,24 @@ class OperacionesService {
     try {
       const params = new URLSearchParams();
       if (acometida || serie) {
-        if (acometida) params.append("acometida", acometida);
-        if (serie) params.append("serie", serie);
+        if (acometida) params.append('acometida', acometida);
+        if (serie) params.append('serie', serie);
       } else {
         throw new Error(
-          "Se debe proporcionar al menos un parámetro: acometida o número de serie",
+          'Se debe proporcionar al menos un parámetro: acometida o número de serie'
         );
       }
-      const response = await api.get("/cambio-medidor/buscar-antiguo", {
-        params,
+      const response = await api.get('/cambio-medidor/buscar-antiguo', {
+        params
       });
       return {
         data: response.data as CambioMedidorBuscarAntiguoRequest,
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -802,18 +889,18 @@ class OperacionesService {
   async getBuscarMedidorNuevo(serie: string) {
     try {
       const params = new URLSearchParams();
-      params.append("serie", serie);
-      const response = await api.get("/cambio-medidor/buscar-nuevo", {
-        params,
+      params.append('serie', serie);
+      const response = await api.get('/cambio-medidor/buscar-nuevo', {
+        params
       });
       return {
         data: response.data as CambioMedidorBuscarNuevoRequest,
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -821,17 +908,17 @@ class OperacionesService {
   async postEjecutarCambioMedidor(request: CambioMedidorEjecutarCambioRequest) {
     try {
       const response = await api.post(
-        "/cambio-medidor/ejecutar-cambio",
-        request,
+        '/cambio-medidor/ejecutar-cambio',
+        request
       );
       return {
         data: response.data,
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -841,74 +928,110 @@ class OperacionesService {
    */
   async getArchivoSAPEmpresas() {
     try {
-      const response = await api.get("archivo-sap/empresas");
+      const response = await api.get('archivo-sap/empresas');
+      const errorFromBody = this.extractErrorFromResponse(response.data);
+
+      if (errorFromBody) {
+        return {
+          data: null,
+          error: errorFromBody
+        };
+      }
+
       return {
-        data: response.data as SAPEmpresas,
-        error: null,
+        data: this.normalizeSapEmpresas(response),
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
 
   async getNombresSugeridos() {
     try {
-      const response = await api.get("archivo-sap/empresas");
+      const response = await api.get('archivo-sap/nombres-sugeridos');
+      const errorFromBody = this.extractErrorFromResponse(response.data);
+
+      if (errorFromBody) {
+        return {
+          data: null,
+          error: errorFromBody
+        };
+      }
+
       return {
-        data: response.data as SAPSugeridos,
-        error: null,
+        data: this.normalizeSapSugeridos(response),
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
 
   async getDescargarEnacabezado(empresaId: string, nombreArchivo: string) {
     const params = new URLSearchParams();
-    params.append("empresaId", empresaId);
-    params.append("nombreArchivo", nombreArchivo);
+    params.append('empresaId', empresaId);
+    params.append('nombreArchivo', nombreArchivo);
 
     try {
-      const response = await api.get("/archivo-sap/descargar-encabezado", {
+      const response = await api.get('/archivo-sap/descargar-encabezado', {
         params,
-        responseType: "blob",
+        responseType: 'blob'
       });
+      const filename = this.extractFilenameFromHeaders(response.headers);
+
       return {
-        data: response.data as Blob,
-        error: null,
+        data: {
+          blob: response.data as Blob,
+          filename,
+          contentType:
+            typeof response.headers?.['content-type'] === 'string'
+              ? response.headers['content-type']
+              : null
+        } as SAPDownloadFile,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
 
   async getDescargarDetalle(empresaId: string, nombreArchivo: string) {
     const params = new URLSearchParams();
-    params.append("empresaId", empresaId);
-    params.append("nombreArchivo", nombreArchivo);
+    params.append('empresaId', empresaId);
+    params.append('nombreArchivo', nombreArchivo);
 
     try {
-      const response = await api.get("/archivo-sap/descargar-detalle", {
+      const response = await api.get('/archivo-sap/descargar-detalle', {
         params,
-        responseType: "blob",
+        responseType: 'blob'
       });
+      const filename = this.extractFilenameFromHeaders(response.headers);
+
       return {
-        data: response.data as Blob,
-        error: null,
+        data: {
+          blob: response.data as Blob,
+          filename,
+          contentType:
+            typeof response.headers?.['content-type'] === 'string'
+              ? response.headers['content-type']
+              : null
+        } as SAPDownloadFile,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }

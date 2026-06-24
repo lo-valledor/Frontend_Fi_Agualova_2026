@@ -1,8 +1,9 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2 } from 'lucide-react';
-import React from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import Select from 'react-select';
+import { toast } from 'sonner';
 import { z } from 'zod';
 
 import { getReactSelectStyles } from '~/components/shared/react-select-styles';
@@ -27,23 +28,31 @@ import {
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
 import { Textarea } from '~/components/ui/textarea';
-import type { Concepto, ConceptoAsociables } from '~/types/mantencion';
+import { mantencionService } from '~/services/mantencionService';
+import type {
+  Concepto,
+  ConceptoAsociables,
+  ConceptoFormValues
+} from '~/types/mantencion';
 
 const conceptoSchema = z.object({
+  id: z.number().optional(),
   denominacion: z
     .string()
-    .min(1, 'La denominación es requerida')
-    .max(100, 'La denominación no debe exceder 100 caracteres'),
+    .min(1, { message: 'La denominación es requerida.' })
+    .max(100, { message: 'La denominación no debe exceder 100 caracteres.' }),
   descripcion: z
     .string()
-    .min(1, 'La descripción es requerida')
-    .max(200, 'La descripción no debe exceder 200 caracteres'),
+    .min(1, { message: 'La descripción es requerida.' })
+    .max(200, { message: 'La descripción no debe exceder 200 caracteres.' }),
   unidad: z
     .string()
-    .min(1, 'La unidad es requerida')
-    .max(20, 'La unidad no debe exceder 20 caracteres'),
-  fijoVariable: z.string().min(1, 'El tipo Fijo/Variable es requerido'),
-  conceptoAsociado: z.string().optional()
+    .min(1, { message: 'La unidad es requerida.' })
+    .max(20, { message: 'La unidad no debe exceder 20 caracteres.' }),
+  fijoVariable: z
+    .string()
+    .min(1, { message: 'El tipo Fijo/Variable es requerido.' }),
+  conceptoAsociado: z.string()
 });
 
 type ConceptoFormData = z.infer<typeof conceptoSchema>;
@@ -52,7 +61,7 @@ interface ConceptoFormModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
-  concepto?: Concepto;
+  concepto: Concepto | null;
   mode: 'add' | 'edit';
   conceptoAsociables: ConceptoAsociables[];
 }
@@ -64,76 +73,106 @@ export default function ConceptoFormModal({
   concepto,
   mode,
   conceptoAsociables
-}: ConceptoFormModalProps) {
+}: Readonly<ConceptoFormModalProps>) {
+  const [isLoading, setIsLoading] = useState(false);
+
   const form = useForm<ConceptoFormData>({
     resolver: zodResolver(conceptoSchema),
     defaultValues: {
-      denominacion: concepto?.denominacion || '',
-      descripcion: concepto?.descripcion || '',
-      unidad: concepto?.unidad || '',
-      fijoVariable: concepto?.fijoVariable || '',
-      conceptoAsociado: concepto?.conceptoAsociado || undefined
+      id: 0,
+      denominacion: '',
+      descripcion: '',
+      unidad: '',
+      fijoVariable: '',
+      conceptoAsociado: ''
     }
   });
-  const { theme } = useTheme();
 
-  // Usar estilos compartidos para react-select
+  const { theme } = useTheme();
   const selectStyles = getReactSelectStyles(theme);
 
-  const isLoading = form.formState.isSubmitting;
+  useEffect(() => {
+    if (!isOpen) return;
 
-  React.useEffect(() => {
-    if (isOpen) {
-      // Buscar el conceptoAsociado a partir de la descripción si no viene el ID
-      let conceptoAsociadoFinal = concepto?.conceptoAsociado;
+    if (mode === 'edit' && concepto) {
+      let conceptoAsociadoFinal = concepto.conceptoAsociado;
 
-      if (!conceptoAsociadoFinal && concepto?.descripcion) {
-        const asociadoEncontrado = conceptoAsociables.find(
+      if (!conceptoAsociadoFinal && concepto.descripcion) {
+        const encontrado = conceptoAsociables.find(
           a => a.descripcion === concepto.descripcion
         );
-        if (asociadoEncontrado) {
-          conceptoAsociadoFinal = asociadoEncontrado.id.toString();
+        if (encontrado) {
+          conceptoAsociadoFinal = encontrado.id.toString();
         }
       }
 
       form.reset({
-        denominacion: concepto?.denominacion || '',
-        descripcion: concepto?.descripcion || '',
-        unidad: concepto?.unidad || '',
-        fijoVariable: concepto?.fijoVariable || '',
-        conceptoAsociado: conceptoAsociadoFinal ?? undefined
+        id: concepto.id,
+        denominacion: concepto.denominacion,
+        descripcion: concepto.descripcion,
+        unidad: concepto.unidad,
+        fijoVariable: concepto.fijoVariable,
+        conceptoAsociado: conceptoAsociadoFinal ?? ''
+      });
+    } else {
+      form.reset({
+        id: 0,
+        denominacion: '',
+        descripcion: '',
+        unidad: '',
+        fijoVariable: '',
+        conceptoAsociado: ''
       });
     }
-  }, [isOpen, concepto, conceptoAsociables, form]);
+  }, [isOpen, mode, concepto, conceptoAsociables, form]);
 
   const onSubmit = async (data: ConceptoFormData) => {
+    setIsLoading(true);
     try {
-      const { default: api } = await import('~/lib/api');
+      const payload: ConceptoFormValues = {
+        id: mode === 'edit' && concepto ? concepto.id : 0,
+        denominacion: data.denominacion,
+        descripcion: data.descripcion,
+        unidad: data.unidad,
+        fijoVariable: data.fijoVariable,
+        conceptoAsociado: data.conceptoAsociado
+      };
 
+      let result;
       if (mode === 'add') {
-        await api.post('/conceptos/crear', data);
-      } else {
-        await api.put(`/conceptos/editar`, { ...data, id: concepto?.id });
+        result = await mantencionService.createConcepto(payload);
+      } else if (mode === 'edit' && concepto) {
+        result = await mantencionService.updateConcepto(payload);
+      }
+
+      if (result?.error) {
+        throw new Error(result.error);
       }
 
       onSuccess();
-      onClose();
     } catch (error) {
       console.error('Error al guardar el concepto:', error);
+      toast.error(
+        mode === 'add'
+          ? 'Error al crear el concepto'
+          : 'Error al actualizar el concepto'
+      );
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[550px]">
+      <DialogContent className="sm:max-w-137.5">
         <DialogHeader>
           <DialogTitle>
             {mode === 'add' ? 'Agregar Nuevo Concepto' : 'Editar Concepto'}
           </DialogTitle>
           <DialogDescription>
             {mode === 'add'
-              ? 'Complete los datos para crear un nuevo concepto'
-              : 'Modifique los datos del concepto seleccionado'}
+              ? 'Complete los datos para crear un nuevo concepto.'
+              : 'Modifique los datos del concepto seleccionado.'}
           </DialogDescription>
         </DialogHeader>
 
@@ -205,9 +244,7 @@ export default function ConceptoFormModal({
                           ? {
                               value: field.value,
                               label:
-                                field.value === 'FIJO' || field.value === 'F'
-                                  ? 'Fijo'
-                                  : 'Variable'
+                                field.value === 'F' ? 'Fijo' : 'Variable'
                             }
                           : null
                       }
@@ -243,13 +280,12 @@ export default function ConceptoFormModal({
                   name="conceptoAsociado"
                   control={form.control}
                   render={({ field }) => {
-                    // Filtrar el elemento "Seleccione.." (id: 0)
                     const validAsociados = conceptoAsociables.filter(
                       a => a.id !== 0
                     );
 
                     const selectedAsociado =
-                      field.value != null && field.value !== '0'
+                      field.value != null && field.value !== ''
                         ? validAsociados.find(
                             a => a.id.toString() === field.value
                           )
@@ -266,7 +302,9 @@ export default function ConceptoFormModal({
                             : null
                         }
                         onChange={(selectedOption: any) => {
-                          const newValue = selectedOption?.value ?? undefined;
+                          const newValue = selectedOption
+                            ? selectedOption.value.toString()
+                            : '';
                           field.onChange(newValue);
                         }}
                         options={validAsociados.map(asociado => ({

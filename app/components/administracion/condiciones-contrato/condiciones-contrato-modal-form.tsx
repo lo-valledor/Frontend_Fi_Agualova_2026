@@ -1,13 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { DollarSign, Loader2, Percent } from 'lucide-react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import Select, { type SingleValue } from 'react-select';
-import type { OptionType } from '~/components/shared/react-select-styles';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
-import { getReactSelectStyles } from '~/components/shared/react-select-styles';
+import { getReactSelectStyles, type OptionType } from '~/components/shared/react-select-styles';
 import { useTheme } from '~/components/theme-provider';
 import { Button } from '~/components/ui/button';
 import {
@@ -29,25 +28,34 @@ import {
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
 import { Switch } from '~/components/ui/switch';
-import api from '~/lib/api';
-import type { CondicionesContratoRow } from '~/types/administracion';
+import { administracionService } from '~/services/administracionService';
+import type {
+  CondicionContratoFormValues,
+  CondicionesContratoRow
+} from '~/types/administracion';
 import type { Concepto } from '~/types/mantencion';
 
 const condicionContratoFormSchema = z.object({
-  descripcion: z.string().min(1, { message: 'La descripción es requerida.' }),
-  conceptoId: z.number().min(1, { message: 'El concepto es requerido.' }),
-  usaPorcentaje: z.boolean(),
+  id: z.number().optional(),
+  descripcion: z
+    .string()
+    .min(1, { message: 'La descripción es requerida.' }),
+  idConcepto: z.coerce
+    .number()
+    .int()
+    .positive({ message: 'El concepto es requerido.' }),
+  tipoCondicion: z.number().int(),
   valor: z.number({ message: 'El valor es requerido.' }),
   estado: z.boolean()
 });
 
-type CondicionContratoFormValues = z.infer<typeof condicionContratoFormSchema>;
+type CondicionContratoFormData = z.infer<typeof condicionContratoFormSchema>;
 
 interface CondicionesContratoModalFormProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
-  condicionContrato: CondicionesContratoRow | undefined;
+  condicionContrato: CondicionesContratoRow | null;
   mode: 'add' | 'edit';
   conceptos: Concepto[];
 }
@@ -60,111 +68,104 @@ export default function CondicionesContratoModalForm({
   mode,
   conceptos
 }: Readonly<CondicionesContratoModalFormProps>) {
+  const [isLoading, setIsLoading] = useState(false);
   const { theme } = useTheme();
-  const form = useForm<CondicionContratoFormValues>({
+  const selectStyles = getReactSelectStyles(theme);
+
+  const form = useForm<CondicionContratoFormData>({
     resolver: zodResolver(condicionContratoFormSchema),
     defaultValues: {
+      id: 0,
       descripcion: '',
-      conceptoId: 0,
-      usaPorcentaje: true,
+      idConcepto: 0,
+      tipoCondicion: 1,
       valor: 0,
       estado: true
     }
   });
 
-  // Usar estilos compartidos para react-select
-  const selectStyles = getReactSelectStyles(theme);
+  const usaPorcentaje = form.watch('tipoCondicion') === 1;
 
-  const isLoading = form.formState.isSubmitting;
-
-  // Resetear formulario cuando se abre el modal
   useEffect(() => {
-    if (isOpen) {
-      // Determinar si usa porcentaje basado en los datos existentes
-      const usaPorcentaje = !!condicionContrato?.factorPorcentual;
+    if (!isOpen) return;
 
-      // Parsear el valor según el tipo
+    if (mode === 'edit' && condicionContrato) {
+      const tipoCondicion = condicionContrato.factorPorcentual ? 1 : 0;
+
       let valor = 0;
-      if (usaPorcentaje && condicionContrato?.factorPorcentual) {
-        // Si es string con coma, reemplazar por punto
+      if (tipoCondicion === 1 && condicionContrato.factorPorcentual) {
         const factorStr = String(condicionContrato.factorPorcentual).replace(
           ',',
           '.'
         );
-        // El backend guarda como decimal (0.05), mostramos como porcentaje (5)
         valor = parseFloat(factorStr) * 100;
-      } else if (condicionContrato?.valorFijo) {
+      } else if (condicionContrato.valorFijo) {
         valor =
           typeof condicionContrato.valorFijo === 'string'
             ? parseFloat(String(condicionContrato.valorFijo).replace(',', '.'))
             : condicionContrato.valorFijo;
       }
 
-      // Encontrar el conceptoId basado en el nombre del concepto
       const conceptoEncontrado = conceptos.find(
-        c => c.descripcion === condicionContrato?.concepto
+        c => c.descripcion === condicionContrato.concepto
       );
-      const conceptoId = conceptoEncontrado?.id || 0;
+      const idConcepto = conceptoEncontrado?.id ?? 0;
 
-      const formValues = {
-        descripcion: condicionContrato?.descripcion || '',
-        conceptoId: conceptoId,
-        usaPorcentaje: usaPorcentaje,
-        valor: valor,
-        estado: condicionContrato?.estado ?? true
-      };
-
-      form.reset(formValues);
+      form.reset({
+        id: condicionContrato.id,
+        descripcion: condicionContrato.descripcion,
+        idConcepto,
+        tipoCondicion,
+        valor,
+        estado: condicionContrato.estado
+      });
+    } else {
+      form.reset({
+        id: 0,
+        descripcion: '',
+        idConcepto: 0,
+        tipoCondicion: 1,
+        valor: 0,
+        estado: true
+      });
     }
-  }, [isOpen, condicionContrato, form, conceptos]);
+  }, [isOpen, mode, condicionContrato, conceptos, form]);
 
-  const onSubmit = async (data: CondicionContratoFormValues) => {
+  const onSubmit = async (data: CondicionContratoFormData) => {
+    setIsLoading(true);
     try {
-      // Calcular el valor a enviar a la API
-      // Si usa porcentaje: el usuario ingresa 5 (para 5%), lo convertimos a 0.05
-      // Si es valor fijo: se envía tal cual
-      const valorParaAPI = data.usaPorcentaje ? data.valor / 100 : data.valor;
+      const valorParaAPI = data.tipoCondicion === 1 ? data.valor / 100 : data.valor;
 
-      // Mapear los datos del formulario al formato esperado por la API
-      const apiPayload = {
-        codigo: condicionContrato?.id || 0, // Para edición, usar el código existente
-        nombre: data.descripcion, // La API espera "nombre", no "descripcion"
-        conceptoId: data.conceptoId,
-        usaPorcentaje: data.usaPorcentaje,
+      const payload: CondicionContratoFormValues = {
+        id: mode === 'edit' && condicionContrato ? condicionContrato.id : 0,
+        descripcion: data.descripcion,
+        idConcepto: data.idConcepto,
+        tipoCondicion: data.tipoCondicion,
         valor: valorParaAPI,
         estado: data.estado
       };
 
+      let result;
       if (mode === 'add') {
-        await api.post(
-          'condicion-contrato/condicionContrato-crear',
-          apiPayload
-        );
-      } else {
-        await api.put(
-          `/condicion-contrato/condicionContrato-modificar/${condicionContrato?.id}`,
-          apiPayload
-        );
+        result = await administracionService.createCondicionContrato(payload);
+      } else if (mode === 'edit' && condicionContrato) {
+        result = await administracionService.updateCondicionContrato(payload);
       }
-      toast.success(
-        mode === 'add'
-          ? 'Condición de contrato creada exitosamente'
-          : 'Condición de contrato actualizada exitosamente'
-      );
-      onSuccess();
-      onClose();
-    } catch (error: any) {
-      console.error('=== DEBUG: Error en Submit ===');
-      console.error('Error completo:', error);
-      console.error('Error response:', error.response);
-      console.error('Error response data:', error.response?.data);
-      console.error('Error status:', error.response?.status);
-      console.error('==============================');
 
-      const errorMessage =
-        error.response?.data?.message ||
-        'Error al guardar la condición de contrato';
-      toast.error(errorMessage);
+      if (result?.error) {
+        throw new Error(result.error);
+      }
+
+      onSuccess();
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : 'Error al guardar la condición de contrato';
+      console.error('Error al guardar la condición de contrato:', error);
+      toast.error(message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -179,8 +180,8 @@ export default function CondicionesContratoModalForm({
           </DialogTitle>
           <DialogDescription>
             {mode === 'add'
-              ? 'Complete los datos para crear una nueva condición de contrato'
-              : 'Modifique los datos de la condición de contrato seleccionada'}
+              ? 'Complete los datos para crear una nueva condición de contrato.'
+              : 'Modifique los datos de la condición de contrato seleccionada.'}
           </DialogDescription>
         </DialogHeader>
 
@@ -201,7 +202,7 @@ export default function CondicionesContratoModalForm({
             />
 
             <Controller
-              name="conceptoId"
+              name="idConcepto"
               control={form.control}
               render={({ field }) => (
                 <FormItem>
@@ -236,19 +237,21 @@ export default function CondicionesContratoModalForm({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
-                name="usaPorcentaje"
+                name="tipoCondicion"
                 render={({ field }) => (
                   <FormItem className="flex flex-row items-center justify-between rounded-xl border p-4">
                     <div className="space-y-0.5">
                       <FormLabel>Tipo de Valor</FormLabel>
                       <FormDescription>
-                        {field.value ? 'Porcentual' : 'Valor Fijo'}
+                        {field.value === 1 ? 'Porcentual' : 'Valor Fijo'}
                       </FormDescription>
                     </div>
                     <FormControl>
                       <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
+                        checked={field.value === 1}
+                        onCheckedChange={checked =>
+                          field.onChange(checked ? 1 : 0)
+                        }
                       />
                     </FormControl>
                   </FormItem>
@@ -261,7 +264,7 @@ export default function CondicionesContratoModalForm({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      {form.watch('usaPorcentaje')
+                      {usaPorcentaje
                         ? 'Porcentaje (%)'
                         : 'Valor Fijo ($)'}
                     </FormLabel>
@@ -271,12 +274,11 @@ export default function CondicionesContratoModalForm({
                           {...field}
                           type="number"
                           step="any"
-                          placeholder={form.watch('usaPorcentaje') ? '5' : '0'}
+                          placeholder={usaPorcentaje ? '5' : '0'}
                           className="pl-8"
                           value={field.value}
-                          onChange={e => {
-                            // Manejar tanto coma como punto como separador decimal
-                            const rawValue = e.target.value;
+                          onChange={event => {
+                            const rawValue = event.target.value;
                             const normalizedValue = rawValue.replace(',', '.');
                             const numericValue = parseFloat(normalizedValue);
 
@@ -293,7 +295,7 @@ export default function CondicionesContratoModalForm({
                             }
                           }}
                         />
-                        {form.watch('usaPorcentaje') ? (
+                        {usaPorcentaje ? (
                           <Percent className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
                         ) : (
                           <DollarSign className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
@@ -301,7 +303,7 @@ export default function CondicionesContratoModalForm({
                       </div>
                     </FormControl>
                     <FormDescription>
-                      {form.watch('usaPorcentaje')
+                      {usaPorcentaje
                         ? 'Ingrese el porcentaje (ej: 5 para 5%, -5 para descuento de 5%)'
                         : 'Ingrese el valor fijo en pesos'}
                     </FormDescription>

@@ -1,6 +1,6 @@
 import { LayoutList, Plus } from 'lucide-react';
 import { motion } from 'motion/react';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useRevalidator } from 'react-router';
 import { toast } from 'sonner';
 
@@ -14,6 +14,7 @@ import {
   CardHeader,
   CardTitle
 } from '~/components/ui/card';
+import { mantencionService } from '~/services/mantencionService';
 import type { Parametro } from '~/types/mantencion';
 
 import { createColumns } from './columns';
@@ -29,52 +30,58 @@ export default function ParametrosComponent({
   parametros
 }: Readonly<ParametrosComponentProps>) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedParametro, setSelectedParametro] = useState<
-    Parametro | undefined
-  >(undefined);
+  const [selectedParametro, setSelectedParametro] = useState<Parametro | null>(
+    null
+  );
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
 
   const revalidator = useRevalidator();
 
-  const handleAdd = () => {
-    setSelectedParametro(undefined);
+  const handleAdd = useCallback(() => {
+    setSelectedParametro(null);
     setModalMode('add');
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const handleEdit = (parametro: Parametro) => {
+  const handleEdit = useCallback((parametro: Parametro) => {
     setSelectedParametro(parametro);
     setModalMode('edit');
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const handleDelete = async (parametro: Parametro) => {
-    if (
-      globalThis.confirm(
-        `¿Está seguro de que desea eliminar el parámetro "${parametro.nombre}"?`
-      )
-    ) {
-      try {
-        const { default: api } = await import('~/lib/api');
-        await api.delete(`/parametros/eliminar/${parametro.id}`);
+  const handleDelete = useCallback(
+    async (parametro: Parametro) => {
+      if (
+        globalThis.confirm(
+          `¿Está seguro de que desea eliminar el parámetro "${parametro.nombre}"?`
+        )
+      ) {
+        try {
+          const result = await mantencionService.deleteParametro(parametro.id);
+          if (result.error) {
+            throw new Error(result.error);
+          }
 
-        toast.success('Parámetro eliminado exitosamente');
-        revalidator.revalidate();
-      } catch (error) {
-        console.error('Error al eliminar el parámetro:', error);
-        toast.error('Error al eliminar el parámetro');
+          toast.success('Parámetro eliminado exitosamente');
+          revalidator.revalidate();
+        } catch (error) {
+          console.error('Error al eliminar el parámetro:', error);
+          toast.error('Error al eliminar el parámetro');
+        }
       }
-    }
-  };
+    },
+    [revalidator]
+  );
 
-  const handleSuccess = () => {
+  const handleSuccess = useCallback(() => {
+    revalidator.revalidate();
+    setIsModalOpen(false);
     toast.success(
       modalMode === 'add'
         ? 'Parámetro creado exitosamente'
         : 'Parámetro actualizado exitosamente'
     );
-    revalidator.revalidate();
-  };
+  }, [modalMode, revalidator]);
 
   const columns = useMemo(
     () =>
