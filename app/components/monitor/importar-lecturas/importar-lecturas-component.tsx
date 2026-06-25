@@ -16,7 +16,6 @@ import * as XLSX from 'xlsx';
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import { ForceReprocessDialog } from '~/components/monitor/importar-lecturas/force-reprocess-dialog';
 import { ModernHeader } from '~/components/shared/modern-header';
-import { getAuthToken } from '~/services/axiosConfig';
 import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert';
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
@@ -32,6 +31,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger
 } from '~/components/ui/collapsible';
+import { getAuthToken } from '~/services/axiosConfig';
 import { ResultadoProcesamientoModal } from './resultado-procesamiento-modal';
 
 interface EstadoProcesamiento {

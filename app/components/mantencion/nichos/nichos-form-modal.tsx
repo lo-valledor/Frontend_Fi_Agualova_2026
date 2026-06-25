@@ -113,8 +113,7 @@ export default function NichoFormModal({
 
     if (mode === 'edit' && nicho) {
       if (sectores.length > 0) {
-        const idSector =
-          sectores.find(s => s.nombre === nicho.sector)?.id ?? 0;
+        const idSector = sectores.find(s => s.nombre === nicho.sector)?.id ?? 0;
         form.reset({
           id: nicho.id,
           sectorId: idSector ? String(idSector) : '',

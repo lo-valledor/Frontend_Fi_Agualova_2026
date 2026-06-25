@@ -106,12 +106,8 @@ export default function EditarMedidorComponent({
 
   const estadoSeleccionado = useMemo(
     () =>
-      estados.find(
-        estado => String(estado.id) === String(medidor.idEstado)
-      ) ??
-      estados.find(
-        estado => estado.descripcion === medidor.nombreEstado
-      ),
+      estados.find(estado => String(estado.id) === String(medidor.idEstado)) ??
+      estados.find(estado => estado.descripcion === medidor.nombreEstado),
     [estados, medidor.idEstado, medidor.nombreEstado]
   );
 

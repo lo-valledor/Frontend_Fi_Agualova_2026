@@ -18,26 +18,15 @@ import {
   TableHeader,
   TableRow
 } from '~/components/ui/table';
-
-type CalculoPrefacturaCargo = {
-  contratoId?: number | string;
-  codigoAgualova?: string;
-  descripcion?: string;
-  cantidad?: number;
-  precioUnitario?: number;
-  subtotal?: number;
-};
-
-type CalculoPrefacturaCompleto = {
-  contratoId?: number | string;
-  cargos?: CalculoPrefacturaCargo[];
-  [key: string]: unknown;
-};
+import type {
+  RevisarCalculosPrefactura,
+  RevisarCalculosPrefacturaCargo
+} from '~/types/operaciones';
 
 interface HierarchicalDataTableProps {
-  columns: ColumnDef<CalculoPrefacturaCompleto>[];
-  data: CalculoPrefacturaCompleto[];
-  onSelectionChange?: (selectedContratos: CalculoPrefacturaCompleto[]) => void;
+  columns: ColumnDef<RevisarCalculosPrefactura>[];
+  data: RevisarCalculosPrefactura[];
+  onSelectionChange?: (selectedContratos: RevisarCalculosPrefactura[]) => void;
 }
 
 export function HierarchicalDataTable({
@@ -72,11 +61,11 @@ export function HierarchicalDataTable({
     },
     getCoreRowModel: getCoreRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
-    getSubRows: row => (row.cargos ? [] : undefined) // Los cargos no tienen sub-filas
+    getSubRows: row => (row.detalleCargos ? [] : undefined) // Los cargos no tienen sub-filas
   });
 
   const renderCargoRow = (
-    cargo: CalculoPrefacturaCargo,
+    cargo: RevisarCalculosPrefacturaCargo,
     contratoIndex: number,
     cargoIndex: number
   ) => (
@@ -88,7 +77,7 @@ export function HierarchicalDataTable({
 
       {/* N° Serie - vacío para cargos */}
       <TableCell className="py-0 px-0.5">
-        <span className="font-medium col-span-2">{cargo.codigoAgualova}</span>
+        <span className="font-medium col-span-2">{cargo.codigoCargo}</span>
       </TableCell>
 
       {/* Descripción Cargo - esta es la primera columna con contenido */}
@@ -110,7 +99,7 @@ export function HierarchicalDataTable({
 
       {/* Subtotal - alineada con Total a Pagar */}
       <TableCell className="text-[12px] text-right font-semibold text-sky-700 dark:text-sky-300 py-0 px-0.5">
-        ${(cargo.subtotal || 0).toLocaleString('es-CL')}
+        ${(cargo.subTotal || 0).toLocaleString('es-CL')}
       </TableCell>
 
       {/* Facturar - vacío para cargos */}
@@ -173,7 +162,7 @@ export function HierarchicalDataTable({
                       </TableCell>
                     ))}
                   </TableRow>
-                  {row.getIsExpanded() && row.original.cargos && (
+                  {row.getIsExpanded() && row.original.detalleCargos && (
                     <>
                       {/* Encabezado de cargos */}
                       <TableRow className="bg-sky-100/50 dark:bg-sky-900/20 border-l-2 border-l-sky-500 dark:border-l-sky-400 hover:bg-sky-100/50 dark:hover:bg-sky-900/20 h-5">
@@ -210,7 +199,7 @@ export function HierarchicalDataTable({
                         <TableCell className="py-0 px-0.5"></TableCell>
                       </TableRow>
                       {/* Filas de cargos */}
-                      {row.original.cargos.map((cargo, cargoIndex) =>
+                      {row.original.detalleCargos.map((cargo, cargoIndex) =>
                         renderCargoRow(cargo, index, cargoIndex)
                       )}
                       {/* Separador después de los cargos */}

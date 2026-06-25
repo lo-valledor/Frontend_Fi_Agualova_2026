@@ -25,7 +25,10 @@ interface MeterRowDetailedProps {
   onRefresh: () => void;
 }
 
-export function MeterRowDetailed({ medidor, onRefresh }: MeterRowDetailedProps) {
+export function MeterRowDetailed({
+  medidor,
+  onRefresh
+}: MeterRowDetailedProps) {
   const status = getMeterStatus(medidor.claveHtml);
   const isImported = isImportedReading(medidor);
 
@@ -107,7 +110,9 @@ export function MeterRowDetailed({ medidor, onRefresh }: MeterRowDetailedProps) 
             <DialogHeader className="shrink-0 pb-3 sm:pb-4 border-b border-border/40 px-4 sm:px-6">
               <DialogTitle className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
                 <div className="flex items-center gap-2 sm:gap-3">
-                  <div className={cn('p-1.5 sm:p-2 rounded-xl', status.bgColor)}>
+                  <div
+                    className={cn('p-1.5 sm:p-2 rounded-xl', status.bgColor)}
+                  >
                     {status.icon}
                   </div>
                   <div>
@@ -148,7 +153,9 @@ export function MeterRowDetailed({ medidor, onRefresh }: MeterRowDetailedProps) 
             <DialogHeader className="shrink-0 pb-3 sm:pb-4 border-b border-border/40 px-4 sm:px-6">
               <DialogTitle className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
                 <div className="flex items-center gap-2 sm:gap-3">
-                  <div className={cn('p-1.5 sm:p-2 rounded-xl', status.bgColor)}>
+                  <div
+                    className={cn('p-1.5 sm:p-2 rounded-xl', status.bgColor)}
+                  >
                     {status.icon}
                   </div>
                   <div>

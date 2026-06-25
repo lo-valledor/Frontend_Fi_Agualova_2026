@@ -2,5 +2,4 @@
 . "$(dirname "$0")/_/h"
 
 echo "Running pre-push validation..."
-pnpm run typecheck
-pnpm run test:run
+pnpm run ci

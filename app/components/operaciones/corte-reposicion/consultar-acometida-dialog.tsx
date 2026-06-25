@@ -1,27 +1,27 @@
-import { Download, Eye, MessageSquare, Unlock } from "lucide-react";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
+import { Download, Eye, MessageSquare, Unlock } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
-import { Button } from "~/components/ui/button";
+import { Button } from '~/components/ui/button';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
-} from "~/components/ui/dialog";
-import { Label } from "~/components/ui/label";
-import { Table, TableBody, TableCell, TableRow } from "~/components/ui/table";
-import { Textarea } from "~/components/ui/textarea";
+  DialogTrigger
+} from '~/components/ui/dialog';
+import { Label } from '~/components/ui/label';
+import { Table, TableBody, TableCell, TableRow } from '~/components/ui/table';
+import { Textarea } from '~/components/ui/textarea';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
-  TooltipTrigger,
-} from "~/components/ui/tooltip";
-import api from "~/lib/api";
-import { operacionesService } from "~/services/operacionesService";
+  TooltipTrigger
+} from '~/components/ui/tooltip';
+import api from '~/lib/api';
+import { operacionesService } from '~/services/operacionesService';
 
 interface ConsultaAcometidaDetalle {
   ctId?: string;
@@ -41,11 +41,11 @@ interface ConsultarAcometidaDialogProps {
   onSuccess: () => void;
 }
 
-const FORMATO_MONEDA = new Intl.NumberFormat("es-CL", {
-  style: "currency",
-  currency: "CLP",
+const FORMATO_MONEDA = new Intl.NumberFormat('es-CL', {
+  style: 'currency',
+  currency: 'CLP',
   minimumFractionDigits: 0,
-  maximumFractionDigits: 0,
+  maximumFractionDigits: 0
 });
 
 const formatCurrency = (value: number | undefined): string =>
@@ -57,12 +57,12 @@ const ColonCell = () => (
 
 export function ConsultarAcometidaDialog({
   acometida,
-  onSuccess,
+  onSuccess
 }: Readonly<ConsultarAcometidaDialogProps>) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<ConsultaAcometidaDetalle | null>(null);
-  const [comentario, setComentario] = useState("");
+  const [comentario, setComentario] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
 
@@ -82,12 +82,12 @@ export function ConsultarAcometidaDialog({
       } else if (response.data && !Array.isArray(response.data)) {
         setData(response.data as ConsultaAcometidaDetalle);
       } else {
-        toast.error("No se encontraron datos para esta acometida");
+        toast.error('No se encontraron datos para esta acometida');
         setData(null);
       }
     } catch (err) {
-      toast.error("Error al cargar los datos de la acometida", {
-        description: String(err),
+      toast.error('Error al cargar los datos de la acometida', {
+        description: String(err)
       });
       setData(null);
     } finally {
@@ -98,9 +98,9 @@ export function ConsultarAcometidaDialog({
   const handleExportarExcel = async (): Promise<void> => {
     setIsExporting(true);
     try {
-      const response = await api.get("exportar-facturas-impagas", {
+      const response = await api.get('exportar-facturas-impagas', {
         params: { acometida },
-        responseType: "blob",
+        responseType: 'blob'
       });
 
       const blob =
@@ -108,18 +108,18 @@ export function ConsultarAcometidaDialog({
           ? response.data
           : new Blob([response.data as BlobPart]);
       const url = globalThis.URL.createObjectURL(blob);
-      const link = document.createElement("a");
+      const link = document.createElement('a');
       link.href = url;
-      link.setAttribute("download", `facturas-impagas-${acometida}.xlsx`);
+      link.setAttribute('download', `facturas-impagas-${acometida}.xlsx`);
       document.body.appendChild(link);
       link.click();
       link.remove();
       globalThis.URL.revokeObjectURL(url);
 
-      toast.success("Excel exportado correctamente");
+      toast.success('Excel exportado correctamente');
     } catch (err) {
-      toast.error("Error al exportar las facturas a Excel", {
-        description: String(err),
+      toast.error('Error al exportar las facturas a Excel', {
+        description: String(err)
       });
     } finally {
       setIsExporting(false);
@@ -128,7 +128,7 @@ export function ConsultarAcometidaDialog({
 
   const handleLiberar = async (): Promise<void> => {
     if (!comentario.trim()) {
-      toast.error("El comentario es obligatorio");
+      toast.error('El comentario es obligatorio');
       return;
     }
 
@@ -136,19 +136,19 @@ export function ConsultarAcometidaDialog({
     try {
       const result = await operacionesService.postLiberarAcometida({
         acometida,
-        comentario,
+        comentario
       });
       if (result.error) {
         toast.error(result.error);
         return;
       }
-      toast.success("Liberación registrada correctamente");
+      toast.success('Liberación registrada correctamente');
       setOpen(false);
-      setComentario("");
+      setComentario('');
       onSuccess();
     } catch (err) {
-      toast.error("Error al registrar la liberación", {
-        description: String(err),
+      toast.error('Error al registrar la liberación', {
+        description: String(err)
       });
     } finally {
       setIsSubmitting(false);
@@ -197,7 +197,7 @@ export function ConsultarAcometidaDialog({
             className="gap-1.5"
           >
             <Download className="h-3 w-3" />
-            {isExporting ? "Exportando..." : "Exportar Facturas"}
+            {isExporting ? 'Exportando...' : 'Exportar Facturas'}
           </Button>
         </div>
 
@@ -216,7 +216,7 @@ export function ConsultarAcometidaDialog({
                     </TableCell>
                     <ColonCell />
                     <TableCell className="font-mono text-xs py-1">
-                      {data.clRut ?? "-"}
+                      {data.clRut ?? '-'}
                     </TableCell>
                   </TableRow>
                   <TableRow>
@@ -225,7 +225,7 @@ export function ConsultarAcometidaDialog({
                     </TableCell>
                     <ColonCell />
                     <TableCell className="text-xs py-1">
-                      {data.clRazonSocialCompleto ?? "-"}
+                      {data.clRazonSocialCompleto ?? '-'}
                     </TableCell>
                   </TableRow>
                 </TableBody>
@@ -241,7 +241,7 @@ export function ConsultarAcometidaDialog({
                     </TableCell>
                     <ColonCell />
                     <TableCell className="font-mono text-xs py-1">
-                      {data.seCodigo ?? "-"}
+                      {data.seCodigo ?? '-'}
                     </TableCell>
                   </TableRow>
                   <TableRow className="border-border">
@@ -250,7 +250,7 @@ export function ConsultarAcometidaDialog({
                     </TableCell>
                     <ColonCell />
                     <TableCell className="font-mono text-xs py-1">
-                      {data.ctId ?? "-"}
+                      {data.ctId ?? '-'}
                     </TableCell>
                   </TableRow>
                   <TableRow>
@@ -259,7 +259,7 @@ export function ConsultarAcometidaDialog({
                     </TableCell>
                     <ColonCell />
                     <TableCell className="font-mono text-xs py-1">
-                      {data.meNSerie ?? "-"}
+                      {data.meNSerie ?? '-'}
                     </TableCell>
                   </TableRow>
                   <TableRow>
@@ -268,7 +268,7 @@ export function ConsultarAcometidaDialog({
                     </TableCell>
                     <ColonCell />
                     <TableCell className="text-xs py-1">
-                      {data.secDescripcion ?? "-"}
+                      {data.secDescripcion ?? '-'}
                     </TableCell>
                   </TableRow>
                   <TableRow>
@@ -277,7 +277,7 @@ export function ConsultarAcometidaDialog({
                     </TableCell>
                     <ColonCell />
                     <TableCell className="text-xs py-1">
-                      {data.niDescripcion ?? "-"}
+                      {data.niDescripcion ?? '-'}
                     </TableCell>
                   </TableRow>
                 </TableBody>
@@ -311,7 +311,7 @@ export function ConsultarAcometidaDialog({
                     </TableCell>
                     <ColonCell />
                     <TableCell className="font-mono text-xs py-1">
-                      {data.reFechaIngreso ?? "-"}
+                      {data.reFechaIngreso ?? '-'}
                     </TableCell>
                   </TableRow>
                 </TableBody>
@@ -334,7 +334,7 @@ export function ConsultarAcometidaDialog({
                   <Textarea
                     id="comentario-liberar"
                     value={comentario}
-                    onChange={(e) => setComentario(e.target.value)}
+                    onChange={e => setComentario(e.target.value)}
                     placeholder="Comentario obligatorio para liberación..."
                     className="min-h-15 resize-none text-xs"
                     maxLength={500}
@@ -349,7 +349,7 @@ export function ConsultarAcometidaDialog({
                   className="w-full text-xs h-8"
                 >
                   <Unlock className="h-3 w-3 mr-1" />
-                  {isSubmitting ? "Liberando..." : "Liberar"}
+                  {isSubmitting ? 'Liberando...' : 'Liberar'}
                 </Button>
               </div>
             </div>

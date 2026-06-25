@@ -258,10 +258,7 @@ class MonitorService {
     request: MonitorProps
   ): Promise<MonitorServiceResponse<unknown>> {
     try {
-      const response = await api.post(
-        '/monitor-lecturas/registrar',
-        request
-      );
+      const response = await api.post('/monitor-lecturas/registrar', request);
       return {
         data: response.data,
         error: null

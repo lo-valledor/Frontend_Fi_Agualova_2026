@@ -1,8 +1,8 @@
-import { useMemo } from "react";
+import { useMemo } from 'react';
 
-import type { ContractFilters } from "~/components/administracion/contratos/contract-filters";
-import type { ContratosRow } from "~/types/administracion";
-import { calculateFilterStats } from "./utils/stats-calculator";
+import type { ContractFilters } from '~/components/administracion/contratos/contract-filters';
+import type { ContratosRow } from '~/types/administracion';
+import { calculateFilterStats } from './utils/stats-calculator';
 
 export interface ContractFilterOptions {
   tiposContrato: string[];
@@ -15,20 +15,20 @@ export type FilterOptions = ContractFilterOptions;
 
 function uniqueSorted(values: string[]): string[] {
   return Array.from(new Set(values.filter(Boolean))).sort((a, b) =>
-    a.localeCompare(b, "es"),
+    a.localeCompare(b, 'es')
   );
 }
 
 export function useContractFilters(
   contracts: ContratosRow[],
-  filters: ContractFilters,
+  filters: ContractFilters
 ) {
   const filterOptions = useMemo((): ContractFilterOptions => {
     return {
       tiposContrato: uniqueSorted(contracts.map(c => c.tipoContrato)),
       ciclosFacturacion: uniqueSorted(contracts.map(c => c.ciclo)),
       tarifas: uniqueSorted(contracts.map(c => c.tarifa)),
-      comunas: uniqueSorted(contracts.map(c => c.comunaEnvio)),
+      comunas: uniqueSorted(contracts.map(c => c.comunaEnvio))
     };
   }, [contracts]);
 
@@ -36,7 +36,7 @@ export function useContractFilters(
     return contracts.filter(contract => {
       if (
         filters.tipoContrato &&
-        filters.tipoContrato !== "all" &&
+        filters.tipoContrato !== 'all' &&
         contract.tipoContrato !== filters.tipoContrato
       ) {
         return false;
@@ -44,7 +44,7 @@ export function useContractFilters(
 
       if (
         filters.cicloFacturacion &&
-        filters.cicloFacturacion !== "all" &&
+        filters.cicloFacturacion !== 'all' &&
         contract.ciclo !== filters.cicloFacturacion
       ) {
         return false;
@@ -52,7 +52,7 @@ export function useContractFilters(
 
       if (
         filters.tarifa &&
-        filters.tarifa !== "all" &&
+        filters.tarifa !== 'all' &&
         contract.tarifa !== filters.tarifa
       ) {
         return false;
@@ -60,7 +60,7 @@ export function useContractFilters(
 
       if (
         filters.comuna &&
-        filters.comuna !== "all" &&
+        filters.comuna !== 'all' &&
         contract.comunaEnvio !== filters.comuna
       ) {
         return false;
@@ -72,12 +72,12 @@ export function useContractFilters(
 
   const filterStats = useMemo(
     () => calculateFilterStats(contracts, filteredContracts, filters),
-    [contracts.length, filteredContracts.length, filters],
+    [contracts.length, filteredContracts.length, filters]
   );
 
   return {
     filteredContracts,
     filterStats,
-    filterOptions,
+    filterOptions
   };
 }

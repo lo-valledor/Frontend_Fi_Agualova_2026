@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
-
+import { DataTable } from '~/components/data-table/data-table';
 import { ModernHeader } from '~/components/shared/modern-header';
 import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert';
 import { Button } from '~/components/ui/button';
@@ -39,11 +39,9 @@ import type {
   CerrarLecturasFiltrosCiclosResponse,
   CerrarLecturasFiltrosPeriodosResponse
 } from '~/types/operaciones';
-
 import AlertCerrarLecturas from './alert-cerrar-lecturas';
-import DialogInformacion from './dialog-informacion';
-import { DataTable } from '~/components/data-table/data-table';
 import { columns } from './columns';
+import DialogInformacion from './dialog-informacion';
 
 interface CerrarLecturasComponentProps {
   readonly periodos: CerrarLecturasFiltrosPeriodosResponse;
@@ -62,9 +60,9 @@ export default function CerrarLecturasComponent({
     () => periodos[0]?.id ?? ''
   );
   const [cicloId, setCicloId] = useState<string>('');
-  const [nichos, setNichos] = useState<CerrarLecturasBuscarEstadisticasRequest[]>(
-    []
-  );
+  const [nichos, setNichos] = useState<
+    CerrarLecturasBuscarEstadisticasRequest[]
+  >([]);
   const [selectedIdsNichos, setSelectedIdsNichos] = useState<number[]>([]);
   const [hasSearched, setHasSearched] = useState(false);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
@@ -136,7 +134,9 @@ export default function CerrarLecturasComponent({
     toast.success('Filtros limpiados');
   };
 
-  const handleSelectionChange = (rows: CerrarLecturasBuscarEstadisticasRequest[]): void => {
+  const handleSelectionChange = (
+    rows: CerrarLecturasBuscarEstadisticasRequest[]
+  ): void => {
     setSelectedIdsNichos(rows.map(r => r.idNicho));
   };
 

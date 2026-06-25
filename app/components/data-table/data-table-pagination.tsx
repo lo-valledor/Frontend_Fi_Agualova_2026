@@ -78,8 +78,7 @@ export function DataTablePagination<TData>({
             </span>
           ) : (
             <span>
-              Mostrando {startRow}–
-              {Math.min(endRow, totalRows ?? endRow)} de{' '}
+              Mostrando {startRow}–{Math.min(endRow, totalRows ?? endRow)} de{' '}
               {totalRows ?? endRow}
             </span>
           )

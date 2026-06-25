@@ -263,8 +263,7 @@ const OverconsumptionAnalysis = memo(function OverconsumptionAnalysis({
                                   Sobreconsumo:
                                 </span>
                                 <span className="font-medium">
-                                  {data.sobreconsumo.toLocaleString('es-CL')}{' '}
-                                  m³
+                                  {data.sobreconsumo.toLocaleString('es-CL')} m³
                                 </span>
                               </div>
                               <div className="flex items-center justify-between gap-4 pt-1 border-t">
@@ -272,8 +271,7 @@ const OverconsumptionAnalysis = memo(function OverconsumptionAnalysis({
                                   Total:
                                 </span>
                                 <span className="font-bold">
-                                  {data.consumoTotal.toLocaleString('es-CL')}{' '}
-                                  m³
+                                  {data.consumoTotal.toLocaleString('es-CL')} m³
                                 </span>
                               </div>
                               <div className="flex items-center justify-between gap-4">

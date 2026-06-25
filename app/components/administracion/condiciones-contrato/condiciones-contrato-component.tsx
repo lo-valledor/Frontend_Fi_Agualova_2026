@@ -3,7 +3,7 @@ import { motion } from 'motion/react';
 import { useCallback, useState } from 'react';
 import { useRevalidator } from 'react-router';
 import { toast } from 'sonner';
-
+import { DataTable } from '~/components/data-table/data-table';
 import { ModernHeader } from '~/components/shared/modern-header';
 import { Button } from '~/components/ui/button';
 import {
@@ -24,11 +24,9 @@ import { ScrollArea } from '~/components/ui/scroll-area';
 import { Separator } from '~/components/ui/separator';
 import type { CondicionesContratoRow } from '~/types/administracion';
 import type { Concepto } from '~/types/mantencion';
-
 import { columns } from './columns';
 import CondicionesContratoModalForm from './condiciones-contrato-modal-form';
 import DetallesCondicionesContrato from './detalles-condiciones-contrato';
-import { DataTable } from '~/components/data-table/data-table';
 
 interface CondicionesContratoComponentProps {
   condicionesContrato: CondicionesContratoRow[];
@@ -40,9 +38,8 @@ export default function CondicionesContratoComponent({
   conceptos
 }: Readonly<CondicionesContratoComponentProps>) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedCondicionContrato, setSelectedCondicionContrato] = useState<
-    CondicionesContratoRow | null
-  >(null);
+  const [selectedCondicionContrato, setSelectedCondicionContrato] =
+    useState<CondicionesContratoRow | null>(null);
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [selectedCondicionId, setSelectedCondicionId] = useState<number | null>(

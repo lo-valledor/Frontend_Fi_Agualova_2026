@@ -30,9 +30,8 @@ export default function TiposContratosComponent({
   tiposContratos
 }: Readonly<TiposContratosComponentProps>) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedTipoContrato, setSelectedTipoContrato] = useState<
-    TipoContrato | null
-  >(null);
+  const [selectedTipoContrato, setSelectedTipoContrato] =
+    useState<TipoContrato | null>(null);
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
 
   const revalidator = useRevalidator();

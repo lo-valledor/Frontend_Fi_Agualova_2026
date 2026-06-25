@@ -11,9 +11,11 @@ vi.mock('sonner', () => ({
   }
 }));
 
-vi.mock('~/lib/api', () => ({
-  default: {
-    get: vi.fn()
+vi.mock('~/services/operacionesService', () => ({
+  operacionesService: {
+    getRevisarCalculosBuscarPrefacturas: vi.fn(() =>
+      Promise.resolve({ data: [], error: null })
+    )
   }
 }));
 

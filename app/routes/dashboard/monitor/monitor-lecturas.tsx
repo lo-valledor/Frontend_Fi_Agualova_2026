@@ -1,13 +1,13 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense } from 'react';
 
-import { MonitorLecturasSkeleton } from "~/components/skeletons";
-import { monitorService } from "~/services/monitorService";
-import type { MonitorSectores } from "~/types/monitor";
+import { MonitorLecturasSkeleton } from '~/components/skeletons';
+import { monitorService } from '~/services/monitorService';
+import type { MonitorSectores } from '~/types/monitor';
 
-import type { Route } from "./+types/monitor-lecturas";
+import type { Route } from './+types/monitor-lecturas';
 
 const MonitorLecturasComponent = lazy(
-  () => import("~/components/monitor/monitor-lecturas-component"),
+  () => import('~/components/monitor/monitor-lecturas-component')
 );
 
 export function hydrateFallback() {
@@ -16,8 +16,8 @@ export function hydrateFallback() {
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Agualova | Monitor Lecturas" },
-    { name: "description", content: "Monitoreo de lecturas de medidores" },
+    { title: 'Agualova | Monitor Lecturas' },
+    { name: 'description', content: 'Monitoreo de lecturas de medidores' }
   ];
 }
 
@@ -30,14 +30,14 @@ export async function clientLoader() {
       sectores: [] as MonitorSectores[],
       claves: [],
       activePeriodoId: null,
-      error: new Error(result.error || "Error al cargar datos"),
+      error: new Error(result.error || 'Error al cargar datos')
     };
   }
 
   let sectores: MonitorSectores[] = [];
   if (result.data.activePeriodoId !== null) {
     const sectoresResult = await monitorService.getSectoresByPeriodo(
-      result.data.activePeriodoId,
+      result.data.activePeriodoId
     );
     if (sectoresResult.data) {
       sectores = sectoresResult.data;
@@ -49,12 +49,12 @@ export async function clientLoader() {
     sectores,
     claves: result.data.claves,
     activePeriodoId: result.data.activePeriodoId,
-    error: null,
+    error: null
   };
 }
 
 export default function MonitorLecturasPage({
-  loaderData,
+  loaderData
 }: Route.ComponentProps) {
   return (
     <Suspense fallback={<MonitorLecturasSkeleton />}>

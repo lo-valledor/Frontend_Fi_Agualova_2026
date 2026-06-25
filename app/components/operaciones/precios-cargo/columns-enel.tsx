@@ -25,7 +25,9 @@ const parsearValorMesAnterior = (valor: string): number | null => {
   const trimmed = valor.trim();
   if (!trimmed || trimmed.toLowerCase() === 'sin valor') return null;
 
-  const numero = Number.parseFloat(trimmed.replace(/\./g, '').replace(',', '.'));
+  const numero = Number.parseFloat(
+    trimmed.replace(/\./g, '').replace(',', '.')
+  );
   return Number.isFinite(numero) && numero > 0 ? numero : null;
 };
 
@@ -177,7 +179,8 @@ export const columns = ({
               className="bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800 text-xs px-1.5 py-0 gap-1"
             >
               <span className="font-mono">
-                ${pendiente.valor.toLocaleString('es-CL', {
+                $
+                {pendiente.valor.toLocaleString('es-CL', {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2
                 })}

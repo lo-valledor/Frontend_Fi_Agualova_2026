@@ -1,9 +1,9 @@
-import type { ColumnDef } from "@tanstack/react-table";
+import type { ColumnDef } from '@tanstack/react-table';
 
-import { DataTableColumnHeader } from "~/components/data-table/data-table-column-header";
-import { TableActions } from "~/components/data-table/table-helpers";
-import { Badge } from "~/components/ui/badge";
-import { type ContratosRow } from "~/types/administracion";
+import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
+import { TableActions } from '~/components/data-table/table-helpers';
+import { Badge } from '~/components/ui/badge';
+import { type ContratosRow } from '~/types/administracion';
 
 interface TableColumnsProps {
   onEdit: (contract: ContratosRow) => void;
@@ -14,10 +14,10 @@ interface TableColumnsProps {
 export const columns = ({
   onEdit,
   onDelete,
-  onViewDetails,
+  onViewDetails
 }: TableColumnsProps): ColumnDef<ContratosRow>[] => [
   {
-    accessorKey: "idContrato",
+    accessorKey: 'idContrato',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Código" />
     ),
@@ -28,10 +28,10 @@ export const columns = ({
         </span>
       );
     },
-    size: 120,
+    size: 120
   },
   {
-    accessorKey: "subEmpalme",
+    accessorKey: 'subEmpalme',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Sub Empalme" />
     ),
@@ -39,10 +39,10 @@ export const columns = ({
       return (
         <span className="text-xs sm:text-sm">{row.original.subEmpalme}</span>
       );
-    },
+    }
   },
   {
-    accessorKey: "tipoContrato",
+    accessorKey: 'tipoContrato',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Tipo Contrato" />
     ),
@@ -50,19 +50,19 @@ export const columns = ({
       return (
         <span className="text-xs sm:text-sm">{row.original.tipoContrato}</span>
       );
-    },
+    }
   },
   {
-    accessorKey: "tarifa",
+    accessorKey: 'tarifa',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Tarifa" />
     ),
     cell: ({ row }) => {
       return <span className="text-xs sm:text-sm">{row.original.tarifa}</span>;
-    },
+    }
   },
   {
-    accessorKey: "nombrePropietario",
+    accessorKey: 'nombrePropietario',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Propietario" />
     ),
@@ -72,10 +72,10 @@ export const columns = ({
           {row.original.nombrePropietario}
         </span>
       );
-    },
+    }
   },
   {
-    accessorKey: "nombreCliente",
+    accessorKey: 'nombreCliente',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Cliente" />
     ),
@@ -83,10 +83,10 @@ export const columns = ({
       return (
         <span className="text-xs sm:text-sm">{row.original.nombreCliente}</span>
       );
-    },
+    }
   },
   {
-    accessorKey: "localEmpresa",
+    accessorKey: 'localEmpresa',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Local Empresa" />
     ),
@@ -94,10 +94,10 @@ export const columns = ({
       return (
         <span className="text-xs sm:text-sm">{row.original.localEmpresa}</span>
       );
-    },
+    }
   },
   {
-    accessorKey: "fechaInicio",
+    accessorKey: 'fechaInicio',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Fecha Inicio" />
     ),
@@ -107,10 +107,10 @@ export const columns = ({
           {new Date(row.original.fechaInicio).toLocaleDateString()}
         </span>
       );
-    },
+    }
   },
   {
-    accessorKey: "fechaTermino",
+    accessorKey: 'fechaTermino',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Fecha Término" />
     ),
@@ -119,13 +119,13 @@ export const columns = ({
         <span className="text-xs sm:text-sm">
           {row.original.fechaTermino
             ? new Date(row.original.fechaTermino).toLocaleDateString()
-            : "N/A"}
+            : 'N/A'}
         </span>
       );
-    },
+    }
   },
   {
-    accessorKey: "comunaEnvio",
+    accessorKey: 'comunaEnvio',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Comuna Envío" />
     ),
@@ -133,10 +133,10 @@ export const columns = ({
       return (
         <span className="text-xs sm:text-sm">{row.original.comunaEnvio}</span>
       );
-    },
+    }
   },
   {
-    accessorKey: "direccionEnvio",
+    accessorKey: 'direccionEnvio',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Dirección Envío" />
     ),
@@ -146,10 +146,10 @@ export const columns = ({
           {row.original.direccionEnvio}
         </span>
       );
-    },
+    }
   },
   {
-    accessorKey: "limiteInvierno",
+    accessorKey: 'limiteInvierno',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Límite Invierno" />
     ),
@@ -159,19 +159,19 @@ export const columns = ({
           {row.original.limiteInvierno}
         </span>
       );
-    },
+    }
   },
   {
-    accessorKey: "ciclo",
+    accessorKey: 'ciclo',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Ciclo" />
     ),
     cell: ({ row }) => {
       return <span className="text-xs sm:text-sm">{row.original.ciclo}</span>;
-    },
+    }
   },
   {
-    accessorKey: "potencia",
+    accessorKey: 'potencia',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Potencia" />
     ),
@@ -179,10 +179,10 @@ export const columns = ({
       return (
         <span className="text-xs sm:text-sm">{row.original.potencia}</span>
       );
-    },
+    }
   },
   {
-    accessorKey: "liberadoCorte",
+    accessorKey: 'liberadoCorte',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Liberado Corte" />
     ),
@@ -190,24 +190,24 @@ export const columns = ({
       return (
         <span className="text-xs sm:text-sm">{row.original.liberadoCorte}</span>
       );
-    },
+    }
   },
   {
-    accessorKey: "activo",
+    accessorKey: 'activo',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Estado" />
     ),
     cell: ({ row }) => {
       return (
         <Badge variant="secondary" className="text-xs">
-          {row.original.activo ? "Activo" : "Inactivo"}
+          {row.original.activo ? 'Activo' : 'Inactivo'}
         </Badge>
       );
     },
-    size: 120,
+    size: 120
   },
   {
-    id: "actions",
+    id: 'actions',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Acciones" />
     ),
@@ -224,6 +224,6 @@ export const columns = ({
         </div>
       );
     },
-    size: 90,
-  },
+    size: 90
+  }
 ];

@@ -18,7 +18,6 @@ export type CicloFacturacionFormValues = {
   id: number;
 };
 
-
 /* Claves */
 // claves/buscar, claves/{id}, claves/crear, claves/editar
 export type Clave = {

@@ -547,9 +547,7 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
                   <p className="text-xl font-bold text-blue-900 dark:text-blue-100">
                     {analyticsData.totalConsumo.toLocaleString('es-CL')}
                   </p>
-                  <p className="text-xs text-blue-600 dark:text-blue-400">
-                    m³
-                  </p>
+                  <p className="text-xs text-blue-600 dark:text-blue-400">m³</p>
                 </div>
                 <Zap className="h-8 w-8 text-blue-600 dark:text-blue-400 opacity-50" />
               </div>
@@ -585,9 +583,7 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
                   <p className="text-xl font-bold text-rose-900 dark:text-rose-100">
                     {analyticsData.maxConsumo.toLocaleString('es-CL')}
                   </p>
-                  <p className="text-xs text-rose-600 dark:text-rose-400">
-                    m³
-                  </p>
+                  <p className="text-xs text-rose-600 dark:text-rose-400">m³</p>
                 </div>
                 <TrendingUp className="h-8 w-8 text-rose-600 dark:text-rose-400 opacity-50" />
               </div>
@@ -604,9 +600,7 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
                   <p className="text-xl font-bold text-cyan-900 dark:text-cyan-100">
                     {analyticsData.minConsumo.toLocaleString('es-CL')}
                   </p>
-                  <p className="text-xs text-cyan-600 dark:text-cyan-400">
-                    m³
-                  </p>
+                  <p className="text-xs text-cyan-600 dark:text-cyan-400">m³</p>
                 </div>
                 <TrendingDown className="h-8 w-8 text-cyan-600 dark:text-cyan-400 opacity-50" />
               </div>
@@ -697,10 +691,7 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
               </TabsList>
 
               <TabsContent value="evolution" className="mt-0">
-                <ChartContainer
-                  config={chartConfig}
-                  className="h-87.5 w-full"
-                >
+                <ChartContainer config={chartConfig} className="h-87.5 w-full">
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={analyticsData.filteredLecturas}>
                       <XAxis
@@ -759,10 +750,7 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
               </TabsContent>
 
               <TabsContent value="comparison" className="mt-0">
-                <ChartContainer
-                  config={chartConfig}
-                  className="h-87.5 w-full"
-                >
+                <ChartContainer config={chartConfig} className="h-87.5 w-full">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={analyticsData.filteredLecturas}>
                       <XAxis
@@ -802,10 +790,7 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
               </TabsContent>
 
               <TabsContent value="analysis" className="mt-0">
-                <ChartContainer
-                  config={chartConfig}
-                  className="h-87.5 w-full"
-                >
+                <ChartContainer config={chartConfig} className="h-87.5 w-full">
                   <ResponsiveContainer width="100%" height="100%">
                     <ComposedChart data={analyticsData.filteredLecturas}>
                       <XAxis

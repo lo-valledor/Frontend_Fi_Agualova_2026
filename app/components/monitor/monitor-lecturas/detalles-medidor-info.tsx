@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import {
   AlertCircle,
   Calendar,
@@ -8,6 +7,7 @@ import {
   PlugIcon,
   Zap
 } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 import { DataTable } from '~/components/data-table/data-table';
 import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert';

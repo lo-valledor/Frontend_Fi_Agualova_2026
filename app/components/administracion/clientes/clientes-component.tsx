@@ -1,29 +1,29 @@
-import { LayoutList, Plus } from "lucide-react";
-import { motion } from "motion/react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { PaginationState } from "@tanstack/react-table";
-import { useNavigate } from "react-router";
-import { toast } from "sonner";
-import { DataTable } from "~/components/data-table/data-table";
-import { ExportButton } from "~/components/shared/export-button";
-import { ModernHeader } from "~/components/shared/modern-header";
-import { Button } from "~/components/ui/button";
+import type { PaginationState } from '@tanstack/react-table';
+import { LayoutList, Plus } from 'lucide-react';
+import { motion } from 'motion/react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useNavigate } from 'react-router';
+import { toast } from 'sonner';
+import { DataTable } from '~/components/data-table/data-table';
+import { ExportButton } from '~/components/shared/export-button';
+import { ModernHeader } from '~/components/shared/modern-header';
+import { Button } from '~/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
-import { useExportClientes } from "~/hooks/administracion/use-export-clientes";
-import { useClientes } from "~/hooks/use-administracion";
-import { administracionService } from "~/services/administracionService";
+  CardTitle
+} from '~/components/ui/card';
+import { useExportClientes } from '~/hooks/administracion/use-export-clientes';
+import { useClientes } from '~/hooks/use-administracion';
+import { administracionService } from '~/services/administracionService';
 import type {
   Cliente,
   ClientesRow,
   NombreComuna,
-  NombreGiro,
-} from "~/types/administracion";
+  NombreGiro
+} from '~/types/administracion';
 import {
   CLIENTES_CREAR_ROUTE,
   createInitialClienteModalState,
@@ -31,10 +31,10 @@ import {
   extractClienteErrorMessage,
   getClienteEditUrl,
   isValidDetailedCliente,
-  normalizeClienteDetallado,
-} from "~/utils/administracion";
-import { columns } from "./columns";
-import { ClienteDetailsModal } from "./detalles-cliente";
+  normalizeClienteDetallado
+} from '~/utils/administracion';
+import { columns } from './columns';
+import { ClienteDetailsModal } from './detalles-cliente';
 
 interface ClientesComponentProps {
   readonly clientes: ClientesRow[];
@@ -43,19 +43,19 @@ interface ClientesComponentProps {
 }
 
 export default function ClientesComponent({
-  clientes,
+  clientes
 }: ClientesComponentProps) {
   // Estado de datos
   const [detailedCliente, setDetailedCliente] = useState<Cliente | null>(null);
 
   // Estado unificado de modales
   const [modalsState, setModalsState] = useState(
-    createInitialClienteModalState(),
+    createInitialClienteModalState()
   );
 
   // Estado de carga (para modales, no la tabla)
   const [_loadingState, setLoadingState] = useState(
-    createInitialLoadingState(),
+    createInitialLoadingState()
   );
 
   // ─── Estado de paginación/búsqueda server-side de la tabla ─────────
@@ -63,18 +63,18 @@ export default function ClientesComponent({
   const [tableData, setTableData] = useState<ClientesRow[]>(clientes);
   const [tableLoading, setTableLoading] = useState(false);
   const [tableError, setTableError] = useState<string | null>(null);
-  const [searchField, setSearchField] = useState("nombreCliente");
-  const [searchValue, setSearchValue] = useState("");
+  const [searchField, setSearchField] = useState('nombreCliente');
+  const [searchValue, setSearchValue] = useState('');
   const [tablePagination, setTablePagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: DEFAULT_PAGE_SIZE,
+    pageSize: DEFAULT_PAGE_SIZE
   });
   const [hasMore, setHasMore] = useState(true);
   const requestIdRef = useRef(0);
 
   const searchFields = useMemo(
-    () => [{ value: "nombreCliente", label: "Nombre del cliente" }],
-    [],
+    () => [{ value: 'nombreCliente', label: 'Nombre del cliente' }],
+    []
   );
 
   // Dependencias
@@ -88,7 +88,7 @@ export default function ClientesComponent({
       pageIndex,
       pageSize,
       field,
-      value,
+      value
     }: {
       pageIndex: number;
       pageSize: number;
@@ -101,7 +101,7 @@ export default function ClientesComponent({
       const result = await administracionService.getClientesByLimitAndOffset({
         limit: pageSize,
         offset: pageIndex * pageSize,
-        ...(value.trim() ? { [field]: value.trim() } : {}),
+        ...(value.trim() ? { [field]: value.trim() } : {})
       });
 
       if (requestId !== requestIdRef.current) return;
@@ -109,14 +109,14 @@ export default function ClientesComponent({
       if (result.error || !result.data) {
         setTableData([]);
         setHasMore(false);
-        setTableError(result.error ?? "Error desconocido");
+        setTableError(result.error ?? 'Error desconocido');
       } else {
         setTableData(result.data);
         setHasMore(result.data.length >= pageSize);
       }
       setTableLoading(false);
     },
-    [],
+    []
   );
 
   useEffect(() => {
@@ -124,7 +124,7 @@ export default function ClientesComponent({
       pageIndex: 0,
       pageSize: DEFAULT_PAGE_SIZE,
       field: searchField,
-      value: "",
+      value: ''
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -136,10 +136,10 @@ export default function ClientesComponent({
         pageIndex: next.pageIndex,
         pageSize: next.pageSize,
         field: searchField,
-        value: searchValue,
+        value: searchValue
       });
     },
-    [fetchClientesPage, searchField, searchValue],
+    [fetchClientesPage, searchField, searchValue]
   );
 
   const handleTableSearchChange = useCallback(
@@ -148,17 +148,17 @@ export default function ClientesComponent({
       setSearchValue(value);
       const next: PaginationState = {
         pageIndex: 0,
-        pageSize: tablePagination.pageSize,
+        pageSize: tablePagination.pageSize
       };
       setTablePagination(next);
       fetchClientesPage({
         pageIndex: next.pageIndex,
         pageSize: next.pageSize,
         field,
-        value,
+        value
       });
     },
-    [fetchClientesPage, tablePagination.pageSize],
+    [fetchClientesPage, tablePagination.pageSize]
   );
 
   const handleAddCliente = useCallback(() => {
@@ -169,43 +169,43 @@ export default function ClientesComponent({
     (cliente: ClientesRow) => {
       navigate(getClienteEditUrl(cliente.rut));
     },
-    [navigate],
+    [navigate]
   );
 
   const handleDetailsCliente = useCallback(
     async (cliente: ClientesRow) => {
       // Early return: validar cliente
       if (!cliente?.rut) {
-        toast.error("Cliente inválido");
+        toast.error('Cliente inválido');
         return;
       }
 
-      setLoadingState((prev) => ({ ...prev, isLoading: true }));
+      setLoadingState(prev => ({ ...prev, isLoading: true }));
 
       try {
         const clienteDetallado = await getClienteByRut(cliente.rut);
         if (!isValidDetailedCliente(clienteDetallado)) {
-          toast.error("Los detalles del cliente no son válidos");
+          toast.error('Los detalles del cliente no son válidos');
           return;
         }
 
         const clienteNormalizado = normalizeClienteDetallado(clienteDetallado);
         setDetailedCliente(clienteNormalizado);
-        setModalsState((prev) => ({
+        setModalsState(prev => ({
           ...prev,
-          details: { isOpen: true },
+          details: { isOpen: true }
         }));
       } catch (error) {
         const errorInfo = extractClienteErrorMessage(
           error,
-          "Error al cargar los detalles del cliente",
+          'Error al cargar los detalles del cliente'
         );
         toast.error(errorInfo.message);
       } finally {
-        setLoadingState((prev) => ({ ...prev, isLoading: false }));
+        setLoadingState(prev => ({ ...prev, isLoading: false }));
       }
     },
-    [getClienteByRut],
+    [getClienteByRut]
   );
 
   const mechanicalEase = [0.25, 0.1, 0.25, 1] as const;
@@ -252,8 +252,8 @@ export default function ClientesComponent({
                   </CardTitle>
                   <CardDescription className="text-xs mt-0.5 text-muted-foreground">
                     {tableLoading
-                      ? "Cargando…"
-                      : `${tableData.length} cliente${tableData.length !== 1 ? "s" : ""} en esta página`}
+                      ? 'Cargando…'
+                      : `${tableData.length} cliente${tableData.length !== 1 ? 's' : ''} en esta página`}
                   </CardDescription>
                 </div>
               </div>
@@ -266,7 +266,7 @@ export default function ClientesComponent({
                     onEdit: handleEditCliente,
                     onDetails: handleDetailsCliente,
                     editingClienteRut: null,
-                    detailingClienteRut: null,
+                    detailingClienteRut: null
                   })}
                   data={tableData}
                   defaultPageSize={DEFAULT_PAGE_SIZE}
@@ -284,13 +284,13 @@ export default function ClientesComponent({
                       pageIndex: tablePagination.pageIndex,
                       pageSize: tablePagination.pageSize,
                       field: searchField,
-                      value: searchValue,
+                      value: searchValue
                     })
                   }
                   emptyMessage={
                     searchValue.trim()
                       ? `Sin resultados para "${searchValue.trim()}"`
-                      : "No hay clientes registrados en el sistema"
+                      : 'No hay clientes registrados en el sistema'
                   }
                 />
               </div>
@@ -302,9 +302,9 @@ export default function ClientesComponent({
         <ClienteDetailsModal
           isOpen={modalsState.details.isOpen}
           onClose={() =>
-            setModalsState((prev) => ({
+            setModalsState(prev => ({
               ...prev,
-              details: { isOpen: false },
+              details: { isOpen: false }
             }))
           }
           cliente={detailedCliente}

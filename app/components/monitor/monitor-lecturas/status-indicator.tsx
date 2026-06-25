@@ -13,10 +13,7 @@ interface StatusIndicatorProps {
   size?: 'sm' | 'md' | 'lg';
 }
 
-export function StatusIndicator({
-  status,
-  size = 'md'
-}: StatusIndicatorProps) {
+export function StatusIndicator({ status, size = 'md' }: StatusIndicatorProps) {
   return (
     <motion.div
       initial={{ scale: 0.8, opacity: 0 }}

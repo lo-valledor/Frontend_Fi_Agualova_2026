@@ -3,13 +3,9 @@ import { ChevronDown, ChevronRight } from 'lucide-react';
 
 import { Button } from '~/components/ui/button';
 import { Checkbox } from '~/components/ui/checkbox';
+import type { RevisarCalculosPrefactura } from '~/types/operaciones';
 
-type CalculoPrefacturaCompleto = Record<string, unknown> & {
-  contratoId?: number | string;
-  cargos?: Record<string, unknown>[];
-};
-
-export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
+export const columns: ColumnDef<RevisarCalculosPrefactura>[] = [
   {
     id: 'expander',
     header: () => null,
@@ -101,9 +97,9 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
     header: () => (
       <div className="text-left font-medium text-[10px]">Tarifa</div>
     ),
-    accessorKey: 'codigoTarifa',
+    accessorKey: 'tarifa',
     cell: ({ row }) => {
-      const tarifa = row.getValue('codigoTarifa');
+      const tarifa = row.getValue('tarifa');
       return (
         <div className="text-left">
           <span className="text-[10px] bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 px-0.5 py-0.5 rounded">
@@ -148,9 +144,9 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
     header: () => (
       <div className="text-left font-medium text-[10px]">Local</div>
     ),
-    accessorKey: 'localId',
+    accessorKey: 'local',
     cell: ({ row }) => {
-      const local = row.getValue('localId');
+      const local = row.getValue('local');
       return (
         <div className="text-left">
           <span className="text-[10px] bg-primary/10 text-primary px-0.5 py-0.5 rounded">
@@ -200,9 +196,9 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
     header: () => (
       <div className="text-center font-medium text-[10px]">N° Medidor</div>
     ),
-    accessorKey: 'numeroSerie',
+    accessorKey: 'numeroMedidor',
     cell: ({ row }) => {
-      const serie = row.getValue('numeroSerie');
+      const serie = row.getValue('numeroMedidor');
       return (
         <span className="font-mono text-[10px] bg-background px-0.5 py-0.5 rounded">
           {serie as string}
@@ -240,13 +236,13 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
     header: () => (
       <div className="text-center font-medium text-[10px]">Consumo</div>
     ),
-    accessorKey: 'consumoPeriodo',
+    accessorKey: 'consumo',
     cell: ({ row }) => {
-      const consumo = row.getValue('consumoPeriodo');
+      const consumo = row.getValue('consumo');
       return (
         <div className="text-right">
           <span className="text-[10px]">
-            ${((consumo as number) || 0).toLocaleString('es-CL')}
+            {((consumo as number) || 0).toLocaleString('es-CL')}
           </span>
         </div>
       );

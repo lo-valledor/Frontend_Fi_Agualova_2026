@@ -1,20 +1,20 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState } from 'react';
 
-import { BreadcrumbSetter } from "~/components/breadcrumb-setter";
-import PrepararLecturasComponent from "~/components/operaciones/preparar-lecturas/preparar-lecturas-component";
-import { operacionesService } from "~/services/operacionesService";
+import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
+import PrepararLecturasComponent from '~/components/operaciones/preparar-lecturas/preparar-lecturas-component';
+import { operacionesService } from '~/services/operacionesService';
 import type {
   PrepararLecturasBuscarNichosRequest,
   PrepararLecturasFiltrosCiclosResponse,
-  PrepararLecturasFiltrosPeriodosResponse,
-} from "~/types/operaciones";
+  PrepararLecturasFiltrosPeriodosResponse
+} from '~/types/operaciones';
 
-import type { Route } from "./+types/preparar-lecturas";
+import type { Route } from './+types/preparar-lecturas';
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Agualova | Preparar Lecturas" },
-    { name: "description", content: "Preparar Lecturas" },
+    { title: 'Agualova | Preparar Lecturas' },
+    { name: 'description', content: 'Preparar Lecturas' }
   ];
 }
 
@@ -31,14 +31,14 @@ export async function clientLoader() {
     return {
       periodoAbierto: [],
       ciclos: [],
-      error: "Error al cargar los datos de preparación",
+      error: 'Error al cargar los datos de preparación'
     } satisfies PrepararLecturasLoaderData;
   }
 
   return {
     periodoAbierto: result.data.periodoAbierto,
     ciclos: result.data.ciclos,
-    error: null,
+    error: null
   } satisfies PrepararLecturasLoaderData;
 }
 
@@ -46,13 +46,13 @@ export default function PrepararLecturas({ loaderData }: Route.ComponentProps) {
   const { periodoAbierto, ciclos, error } = loaderData;
 
   const [nichos, setNichos] = useState<PrepararLecturasBuscarNichosRequest[]>(
-    [],
+    []
   );
   const [isLoadingNichos, setIsLoadingNichos] = useState(false);
 
   const pageBreadcrumbs = [
-    { label: "Operaciones" },
-    { label: "Preparar Lecturas" },
+    { label: 'Operaciones' },
+    { label: 'Preparar Lecturas' }
   ];
 
   const recargarNichos = useCallback(
@@ -63,18 +63,18 @@ export default function PrepararLecturas({ loaderData }: Route.ComponentProps) {
       try {
         const result = await operacionesService.getBuscarNichos(
           cicloId,
-          periodoId,
+          periodoId
         );
 
         setNichos(result.error || !result.data ? [] : result.data);
       } catch (err) {
-        console.error("Error al obtener nichos:", err);
+        console.error('Error al obtener nichos:', err);
         setNichos([]);
       } finally {
         setIsLoadingNichos(false);
       }
     },
-    [],
+    []
   );
 
   return (

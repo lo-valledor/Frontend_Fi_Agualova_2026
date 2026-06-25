@@ -123,7 +123,7 @@ export default function DashboardComponent() {
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setDashboardData((prev) => ({ ...prev, fechaHora: new Date() }));
+      setDashboardData(prev => ({ ...prev, fechaHora: new Date() }));
     }, 1000);
 
     return () => clearInterval(timer);

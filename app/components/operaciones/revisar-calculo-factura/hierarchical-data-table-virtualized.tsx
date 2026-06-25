@@ -19,26 +19,15 @@ import {
   TableHeader,
   TableRow
 } from '~/components/ui/table';
-
-type CalculoPrefacturaCargo = {
-  contratoId?: number | string;
-  codigoAgualova?: string;
-  descripcion?: string;
-  cantidad?: number;
-  precioUnitario?: number;
-  subtotal?: number;
-};
-
-type CalculoPrefacturaCompleto = {
-  contratoId?: number | string;
-  cargos?: CalculoPrefacturaCargo[];
-  [key: string]: unknown;
-};
+import type {
+  RevisarCalculosPrefactura,
+  RevisarCalculosPrefacturaCargo
+} from '~/types/operaciones';
 
 interface HierarchicalDataTableVirtualizedProps {
-  columns: ColumnDef<CalculoPrefacturaCompleto>[];
-  data: CalculoPrefacturaCompleto[];
-  onSelectionChange?: (selectedContratos: CalculoPrefacturaCompleto[]) => void;
+  columns: ColumnDef<RevisarCalculosPrefactura>[];
+  data: RevisarCalculosPrefactura[];
+  onSelectionChange?: (selectedContratos: RevisarCalculosPrefactura[]) => void;
 }
 
 // Tipo para representar una fila virtual (puede ser principal o cargo)
@@ -46,7 +35,7 @@ type VirtualRow =
   | {
       type: 'main';
       index: number;
-      data: CalculoPrefacturaCompleto;
+      data: RevisarCalculosPrefactura;
     }
   | {
       type: 'cargo-header';
@@ -56,7 +45,7 @@ type VirtualRow =
       type: 'cargo';
       parentIndex: number;
       cargoIndex: number;
-      cargo: CalculoPrefacturaCargo;
+      cargo: RevisarCalculosPrefacturaCargo;
     }
   | {
       type: 'cargo-separator';
@@ -95,7 +84,7 @@ export function HierarchicalDataTableVirtualized({
     },
     getCoreRowModel: getCoreRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
-    getSubRows: row => (row.cargos ? [] : undefined)
+    getSubRows: row => (row.detalleCargos ? [] : undefined)
   });
 
   // Calcular las filas virtuales (incluyendo filas principales + cargos expandidos)
@@ -114,8 +103,8 @@ export function HierarchicalDataTableVirtualized({
       // Si está expandida, agregar filas de cargos
       if (
         row.getIsExpanded() &&
-        row.original.cargos &&
-        row.original.cargos.length > 0
+        row.original.detalleCargos &&
+        row.original.detalleCargos.length > 0
       ) {
         // Encabezado de cargos
         result.push({
@@ -124,7 +113,7 @@ export function HierarchicalDataTableVirtualized({
         });
 
         // Cada cargo
-        row.original.cargos.forEach((cargo, cargoIndex) => {
+        row.original.detalleCargos.forEach((cargo, cargoIndex) => {
           result.push({
             type: 'cargo',
             parentIndex: index,
@@ -169,11 +158,11 @@ export function HierarchicalDataTableVirtualized({
   const tableRows = table.getRowModel().rows;
 
   // Renderizar una fila de cargo
-  const renderCargoRow = (cargo: CalculoPrefacturaCargo) => (
+  const renderCargoRow = (cargo: RevisarCalculosPrefacturaCargo) => (
     <>
       <TableCell colSpan={9} className="py-0 px-0.5"></TableCell>
       <TableCell className="py-0 px-0.5">
-        <span className="font-medium col-span-2">{cargo.codigoAgualova}</span>
+        <span className="font-medium col-span-2">{cargo.codigoCargo}</span>
       </TableCell>
       <TableCell colSpan={2} className="pl-2 py-0 px-0.5">
         <span className="font-medium col-span-2">{cargo.descripcion}</span>
@@ -187,7 +176,7 @@ export function HierarchicalDataTableVirtualized({
         ${(cargo.precioUnitario || 0).toLocaleString('es-CL')}
       </TableCell>
       <TableCell className="text-[12px] text-right font-semibold text-sky-700 dark:text-sky-300 py-0 px-0.5">
-        ${(cargo.subtotal || 0).toLocaleString('es-CL')}
+        ${(cargo.subTotal || 0).toLocaleString('es-CL')}
       </TableCell>
     </>
   );

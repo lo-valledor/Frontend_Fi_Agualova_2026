@@ -1,12 +1,12 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
-import { Card, CardContent } from "~/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import type { Menus, PermisoRolMenu, Roles } from "~/types/roles-permisos";
+import { Card, CardContent } from '~/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
+import type { Menus, PermisoRolMenu, Roles } from '~/types/roles-permisos';
 
-import MenusTabComponent from "./menus-tab-component";
-import PermisosTabComponent from "./permisos-tab-component";
-import RolesTabComponent from "./roles-tab-component";
+import MenusTabComponent from './menus-tab-component';
+import PermisosTabComponent from './permisos-tab-component';
+import RolesTabComponent from './roles-tab-component';
 
 interface RolesPermisosComponentProps {
   roles: Roles[];
@@ -21,9 +21,9 @@ const RolesPermisosComponent: React.FC<RolesPermisosComponentProps> = ({
   menus,
   permisos,
   error,
-  onDataChange,
+  onDataChange
 }) => {
-  const [activeTab, setActiveTab] = useState("roles");
+  const [activeTab, setActiveTab] = useState('roles');
 
   if (error) {
     return (

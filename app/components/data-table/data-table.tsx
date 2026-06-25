@@ -11,30 +11,30 @@ import {
   type RowSelectionState,
   type SortingState,
   useReactTable,
-  type VisibilityState,
-} from "@tanstack/react-table";
-import { AlertCircle, Loader2, Search, X } from "lucide-react";
+  type VisibilityState
+} from '@tanstack/react-table';
+import { AlertCircle, Loader2, Search, X } from 'lucide-react';
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { Button } from "~/components/ui/button";
-import { Input } from "~/components/ui/input";
+import { Button } from '~/components/ui/button';
+import { Input } from '~/components/ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
-} from "~/components/ui/select";
+  SelectValue
+} from '~/components/ui/select';
 import {
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
-} from "~/components/ui/table";
+  TableRow
+} from '~/components/ui/table';
 
-import { DataTablePagination } from "./data-table-pagination";
+import { DataTablePagination } from './data-table-pagination';
 
 export interface SearchFieldOption {
   /** Key que se envía al backend (ej: "nombreCliente") */
@@ -91,7 +91,7 @@ export function DataTable<TData, TValue>({
   columns,
   data,
 
-  searchPlaceholder = "Buscar...",
+  searchPlaceholder = 'Buscar...',
   showSearch = true,
   manualFiltering = false,
   searchDebounceMs = 300,
@@ -114,25 +114,25 @@ export function DataTable<TData, TValue>({
   rowIdKey,
   initialSorting = [],
   meta,
-  emptyMessage = "No se encontraron resultados.",
+  emptyMessage = 'No se encontraron resultados.'
 }: DataTableAdvancedProps<TData, TValue>) {
-  const [globalFilter, setGlobalFilter] = useState("");
+  const [globalFilter, setGlobalFilter] = useState('');
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [sorting, setSorting] = useState<SortingState>(initialSorting);
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: defaultPageSize,
+    pageSize: defaultPageSize
   });
   const [searchField, setSearchField] = useState<string>(
-    searchFields?.[0]?.value ?? "",
+    searchFields?.[0]?.value ?? ''
   );
 
   const searchDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const currentFieldLabel = useMemo(
     () => searchFields?.find(f => f.value === searchField)?.label,
-    [searchFields, searchField],
+    [searchFields, searchField]
   );
 
   const resolvedPlaceholder = currentFieldLabel
@@ -140,10 +140,9 @@ export function DataTable<TData, TValue>({
     : searchPlaceholder;
 
   const handlePaginationChange = (
-    updater: PaginationState | ((old: PaginationState) => PaginationState),
+    updater: PaginationState | ((old: PaginationState) => PaginationState)
   ) => {
-    const next =
-      typeof updater === "function" ? updater(pagination) : updater;
+    const next = typeof updater === 'function' ? updater(pagination) : updater;
     setPagination(next);
     onPaginationChange?.(next);
   };
@@ -162,13 +161,13 @@ export function DataTable<TData, TValue>({
   };
 
   const clearSearch = () => {
-    setGlobalFilter("");
+    setGlobalFilter('');
     if (searchDebounceRef.current) {
       clearTimeout(searchDebounceRef.current);
       searchDebounceRef.current = null;
     }
     if (manualFiltering) {
-      onSearchChange?.({ field: searchField, value: "" });
+      onSearchChange?.({ field: searchField, value: '' });
     }
   };
 
@@ -196,24 +195,24 @@ export function DataTable<TData, TValue>({
       columnVisibility,
       rowSelection,
       pagination,
-      globalFilter,
+      globalFilter
     },
     manualPagination,
     manualFiltering,
     pageCount: manualPagination ? pageCount : undefined,
     enableRowSelection: true,
-    getRowId: rowIdKey ? (row) => String(row[rowIdKey]) : undefined,
-    onRowSelectionChange: (updater) => {
+    getRowId: rowIdKey ? row => String(row[rowIdKey]) : undefined,
+    onRowSelectionChange: updater => {
       const newSelection =
-        typeof updater === "function" ? updater(rowSelection) : updater;
+        typeof updater === 'function' ? updater(rowSelection) : updater;
       setRowSelection(newSelection);
 
       if (onRowSelectionChange) {
         const selectedRows = Object.keys(newSelection)
-          .filter((key) => newSelection[key])
-          .map((key) => {
+          .filter(key => newSelection[key])
+          .map(key => {
             if (rowIdKey) {
-              return data.find((row) => String(row[rowIdKey]) === key) as TData;
+              return data.find(row => String(row[rowIdKey]) === key) as TData;
             }
             return data[parseInt(key)] as TData;
           })
@@ -232,7 +231,7 @@ export function DataTable<TData, TValue>({
       : getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
-    getFacetedUniqueValues: getFacetedUniqueValues(),
+    getFacetedUniqueValues: getFacetedUniqueValues()
   });
 
   const resolvedTotalRows =
@@ -298,13 +297,13 @@ export function DataTable<TData, TValue>({
       );
     }
 
-    return rows.map((row) => (
+    return rows.map(row => (
       <TableRow
         key={row.id}
         className="border-b hover:bg-muted"
-        data-state={row.getIsSelected() && "selected"}
+        data-state={row.getIsSelected() && 'selected'}
       >
-        {row.getVisibleCells().map((cell) => (
+        {row.getVisibleCells().map(cell => (
           <TableCell key={cell.id} className="h-10 px-3 py-1 text-sm">
             {flexRender(cell.column.columnDef.cell, cell.getContext())}
           </TableCell>
@@ -321,10 +320,8 @@ export function DataTable<TData, TValue>({
             <Search className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder={resolvedPlaceholder}
-              value={globalFilter ?? ""}
-              onChange={(event) =>
-                handleGlobalFilterChange(event.target.value)
-              }
+              value={globalFilter ?? ''}
+              onChange={event => handleGlobalFilterChange(event.target.value)}
               className="h-9 pl-9 pr-9 text-sm bg-white dark:bg-slate-950"
             />
             {hasActiveSearch && !isLoading && (
@@ -348,7 +345,7 @@ export function DataTable<TData, TValue>({
                 <SelectValue placeholder="Buscar en…" />
               </SelectTrigger>
               <SelectContent>
-                {searchFields.map((field) => (
+                {searchFields.map(field => (
                   <SelectItem key={field.value} value={field.value}>
                     {field.label}
                   </SelectItem>
@@ -363,12 +360,12 @@ export function DataTable<TData, TValue>({
         <div className="relative w-full overflow-auto max-h-150">
           <table className="w-full caption-bottom text-sm">
             <TableHeader className="sticky top-0 z-10 bg-background">
-              {table.getHeaderGroups().map((headerGroup) => (
+              {table.getHeaderGroups().map(headerGroup => (
                 <TableRow
                   key={headerGroup.id}
                   className="hover:bg-transparent border-b"
                 >
-                  {headerGroup.headers.map((header) => (
+                  {headerGroup.headers.map(header => (
                     <TableHead
                       key={header.id}
                       className="h-10 px-3 text-xs font-medium bg-background"
@@ -377,7 +374,7 @@ export function DataTable<TData, TValue>({
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
-                            header.getContext(),
+                            header.getContext()
                           )}
                     </TableHead>
                   ))}

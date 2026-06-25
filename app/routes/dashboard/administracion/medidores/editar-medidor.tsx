@@ -14,7 +14,12 @@ import {
 } from '~/components/ui/dialog';
 import api from '~/lib/api';
 import { administracionService } from '~/services/administracionService';
-import type { Estado, Marca, MedidorByCodigo, Tipo } from '~/types/administracion';
+import type {
+  Estado,
+  Marca,
+  MedidorByCodigo,
+  Tipo
+} from '~/types/administracion';
 
 export function meta() {
   return [

@@ -16,11 +16,10 @@ import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router';
 import Select, { type SingleValue } from 'react-select';
-import type { OptionType } from '~/components/shared/react-select-styles';
 import { toast } from 'sonner';
 import { z } from 'zod';
-
 import { ModernHeader } from '~/components/shared/modern-header';
+import type { OptionType } from '~/components/shared/react-select-styles';
 import { getReactSelectStyles } from '~/components/shared/react-select-styles';
 import { useTheme } from '~/components/theme-provider';
 import { Alert, AlertDescription } from '~/components/ui/alert';
@@ -423,7 +422,9 @@ export default function CrearContratanteComponent() {
                               options={comunaOptions}
                               value={comunaActual ?? null}
                               onChange={(option: SingleValue<OptionType>) =>
-                                field.onChange(option ? String(option.value) : '')
+                                field.onChange(
+                                  option ? String(option.value) : ''
+                                )
                               }
                               placeholder="Seleccione la comuna"
                               isClearable

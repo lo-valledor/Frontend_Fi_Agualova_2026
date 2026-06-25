@@ -1,17 +1,17 @@
-import { useVirtualizer } from "@tanstack/react-virtual";
-import { Eye, Save, Search, Smartphone, Table, X } from "lucide-react";
+import { useVirtualizer } from '@tanstack/react-virtual';
+import { Eye, Save, Search, Smartphone, Table, X } from 'lucide-react';
 
-import React, { useCallback, useMemo, useRef, useState } from "react";
-import { toast } from "sonner";
-import { MobileView } from "~/components/configuracion/roles-permisos/mobile-view";
-import { PermisoCheckboxGroup } from "~/components/configuracion/roles-permisos/permiso-checkbox-group";
-import { Badge } from "~/components/ui/badge";
-import { Button } from "~/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
-import { Input } from "~/components/ui/input";
-import { useDebounce } from "~/hooks/shared/use-debounce";
-import { rolesPermisosService } from "~/services/rolesPermisosService";
-import type { Menus, PermisoRolMenu, Roles } from "~/types/roles-permisos";
+import React, { useCallback, useMemo, useRef, useState } from 'react';
+import { toast } from 'sonner';
+import { MobileView } from '~/components/configuracion/roles-permisos/mobile-view';
+import { PermisoCheckboxGroup } from '~/components/configuracion/roles-permisos/permiso-checkbox-group';
+import { Badge } from '~/components/ui/badge';
+import { Button } from '~/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
+import { Input } from '~/components/ui/input';
+import { useDebounce } from '~/hooks/shared/use-debounce';
+import { rolesPermisosService } from '~/services/rolesPermisosService';
+import type { Menus, PermisoRolMenu, Roles } from '~/types/roles-permisos';
 
 interface PermisosTabComponentProps {
   roles: Roles[];
@@ -24,12 +24,12 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
   roles,
   menus,
   permisos,
-  onDataChange,
+  onDataChange
 }) => {
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const debouncedSearch = useDebounce(searchTerm, 300);
   const [selectedRoles, setSelectedRoles] = useState<number[]>([]);
-  const [viewMode, setViewMode] = useState<"table" | "mobile">("table");
+  const [viewMode, setViewMode] = useState<'table' | 'mobile'>('table');
   const [compactView, setCompactView] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [_bannerCollapsed, setBannerCollapsed] = useState(false);
@@ -60,29 +60,29 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
       const pendingChange = pendingChanges.get(key);
       return pendingChange || permisosMap.get(key);
     },
-    [permisosMap, pendingChanges],
+    [permisosMap, pendingChanges]
   );
 
   // Filtrar menús por búsqueda
   const filteredMenus = useMemo(
     () =>
       menus.filter(
-        (menu) =>
+        menu =>
           menu.nombreMenu
             .toLowerCase()
             .includes(debouncedSearch.toLowerCase()) ||
-          menu.ruta?.toLowerCase().includes(debouncedSearch.toLowerCase()),
+          menu.ruta?.toLowerCase().includes(debouncedSearch.toLowerCase())
       ),
-    [menus, debouncedSearch],
+    [menus, debouncedSearch]
   );
 
   // Filtrar roles seleccionados
   const visibleRoles = useMemo(
     () =>
       selectedRoles.length > 0
-        ? roles.filter((role) => selectedRoles.includes(role.idRol))
+        ? roles.filter(role => selectedRoles.includes(role.idRol))
         : roles,
-    [roles, selectedRoles],
+    [roles, selectedRoles]
   );
 
   // ✅ VIRTUALIZACIÓN: Solo renderizar filas visibles en el viewport
@@ -90,7 +90,7 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
     count: filteredMenus.length,
     getScrollElement: () => tableContainerRef.current,
     estimateSize: () => (compactView ? 50 : 70), // Altura estimada por fila
-    overscan: 5, // Renderizar 5 filas extra arriba/abajo para scroll suave
+    overscan: 5 // Renderizar 5 filas extra arriba/abajo para scroll suave
   });
 
   // ✅ NUEVA FUNCIÓN: Actualizar permiso localmente (sin guardar en BD)
@@ -113,10 +113,10 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
         puedeEditar: permisoActual?.puedeEditar || false,
         puedeEliminar: permisoActual?.puedeEliminar || false,
         [tipoPermiso]: valor,
-        fechaAsignacion: new Date().toISOString().split(".")[0],
+        fechaAsignacion: new Date().toISOString().split('.')[0]
       };
 
-      setPendingChanges((prev) => {
+      setPendingChanges(prev => {
         const newMap = new Map(prev);
 
         // Verificar si el nuevo permiso es IGUAL al original
@@ -139,13 +139,13 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
         return newMap;
       });
     },
-    [getPermiso, permisosMap],
+    [getPermiso, permisosMap]
   );
 
   // ✅ NUEVA FUNCIÓN: Guardar todos los cambios pendientes
   const handleSaveChanges = useCallback(async () => {
     if (pendingChanges.size === 0) {
-      toast.info("No hay cambios pendientes para guardar");
+      toast.info('No hay cambios pendientes para guardar');
       return;
     }
 
@@ -156,7 +156,7 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
     try {
       // Procesar todos los cambios en paralelo
       const promises = Array.from(pendingChanges.values()).map(
-        async (permiso) => {
+        async permiso => {
           const result =
             await rolesPermisosService.asignarPermisoDirecto(permiso);
           if (result.error) {
@@ -166,7 +166,7 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
             successCount++;
             return { success: true };
           }
-        },
+        }
       );
 
       await Promise.all(promises);
@@ -177,7 +177,7 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
         onDataChange?.(); // Recargar datos
       } else if (successCount > 0) {
         toast.warning(
-          `⚠️ ${successCount} permisos guardados, ${errorCount} fallaron`,
+          `⚠️ ${successCount} permisos guardados, ${errorCount} fallaron`
         );
         // No limpiar pendingChanges para que el usuario pueda reintentar
       } else {
@@ -185,7 +185,7 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
       }
     } catch (error) {
       if (import.meta.env.DEV) console.error('guardarPermisos', error);
-      toast.error("Error inesperado al guardar cambios");
+      toast.error('Error inesperado al guardar cambios');
     } finally {
       setIsSaving(false);
     }
@@ -194,21 +194,21 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
   const handleDiscardChanges = useCallback(() => {
     setPendingChanges(new Map());
     setBannerCollapsed(false);
-    toast.info("Cambios descartados");
+    toast.info('Cambios descartados');
   }, []);
 
   // REFACTOR: Extraer handlers para reducir anidación
   const handleToggleRole = useCallback((roleId: number) => {
-    setSelectedRoles((prev) =>
+    setSelectedRoles(prev =>
       prev.includes(roleId)
-        ? prev.filter((id) => id !== roleId)
-        : [...prev, roleId],
+        ? prev.filter(id => id !== roleId)
+        : [...prev, roleId]
     );
   }, []);
 
   const handleToggleAllRoles = useCallback(() => {
     setSelectedRoles(
-      selectedRoles.length === roles.length ? [] : roles.map((r) => r.idRol),
+      selectedRoles.length === roles.length ? [] : roles.map(r => r.idRol)
     );
   }, [selectedRoles.length, roles]);
 
@@ -240,18 +240,18 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
               {/* Toggle de vista */}
               <div className="flex items-center border-border rounded-xl p-1">
                 <Button
-                  variant={viewMode === "table" ? "default" : "ghost"}
+                  variant={viewMode === 'table' ? 'default' : 'ghost'}
                   size="sm"
-                  onClick={() => setViewMode("table")}
+                  onClick={() => setViewMode('table')}
                   className="hidden sm:flex items-center gap-2 h-8 px-3"
                 >
                   <Table className="h-4 w-4" />
                   Tabla
                 </Button>
                 <Button
-                  variant={viewMode === "mobile" ? "default" : "ghost"}
+                  variant={viewMode === 'mobile' ? 'default' : 'ghost'}
                   size="sm"
-                  onClick={() => setViewMode("mobile")}
+                  onClick={() => setViewMode('mobile')}
                   className="flex items-center gap-2 h-8 px-3"
                 >
                   <Smartphone className="h-4 w-4" />
@@ -260,9 +260,9 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
               </div>
 
               {/* Toggle vista compacta */}
-              {viewMode === "table" && (
+              {viewMode === 'table' && (
                 <Button
-                  variant={compactView ? "default" : "outline"}
+                  variant={compactView ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setCompactView(!compactView)}
                   className="hidden md:flex items-center gap-2 h-8 px-3"
@@ -282,7 +282,7 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
               <Input
                 placeholder="Buscar menús por nombre o ruta..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={e => setSearchTerm(e.target.value)}
                 className="pl-10"
               />
             </div>
@@ -290,11 +290,11 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
             {/* Selector de roles */}
             <div className="flex flex-wrap gap-1 items-center">
               <span className="text-sm mr-2">Roles:</span>
-              {roles.slice(0, 3).map((role) => (
+              {roles.slice(0, 3).map(role => (
                 <Button
                   key={role.idRol}
                   variant={
-                    selectedRoles.includes(role.idRol) ? "default" : "outline"
+                    selectedRoles.includes(role.idRol) ? 'default' : 'outline'
                   }
                   size="sm"
                   onClick={() => handleToggleRole(role.idRol)}
@@ -311,7 +311,7 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
                   className="h-7 px-2 text-xs"
                 >
                   {selectedRoles.length === roles.length
-                    ? "Ninguno"
+                    ? 'Ninguno'
                     : `+${roles.length - 3} más`}
                 </Button>
               )}
@@ -363,8 +363,8 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
           <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-2 items-end animate-in slide-in-from-bottom-5 duration-300">
             {/* Tooltip con contador */}
             <div className="bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 px-3 py-1.5 rounded-lg text-sm font-medium shadow-lg animate-in fade-in zoom-in duration-200">
-              {pendingChanges.size} cambio{pendingChanges.size !== 1 ? "s" : ""}{" "}
-              pendiente{pendingChanges.size !== 1 ? "s" : ""}
+              {pendingChanges.size} cambio{pendingChanges.size !== 1 ? 's' : ''}{' '}
+              pendiente{pendingChanges.size !== 1 ? 's' : ''}
             </div>
 
             {/* Botones de acción */}
@@ -393,7 +393,7 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
                     <Save className="h-6 w-6" />
                     {/* Badge con contador */}
                     <div className="absolute -top-1 -right-1 h-7 w-7 bg-red-500 rounded-full flex items-center justify-center text-xs font-bold shadow-lg ring-2 ring-white dark:ring-slate-900">
-                      {pendingChanges.size > 99 ? "99+" : pendingChanges.size}
+                      {pendingChanges.size > 99 ? '99+' : pendingChanges.size}
                     </div>
                   </>
                 )}
@@ -402,7 +402,7 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
           </div>
         )}
 
-        {viewMode === "mobile" ? (
+        {viewMode === 'mobile' ? (
           <MobileView
             filteredMenus={filteredMenus}
             visibleRoles={visibleRoles}
@@ -425,9 +425,9 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
                     <th
                       className="text-left p-3 border-b font-medium sticky left-0 bg-background z-20 shadow-r"
                       style={{
-                        width: "280px",
-                        minWidth: "280px",
-                        maxWidth: "280px",
+                        width: '280px',
+                        minWidth: '280px',
+                        maxWidth: '280px'
                       }}
                     >
                       <div className="flex items-center gap-2">
@@ -437,19 +437,19 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
                         </Badge>
                       </div>
                     </th>
-                    {visibleRoles.map((rol) => (
+                    {visibleRoles.map(rol => (
                       <th
                         key={rol.idRol}
                         style={{
-                          width: compactView ? "160px" : "200px",
-                          minWidth: compactView ? "160px" : "200px",
-                          maxWidth: compactView ? "160px" : "200px",
+                          width: compactView ? '160px' : '200px',
+                          minWidth: compactView ? '160px' : '200px',
+                          maxWidth: compactView ? '160px' : '200px'
                         }}
                         className={`text-center border-b border-l font-medium ${
-                          compactView ? "p-2" : "p-3"
+                          compactView ? 'p-2' : 'p-3'
                         }`}
                       >
-                        <div className={`space-y-${compactView ? "1" : "2"}`}>
+                        <div className={`space-y-${compactView ? '1' : '2'}`}>
                           <div className="flex items-center justify-center gap-2">
                             <Badge
                               variant="secondary"
@@ -460,7 +460,7 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
                             </Badge>
                             <div
                               className={`font-semibold text-sm truncate ${
-                                compactView ? "max-w-[100px]" : "max-w-[120px]"
+                                compactView ? 'max-w-[100px]' : 'max-w-[120px]'
                               }`}
                               title={rol.nombreRol}
                             >
@@ -491,10 +491,10 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
                 <tbody
                   style={{
                     height: `${rowVirtualizer.getTotalSize()}px`,
-                    position: "relative",
+                    position: 'relative'
                   }}
                 >
-                  {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+                  {rowVirtualizer.getVirtualItems().map(virtualRow => {
                     const menu = filteredMenus[virtualRow.index];
                     const rowHeight = compactView ? 50 : 70;
                     return (
@@ -502,24 +502,24 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
                         key={menu.idMenu}
                         data-index={virtualRow.index}
                         style={{
-                          position: "absolute",
+                          position: 'absolute',
                           top: 0,
                           left: 0,
-                          width: "100%",
+                          width: '100%',
                           height: `${rowHeight}px`,
                           transform: `translateY(${virtualRow.start}px)`,
-                          display: "table",
+                          display: 'table'
                         }}
                         className="hover:muted"
                       >
                         <td
                           style={{
-                            width: "280px",
-                            minWidth: "280px",
-                            maxWidth: "280px",
+                            width: '280px',
+                            minWidth: '280px',
+                            maxWidth: '280px'
                           }}
                           className={`border-b font-medium sticky left-0 bg-background z-10 shadow-r ${
-                            compactView ? "p-2" : "p-3"
+                            compactView ? 'p-2' : 'p-3'
                           }`}
                         >
                           <div className="space-y-1">
@@ -532,7 +532,7 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
                               </Badge>
                               <div
                                 className={`font-medium truncate ${
-                                  compactView ? "max-w-40" : "max-w-45"
+                                  compactView ? 'max-w-40' : 'max-w-45'
                                 }`}
                                 title={menu.nombreMenu}
                               >
@@ -543,8 +543,8 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
                               <div
                                 className={`text-xs text-slate-500 font-mono truncate ${
                                   compactView
-                                    ? "max-w-[180px]"
-                                    : "max-w-[200px]"
+                                    ? 'max-w-[180px]'
+                                    : 'max-w-[200px]'
                                 }`}
                                 title={menu.ruta}
                               >
@@ -553,17 +553,17 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
                             )}
                           </div>
                         </td>
-                        {visibleRoles.map((rol) => {
+                        {visibleRoles.map(rol => {
                           const permiso = getPermiso(rol.idRol, menu.idMenu);
                           return (
                             <td
                               key={`${rol.idRol}-${menu.idMenu}`}
                               style={{
-                                width: compactView ? "160px" : "200px",
-                                minWidth: compactView ? "160px" : "200px",
-                                maxWidth: compactView ? "160px" : "200px",
+                                width: compactView ? '160px' : '200px',
+                                minWidth: compactView ? '160px' : '200px',
+                                maxWidth: compactView ? '160px' : '200px'
                               }}
-                              className={`border-b border-l ${compactView ? "p-1" : "p-3"}`}
+                              className={`border-b border-l ${compactView ? 'p-1' : 'p-3'}`}
                             >
                               <PermisoCheckboxGroup
                                 permiso={permiso}

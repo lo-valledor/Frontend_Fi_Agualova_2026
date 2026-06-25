@@ -4,7 +4,6 @@ import React from 'react';
 
 import { Alert, AlertDescription } from '~/components/ui/alert';
 import { Button } from '~/components/ui/button';
-import { clearAuthToken } from '~/services/axiosConfig';
 import {
   Card,
   CardContent,
@@ -12,6 +11,7 @@ import {
   CardHeader,
   CardTitle
 } from '~/components/ui/card';
+import { clearAuthToken } from '~/services/axiosConfig';
 
 interface ErrorBoundaryProps {
   error?: Error;

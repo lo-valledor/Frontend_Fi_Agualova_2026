@@ -5,7 +5,7 @@ import {
   TrendingUp
 } from 'lucide-react';
 import { useCallback, useMemo, useState } from 'react';
-
+import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -16,7 +16,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from '~/components/ui/alert-dialog';
-import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert';
 import { Button } from '~/components/ui/button';
 import {
   Dialog,
@@ -89,15 +88,18 @@ export default function DialogAgregarPrecios({
     return null;
   }, [valor, valorNumerico]);
 
-  const handleOpenChange = useCallback((open: boolean) => {
-    setIsOpen(open);
-    if (open && typeof initialValue === 'number' && initialValue > 0) {
-      setValor(initialValue.toString());
-    } else if (!open) {
-      setValor(VALOR_INICIAL);
-      setShowConfirmDialog(false);
-    }
-  }, [initialValue]);
+  const handleOpenChange = useCallback(
+    (open: boolean) => {
+      setIsOpen(open);
+      if (open && typeof initialValue === 'number' && initialValue > 0) {
+        setValor(initialValue.toString());
+      } else if (!open) {
+        setValor(VALOR_INICIAL);
+        setShowConfirmDialog(false);
+      }
+    },
+    [initialValue]
+  );
 
   const handleConfirm = useCallback(() => {
     onConfirm(valorNumerico);
@@ -220,8 +222,8 @@ export default function DialogAgregarPrecios({
                   Cambio inusual detectado
                 </AlertTitle>
                 <AlertDescription className="text-xs">
-                  La variación supera el {PORCENTAJE_CAMBIO_INUSUAL}% respecto al
-                  valor del mes anterior. Se pedirá confirmación antes de
+                  La variación supera el {PORCENTAJE_CAMBIO_INUSUAL}% respecto
+                  al valor del mes anterior. Se pedirá confirmación antes de
                   agregar a la cola.
                 </AlertDescription>
               </Alert>
@@ -258,10 +260,7 @@ export default function DialogAgregarPrecios({
         </DialogContent>
       </Dialog>
 
-      <AlertDialog
-        open={showConfirmDialog}
-        onOpenChange={setShowConfirmDialog}
-      >
+      <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle className="flex items-center gap-2">
@@ -276,8 +275,8 @@ export default function DialogAgregarPrecios({
                   : ''}
                 {diferenciaPorcentual?.toFixed(1)}%
               </strong>{' '}
-              (${formatValorCL(Math.abs(diferencia ?? 0))}). ¿Desea agregar
-              este valor a la cola de pendientes?
+              (${formatValorCL(Math.abs(diferencia ?? 0))}). ¿Desea agregar este
+              valor a la cola de pendientes?
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

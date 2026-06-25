@@ -10,9 +10,14 @@ vi.mock('sonner', () => ({
   }
 }));
 
-vi.mock('~/lib/api', () => ({
-  default: {
-    post: vi.fn()
+vi.mock('~/services/operacionesService', () => ({
+  operacionesService: {
+    postRevisarCalculosLanzarCalculo: vi.fn(() =>
+      Promise.resolve({ data: {}, error: null })
+    ),
+    postRevisarCalculosAceptar: vi.fn(() =>
+      Promise.resolve({ data: {}, error: null })
+    )
   }
 }));
 

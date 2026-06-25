@@ -1,5 +1,5 @@
 import type { PropietariosRow } from '~/types/administracion';
-import { extractApiErrorMessage, type ApiErrorInfo } from './api-error';
+import { type ApiErrorInfo, extractApiErrorMessage } from './api-error';
 
 type PropietarioModalState = {
   details: {

@@ -1,3 +1,4 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import {
   CalendarClock,
   CheckCircle2,
@@ -14,14 +15,13 @@ import {
   Repeat,
   Settings2,
   Tags,
-  Text,
+  Text
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import Select from 'react-select';
 import { toast } from 'sonner';
 import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
 
 import {
   getReactSelectStyles,
@@ -67,7 +67,6 @@ interface CargoFacturableModalFormProps {
   tarifas: CargoFacturableTarifas[];
   tiposMedidor: CargoFacturableTiposMedidor[];
 }
-
 
 const fijoVariableOptions: OptionType[] = [
   { value: 'F', label: 'Fijo' },
@@ -443,9 +442,7 @@ export default function CargoFacturableModalForm({
                         }))}
                         value={conceptos
                           .map(c => ({ value: c.id, label: c.descripcion }))
-                          .find(
-                            c => Number(c.value) === Number(field.value)
-                          )}
+                          .find(c => Number(c.value) === Number(field.value))}
                         onChange={(o: { value: string } | null) =>
                           field.onChange(o ? Number(o.value) : 0)
                         }

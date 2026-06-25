@@ -588,8 +588,8 @@ export function AcometidaForm({
                           />
                         </FormControl>
                         <p className="text-xs text-muted-foreground">
-                          Formato: <span className="font-mono">123,4</span> (coma
-                          decimal).
+                          Formato: <span className="font-mono">123,4</span>{' '}
+                          (coma decimal).
                         </p>
                         <FormMessage />
                       </FormItem>
@@ -684,9 +684,7 @@ export function AcometidaForm({
                 <Table className="min-w-200 relative">
                   <TableHeader className="bg-muted/50 sticky top-0 z-10">
                     <TableRow>
-                      <TableHead className="min-w-35">
-                        ID Contrato
-                      </TableHead>
+                      <TableHead className="min-w-35">ID Contrato</TableHead>
                       <TableHead className="min-w-200">Cliente</TableHead>
                       <TableHead className="min-w-180">Empresa</TableHead>
                       <TableHead className="min-w-120">Local</TableHead>

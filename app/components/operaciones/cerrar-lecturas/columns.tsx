@@ -2,6 +2,7 @@ import type { ColumnDef } from '@tanstack/react-table';
 import { ServerIcon, UsersIcon } from 'lucide-react';
 
 import { Badge } from '~/components/ui/badge';
+import { Checkbox } from '~/components/ui/checkbox';
 import type { CerrarLecturasBuscarEstadisticasRequest } from '~/types/operaciones';
 
 interface StatBadgeProps {
@@ -40,6 +41,34 @@ function StatBadge({ value, variant }: StatBadgeProps) {
 }
 
 export const columns: ColumnDef<CerrarLecturasBuscarEstadisticasRequest>[] = [
+  {
+    id: 'select',
+    enableSorting: false,
+    enableHiding: false,
+    header: ({ table }) => (
+      <div className="flex justify-center">
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && 'indeterminate')
+          }
+          onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Seleccionar todos"
+        />
+      </div>
+    ),
+    cell: ({ row }) => (
+      <div className="flex justify-center">
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={value => row.toggleSelected(!!value)}
+          aria-label={`Seleccionar nicho ${row.original.idNicho}`}
+        />
+      </div>
+    ),
+    minSize: 40,
+    maxSize: 50
+  },
   {
     id: 'idNicho',
     accessorKey: 'idNicho',
@@ -108,7 +137,10 @@ export const columns: ColumnDef<CerrarLecturasBuscarEstadisticasRequest>[] = [
     header: 'Correg.',
     cell: ({ row }) => (
       <div className="flex justify-center">
-        <StatBadge value={row.original.cantidadCorregidas} variant="corregida" />
+        <StatBadge
+          value={row.original.cantidadCorregidas}
+          variant="corregida"
+        />
       </div>
     ),
     minSize: 80,
@@ -120,7 +152,10 @@ export const columns: ColumnDef<CerrarLecturasBuscarEstadisticasRequest>[] = [
     header: 'Naranja',
     cell: ({ row }) => (
       <div className="flex justify-center">
-        <StatBadge value={row.original.cantidadClaveNaranja} variant="naranja" />
+        <StatBadge
+          value={row.original.cantidadClaveNaranja}
+          variant="naranja"
+        />
       </div>
     ),
     minSize: 80,
@@ -144,7 +179,10 @@ export const columns: ColumnDef<CerrarLecturasBuscarEstadisticasRequest>[] = [
     header: 'S/Lec',
     cell: ({ row }) => (
       <div className="flex justify-center">
-        <StatBadge value={row.original.cantidadSinLectura} variant="sinLectura" />
+        <StatBadge
+          value={row.original.cantidadSinLectura}
+          variant="sinLectura"
+        />
       </div>
     ),
     minSize: 70,

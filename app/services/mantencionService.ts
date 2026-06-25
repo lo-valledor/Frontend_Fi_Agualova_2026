@@ -344,7 +344,7 @@ class MantencionService {
     request: NichoFormValues
   ): Promise<MantencionServiceResponse<NichoFormValues>> {
     try {
-      const response = await api.put("/nichos", request);
+      const response = await api.put('/nichos', request);
       return {
         data: response.data as NichoFormValues,
         error: null
@@ -389,7 +389,9 @@ class MantencionService {
     }
   }
 
-  async updateParametro(request: ParametroFormValues): Promise<MantencionServiceResponse<ParametroFormValues>> {
+  async updateParametro(
+    request: ParametroFormValues
+  ): Promise<MantencionServiceResponse<ParametroFormValues>> {
     try {
       const response = await api.put('/parametros/editar', request);
       return {
@@ -451,7 +453,7 @@ class MantencionService {
 
   async updateSector(request: SectorFormValues) {
     try {
-      const response = await api.put("/sectores/editar", request);
+      const response = await api.put('/sectores/editar', request);
       return {
         data: this.processApiResponse<Sector>(response),
         error: null
@@ -500,7 +502,7 @@ class MantencionService {
     request: TarifaFormValues
   ): Promise<MantencionServiceResponse<TarifaFormValues>> {
     try {
-      const response = await api.put("/tarifas/editar", request);
+      const response = await api.put('/tarifas/editar', request);
       return {
         data: response.data as TarifaFormValues,
         error: null
@@ -551,10 +553,7 @@ class MantencionService {
     request: TipoContratoFormValues
   ): Promise<MantencionServiceResponse<TipoContratoFormValues>> {
     try {
-      const response = await api.put(
-        "/tipos-contrato/editar",
-        request
-      );
+      const response = await api.put('/tipos-contrato/editar', request);
       return {
         data: response.data as TipoContratoFormValues,
         error: null

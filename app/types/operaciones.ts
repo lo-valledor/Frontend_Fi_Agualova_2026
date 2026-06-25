@@ -248,7 +248,39 @@ export type RevisarCalculosLanzarCalculoRequest = {
   procesoId: number;
 };
 
-//Todo: POST /revisar-calculos/buscar-prefacturas
+export type LanzarCalculoResponse = {
+  procesoId: number;
+  mensaje: string;
+  esError: boolean;
+};
+
+export type RevisarCalculosPrefacturaCargo = {
+  codigoCargo: string;
+  descripcion: string;
+  cantidad: number;
+  precioUnitario: number;
+  subTotal: number;
+};
+
+export type RevisarCalculosPrefactura = {
+  contratoId: number;
+  lecturaId: number;
+  sector: string;
+  tarifa: string;
+  rutCliente: string;
+  nombreCliente: string;
+  direccion: string;
+  comuna: string;
+  numeroMedidor: string;
+  local: string;
+  fechaLectura: string;
+  consumo: number;
+  totalFacturado: number;
+  detalleCargos: RevisarCalculosPrefacturaCargo[];
+};
+
+export type RevisarCalculosBuscarPrefacturasResponse =
+  RevisarCalculosPrefactura[];
 
 /**
  * Revisión Precios

@@ -12,6 +12,7 @@ import type {
   CorteReposicionLiberarRequest,
   CorteReposicionRegistrarCorteRequest,
   CorteReposicionResumenResponse,
+  LanzarCalculoResponse,
   PeriodosAniosDisponiblesResponse,
   PeriodosBuscarRequest,
   PeriodosCrearRequest,
@@ -21,6 +22,8 @@ import type {
   PrepararLecturasFiltrosCiclosResponse,
   PrepararLecturasFiltrosPeriodosResponse,
   PrepararLecturasGenerarRequest,
+  RevisarCalculosBuscarPrefacturasResponse,
+  RevisarCalculosEstadoProcesoRequest,
   RevisarCalculosFiltrosCiclosResponse,
   RevisarCalculosFiltrosPeriodosResponse,
   RevisarCalculosLanzarCalculoRequest,
@@ -574,7 +577,9 @@ class OperacionesService {
   /**
    * Cerrar Lecturas
    */
-  async getObtenerCiclos(): Promise<OperacionesServiceResponse<CerrarLecturasFiltrosCiclosResponse>> {
+  async getObtenerCiclos(): Promise<
+    OperacionesServiceResponse<CerrarLecturasFiltrosCiclosResponse>
+  > {
     try {
       const response = await api.get('/cerrar-lecturas/filtros/ciclos');
       return {
@@ -589,7 +594,9 @@ class OperacionesService {
     }
   }
 
-  async getObtenerPeriodosCerrarLecturas(): Promise<OperacionesServiceResponse<CerrarLecturasFiltrosPeriodosResponse[]>> {
+  async getObtenerPeriodosCerrarLecturas(): Promise<
+    OperacionesServiceResponse<CerrarLecturasFiltrosPeriodosResponse[]>
+  > {
     try {
       const response = await api.get('/cerrar-lecturas/filtros/periodos');
       return {
@@ -604,9 +611,16 @@ class OperacionesService {
     }
   }
 
-  async getObtenerGrilla(cicloId: number, periodoId: string): Promise<OperacionesServiceResponse<CerrarLecturasBuscarEstadisticasRequest[]>> {
+  async getObtenerGrilla(
+    cicloId: number,
+    periodoId: string
+  ): Promise<
+    OperacionesServiceResponse<CerrarLecturasBuscarEstadisticasRequest[]>
+  > {
     try {
-      const response = await api.get(`/cerrar-lecturas/buscar-estadisticas?cicloId=${cicloId}&periodoId=${periodoId}`);
+      const response = await api.get(
+        `/cerrar-lecturas/buscar-estadisticas?cicloId=${cicloId}&periodoId=${periodoId}`
+      );
       return {
         data: response.data as CerrarLecturasBuscarEstadisticasRequest[],
         error: null
@@ -619,7 +633,9 @@ class OperacionesService {
     }
   }
 
-  async postCerrarLecturas(request: CerrarLecturasCerrarRequest): Promise<OperacionesServiceResponse<CerrarLecturasCerrarResponse>> {
+  async postCerrarLecturas(
+    request: CerrarLecturasCerrarRequest
+  ): Promise<OperacionesServiceResponse<CerrarLecturasCerrarResponse>> {
     try {
       const response = await api.post('/cerrar-lecturas/cerrar', request);
       return {
@@ -634,7 +650,9 @@ class OperacionesService {
     }
   }
 
-  async getObtenerGrillaData(): Promise<OperacionesServiceResponse<CerrarLecturasBuscarEstadisticasRequest[]>> {
+  async getObtenerGrillaData(): Promise<
+    OperacionesServiceResponse<CerrarLecturasBuscarEstadisticasRequest[]>
+  > {
     try {
       const response = await api.get('/cerrar-lecturas/buscar-estadisticas');
       return {
@@ -648,7 +666,6 @@ class OperacionesService {
       };
     }
   }
-
 
   /** Corte y Reposición */
 
@@ -849,7 +866,10 @@ class OperacionesService {
     }
   }
 
-  async getRevisarCalculosEstadoProceso(cicloId: number, periodoId: string) {
+  async getRevisarCalculosEstadoProceso(
+    cicloId: number,
+    periodoId: string
+  ): Promise<OperacionesServiceResponse<RevisarCalculosEstadoProcesoRequest>> {
     try {
       const params = new URLSearchParams();
       params.append('cicloId', cicloId.toString());
@@ -858,7 +878,7 @@ class OperacionesService {
         params
       });
       return {
-        data: response.data as [],
+        data: response.data as RevisarCalculosEstadoProcesoRequest,
         error: null
       };
     } catch (error) {
@@ -871,14 +891,14 @@ class OperacionesService {
 
   async postRevisarCalculosLanzarCalculo(
     request: RevisarCalculosLanzarCalculoRequest
-  ) {
+  ): Promise<OperacionesServiceResponse<LanzarCalculoResponse>> {
     try {
       const response = await api.post(
         '/revisar-calculos/lanzar-calculo',
         request
       );
       return {
-        data: response.data,
+        data: response.data as LanzarCalculoResponse,
         error: null
       };
     } catch (error) {
@@ -898,7 +918,9 @@ class OperacionesService {
     local?: string,
     modo?: string,
     procesoId?: number
-  ) {
+  ): Promise<
+    OperacionesServiceResponse<RevisarCalculosBuscarPrefacturasResponse>
+  > {
     try {
       const params = new URLSearchParams();
       params.append('cicloId', cicloId.toString());
@@ -913,7 +935,7 @@ class OperacionesService {
         params
       });
       return {
-        data: response.data,
+        data: response.data as RevisarCalculosBuscarPrefacturasResponse,
         error: null
       };
     } catch (error) {
@@ -924,10 +946,13 @@ class OperacionesService {
     }
   }
 
-  async postRevisarCalculosAceptar(periodoId: string) {
+  async postRevisarCalculosAceptar(periodoId: string, lecturaIds: number[]) {
     try {
-      const response = await api.post('/revisar-calculos/aceptar', {
-        periodoId
+      const params = new URLSearchParams();
+      params.append('periodoId', periodoId);
+
+      const response = await api.post('/revisar-calculos/aceptar', lecturaIds, {
+        params
       });
       return {
         data: response.data,

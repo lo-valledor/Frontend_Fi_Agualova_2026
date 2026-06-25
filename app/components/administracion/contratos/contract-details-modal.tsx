@@ -36,7 +36,9 @@ export function ContractDetailsModal({
       try {
         setIsLoading(true);
         setError(null);
-        await new Promise(resolve => setTimeout(resolve, DETAILS_FETCH_DELAY_MS));
+        await new Promise(resolve =>
+          setTimeout(resolve, DETAILS_FETCH_DELAY_MS)
+        );
         setDetailsData(contract);
       } catch (err) {
         console.error('Error al cargar los detalles del contrato:', err);

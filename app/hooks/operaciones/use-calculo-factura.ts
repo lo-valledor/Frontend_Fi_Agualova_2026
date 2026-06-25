@@ -1,23 +1,9 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
-import api from '~/lib/api';
+import { operacionesService } from '~/services/operacionesService';
+import type { RevisarCalculosPrefactura } from '~/types/operaciones';
 import { convertirCicloParaAPI } from './utils/cycle-utilities';
-import { es404, extraerErrorMessage } from './utils/error-handler';
-
-type CalculoPrefacturaDetalle = {
-  contratoId?: number | string;
-  [key: string]: unknown;
-};
-
-type CalculoPrefacturaCargo = {
-  contratoId?: number | string;
-  [key: string]: unknown;
-};
-
-type CalculoPrefacturaCompleto = CalculoPrefacturaDetalle & {
-  cargos?: CalculoPrefacturaCargo[];
-};
 
 interface UseCalculoFacturaProps {
   periodoFormateado: string;
@@ -25,22 +11,22 @@ interface UseCalculoFacturaProps {
 }
 
 export interface UseCalculoFacturaResult {
-  data: CalculoPrefacturaCompleto[];
-  filteredData: CalculoPrefacturaCompleto[];
+  data: RevisarCalculosPrefactura[];
+  filteredData: RevisarCalculosPrefactura[];
   isLoading: boolean;
   error: string | null;
   searchTerm: string;
   setSearchTerm: (term: string) => void;
   handleRevisarCalculo: () => Promise<void>;
-  setData: (data: CalculoPrefacturaCompleto[]) => void;
+  setData: (data: RevisarCalculosPrefactura[]) => void;
 }
 
 export function useCalculoFactura({
   periodoFormateado,
   cicloId
 }: UseCalculoFacturaProps): UseCalculoFacturaResult {
-  const [data, setData] = useState<CalculoPrefacturaCompleto[]>([]);
-  const [filteredData, setFilteredData] = useState<CalculoPrefacturaCompleto[]>(
+  const [data, setData] = useState<RevisarCalculosPrefactura[]>([]);
+  const [filteredData, setFilteredData] = useState<RevisarCalculosPrefactura[]>(
     []
   );
   const [isLoading, setIsLoading] = useState(false);
@@ -64,20 +50,26 @@ export function useCalculoFactura({
     try {
       const cicloParaAPI = convertirCicloParaAPI(cicloId);
       const requestParams = {
-        cicloId: cicloParaAPI,
+        cicloId: Number.parseInt(cicloParaAPI, 10),
         periodo: periodoFormateado
       };
 
-      // Obtener encabezados
-      const encabezadoResponse = await api.get(
-        '/calculo-prefactura-encabezado',
-        { params: requestParams }
-      );
+      const result =
+        await operacionesService.getRevisarCalculosBuscarPrefacturas(
+          requestParams.cicloId,
+          requestParams.periodo
+        );
 
-      const encabezados = encabezadoResponse.data as CalculoPrefacturaDetalle[];
+      if (result.error) {
+        setError(result.error);
+        setData([]);
+        toast.error(`Error: ${result.error}`);
+        return;
+      }
 
-      // Early return si no hay encabezados
-      if (!Array.isArray(encabezados) || encabezados.length === 0) {
+      const datosCombinados = Array.isArray(result.data) ? result.data : [];
+
+      if (datosCombinados.length === 0) {
         setData([]);
         toast.info(
           'No se encontraron prefacturas para el ciclo y periodo elegidos'
@@ -85,52 +77,12 @@ export function useCalculoFactura({
         return;
       }
 
-      // Obtener cargos
-      const cargosResponse = await api.get('/calculo-prefactura-cargos', {
-        params: requestParams
-      });
-
-      const cargosData = cargosResponse.data as CalculoPrefacturaCargo[];
-
-      // Combinar datos
-      const cargosByContrato = new Map<
-        string | number,
-        CalculoPrefacturaCargo[]
-      >();
-      for (const cargo of cargosData) {
-        if (cargo.contratoId === undefined) continue;
-        const list = cargosByContrato.get(cargo.contratoId) ?? [];
-        list.push(cargo);
-        cargosByContrato.set(cargo.contratoId, list);
-      }
-      const datosCombinados: CalculoPrefacturaCompleto[] = encabezados.map(
-        encabezado => ({
-          ...encabezado,
-          cargos:
-            encabezado.contratoId !== undefined
-              ? (cargosByContrato.get(encabezado.contratoId) ?? [])
-              : []
-        })
-      );
-
       setData(datosCombinados);
       toast.success(`Se encontraron ${datosCombinados.length} registros`);
     } catch (err) {
-      // Caso especial: 404 significa que no hay lecturas cerradas
-      if (es404(err)) {
-        setError('NO_LECTURAS_CERRADAS');
-        toast.success('✓ No hay lecturas pendientes de facturar', {
-          duration: 6000,
-          description:
-            'Todas las lecturas cerradas ya están facturadas. Para procesar nuevas facturas, cierra las lecturas pendientes y ejecuta "Preparar Cálculo".',
-          icon: '✓'
-        });
-      } else {
-        const { message } = extraerErrorMessage(err);
-        setError(message);
-        toast.error(`Error: ${message}`);
-      }
-
+      const message = err instanceof Error ? err.message : 'Error desconocido';
+      setError(message);
+      toast.error(`Error: ${message}`);
       setData([]);
     } finally {
       setIsLoading(false);

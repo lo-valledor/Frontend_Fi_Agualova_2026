@@ -5,7 +5,11 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 
 import { authService } from '../services/authService';
-import { clearAuthToken, getAuthToken, setAuthToken } from '../services/axiosConfig';
+import {
+  clearAuthToken,
+  getAuthToken,
+  setAuthToken
+} from '../services/axiosConfig';
 
 export interface UserData {
   id: string;

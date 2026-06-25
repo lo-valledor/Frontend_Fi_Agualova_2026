@@ -1,12 +1,12 @@
-import { BreadcrumbSetter } from "~/components/breadcrumb-setter";
-import AbrirPeriodoFacturacion from "~/components/operaciones/periodo-facturacion/periodo-facturacion-component";
-import { operacionesService } from "~/services/operacionesService";
-import type { Route } from "./+types/periodo-facturacion";
+import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
+import AbrirPeriodoFacturacion from '~/components/operaciones/periodo-facturacion/periodo-facturacion-component';
+import { operacionesService } from '~/services/operacionesService';
+import type { Route } from './+types/periodo-facturacion';
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Agualova | Periodos de Facturación" },
-    { name: "description", content: "Periodos de Facturación" },
+    { title: 'Agualova | Periodos de Facturación' },
+    { name: 'description', content: 'Periodos de Facturación' }
   ];
 }
 
@@ -17,24 +17,24 @@ export async function clientLoader() {
     return {
       years: [],
       periodos: [],
-      error: result.error || "Error al cargar los datos",
+      error: result.error || 'Error al cargar los datos'
     };
   }
 
   return {
     years: result.data.years,
     periodos: result.data.periodos,
-    error: null,
+    error: null
   };
 }
 
 export default function PeriodoFacturacion({
-  loaderData,
+  loaderData
 }: Route.ComponentProps) {
   const { years, periodos, error } = loaderData;
   const pageBreadcrumbs = [
-    { label: "Operaciones" },
-    { label: "Periodos de Facturación" },
+    { label: 'Operaciones' },
+    { label: 'Periodos de Facturación' }
   ];
 
   return (

@@ -147,7 +147,9 @@ export function MeterCard({ medidor, onRefresh }: MeterCardProps) {
                           ID: {medidor.id} | Medidor: {medidor.nSerie}
                         </DrawerDescription>
                       </div>
-                      <Badge className={`${status.bgColor} text-xs sm:text-sm shrink-0`}>
+                      <Badge
+                        className={`${status.bgColor} text-xs sm:text-sm shrink-0`}
+                      >
                         {status.label}
                       </Badge>
                     </div>

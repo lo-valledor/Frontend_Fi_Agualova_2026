@@ -43,10 +43,7 @@ import {
   validatePeriod
 } from '~/utils/operaciones';
 
-import {
-  columns as columnsEnel,
-  type PrecioPendiente
-} from './columns-enel';
+import { columns as columnsEnel, type PrecioPendiente } from './columns-enel';
 import { DataTablePreciosVirtualized } from './data-table-precios-virtualized';
 
 interface PreciosCargoComponentProps {

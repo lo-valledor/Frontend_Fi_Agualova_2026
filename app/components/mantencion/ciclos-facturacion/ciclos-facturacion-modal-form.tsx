@@ -117,7 +117,7 @@ export default function CiclosFacturacionModalForm({
     setIsLoading(true);
     try {
       if (mode === 'add') {
-        await mantencionService.createCicloFacturacion(data)
+        await mantencionService.createCicloFacturacion(data);
       } else if (mode === 'edit' && ciclo) {
         await mantencionService.updateCicloFacturacion(data);
       }

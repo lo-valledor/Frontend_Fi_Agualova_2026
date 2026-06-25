@@ -1,4 +1,4 @@
-import type { PaginationState } from "@tanstack/react-table";
+import type { PaginationState } from '@tanstack/react-table';
 import {
   AlertTriangle,
   CheckCircle,
@@ -7,62 +7,62 @@ import {
   History,
   Loader2,
   PlusCircleIcon,
-  X,
-} from "lucide-react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { BreadcrumbSetter } from "~/components/breadcrumb-setter";
-import { DataTable } from "~/components/data-table/data-table";
-import { ModernHeader } from "~/components/shared/modern-header";
-import { AlertDescription, AlertTitle } from "~/components/ui/alert";
-import { Button } from "~/components/ui/button";
+  X
+} from 'lucide-react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
+import { DataTable } from '~/components/data-table/data-table';
+import { ModernHeader } from '~/components/shared/modern-header';
+import { AlertDescription, AlertTitle } from '~/components/ui/alert';
+import { Button } from '~/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
-import { Label } from "~/components/ui/label";
+  CardTitle
+} from '~/components/ui/card';
+import { Label } from '~/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
-} from "~/components/ui/select";
+  SelectValue
+} from '~/components/ui/select';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
-  TooltipTrigger,
-} from "~/components/ui/tooltip";
-import { monitorService } from "~/services/monitorService";
-import { operacionesService } from "~/services/operacionesService";
-import type { MonitorPeriodos } from "~/types/monitor";
-import type { Anio, Periodos } from "~/types/operaciones";
-import CerrarPeriodo from "./cerrar-periodo";
-import { columns } from "./columns";
-import DialogNuevoPeriodo from "./dialog-nuevo-periodo";
+  TooltipTrigger
+} from '~/components/ui/tooltip';
+import { monitorService } from '~/services/monitorService';
+import { operacionesService } from '~/services/operacionesService';
+import type { MonitorPeriodos } from '~/types/monitor';
+import type { Anio, Periodos } from '~/types/operaciones';
+import CerrarPeriodo from './cerrar-periodo';
+import { columns } from './columns';
+import DialogNuevoPeriodo from './dialog-nuevo-periodo';
 
 const MESES = [
-  { value: "01", label: "Enero" },
-  { value: "02", label: "Febrero" },
-  { value: "03", label: "Marzo" },
-  { value: "04", label: "Abril" },
-  { value: "05", label: "Mayo" },
-  { value: "06", label: "Junio" },
-  { value: "07", label: "Julio" },
-  { value: "08", label: "Agosto" },
-  { value: "09", label: "Septiembre" },
-  { value: "10", label: "Octubre" },
-  { value: "11", label: "Noviembre" },
-  { value: "12", label: "Diciembre" },
+  { value: '01', label: 'Enero' },
+  { value: '02', label: 'Febrero' },
+  { value: '03', label: 'Marzo' },
+  { value: '04', label: 'Abril' },
+  { value: '05', label: 'Mayo' },
+  { value: '06', label: 'Junio' },
+  { value: '07', label: 'Julio' },
+  { value: '08', label: 'Agosto' },
+  { value: '09', label: 'Septiembre' },
+  { value: '10', label: 'Octubre' },
+  { value: '11', label: 'Noviembre' },
+  { value: '12', label: 'Diciembre' }
 ];
 
 export default function AbrirPeriodoFacturacion({
   years,
   periodos,
-  error,
+  error
 }: Readonly<{
   years: Anio[];
   periodos: Periodos[];
@@ -71,19 +71,19 @@ export default function AbrirPeriodoFacturacion({
   const [isOpenDialog, setIsOpenDialog] = useState(false);
 
   // ─── Filtros server-side (mes / año) ──────────────────────────────────
-  const [mesFilter, setMesFilter] = useState<string>("");
-  const [anioFilter, setAnioFilter] = useState<string>("");
+  const [mesFilter, setMesFilter] = useState<string>('');
+  const [anioFilter, setAnioFilter] = useState<string>('');
 
   // ─── Estado de paginación/búsqueda server-side de la tabla ─────────
   const DEFAULT_PAGE_SIZE = 10;
   const [tableData, setTableData] = useState<Periodos[]>(
-    Array.isArray(periodos) ? periodos : [],
+    Array.isArray(periodos) ? periodos : []
   );
   const [tableLoading, setTableLoading] = useState(false);
   const [tableError, setTableError] = useState<string | null>(null);
   const [tablePagination, setTablePagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: DEFAULT_PAGE_SIZE,
+    pageSize: DEFAULT_PAGE_SIZE
   });
   // Heurística: si la respuesta trae menos filas que pageSize, sabemos
   // que es la última página. Si trae la cantidad completa, asumimos más.
@@ -94,7 +94,7 @@ export default function AbrirPeriodoFacturacion({
   // La búsqueda libre no la pasamos al backend (no hay un parámetro
   // `descripcion` o `q` en /periodos/buscar). Filtramos en memoria sobre
   // la página actual. Si el dataset crece, conviene agregarlo al backend.
-  const [searchValue, setSearchValue] = useState("");
+  const [searchValue, setSearchValue] = useState('');
 
   // ─── Periodo activo desde el monitor ─────────────────────────────────
   // El endpoint /periodos/buscar devuelve todos los periodos, pero el
@@ -103,21 +103,21 @@ export default function AbrirPeriodoFacturacion({
   // { value: "092025", text: "Septiembre 2025", ... }. Usamos esa fuente
   // para mostrar el periodo activo y poder cerrarlo.
   const [monitorPeriodo, setMonitorPeriodo] = useState<MonitorPeriodos | null>(
-    null,
+    null
   );
   const [monitorLoading, setMonitorLoading] = useState(false);
   const [monitorError, setMonitorError] = useState<string | null>(null);
 
   const pageBreadcrumbs = [
-    { label: "Operaciones" },
-    { label: "Período Facturación" },
+    { label: 'Operaciones' },
+    { label: 'Período Facturación' }
   ];
 
   // ─── Fetch server-side: limit + offset + filtros mes/anio ──────────
   const fetchPeriodosPage = useCallback(
     async ({
       pageIndex,
-      pageSize,
+      pageSize
     }: {
       pageIndex: number;
       pageSize: number;
@@ -130,7 +130,7 @@ export default function AbrirPeriodoFacturacion({
           mesFilter || undefined,
           anioFilter || undefined,
           pageSize,
-          pageIndex * pageSize,
+          pageIndex * pageSize
         );
 
       // Descartar respuesta si el usuario ya disparó otra request
@@ -139,22 +139,22 @@ export default function AbrirPeriodoFacturacion({
       if (result.error || !result.data) {
         setTableData([]);
         setHasMore(false);
-        setTableError(result.error ?? "Error desconocido");
+        setTableError(result.error ?? 'Error desconocido');
       } else {
         setTableData(result.data);
         setHasMore(result.data.length >= pageSize);
       }
       setTableLoading(false);
     },
-    [mesFilter, anioFilter],
+    [mesFilter, anioFilter]
   );
 
   // Carga inicial + refetch cuando cambian filtros (resetea a página 0)
   useEffect(() => {
-    setTablePagination((prev) => ({ ...prev, pageIndex: 0 }));
+    setTablePagination(prev => ({ ...prev, pageIndex: 0 }));
     fetchPeriodosPage({
       pageIndex: 0,
-      pageSize: tablePagination.pageSize,
+      pageSize: tablePagination.pageSize
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mesFilter, anioFilter]);
@@ -163,7 +163,7 @@ export default function AbrirPeriodoFacturacion({
   useEffect(() => {
     fetchPeriodosPage({
       pageIndex: tablePagination.pageIndex,
-      pageSize: tablePagination.pageSize,
+      pageSize: tablePagination.pageSize
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tablePagination.pageSize]);
@@ -173,17 +173,17 @@ export default function AbrirPeriodoFacturacion({
       setTablePagination(next);
       fetchPeriodosPage({
         pageIndex: next.pageIndex,
-        pageSize: next.pageSize,
+        pageSize: next.pageSize
       });
     },
-    [fetchPeriodosPage],
+    [fetchPeriodosPage]
   );
 
   const handleTableSearchChange = useCallback(
     ({ value }: { field: string; value: string }) => {
       setSearchValue(value);
     },
-    [],
+    []
   );
 
   // ─── Filtrado client-side sobre la página actual ───────────────────
@@ -191,17 +191,17 @@ export default function AbrirPeriodoFacturacion({
     const q = searchValue.trim().toLowerCase();
     if (!q) return tableData;
     return tableData.filter(
-      (p) =>
+      p =>
         p.codigo.toLowerCase().includes(q) ||
-        p.descripcion.toLowerCase().includes(q),
+        p.descripcion.toLowerCase().includes(q)
     );
   }, [tableData, searchValue]);
 
-  const hasActiveFilters = mesFilter !== "" || anioFilter !== "";
+  const hasActiveFilters = mesFilter !== '' || anioFilter !== '';
 
   const clearFilters = useCallback(() => {
-    setMesFilter("");
-    setAnioFilter("");
+    setMesFilter('');
+    setAnioFilter('');
   }, []);
 
   // Refetch helper que también respeta el filtro actual (usado por
@@ -209,7 +209,7 @@ export default function AbrirPeriodoFacturacion({
   const refetchPeriodos = useCallback(() => {
     fetchPeriodosPage({
       pageIndex: tablePagination.pageIndex,
-      pageSize: tablePagination.pageSize,
+      pageSize: tablePagination.pageSize
     });
   }, [fetchPeriodosPage, tablePagination.pageIndex, tablePagination.pageSize]);
 
@@ -294,7 +294,7 @@ export default function AbrirPeriodoFacturacion({
                     <CardDescription className="mt-1 text-xs">
                       <span className="font-medium text-primary">
                         {monitorPeriodo.text}
-                      </span>{" "}
+                      </span>{' '}
                       está abierto
                     </CardDescription>
                   </div>
@@ -362,8 +362,8 @@ export default function AbrirPeriodoFacturacion({
                     </AlertTitle>
                     <AlertDescription className="text-muted-foreground mt-1 text-xs">
                       {monitorError
-                        ? "No se pudo consultar el período activo del monitor."
-                        : "El sistema está disponible. Puede crear un nuevo período de facturación y todas las operaciones se registrarán en él."}
+                        ? 'No se pudo consultar el período activo del monitor.'
+                        : 'El sistema está disponible. Puede crear un nuevo período de facturación y todas las operaciones se registrarán en él.'}
                     </AlertDescription>
                   </div>
                 </div>
@@ -413,7 +413,7 @@ export default function AbrirPeriodoFacturacion({
                     <SelectValue placeholder="Todos" />
                   </SelectTrigger>
                   <SelectContent>
-                    {MESES.map((m) => (
+                    {MESES.map(m => (
                       <SelectItem key={m.value} value={m.value}>
                         {m.label}
                       </SelectItem>
@@ -430,7 +430,7 @@ export default function AbrirPeriodoFacturacion({
                     <SelectValue placeholder="Todos" />
                   </SelectTrigger>
                   <SelectContent>
-                    {years.map((y) => (
+                    {years.map(y => (
                       <SelectItem key={y.idAnio} value={String(y.anio)}>
                         {y.anio}
                       </SelectItem>
@@ -477,8 +477,8 @@ export default function AbrirPeriodoFacturacion({
                   {searchValue.trim()
                     ? `Sin resultados para "${searchValue.trim()}"`
                     : hasActiveFilters
-                      ? "No hay períodos que coincidan con los filtros aplicados"
-                      : "No hay períodos de facturación registrados"}
+                      ? 'No hay períodos que coincidan con los filtros aplicados'
+                      : 'No hay períodos de facturación registrados'}
                 </p>
               </div>
             ) : (
@@ -499,7 +499,7 @@ export default function AbrirPeriodoFacturacion({
                   emptyMessage={
                     searchValue.trim()
                       ? `Sin resultados para "${searchValue.trim()}"`
-                      : "No hay períodos registrados"
+                      : 'No hay períodos registrados'
                   }
                 />
               </div>

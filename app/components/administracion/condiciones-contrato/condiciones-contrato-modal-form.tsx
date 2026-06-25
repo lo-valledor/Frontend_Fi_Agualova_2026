@@ -6,7 +6,10 @@ import Select, { type SingleValue } from 'react-select';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
-import { getReactSelectStyles, type OptionType } from '~/components/shared/react-select-styles';
+import {
+  getReactSelectStyles,
+  type OptionType
+} from '~/components/shared/react-select-styles';
 import { useTheme } from '~/components/theme-provider';
 import { Button } from '~/components/ui/button';
 import {
@@ -37,9 +40,7 @@ import type { Concepto } from '~/types/mantencion';
 
 const condicionContratoFormSchema = z.object({
   id: z.number().optional(),
-  descripcion: z
-    .string()
-    .min(1, { message: 'La descripción es requerida.' }),
+  descripcion: z.string().min(1, { message: 'La descripción es requerida.' }),
   idConcepto: z.coerce
     .number()
     .int()
@@ -134,7 +135,8 @@ export default function CondicionesContratoModalForm({
   const onSubmit = async (data: CondicionContratoFormData) => {
     setIsLoading(true);
     try {
-      const valorParaAPI = data.tipoCondicion === 1 ? data.valor / 100 : data.valor;
+      const valorParaAPI =
+        data.tipoCondicion === 1 ? data.valor / 100 : data.valor;
 
       const payload: CondicionContratoFormValues = {
         id: mode === 'edit' && condicionContrato ? condicionContrato.id : 0,
@@ -264,9 +266,7 @@ export default function CondicionesContratoModalForm({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      {usaPorcentaje
-                        ? 'Porcentaje (%)'
-                        : 'Valor Fijo ($)'}
+                      {usaPorcentaje ? 'Porcentaje (%)' : 'Valor Fijo ($)'}
                     </FormLabel>
                     <FormControl>
                       <div className="relative">

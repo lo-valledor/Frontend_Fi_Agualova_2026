@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
-
+import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,15 +21,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from '~/components/ui/alert-dialog';
-import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert';
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle
-} from '~/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
 import { LoadingCard } from '~/components/ui/loading-card';
@@ -145,7 +139,7 @@ export default function DetallesMedidor({
       }
 
       const lastAd = d?.ultimaLecturaAdicional;
-      setLecturaActualAd(lastAd);
+      setLecturaActualAd(lastAd != null ? String(lastAd) : '');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error desconocido');
     } finally {
@@ -274,9 +268,7 @@ export default function DetallesMedidor({
   // correctamente el id numérico correspondiente a cada `claveHtml`.
   const CLAVE_ID_HARDCODED = 24;
 
-  const handleHabilitarEdicion = async (
-    descripcion: string
-  ): Promise<void> => {
+  const handleHabilitarEdicion = async (descripcion: string): Promise<void> => {
     if (!descripcion.trim()) {
       toast.error('Debe ingresar una descripción');
       return;
@@ -299,9 +291,7 @@ export default function DetallesMedidor({
       onSuccess?.();
     } catch (err) {
       toast.error(
-        err instanceof Error
-          ? err.message
-          : 'Error al habilitar la edición'
+        err instanceof Error ? err.message : 'Error al habilitar la edición'
       );
     } finally {
       setIsSubmitting(false);
@@ -314,12 +304,13 @@ export default function DetallesMedidor({
     if (action === 'copiar') return handleCopiarUltimaLectura();
     if (action === 'registrar') return handleRegistrar();
     if (action === 'aceptar') return handleAceptar();
-    if (action === 'habilitar') return handleHabilitarEdicion(habilitarDescripcion);
+    if (action === 'habilitar')
+      return handleHabilitarEdicion(habilitarDescripcion);
   };
 
   const handleSubmitOnEnter = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
-    if (isSubmitting) return;
+    if (isSubmitting || !puedeRegistrar) return;
     setPendingAction('registrar');
   };
 
@@ -480,7 +471,9 @@ export default function DetallesMedidor({
               )}
             </CardTitle>
           </CardHeader>
-          <CardContent className={cn(isCompact ? 'space-y-3 p-3 pt-0' : 'space-y-4')}>
+          <CardContent
+            className={cn(isCompact ? 'space-y-3 p-3 pt-0' : 'space-y-4')}
+          >
             {/* En compact: lectura anterior y fecha como referencia; en full: inputs editables */}
             {isCompact ? (
               <div className="flex items-center justify-between text-xs text-muted-foreground">
@@ -504,7 +497,7 @@ export default function DetallesMedidor({
                   <Input
                     id="fecha"
                     type="date"
-                      value={fecha}
+                    value={fecha}
                     disabled
                     onChange={e => setFecha(e.target.value)}
                   />
@@ -563,7 +556,10 @@ export default function DetallesMedidor({
                     <Plus className="h-3 w-3" />
                     Medidor Adicional
                     {serieAdicional && (
-                      <Badge variant="outline" className="font-mono text-[10px]">
+                      <Badge
+                        variant="outline"
+                        className="font-mono text-[10px]"
+                      >
                         {serieAdicional}
                       </Badge>
                     )}
@@ -667,6 +663,7 @@ export default function DetallesMedidor({
                   <Button
                     type="submit"
                     size="sm"
+                    disabled={!puedeRegistrar || isSubmitting}
                     className="bg-emerald-600 hover:bg-emerald-700 flex-1"
                   >
                     <Save className="h-3 w-3 mr-1" />
@@ -699,6 +696,7 @@ export default function DetallesMedidor({
                   <Button
                     type="submit"
                     size="sm"
+                    disabled={!puedeRegistrar || isSubmitting}
                     className="bg-emerald-600 hover:bg-emerald-700"
                   >
                     <Save className="h-3 w-3 mr-1" />
@@ -786,9 +784,7 @@ export default function DetallesMedidor({
                       <Input
                         id="habilitar-descripcion"
                         value={habilitarDescripcion}
-                        onChange={e =>
-                          setHabilitarDescripcion(e.target.value)
-                        }
+                        onChange={e => setHabilitarDescripcion(e.target.value)}
                         placeholder="Ej. Corrección solicitada por el cliente"
                         autoFocus
                       />
@@ -809,8 +805,7 @@ export default function DetallesMedidor({
               onClick={handleConfirmPending}
               disabled={
                 isSubmitting ||
-                (pendingAction === 'habilitar' &&
-                  !habilitarDescripcion.trim())
+                (pendingAction === 'habilitar' && !habilitarDescripcion.trim())
               }
               className={
                 pendingAction === 'aceptar'

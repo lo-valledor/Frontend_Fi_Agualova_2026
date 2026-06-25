@@ -83,8 +83,6 @@ describe('RevisarCalculoFacturaComponent', () => {
     periodoAbierto: [
       {
         id: '012024',
-        mes: 1,
-        anio: 2024,
         descripcion: 'Enero 2024'
       }
     ],

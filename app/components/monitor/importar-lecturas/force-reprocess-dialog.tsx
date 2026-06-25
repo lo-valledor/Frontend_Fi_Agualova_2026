@@ -46,9 +46,7 @@ export function ForceReprocessDialog({
   };
 
   const isValid =
-    !!periodoActivo &&
-    confirmPeriodInput === periodoActivo &&
-    ackRiskChecked;
+    !!periodoActivo && confirmPeriodInput === periodoActivo && ackRiskChecked;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -71,22 +69,17 @@ export function ForceReprocessDialog({
             </label>
             <Input
               value={confirmPeriodInput}
-              onChange={(e) => setConfirmPeriodInput(e.target.value)}
+              onChange={e => setConfirmPeriodInput(e.target.value)}
               placeholder="Ej: 102025"
             />
           </div>
           <div className="flex items-center gap-2">
             <Checkbox
               checked={ackRiskChecked}
-              onCheckedChange={(checked) =>
-                setAckRiskChecked(Boolean(checked))
-              }
+              onCheckedChange={checked => setAckRiskChecked(Boolean(checked))}
               id="ack-risk"
             />
-            <label
-              htmlFor="ack-risk"
-              className="text-xs text-muted-foreground"
-            >
+            <label htmlFor="ack-risk" className="text-xs text-muted-foreground">
               Entiendo el riesgo de reprocesar lecturas en el mismo período.
             </label>
           </div>

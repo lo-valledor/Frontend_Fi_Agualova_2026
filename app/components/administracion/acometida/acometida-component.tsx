@@ -1,23 +1,23 @@
-import type { PaginationState } from "@tanstack/react-table";
-import { LayoutList, Plus } from "lucide-react";
-import { motion } from "motion/react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useRevalidator } from "react-router";
-import { toast } from "sonner";
+import type { PaginationState } from '@tanstack/react-table';
+import { LayoutList, Plus } from 'lucide-react';
+import { motion } from 'motion/react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useRevalidator } from 'react-router';
+import { toast } from 'sonner';
 
-import { DataTable } from "~/components/data-table/data-table";
-import { ExportButton } from "~/components/shared/export-button";
-import { ModernHeader } from "~/components/shared/modern-header";
-import { Button } from "~/components/ui/button";
+import { DataTable } from '~/components/data-table/data-table';
+import { ExportButton } from '~/components/shared/export-button';
+import { ModernHeader } from '~/components/shared/modern-header';
+import { Button } from '~/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
-import { useExportAcometidas } from "~/hooks/administracion/use-export-acometidas";
-import { administracionService } from "~/services/administracionService";
+  CardTitle
+} from '~/components/ui/card';
+import { useExportAcometidas } from '~/hooks/administracion/use-export-acometidas';
+import { administracionService } from '~/services/administracionService';
 import type {
   AcometidaFormValues,
   AcometidaProps,
@@ -25,10 +25,10 @@ import type {
   BuscarContratosLibres,
   Empalmes,
   Nichos,
-  Sectores,
-} from "~/types/administracion";
-import { AcometidaForm } from "./acometida-form";
-import { columns } from "./columns";
+  Sectores
+} from '~/types/administracion';
+import { AcometidaForm } from './acometida-form';
+import { columns } from './columns';
 
 interface AcometidaComponentProps {
   acometidas: AcometidaRow[];
@@ -43,12 +43,12 @@ export default function AcometidaComponent({
   comboEmpalmes,
   comboNichos,
   comboSectores,
-  contratosDisponibles,
+  contratosDisponibles
 }: Readonly<AcometidaComponentProps>) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedAcometida, setSelectedAcometida] =
     useState<AcometidaRow | null>(null);
-  const [modalMode, setModalMode] = useState<"add" | "edit">("add");
+  const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
   const [, setEditingAcometidaId] = useState<number | null>(null);
 
   // ─── Estado de paginación/búsqueda server-side de la tabla ─────────
@@ -56,17 +56,17 @@ export default function AcometidaComponent({
   const [tableData, setTableData] = useState<AcometidaRow[]>(acometidas);
   const [tableLoading, setTableLoading] = useState(false);
   const [tableError, setTableError] = useState<string | null>(null);
-  const [searchValue, setSearchValue] = useState("");
+  const [searchValue, setSearchValue] = useState('');
   const [tablePagination, setTablePagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: DEFAULT_PAGE_SIZE,
+    pageSize: DEFAULT_PAGE_SIZE
   });
   const [hasMore, setHasMore] = useState(true);
   const requestIdRef = useRef(0);
 
   const searchFields = useMemo(
-    () => [{ value: "ubicacion", label: "Ubicación" }],
-    [],
+    () => [{ value: 'ubicacion', label: 'Ubicación' }],
+    []
   );
 
   const revalidator = useRevalidator();
@@ -76,7 +76,7 @@ export default function AcometidaComponent({
     async ({
       pageIndex,
       pageSize,
-      value,
+      value
     }: {
       pageIndex: number;
       pageSize: number;
@@ -90,7 +90,7 @@ export default function AcometidaComponent({
         undefined,
         undefined,
         pageSize,
-        pageIndex * pageSize,
+        pageIndex * pageSize
       );
 
       if (requestId !== requestIdRef.current) return;
@@ -98,21 +98,21 @@ export default function AcometidaComponent({
       if (result.error || !result.data) {
         setTableData([]);
         setHasMore(false);
-        setTableError(result.error ?? "Error desconocido");
+        setTableError(result.error ?? 'Error desconocido');
       } else {
         setTableData(result.data);
         setHasMore(result.data.length >= pageSize);
       }
       setTableLoading(false);
     },
-    [],
+    []
   );
 
   useEffect(() => {
     fetchAcometidasPage({
       pageIndex: 0,
       pageSize: DEFAULT_PAGE_SIZE,
-      value: "",
+      value: ''
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -123,10 +123,10 @@ export default function AcometidaComponent({
       fetchAcometidasPage({
         pageIndex: next.pageIndex,
         pageSize: next.pageSize,
-        value: searchValue,
+        value: searchValue
       });
     },
-    [fetchAcometidasPage, searchValue],
+    [fetchAcometidasPage, searchValue]
   );
 
   const handleTableSearchChange = useCallback(
@@ -134,35 +134,35 @@ export default function AcometidaComponent({
       setSearchValue(value);
       const next: PaginationState = {
         pageIndex: 0,
-        pageSize: tablePagination.pageSize,
+        pageSize: tablePagination.pageSize
       };
       setTablePagination(next);
       fetchAcometidasPage({
         pageIndex: next.pageIndex,
         pageSize: next.pageSize,
-        value,
+        value
       });
     },
-    [fetchAcometidasPage, tablePagination.pageSize],
+    [fetchAcometidasPage, tablePagination.pageSize]
   );
 
   const handleAddAcometida = () => {
     setSelectedAcometida(null);
-    setModalMode("add");
+    setModalMode('add');
     setIsModalOpen(true);
   };
 
   const handleEditAcometida = async (acometida: AcometidaRow) => {
     setEditingAcometidaId(acometida.idAcometida);
     setSelectedAcometida(acometida);
-    setModalMode("edit");
+    setModalMode('edit');
     setIsModalOpen(true);
   };
 
   const handleSuccess = () => {
     setIsModalOpen(false);
     setSelectedAcometida(null);
-    setModalMode("add");
+    setModalMode('add');
     setEditingAcometidaId(null);
     revalidator.revalidate();
     // Refetchear la página actual de la tabla server-side para reflejar
@@ -170,31 +170,31 @@ export default function AcometidaComponent({
     fetchAcometidasPage({
       pageIndex: tablePagination.pageIndex,
       pageSize: tablePagination.pageSize,
-      value: searchValue,
+      value: searchValue
     });
     toast.success(
-      modalMode === "add"
-        ? "Acometida creada exitosamente"
-        : "Acometida actualizada exitosamente",
+      modalMode === 'add'
+        ? 'Acometida creada exitosamente'
+        : 'Acometida actualizada exitosamente'
     );
   };
 
   const handleSubmitForm = async (
-    data: AcometidaProps | AcometidaFormValues,
+    data: AcometidaProps | AcometidaFormValues
   ) => {
     try {
-      if (modalMode === "add") {
+      if (modalMode === 'add') {
         await administracionService.createAcometida(data as AcometidaProps);
       } else {
         // En edición, el form ya envía el payload con idAcometida incluido
         // y los ids como string (AcometidaFormValues). No sobrescribimos campos.
         await administracionService.updateAcometida(
-          data as AcometidaFormValues,
+          data as AcometidaFormValues
         );
       }
       handleSuccess();
     } catch {
-      toast.error("Ha ocurrido un error al guardar la acometida");
+      toast.error('Ha ocurrido un error al guardar la acometida');
     }
   };
 
@@ -244,8 +244,8 @@ export default function AcometidaComponent({
                   </CardTitle>
                   <CardDescription className="text-xs mt-0.5 text-muted-foreground">
                     {tableLoading
-                      ? "Cargando…"
-                      : `${tableData.length} acometida${tableData.length !== 1 ? "s" : ""} en esta página`}
+                      ? 'Cargando…'
+                      : `${tableData.length} acometida${tableData.length !== 1 ? 's' : ''} en esta página`}
                   </CardDescription>
                 </div>
               </div>
@@ -255,7 +255,7 @@ export default function AcometidaComponent({
               <div className="overflow-x-auto -mx-1">
                 <DataTable
                   columns={columns({
-                    onEdit: handleEditAcometida,
+                    onEdit: handleEditAcometida
                   })}
                   data={tableData}
                   defaultPageSize={DEFAULT_PAGE_SIZE}
@@ -274,13 +274,13 @@ export default function AcometidaComponent({
                     fetchAcometidasPage({
                       pageIndex: tablePagination.pageIndex,
                       pageSize: tablePagination.pageSize,
-                      value: searchValue,
+                      value: searchValue
                     })
                   }
                   emptyMessage={
                     searchValue.trim()
                       ? `Sin resultados para "${searchValue.trim()}"`
-                      : "No hay acometidas registradas en el sistema"
+                      : 'No hay acometidas registradas en el sistema'
                   }
                 />
               </div>

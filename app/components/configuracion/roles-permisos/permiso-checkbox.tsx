@@ -7,7 +7,11 @@ interface PermisoCheckboxProps {
   className?: string;
 }
 
-export const PermisoCheckbox = ({ checked, onCheckedChange, className }: PermisoCheckboxProps) => (
+export const PermisoCheckbox = ({
+  checked,
+  onCheckedChange,
+  className
+}: PermisoCheckboxProps) => (
   <Checkbox
     checked={checked}
     onCheckedChange={onCheckedChange}

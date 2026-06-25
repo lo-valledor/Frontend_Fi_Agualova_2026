@@ -24,7 +24,7 @@ export function MobileView({
 }: MobileViewProps) {
   return (
     <div className="space-y-4">
-      {filteredMenus.map((menu) => (
+      {filteredMenus.map(menu => (
         <Card key={menu.idMenu} className="border-border">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
@@ -45,7 +45,7 @@ export function MobileView({
           </CardHeader>
           <CardContent className="pt-0">
             <div className="space-y-3">
-              {visibleRoles.map((rol) => {
+              {visibleRoles.map(rol => {
                 const permiso = getPermiso(rol.idRol, menu.idMenu);
                 return (
                   <div

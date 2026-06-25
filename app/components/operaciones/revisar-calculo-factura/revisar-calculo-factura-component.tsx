@@ -1,4 +1,4 @@
-import { driver } from "driver.js";
+import { driver } from 'driver.js';
 import {
   AlertCircleIcon,
   CalendarIcon,
@@ -13,39 +13,44 @@ import {
   Plus,
   RefreshCcwIcon,
   SearchIcon,
-  TrendingUp,
-} from "lucide-react";
-import { toast } from "sonner";
-import "driver.js/dist/driver.css";
+  TrendingUp
+} from 'lucide-react';
+import { toast } from 'sonner';
+import 'driver.js/dist/driver.css';
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from 'react';
 
-import { ModernHeader } from "~/components/shared/modern-header";
-import { Alert, AlertDescription, AlertTitle } from "~/components/ui/alert";
-import { Badge } from "~/components/ui/badge";
-import { Button } from "~/components/ui/button";
+import { ModernHeader } from '~/components/shared/modern-header';
+import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert';
+import { Badge } from '~/components/ui/badge';
+import { Button } from '~/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
-import { Collapsible, CollapsibleContent } from "~/components/ui/collapsible";
-import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
-import { useCalculoFactura } from "~/hooks/operaciones/use-calculo-factura";
-import { useCalculoProceso } from "~/hooks/operaciones/use-calculo-proceso";
-import { useValidacionPrecios } from "~/hooks/operaciones/use-validacion-precios";
+  CardTitle
+} from '~/components/ui/card';
+import { Collapsible, CollapsibleContent } from '~/components/ui/collapsible';
+import { Input } from '~/components/ui/input';
+import { Label } from '~/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '~/components/ui/select';
+import { useCalculoFactura } from '~/hooks/operaciones/use-calculo-factura';
+import { useCalculoProceso } from '~/hooks/operaciones/use-calculo-proceso';
+import { useValidacionPrecios } from '~/hooks/operaciones/use-validacion-precios';
 
-import { columns } from "./columnsPrecalculo";
-import { HierarchicalDataTable } from "./hierarchical-data-table";
+import { columns } from './columnsPrecalculo';
+import { HierarchicalDataTable } from './hierarchical-data-table';
 
 type PeriodoAbierto = {
   id: string;
   descripcion: string;
-  mes: number;
-  anio: number;
 };
 
 type Ciclo = {
@@ -61,8 +66,8 @@ type EstadoCierreLecturas = {
 
 export default function RevisarCalculoFacturaComponent({
   periodoAbierto,
-  ciclosFacturacionActivos: _ciclosFacturacionActivos,
-  estadoCierreLecturas: _estadoCierreLecturas,
+  ciclosFacturacionActivos,
+  estadoCierreLecturas: _estadoCierreLecturas
 }: Readonly<{
   periodoAbierto: PeriodoAbierto[];
   ciclosFacturacionActivos: Ciclo[];
@@ -71,16 +76,11 @@ export default function RevisarCalculoFacturaComponent({
   // Estados de UI
   const [isFiltersOpen, setIsFiltersOpen] = useState(true);
   const [isMenuOpen, setIsMenuOpen] = useState(true);
-  const cicloId = "1";
+  const [cicloId, setCicloId] = useState(
+    () => ciclosFacturacionActivos[0]?.id ?? ''
+  );
 
-  // Memoizar periodo formateado
-  const periodoFormateado = useMemo(() => {
-    if (periodoAbierto && periodoAbierto.length > 0) {
-      const { mes, anio } = periodoAbierto[0];
-      return `${mes.toString().padStart(2, "0")}${anio.toString()}`;
-    }
-    return "";
-  }, [periodoAbierto]);
+  const periodoId = periodoAbierto[0]?.id ?? '';
 
   // Validar que los precios estén confirmados
   const {
@@ -88,26 +88,29 @@ export default function RevisarCalculoFacturaComponent({
     isLoading: isLoadingValidacion,
     preciosConfirmadosCount,
     preciosPendientesCount,
-    totalPrecios,
+    totalPrecios
   } = useValidacionPrecios({
-    periodoFormateado,
-    cicloId,
+    periodoFormateado: periodoId,
+    cicloId
   });
 
   // Usar los hooks personalizados
   const {
     isLaunching,
     isAccepting,
+    isCheckingStatus,
+    estadoProceso,
     selectedContratos,
     setSelectedContratos,
+    handleConsultarEstadoProceso,
     handleLanzarCalculo,
-    handleAceptarCalculo,
+    handleAceptarCalculo
   } = useCalculoProceso({
-    periodoFormateado,
+    periodoFormateado: periodoId,
     cicloId,
     onCalculoAceptado: useCallback(() => {
       handleRevisarCalculo();
-    }, []),
+    }, [])
   });
 
   const {
@@ -117,10 +120,10 @@ export default function RevisarCalculoFacturaComponent({
     error,
     searchTerm,
     setSearchTerm,
-    handleRevisarCalculo,
+    handleRevisarCalculo
   } = useCalculoFactura({
-    periodoFormateado,
-    cicloId,
+    periodoFormateado: periodoId,
+    cicloId
   });
 
   // Estadísticas calculadas (memoizadas)
@@ -129,7 +132,7 @@ export default function RevisarCalculoFacturaComponent({
       return {
         totalRegistros: 0,
         totalFacturado: 0,
-        totalConsumo: 0,
+        totalConsumo: 0
       };
     }
 
@@ -137,98 +140,98 @@ export default function RevisarCalculoFacturaComponent({
       totalRegistros: filteredData.length,
       totalFacturado: filteredData.reduce(
         (sum, item) => sum + (Number(item.totalFacturado) || 0),
-        0,
+        0
       ),
       totalConsumo: filteredData.reduce(
-        (sum, item) => sum + (Number(item.consumoPeriodo) || 0),
-        0,
-      ),
+        (sum, item) => sum + (Number(item.consumo) || 0),
+        0
+      )
     };
   }, [filteredData]);
 
   // Handler para cambio de selección (memoizado)
   const handleSelectionChange = useCallback(
     (selectedItems: any[]) => {
-      setSelectedContratos(selectedItems.map((item) => item.lecturaId));
+      setSelectedContratos(selectedItems.map(item => item.lecturaId));
     },
-    [setSelectedContratos],
+    [setSelectedContratos]
   );
 
   // Pasos del tour interactivo (memoizados)
   const tourSteps = useMemo(
     () => [
       {
-        element: "#periodo-info",
+        element: '#periodo-info',
         popover: {
-          title: "📅 Período de Facturación",
+          title: '📅 Período de Facturación',
           description:
-            "Aquí se muestra el período activo para facturación. Solo se puede trabajar con períodos abiertos.",
-          side: "bottom" as const,
-          align: "start" as const,
-        },
+            'Aquí se muestra el período activo para facturación. Solo se puede trabajar con períodos abiertos.',
+          side: 'bottom' as const,
+          align: 'start' as const
+        }
       },
       {
-        element: "#preparar-calculo-btn",
+        element: '#preparar-calculo-btn',
         popover: {
-          title: "🔄 Preparar Cálculo",
+          title: '🔄 Preparar Cálculo',
           description:
             '¡Empezar aquí! Este botón <strong>inicia el procesamiento</strong> de facturación.<br/><br/><strong>Requisito:</strong> Confirmar todos los precios en "Revisar Precios".<br/><br/><strong>⏱️ Proceso automático:</strong> El sistema verificará cada 4 segundos si los datos están listos y te notificará cuando puedas ver los resultados.',
-          side: "bottom" as const,
-          align: "center" as const,
-        },
+          side: 'bottom' as const,
+          align: 'center' as const
+        }
       },
       {
-        element: "#ver-calculo-btn",
+        element: '#ver-calculo-btn',
         popover: {
-          title: "👁️ Ver Cálculos",
+          title: '👁️ Ver Cálculos',
           description:
-            "Este botón se <strong>habilitará automáticamente</strong> cuando el sistema termine de procesar los cálculos.<br/><br/>📊 Recibirás una notificación indicando el tiempo de procesamiento y la cantidad de registros listos.",
-          side: "bottom" as const,
-          align: "center" as const,
-        },
+            'Este botón se <strong>habilitará automáticamente</strong> cuando el sistema termine de procesar los cálculos.<br/><br/>📊 Recibirás una notificación indicando el tiempo de procesamiento y la cantidad de registros listos.',
+          side: 'bottom' as const,
+          align: 'center' as const
+        }
       },
       {
-        element: "#aceptar-calculo-btn",
+        element: '#aceptar-calculo-btn',
         popover: {
-          title: "✅ Aceptar Cálculo",
+          title: '✅ Aceptar Cálculo',
           description:
-            "Finaliza el proceso <strong>aceptando</strong> los cálculos seleccionados. Solo funciona con contratos marcados.",
-          side: "bottom" as const,
-          align: "center" as const,
-        },
+            'Finaliza el proceso <strong>aceptando</strong> los cálculos seleccionados. Solo funciona con contratos marcados.',
+          side: 'bottom' as const,
+          align: 'center' as const
+        }
       },
       {
-        element: "#actualizar-btn",
+        element: '#actualizar-btn',
         popover: {
-          title: "🔄 Actualizar Datos",
+          title: '🔄 Actualizar Datos',
           description:
-            "Refresca los datos mostrados sin perder el estado de preparación del cálculo.",
-          side: "bottom" as const,
-          align: "center" as const,
-        },
+            'Refresca los datos mostrados sin perder el estado de preparación del cálculo.',
+          side: 'bottom' as const,
+          align: 'center' as const
+        }
       },
       {
-        element: "#limpiar-btn",
+        element: '#limpiar-btn',
         popover: {
-          title: "🧹 Limpiar Todo",
+          title: '🧹 Limpiar Todo',
           description:
-            "Reinicia completamente el proceso: limpia filtros, datos y estados para empezar de nuevo.",
-          side: "bottom" as const,
-          align: "center" as const,
-        },
+            'Reinicia completamente el proceso: limpia filtros, datos y estados para empezar de nuevo.',
+          side: 'bottom' as const,
+          align: 'center' as const
+        }
       },
       {
-        element: "#exportar-btn",
+        element: '#exportar-btn',
         popover: {
-          title: "📥 Exportar Resultados",
+          title: '📥 Exportar Resultados',
           description:
-            "Descarga los resultados del cálculo en formato <strong>Excel (.xlsx)</strong> o <strong>CSV (.csv)</strong> con todos los detalles de cargos.",
-          side: "bottom" as const,
-          align: "center" as const,
-        },
-      },
+            'Descarga los resultados del cálculo en formato <strong>Excel (.xlsx)</strong> o <strong>CSV (.csv)</strong> con todos los detalles de cargos.',
+          side: 'bottom' as const,
+          align: 'center' as const
+        }
+      }
     ],
-    [],
+    []
   );
 
   // Función para iniciar el tour (memoizada)
@@ -236,20 +239,20 @@ export default function RevisarCalculoFacturaComponent({
     setIsMenuOpen(true);
     const driverjs = driver({
       showProgress: true,
-      progressText: "Paso {{current}} de {{total}}",
+      progressText: 'Paso {{current}} de {{total}}',
       smoothScroll: true,
       stagePadding: 4,
       stageRadius: 6,
       animate: true,
       allowClose: true,
-      nextBtnText: "Siguiente",
-      prevBtnText: "Anterior",
-      doneBtnText: "Finalizar",
-      onHighlightStarted: (element) => {
+      nextBtnText: 'Siguiente',
+      prevBtnText: 'Anterior',
+      doneBtnText: 'Finalizar',
+      onHighlightStarted: element => {
         if (element) {
-          element.scrollIntoView({ behavior: "smooth", block: "center" });
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
-      },
+      }
     });
 
     driverjs.setSteps(tourSteps);
@@ -283,8 +286,8 @@ export default function RevisarCalculoFacturaComponent({
               size="sm"
               className="w-full flex justify-between items-center px-4 py-3 h-auto cursor-pointer hover:bg-muted/40 transition-colors rounded-b-none"
               onClick={() => setIsFiltersOpen(!isFiltersOpen)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
+              onKeyDown={e => {
+                if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault();
                   setIsFiltersOpen(!isFiltersOpen);
                 }
@@ -328,8 +331,8 @@ export default function RevisarCalculoFacturaComponent({
                       >
                         <CalendarIcon className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
                         <span className="font-medium text-sm">
-                          {periodoAbierto[0].mes.toString().padStart(2, "0")}/
-                          {periodoAbierto[0].anio}
+                          {periodoAbierto[0].descripcion ||
+                            periodoAbierto[0].id}
                         </span>
                       </div>
                     ) : (
@@ -351,12 +354,30 @@ export default function RevisarCalculoFacturaComponent({
                       <FileTextIcon className="w-3.5 h-3.5" />
                       Ciclo de Facturación
                     </Label>
-                    <div className="h-9 px-3 rounded-md bg-muted/40 border border-border flex items-center gap-2">
-                      <CheckCircle className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-                      <span className="text-sm truncate">Ciclo día 15</span>
-                    </div>
+                    <Select value={cicloId} onValueChange={setCicloId}>
+                      <SelectTrigger className="h-9 bg-background border-border">
+                        <SelectValue placeholder="Seleccione ciclo" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {ciclosFacturacionActivos.map(ciclo => (
+                          <SelectItem key={ciclo.id} value={ciclo.id}>
+                            {ciclo.descripcion}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
+
+                {estadoProceso && (
+                  <div className="flex items-center gap-2 rounded-md border border-blue-200 bg-blue-50 px-3 py-2 text-sm text-blue-800 dark:border-blue-900 dark:bg-blue-950/20 dark:text-blue-300">
+                    <Info className="h-4 w-4" />
+                    <span>
+                      Estado: <strong>{estadoProceso.estado}</strong> · Proceso:{' '}
+                      <strong>{estadoProceso.procesoId}</strong>
+                    </span>
+                  </div>
+                )}
 
                 {/* Estado de precios */}
                 {!isLoadingValidacion && !preciosConfirmados && (
@@ -367,9 +388,9 @@ export default function RevisarCalculoFacturaComponent({
                         Precios pendientes de confirmación
                       </p>
                       <p className="text-xs mt-0.5 opacity-80">
-                        Confirma {preciosPendientesCount} de {totalPrecios}{" "}
+                        Confirma {preciosPendientesCount} de {totalPrecios}{' '}
                         precios en <strong>Revisar Precios</strong> antes de
-                        continuar. ({preciosConfirmadosCount}/{totalPrecios}{" "}
+                        continuar. ({preciosConfirmadosCount}/{totalPrecios}{' '}
                         confirmados)
                       </p>
                     </div>
@@ -394,18 +415,28 @@ export default function RevisarCalculoFacturaComponent({
                 {/* Acciones */}
                 <div className="flex gap-2 pt-1 border-t border-border">
                   <Button
+                    id="estado-proceso-btn"
+                    onClick={handleConsultarEstadoProceso}
+                    disabled={isCheckingStatus || !periodoId || !cicloId}
+                    variant="outline"
+                    size="sm"
+                    title="Consultar estado del proceso"
+                  >
+                    {isCheckingStatus ? (
+                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                    ) : (
+                      <Info className="h-4 w-4" />
+                    )}
+                    <span className="hidden sm:inline">Estado Proceso</span>
+                  </Button>
+
+                  <Button
                     id="preparar-calculo-btn"
                     onClick={handleLanzarCalculo}
-                    disabled={
-                      isLaunching || !preciosConfirmados || isLoadingValidacion
-                    }
+                    disabled={isLaunching || !periodoId || !cicloId}
                     variant="default"
                     size="sm"
-                    title={
-                      !preciosConfirmados
-                        ? "Debes confirmar todos los precios primero"
-                        : "Preparar cálculo de facturación"
-                    }
+                    title="Preparar cálculo de facturación"
                   >
                     {isLaunching ? (
                       <>
@@ -426,16 +457,10 @@ export default function RevisarCalculoFacturaComponent({
                   <Button
                     id="ver-calculo-btn"
                     onClick={handleRevisarCalculo}
-                    disabled={
-                      isLoading || !preciosConfirmados || isLoadingValidacion
-                    }
+                    disabled={isLoading || !periodoId || !cicloId}
                     variant="secondary"
                     size="sm"
-                    title={
-                      !preciosConfirmados
-                        ? "Debes confirmar todos los precios primero"
-                        : "Ver cálculos de facturación"
-                    }
+                    title="Ver cálculos de facturación"
                   >
                     {isLoading ? (
                       <>
@@ -498,7 +523,7 @@ export default function RevisarCalculoFacturaComponent({
 
               if (error) {
                 // Caso especial: No hay lecturas cerradas (404)
-                if (error === "NO_LECTURAS_CERRADAS") {
+                if (error === 'NO_LECTURAS_CERRADAS') {
                   return (
                     <Alert className="border-emerald-300 bg-linear-to-r from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30 dark:border-emerald-800 shadow-sm">
                       <CheckCircle className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
@@ -513,13 +538,11 @@ export default function RevisarCalculoFacturaComponent({
                             Estado actual
                           </p>
                           <p className="text-sm mt-2">
-                            Todas las lecturas cerradas del periodo{" "}
+                            Todas las lecturas cerradas del periodo{' '}
                             <strong>
-                              {periodoAbierto?.[0]?.mes
-                                ?.toString()
-                                .padStart(2, "0")}
-                              /{periodoAbierto?.[0]?.anio}
-                            </strong>{" "}
+                              {periodoAbierto?.[0]?.descripcion ||
+                                periodoAbierto?.[0]?.id}
+                            </strong>{' '}
                             ya han sido procesadas y facturadas correctamente.
                           </p>
                         </div>
@@ -531,7 +554,7 @@ export default function RevisarCalculoFacturaComponent({
                           </p>
                           <ol className="list-decimal list-inside space-y-2 text-sm text-blue-800 dark:text-blue-200 ml-2">
                             <li>
-                              Ve a{" "}
+                              Ve a{' '}
                               <strong>
                                 "Operaciones → Cierre de Lecturas"
                               </strong>
@@ -540,11 +563,11 @@ export default function RevisarCalculoFacturaComponent({
                               Cierra las lecturas pendientes del periodo actual
                             </li>
                             <li>
-                              Regresa aquí y haz clic en{" "}
+                              Regresa aquí y haz clic en{' '}
                               <strong>"Preparar Cálculo"</strong>
                             </li>
                             <li>
-                              Espera el procesamiento y luego{" "}
+                              Espera el procesamiento y luego{' '}
                               <strong>"Ver Cálculo Facturas"</strong>
                             </li>
                           </ol>
@@ -624,11 +647,11 @@ export default function RevisarCalculoFacturaComponent({
                     </div>
                     <div className="px-4 py-3 text-center">
                       <div className="text-lg font-semibold tabular-nums">
-                        {new Intl.NumberFormat("es-CL", {
-                          style: "currency",
-                          currency: "CLP",
+                        {new Intl.NumberFormat('es-CL', {
+                          style: 'currency',
+                          currency: 'CLP',
                           minimumFractionDigits: 0,
-                          maximumFractionDigits: 0,
+                          maximumFractionDigits: 0
                         }).format(estadisticas.totalFacturado)}
                       </div>
                       <div className="text-xs text-muted-foreground mt-0.5">
@@ -637,7 +660,7 @@ export default function RevisarCalculoFacturaComponent({
                     </div>
                     <div className="px-4 py-3 text-center">
                       <div className="text-xl font-semibold tabular-nums">
-                        {estadisticas.totalConsumo.toLocaleString("es-CL")}
+                        {estadisticas.totalConsumo.toLocaleString('es-CL')}
                       </div>
                       <div className="text-xs text-muted-foreground mt-0.5">
                         Consumo kWh
@@ -652,7 +675,7 @@ export default function RevisarCalculoFacturaComponent({
                       type="text"
                       placeholder="Buscar por contrato, nombre, RUT, dirección..."
                       value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
+                      onChange={e => setSearchTerm(e.target.value)}
                       className="pl-10"
                     />
                     {searchTerm && (
@@ -672,7 +695,7 @@ export default function RevisarCalculoFacturaComponent({
                         </span>
                       </div>
                       <div className="flex flex-wrap gap-1.5">
-                        {selectedContratos.slice(0, 20).map((lecturaId) => (
+                        {selectedContratos.slice(0, 20).map(lecturaId => (
                           <Badge
                             key={lecturaId}
                             variant="outline"
@@ -717,7 +740,7 @@ export default function RevisarCalculoFacturaComponent({
         {/* Barra de acciones flotante (drawer desde la derecha) */}
         <div
           className={`fixed top-1/3 right-0 z-50 flex items-start transition-transform
-                         duration-300 ease-in-out ${isMenuOpen ? "translate-x-0" : "translate-x-[calc(100%-2.5rem)]"}`}
+                         duration-300 ease-in-out ${isMenuOpen ? 'translate-x-0' : 'translate-x-[calc(100%-2.5rem)]'}`}
         >
           {/* Botón de control del menú (siempre visible en el borde) */}
           <Button
@@ -727,8 +750,8 @@ export default function RevisarCalculoFacturaComponent({
             className="h-20 w-10 rounded-l-full rounded-r-none shadow-lg hover:bg-primary/40 border-r-0"
             title={
               isMenuOpen
-                ? "Ocultar menú de acciones"
-                : "Mostrar menú de acciones"
+                ? 'Ocultar menú de acciones'
+                : 'Mostrar menú de acciones'
             }
           >
             {isMenuOpen ? (
@@ -743,8 +766,8 @@ export default function RevisarCalculoFacturaComponent({
             {/* Indicador de selección */}
             {selectedContratos.length > 0 && isMenuOpen && (
               <div className="absolute -left-36 top-0 bg-popover border border-border text-popover-foreground px-3 py-1.5 rounded-md shadow-md text-xs font-medium whitespace-nowrap">
-                {selectedContratos.length}{" "}
-                {selectedContratos.length === 1 ? "cálculo" : "cálculos"}
+                {selectedContratos.length}{' '}
+                {selectedContratos.length === 1 ? 'cálculo' : 'cálculos'}
               </div>
             )}
 
@@ -757,8 +780,8 @@ export default function RevisarCalculoFacturaComponent({
               size="sm"
               title={
                 selectedContratos.length === 0
-                  ? "Seleccione al menos un contrato"
-                  : `Aceptar ${selectedContratos.length} ${selectedContratos.length === 1 ? "cálculo" : "cálculos"} seleccionado(s)`
+                  ? 'Seleccione al menos un contrato'
+                  : `Aceptar ${selectedContratos.length} ${selectedContratos.length === 1 ? 'cálculo' : 'cálculos'} seleccionado(s)`
               }
             >
               {isAccepting ? (
@@ -784,7 +807,7 @@ export default function RevisarCalculoFacturaComponent({
             <Button
               id="limpiar-btn"
               onClick={() => {
-                setSearchTerm("");
+                setSearchTerm('');
                 setSelectedContratos([]);
               }}
               disabled={isLoading}
@@ -800,7 +823,7 @@ export default function RevisarCalculoFacturaComponent({
               id="exportar-btn"
               onClick={() => {
                 if (filteredData.length === 0) {
-                  toast.error("No hay datos para exportar");
+                  toast.error('No hay datos para exportar');
                   return;
                 }
                 toast.success(`Exportando ${filteredData.length} registros...`);

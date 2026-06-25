@@ -41,10 +41,7 @@ const SectorFormSchema = z.object({
     .string()
     .min(1, { message: 'El nombre es requerido.' })
     .max(50, { message: 'El nombre no puede exceder 50 caracteres.' }),
-  idZona: z.coerce
-    .number()
-    .int()
-    .min(1, { message: 'La zona es requerida.' }),
+  idZona: z.coerce.number().int().min(1, { message: 'La zona es requerida.' }),
   estado: z.boolean()
 });
 

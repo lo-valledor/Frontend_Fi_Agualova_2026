@@ -243,8 +243,7 @@ export default function ConceptoFormModal({
                         field.value
                           ? {
                               value: field.value,
-                              label:
-                                field.value === 'F' ? 'Fijo' : 'Variable'
+                              label: field.value === 'F' ? 'Fijo' : 'Variable'
                             }
                           : null
                       }

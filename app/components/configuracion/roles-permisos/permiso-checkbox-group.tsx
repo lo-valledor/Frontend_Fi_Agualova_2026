@@ -44,7 +44,9 @@ export function PermisoCheckboxGroup({
             </span>
           </div>
           <div
-            onClick={() => handleToggle('puedeCrear', permiso?.puedeCrear ?? false)}
+            onClick={() =>
+              handleToggle('puedeCrear', permiso?.puedeCrear ?? false)
+            }
             className="flex items-center gap-2 cursor-pointer hover:bg-emerald-50 dark:hover:bg-emerald-950/20 p-2 rounded-lg transition-colors"
           >
             <PermisoCheckbox
@@ -59,7 +61,9 @@ export function PermisoCheckboxGroup({
         </div>
         <div className="space-y-2">
           <div
-            onClick={() => handleToggle('puedeEditar', permiso?.puedeEditar ?? false)}
+            onClick={() =>
+              handleToggle('puedeEditar', permiso?.puedeEditar ?? false)
+            }
             className="flex items-center gap-2 cursor-pointer hover:bg-amber-50 dark:hover:bg-amber-950/20 p-2 rounded-lg transition-colors"
           >
             <PermisoCheckbox
@@ -72,7 +76,9 @@ export function PermisoCheckboxGroup({
             </span>
           </div>
           <div
-            onClick={() => handleToggle('puedeEliminar', permiso?.puedeEliminar ?? false)}
+            onClick={() =>
+              handleToggle('puedeEliminar', permiso?.puedeEliminar ?? false)
+            }
             className="flex items-center gap-2 cursor-pointer hover:bg-rose-50 dark:hover:bg-rose-950/20 p-2 rounded-lg transition-colors"
           >
             <PermisoCheckbox
@@ -122,7 +128,9 @@ export function PermisoCheckboxGroup({
         />
       </div>
       <div
-        onClick={() => handleToggle('puedeEditar', permiso?.puedeEditar ?? false)}
+        onClick={() =>
+          handleToggle('puedeEditar', permiso?.puedeEditar ?? false)
+        }
         className={`flex items-center justify-center p-2 rounded-lg cursor-pointer transition-all ${
           permiso?.puedeEditar
             ? 'bg-amber-100 dark:bg-amber-900/30 hover:bg-amber-200 dark:hover:bg-amber-900/50'
@@ -137,7 +145,9 @@ export function PermisoCheckboxGroup({
         />
       </div>
       <div
-        onClick={() => handleToggle('puedeEliminar', permiso?.puedeEliminar ?? false)}
+        onClick={() =>
+          handleToggle('puedeEliminar', permiso?.puedeEliminar ?? false)
+        }
         className={`flex items-center justify-center p-2 rounded-lg cursor-pointer transition-all ${
           permiso?.puedeEliminar
             ? 'bg-rose-100 dark:bg-rose-900/30 hover:bg-rose-200 dark:hover:bg-rose-900/50'
