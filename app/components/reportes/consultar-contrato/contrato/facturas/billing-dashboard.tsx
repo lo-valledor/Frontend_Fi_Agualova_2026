@@ -39,7 +39,7 @@ export const formatCurrency = (value: number): string => {
   })}`;
 };
 
-// Función para calcular costo por kWh
+// Función para calcular costo por m³
 export const calcularCostoPorKwh = (
   valorTotal: number,
   consumo: number
@@ -189,11 +189,11 @@ const BillingDashboard = memo(function BillingDashboard({
       'Nro Factura',
       'Fecha Emisión',
       'Fecha Vencimiento',
-      'Consumo kWh',
+      'Consumo m³',
       'Valor Neto',
       'IVA',
       'Valor Total',
-      'Costo por kWh',
+      'Costo por m³',
       'Tarifa'
     ];
 

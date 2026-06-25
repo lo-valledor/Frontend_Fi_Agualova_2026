@@ -237,3 +237,64 @@ export function validateConsumption(
 
   return { isValid: true, error: null };
 }
+
+export type ReadingAnomalyKind = 'zero-consumption' | 'wraparound' | null;
+
+export interface ReadingAnomaly {
+  /**
+   * Tipo de anomalía detectada, o `null` si no hay anomalía.
+   * - `'zero-consumption'`: la lectura actual es igual a la anterior (consumo = 0).
+   * - `'wraparound'`: la lectura actual es menor que la anterior, lo que sugiere
+   *   que el medidor dio la vuelta (superó el límite de dígitos).
+   */
+  kind: ReadingAnomalyKind;
+  /**
+   * Diferencia calculada entre lectura actual y anterior.
+   * Negativa cuando hay wraparound.
+   */
+  delta: number;
+}
+
+/**
+ * Detecta anomalías al comparar la lectura actual contra la anterior.
+ *
+ * Casos cubiertos:
+ * - Si la lectura actual es **menor** que la anterior, el medidor probablemente
+ *   dio la vuelta (superó su capacidad de dígitos). El delta se devuelve
+ *   negativo para señalar el wraparound.
+ * - Si la lectura actual es **igual** a la anterior, el consumo del período
+ *   es 0 (sin consumo). Puede ser legítimo (ej. medidor sin uso) pero merece
+ *   aviso.
+ *
+ * Retorna `{ kind: null, delta: 0 }` cuando no hay anomalía o los valores
+ * no son numéricos.
+ */
+export function detectReadingAnomaly(
+  previousReading: string | number | null | undefined,
+  currentReading: string | number | null | undefined
+): ReadingAnomaly {
+  const prev =
+    previousReading === null || previousReading === undefined
+      ? Number.NaN
+      : Number.parseFloat(String(previousReading));
+  const curr =
+    currentReading === null || currentReading === undefined
+      ? Number.NaN
+      : Number.parseFloat(String(currentReading));
+
+  if (Number.isNaN(prev) || Number.isNaN(curr)) {
+    return { kind: null, delta: 0 };
+  }
+
+  const delta = curr - prev;
+
+  if (delta < 0) {
+    return { kind: 'wraparound', delta };
+  }
+
+  if (delta === 0) {
+    return { kind: 'zero-consumption', delta: 0 };
+  }
+
+  return { kind: null, delta };
+}

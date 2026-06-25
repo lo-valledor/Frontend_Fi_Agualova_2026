@@ -54,12 +54,37 @@ export type CerrarLecturasFiltrosPeriodosResponse = {
 }[];
 
 //Todo: GET /cerrar-lecturas/buscar-estadisticas
+export type CerrarLecturasBuscarEstadisticasRequest = {
+  idSector: number;
+  nombreNicho: string;
+  cantidadSinLectura: number;
+  cantidadOk: number;
+  cantidadClaveRoja: number;
+  cantidadClaveNaranja: number;
+  cantidadCorregidas: number;
+  cantidadTotal: number;
+  idNicho: number;
+  nombreSector: string;
+};
 
 // POST cerrar-lecturas/cerrar
 export type CerrarLecturasCerrarRequest = {
   idsNichos: number[];
   cicloId: number;
   periodoId: string;
+};
+
+/**
+ * Respuesta del endpoint POST /cerrar-lecturas/cerrar.
+ * La forma exacta del backend no está documentada; este tipo
+ * es flexible mientras se valida con el equipo del backend.
+ */
+export type CerrarLecturasCerrarResponse = {
+  ok?: boolean;
+  mensaje?: string;
+  exitosos?: number;
+  fallidos?: number;
+  [key: string]: unknown;
 };
 
 /**

@@ -1,50 +1,49 @@
-import type { PaginationState } from "@tanstack/react-table";
-import { LayoutList, Plus } from "lucide-react";
-import { motion } from "motion/react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate } from "react-router";
-import { toast } from "sonner";
+import type { PaginationState } from '@tanstack/react-table';
+import { LayoutList, Plus } from 'lucide-react';
+import { motion } from 'motion/react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useNavigate } from 'react-router';
+import { toast } from 'sonner';
 
 import type {
   MedidorListItem,
-  MedidorModalState,
-} from "~/components/administracion/medidores/medidores-types";
-import { DataTable } from "~/components/data-table/data-table";
-import { ExportButton } from "~/components/shared/export-button";
-import { ModernHeader } from "~/components/shared/modern-header";
-import { Button } from "~/components/ui/button";
+  MedidorModalState
+} from '~/components/administracion/medidores/medidores-types';
+import { DataTable } from '~/components/data-table/data-table';
+import { ExportButton } from '~/components/shared/export-button';
+import { ModernHeader } from '~/components/shared/modern-header';
+import { Button } from '~/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
-import { useExportMedidores } from "~/hooks/administracion/use-export-medidores";
-import { administracionService } from "~/services/administracionService";
+  CardTitle
+} from '~/components/ui/card';
+import { useExportMedidores } from '~/hooks/administracion/use-export-medidores';
+import { administracionService } from '~/services/administracionService';
 import {
   createInitialMedidorModalState,
   extractMedidorErrorMessage,
   getMedidorEditUrl,
   isValidMedidorForOperation,
-  MEDIDORES_CREAR_ROUTE,
-} from "~/utils/administracion";
+  MEDIDORES_CREAR_ROUTE
+} from '~/utils/administracion';
 
-import { AsociarSubempalmeModal } from "./asociar-subempalme-modal";
-import { columns } from "./columns";
-import { DeleteConfirmationDialog } from "./delete-confirm-dialog";
+import { columns } from './columns';
+import { DeleteConfirmationDialog } from './delete-confirm-dialog';
 
 interface MedidoresComponentProps {
   readonly medidores: MedidorListItem[];
 }
 
 export default function MedidoresComponent({
-  medidores: initialMedidores,
+  medidores: initialMedidores
 }: MedidoresComponentProps) {
   const [selectedMedidor, setSelectedMedidor] =
     useState<MedidorListItem | null>(null);
   const [modalsState, setModalsState] = useState<MedidorModalState>(
-    createInitialMedidorModalState(),
+    createInitialMedidorModalState()
   );
   // ─── Estado de paginación/búsqueda server-side de la tabla ─────────
   const DEFAULT_PAGE_SIZE = 10;
@@ -52,21 +51,21 @@ export default function MedidoresComponent({
     useState<MedidorListItem[]>(initialMedidores);
   const [tableLoading, setTableLoading] = useState(false);
   const [tableError, setTableError] = useState<string | null>(null);
-  const [searchField, setSearchField] = useState("modelo");
-  const [searchValue, setSearchValue] = useState("");
+  const [searchField, setSearchField] = useState('modelo');
+  const [searchValue, setSearchValue] = useState('');
   const [tablePagination, setTablePagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: DEFAULT_PAGE_SIZE,
+    pageSize: DEFAULT_PAGE_SIZE
   });
   const [hasMore, setHasMore] = useState(true);
   const requestIdRef = useRef(0);
 
   const searchFields = useMemo(
     () => [
-      { value: "modelo", label: "Modelo" },
-      { value: "serie", label: "Serie" },
+      { value: 'modelo', label: 'Modelo' },
+      { value: 'serie', label: 'Serie' }
     ],
-    [],
+    []
   );
 
   const { medidorColumns } = useExportMedidores();
@@ -77,7 +76,7 @@ export default function MedidoresComponent({
       pageIndex,
       pageSize,
       field,
-      value,
+      value
     }: {
       pageIndex: number;
       pageSize: number;
@@ -90,7 +89,7 @@ export default function MedidoresComponent({
       const result = await administracionService.getMedidoresByLimitAndOffset({
         limit: pageSize,
         offset: pageIndex * pageSize,
-        ...(value.trim() ? { [field]: value.trim() } : {}),
+        ...(value.trim() ? { [field]: value.trim() } : {})
       });
 
       if (requestId !== requestIdRef.current) return;
@@ -98,14 +97,14 @@ export default function MedidoresComponent({
       if (result.error || !result.data) {
         setTableData([]);
         setHasMore(false);
-        setTableError(result.error ?? "Error desconocido");
+        setTableError(result.error ?? 'Error desconocido');
       } else {
         setTableData(result.data);
         setHasMore(result.data.length >= pageSize);
       }
       setTableLoading(false);
     },
-    [],
+    []
   );
 
   useEffect(() => {
@@ -113,7 +112,7 @@ export default function MedidoresComponent({
       pageIndex: 0,
       pageSize: DEFAULT_PAGE_SIZE,
       field: searchField,
-      value: "",
+      value: ''
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -125,10 +124,10 @@ export default function MedidoresComponent({
         pageIndex: next.pageIndex,
         pageSize: next.pageSize,
         field: searchField,
-        value: searchValue,
+        value: searchValue
       });
     },
-    [fetchMedidoresPage, searchField, searchValue],
+    [fetchMedidoresPage, searchField, searchValue]
   );
 
   const handleTableSearchChange = useCallback(
@@ -137,17 +136,17 @@ export default function MedidoresComponent({
       setSearchValue(value);
       const next: PaginationState = {
         pageIndex: 0,
-        pageSize: tablePagination.pageSize,
+        pageSize: tablePagination.pageSize
       };
       setTablePagination(next);
       fetchMedidoresPage({
         pageIndex: next.pageIndex,
         pageSize: next.pageSize,
         field,
-        value,
+        value
       });
     },
-    [fetchMedidoresPage, tablePagination.pageSize],
+    [fetchMedidoresPage, tablePagination.pageSize]
   );
 
   const refetchMedidores = useCallback(async () => {
@@ -155,14 +154,14 @@ export default function MedidoresComponent({
       pageIndex: tablePagination.pageIndex,
       pageSize: tablePagination.pageSize,
       field: searchField,
-      value: searchValue,
+      value: searchValue
     });
   }, [
     fetchMedidoresPage,
     tablePagination.pageIndex,
     tablePagination.pageSize,
     searchField,
-    searchValue,
+    searchValue
   ]);
 
   const handleAdd = useCallback(() => {
@@ -173,51 +172,43 @@ export default function MedidoresComponent({
     (medidor: MedidorListItem) => {
       navigate(getMedidorEditUrl(medidor.idMedidor));
     },
-    [navigate],
+    [navigate]
   );
-
-  const handleAsociarSubempalme = useCallback((medidor: MedidorListItem) => {
-    setSelectedMedidor(medidor);
-    setModalsState((prev) => ({
-      ...prev,
-      asociarSubempalme: { isOpen: true },
-    }));
-  }, []);
 
   const handleDeleteMedidor = useCallback((medidor: MedidorListItem) => {
     setSelectedMedidor(medidor);
-    setModalsState((prev) => ({
+    setModalsState(prev => ({
       ...prev,
-      delete: { isOpen: true },
+      delete: { isOpen: true }
     }));
   }, []);
 
   const handleConfirmDelete = useCallback(async () => {
     if (!isValidMedidorForOperation(selectedMedidor)) {
-      setModalsState((prev) => ({
+      setModalsState(prev => ({
         ...prev,
-        delete: { isOpen: false },
+        delete: { isOpen: false }
       }));
       return;
     }
 
     try {
       await fetch(`/MedidorEliminar/${selectedMedidor.idMedidor}`, {
-        method: "DELETE",
+        method: 'DELETE'
       });
-      toast.success("Medidor eliminado exitosamente");
+      toast.success('Medidor eliminado exitosamente');
       await refetchMedidores();
       setSelectedMedidor(null);
     } catch (error) {
       const errorInfo = extractMedidorErrorMessage(
         error,
-        "Error al eliminar el medidor",
+        'Error al eliminar el medidor'
       );
       toast.error(errorInfo.message);
     } finally {
-      setModalsState((prev) => ({
+      setModalsState(prev => ({
         ...prev,
-        delete: { isOpen: false },
+        delete: { isOpen: false }
       }));
     }
   }, [selectedMedidor, refetchMedidores]);
@@ -266,8 +257,8 @@ export default function MedidoresComponent({
                   </CardTitle>
                   <CardDescription className="text-xs mt-0.5 text-muted-foreground">
                     {tableLoading
-                      ? "Cargando…"
-                      : `${tableData.length} medidor${tableData.length !== 1 ? "es" : ""} en esta página`}
+                      ? 'Cargando…'
+                      : `${tableData.length} medidor${tableData.length !== 1 ? 'es' : ''} en esta página`}
                   </CardDescription>
                 </div>
               </div>
@@ -278,8 +269,7 @@ export default function MedidoresComponent({
                 <DataTable
                   columns={columns({
                     onEdit: handleEdit,
-                    onAsociarSubempalme: handleAsociarSubempalme,
-                    onDelete: handleDeleteMedidor,
+                    onDelete: handleDeleteMedidor
                   })}
                   data={tableData}
                   defaultPageSize={DEFAULT_PAGE_SIZE}
@@ -296,7 +286,7 @@ export default function MedidoresComponent({
                   emptyMessage={
                     searchValue.trim()
                       ? `Sin resultados para "${searchValue.trim()}"`
-                      : "No hay medidores registrados en el sistema"
+                      : 'No hay medidores registrados en el sistema'
                   }
                 />
               </div>
@@ -307,25 +297,13 @@ export default function MedidoresComponent({
         <DeleteConfirmationDialog
           isOpen={modalsState.delete.isOpen}
           onClose={() =>
-            setModalsState((prev) => ({
+            setModalsState(prev => ({
               ...prev,
-              delete: { isOpen: false },
+              delete: { isOpen: false }
             }))
           }
           onConfirm={handleConfirmDelete}
           medidor={selectedMedidor}
-        />
-
-        <AsociarSubempalmeModal
-          isOpen={modalsState.asociarSubempalme.isOpen}
-          onClose={() =>
-            setModalsState((prev) => ({
-              ...prev,
-              asociarSubempalme: { isOpen: false },
-            }))
-          }
-          medidor={selectedMedidor}
-          onSuccess={refetchMedidores}
         />
       </div>
     </div>

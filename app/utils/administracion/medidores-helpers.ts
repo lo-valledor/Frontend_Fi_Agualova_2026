@@ -12,9 +12,6 @@ export const MEDIDORES_CREAR_ROUTE =
 export const createInitialMedidorModalState = (): MedidorModalState => ({
   delete: {
     isOpen: false
-  },
-  asociarSubempalme: {
-    isOpen: false
   }
 });
 

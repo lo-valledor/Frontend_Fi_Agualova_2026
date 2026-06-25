@@ -4,23 +4,19 @@ import {
   Clock,
   Gauge,
   Hash,
-  Link2,
   Power,
   Save,
   Tag,
-  Type,
-  X
+  Type
 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import Select from 'react-select';
 import { toast } from 'sonner';
 import { z } from 'zod';
-
-import { AsociarSubempalmeModal } from '~/components/administracion/medidores/asociar-subempalme-modal';
 import type {
   MedidorEstadoOption,
-  MedidorListItem,
+  MedidorForEdit,
   MedidorMarcaOption,
   MedidorTipoOption
 } from '~/components/administracion/medidores/medidores-types';
@@ -57,7 +53,7 @@ const medidorSchema = z.object({
 type MedidorFormData = z.infer<typeof medidorSchema>;
 
 interface EditarMedidorComponentProps {
-  readonly medidor: MedidorListItem;
+  readonly medidor: MedidorForEdit;
   readonly marcas: MedidorMarcaOption[];
   readonly tipos: MedidorTipoOption[];
   readonly estados: MedidorEstadoOption[];
@@ -106,12 +102,17 @@ export default function EditarMedidorComponent({
 }: EditarMedidorComponentProps) {
   const { theme } = useTheme();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isAsociarModalOpen, setIsAsociarModalOpen] = useState(false);
   const selectStyles = getReactSelectStyles(theme);
 
   const estadoSeleccionado = useMemo(
-    () => estados.find(estado => estado.descripcion === medidor.estado),
-    [estados, medidor.estado]
+    () =>
+      estados.find(
+        estado => String(estado.id) === String(medidor.idEstado)
+      ) ??
+      estados.find(
+        estado => estado.descripcion === medidor.nombreEstado
+      ),
+    [estados, medidor.idEstado, medidor.nombreEstado]
   );
 
   const form = useForm<MedidorFormData>({
@@ -133,28 +134,21 @@ export default function EditarMedidorComponent({
   });
 
   useEffect(() => {
-    const marcaSeleccionada = marcas.find(
-      marca => marca.descripcion === medidor.marca
-    );
-    const tipoSeleccionado = tipos.find(
-      tipo => tipo.descripcion === medidor.tipo
-    );
-
     form.reset({
-      idMarca: marcaSeleccionada ? String(marcaSeleccionada.id) : '',
-      idTipo: tipoSeleccionado ? String(tipoSeleccionado.id) : '',
-      modelo: medidor.modelo,
-      serie: medidor.serie,
-      idEstado: estadoSeleccionado ? String(estadoSeleccionado.id) : '',
-      fechaInicio: formatDateForInput(medidor.fechaInicio),
-      digitos: medidor.digitos,
-      multiplicador: medidor.multiplicador,
-      idSubEmpalme: medidor.codigoAcometida ?? '',
-      primeraLectura: '',
+      idMarca: String(medidor.idMarca ?? ''),
+      idTipo: String(medidor.idTipo ?? ''),
+      modelo: medidor.modelo ?? '',
+      serie: medidor.serie ?? '',
+      idEstado: String(medidor.idEstado ?? ''),
+      fechaInicio: formatDateForInput(medidor.fechaInicio ?? ''),
+      digitos: medidor.digitos ?? 0,
+      multiplicador: medidor.multiplicador ?? 1,
+      idSubEmpalme: medidor.idSubEmpalme ?? medidor.codigoAcometida ?? '',
+      primeraLectura: medidor.primeraLectura ?? '',
       fechaPrimeraLectura: '',
       horaPrimeraLectura: ''
     });
-  }, [form, marcas, tipos, estadoSeleccionado, medidor]);
+  }, [form, medidor]);
 
   const handleFormSubmit = async (data: MedidorFormData) => {
     setIsSubmitting(true);
@@ -463,31 +457,6 @@ export default function EditarMedidorComponent({
                             className="h-11"
                           />
                         </FormControl>
-                        <div className="flex items-center gap-2">
-                          <Button
-                            type="button"
-                            variant="outline"
-                            className="gap-2"
-                            onClick={() => setIsAsociarModalOpen(true)}
-                          >
-                            <Link2 className="h-4 w-4" />
-                            Asociar
-                          </Button>
-                          <Button
-                            type="button"
-                            variant="outline"
-                            className="gap-2"
-                            onClick={() => {
-                              field.onChange('');
-                              toast.success(
-                                'Acometida removida del medidor. Para guardar el cambio debe hacer clic en Guardar Cambios'
-                              );
-                            }}
-                          >
-                            <X className="h-4 w-4" />
-                            Remover
-                          </Button>
-                        </div>
                       </div>
                       <FormMessage />
                     </FormItem>
@@ -568,22 +537,6 @@ export default function EditarMedidorComponent({
             </div>
           </form>
         </Form>
-
-        {isAsociarModalOpen && (
-          <AsociarSubempalmeModal
-            isOpen={isAsociarModalOpen}
-            onClose={() => setIsAsociarModalOpen(false)}
-            medidor={medidor}
-            onSuccess={codigo => {
-              form.setValue('idSubEmpalme', codigo ?? '', {
-                shouldDirty: true,
-                shouldValidate: true
-              });
-              toast.success('Acometida asociada al medidor');
-              setIsAsociarModalOpen(false);
-            }}
-          />
-        )}
       </div>
     </div>
   );

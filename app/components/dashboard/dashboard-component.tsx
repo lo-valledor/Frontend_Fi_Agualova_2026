@@ -212,7 +212,7 @@ export default function DashboardComponent() {
                 className="tabular-nums"
               />
               <span className="text-base font-light text-muted-foreground ml-1">
-                kWh
+                m³
               </span>
             </>
           )}

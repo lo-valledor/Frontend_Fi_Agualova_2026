@@ -1,6 +1,7 @@
-import { Eye } from 'lucide-react';
+import { Eye, Pencil } from 'lucide-react';
 
 import DetallesMedidor from '~/components/monitor/monitor-lecturas/detalles-medidor';
+import DetallesMedidorInfo from '~/components/monitor/monitor-lecturas/detalles-medidor-info';
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
 import {
@@ -10,8 +11,8 @@ import {
   DialogTitle,
   DialogTrigger
 } from '~/components/ui/dialog';
-import type { MonitorMedidores } from '~/types/monitor';
 import { cn } from '~/lib/utils';
+import type { MonitorMedidores } from '~/types/monitor';
 import {
   getMeterStatus,
   isImportedReading
@@ -89,13 +90,15 @@ export function MeterRowDetailed({ medidor, onRefresh }: MeterRowDetailedProps) 
         </Badge>
       </div>
 
-      <div className="flex justify-end">
+      <div className="flex justify-end gap-1">
+        {/* Modal de información (solo lectura) */}
         <Dialog>
           <DialogTrigger asChild>
             <Button
               variant="ghost"
               size="sm"
               className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+              title="Ver información"
             >
               <Eye className="h-4 w-4" />
             </Button>
@@ -109,7 +112,7 @@ export function MeterRowDetailed({ medidor, onRefresh }: MeterRowDetailedProps) 
                   </div>
                   <div>
                     <h2 className="text-lg sm:text-xl font-semibold tracking-tight">
-                      Detalle de Lectura
+                      Información del Medidor
                     </h2>
                     <p className="text-xs sm:text-sm text-muted-foreground mt-1">
                       ID: {medidor.id} | Medidor: {medidor.nSerie}
@@ -123,7 +126,52 @@ export function MeterRowDetailed({ medidor, onRefresh }: MeterRowDetailedProps) 
             </DialogHeader>
             <div className="flex-1 overflow-y-auto">
               <div className="p-3 sm:p-6">
-                <DetallesMedidor lecturaId={medidor.id} onSuccess={onRefresh} />
+                <DetallesMedidorInfo lecturaId={medidor.id} />
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Modal de ingreso de lectura */}
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 w-8 p-0 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-950/30"
+              title="Ingresar / registrar lectura"
+            >
+              <Pencil className="h-4 w-4" />
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-[95vw] w-full max-h-[95vh] h-auto sm:max-w-xl md:max-w-2xl lg:max-w-3xl overflow-hidden flex flex-col">
+            <DialogHeader className="shrink-0 pb-3 sm:pb-4 border-b border-border/40 px-4 sm:px-6">
+              <DialogTitle className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <div className={cn('p-1.5 sm:p-2 rounded-xl', status.bgColor)}>
+                    {status.icon}
+                  </div>
+                  <div>
+                    <h2 className="text-lg sm:text-xl font-semibold tracking-tight">
+                      Ingresar Lectura
+                    </h2>
+                    <p className="text-xs sm:text-sm text-muted-foreground mt-1">
+                      ID: {medidor.id} | Medidor: {medidor.nSerie}
+                    </p>
+                  </div>
+                </div>
+                <Badge className={cn(status.bgColor, 'text-xs sm:text-sm')}>
+                  {status.label}
+                </Badge>
+              </DialogTitle>
+            </DialogHeader>
+            <div className="flex-1 overflow-y-auto">
+              <div className="p-3 sm:p-6">
+                <DetallesMedidor
+                  lecturaId={medidor.id}
+                  claveHtml={medidor.claveHtml}
+                  onSuccess={onRefresh}
+                />
               </div>
             </div>
           </DialogContent>

@@ -113,7 +113,7 @@ export const lecturasTableColumns: ColumnDef<DetalleLecturas>[] = [
       return (
         <div className="text-start text-slate-700 dark:text-slate-300">
           <span className="font-bold">{consumo.toLocaleString('es-CL')}</span>{' '}
-          kWh
+          m³
         </div>
       );
     },
@@ -136,7 +136,7 @@ export const lecturasTableColumns: ColumnDef<DetalleLecturas>[] = [
 
       return (
         <div className="text-start text-emerald-600 dark:text-emerald-400">
-          {energia.toLocaleString('es-CL')} kWh
+          {energia.toLocaleString('es-CL')} m³
         </div>
       );
     },
@@ -163,7 +163,7 @@ export const lecturasTableColumns: ColumnDef<DetalleLecturas>[] = [
       if (!hasSobreconsumo) {
         return (
           <div className="text-start text-slate-400 dark:text-slate-600">
-            0 kWh
+            0 m³
           </div>
         );
       }
@@ -194,7 +194,7 @@ export const lecturasTableColumns: ColumnDef<DetalleLecturas>[] = [
       return (
         <div className="text-start">
           <span className="text-amber-700 dark:text-amber-400 font-bold">
-            {sobreconsumo.toLocaleString('es-CL')} kWh
+            {sobreconsumo.toLocaleString('es-CL')} m³
           </span>
           {badge}
         </div>

@@ -201,7 +201,7 @@ export default function ConceptoFormModal({
                   <FormItem>
                     <FormLabel>Unidad</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="Ej: kWh, m3, unidades" />
+                      <Input {...field} placeholder="Ej: m³, m3, unidades" />
                     </FormControl>
                     <FormDescription>Máximo 20 caracteres</FormDescription>
                     <FormMessage />

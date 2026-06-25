@@ -15,7 +15,6 @@ import { toast } from 'sonner';
 
 import { ModernHeader } from '~/components/shared/modern-header';
 import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert';
-import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
 import {
   Card,
@@ -24,7 +23,6 @@ import {
   CardHeader,
   CardTitle
 } from '~/components/ui/card';
-import { Checkbox } from '~/components/ui/checkbox';
 import { Collapsible, CollapsibleContent } from '~/components/ui/collapsible';
 import { Label } from '~/components/ui/label';
 import {
@@ -37,13 +35,15 @@ import {
 import { Separator } from '~/components/ui/separator';
 import { operacionesService } from '~/services/operacionesService';
 import type {
+  CerrarLecturasBuscarEstadisticasRequest,
   CerrarLecturasFiltrosCiclosResponse,
-  CerrarLecturasFiltrosPeriodosResponse,
-  PrepararLecturasBuscarNichosRequest
+  CerrarLecturasFiltrosPeriodosResponse
 } from '~/types/operaciones';
 
 import AlertCerrarLecturas from './alert-cerrar-lecturas';
 import DialogInformacion from './dialog-informacion';
+import { DataTable } from '~/components/data-table/data-table';
+import { columns } from './columns';
 
 interface CerrarLecturasComponentProps {
   readonly periodos: CerrarLecturasFiltrosPeriodosResponse;
@@ -62,7 +62,7 @@ export default function CerrarLecturasComponent({
     () => periodos[0]?.id ?? ''
   );
   const [cicloId, setCicloId] = useState<string>('');
-  const [nichos, setNichos] = useState<PrepararLecturasBuscarNichosRequest[]>(
+  const [nichos, setNichos] = useState<CerrarLecturasBuscarEstadisticasRequest[]>(
     []
   );
   const [selectedIdsNichos, setSelectedIdsNichos] = useState<number[]>([]);
@@ -96,7 +96,7 @@ export default function CerrarLecturasComponent({
       setHasSearched(true);
       setSelectedIdsNichos([]);
 
-      const result = await operacionesService.getBuscarNichos(
+      const result = await operacionesService.getObtenerGrilla(
         cicloIdNumero,
         periodoId
       );
@@ -108,7 +108,7 @@ export default function CerrarLecturasComponent({
       }
 
       const data = Array.isArray(result.data)
-        ? (result.data as PrepararLecturasBuscarNichosRequest[])
+        ? (result.data as CerrarLecturasBuscarEstadisticasRequest[])
         : [];
 
       setNichos(data);
@@ -136,20 +136,8 @@ export default function CerrarLecturasComponent({
     toast.success('Filtros limpiados');
   };
 
-  const toggleNicho = (idNicho: number): void => {
-    setSelectedIdsNichos(prev =>
-      prev.includes(idNicho)
-        ? prev.filter(id => id !== idNicho)
-        : [...prev, idNicho]
-    );
-  };
-
-  const toggleSeleccionarTodo = (): void => {
-    if (selectedIdsNichos.length === nichos.length) {
-      setSelectedIdsNichos([]);
-    } else {
-      setSelectedIdsNichos(nichos.map(n => n.idNicho));
-    }
+  const handleSelectionChange = (rows: CerrarLecturasBuscarEstadisticasRequest[]): void => {
+    setSelectedIdsNichos(rows.map(r => r.idNicho));
   };
 
   const handleAbrirCerrar = (): void => {
@@ -170,7 +158,7 @@ export default function CerrarLecturasComponent({
     await handleBuscar();
   };
 
-  const renderResultados = () => {
+  const renderEmptyOrLoading = () => {
     if (isLoading) {
       return (
         <div className="flex justify-center items-center h-48">
@@ -197,80 +185,39 @@ export default function CerrarLecturasComponent({
       );
     }
 
-    if (nichos.length === 0) {
-      return (
-        <Alert className="border-blue-200 bg-blue-50 dark:bg-blue-950/20 dark:border-blue-900">
-          <Info className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-          <AlertTitle className="text-blue-800 dark:text-blue-300 font-semibold">
-            Sin nichos pendientes
-          </AlertTitle>
-          <AlertDescription className="text-blue-700 dark:text-blue-400 mt-2">
-            No hay nichos disponibles para el ciclo y período seleccionados.
-          </AlertDescription>
-        </Alert>
-      );
-    }
-
-    const todosSeleccionados =
-      nichos.length > 0 && selectedIdsNichos.length === nichos.length;
-
     return (
-      <div className="space-y-4">
-        <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30 border border-border">
-          <div className="flex items-center gap-3 text-sm">
-            <Checkbox
-              checked={todosSeleccionados}
-              onCheckedChange={toggleSeleccionarTodo}
-              aria-label="Seleccionar todos"
-            />
-            <span>
-              {selectedIdsNichos.length === 0
-                ? 'Selecciona los nichos a cerrar'
-                : `${selectedIdsNichos.length} de ${nichos.length} nichos seleccionados`}
-            </span>
-          </div>
-          <Button
-            onClick={handleAbrirCerrar}
-            disabled={selectedIdsNichos.length === 0}
-            size="sm"
-            className="gap-2 bg-red-600 hover:bg-red-700 text-white"
-          >
-            <Lock className="h-3 w-3 sm:h-4 sm:w-4" />
-            Cerrar lecturas ({selectedIdsNichos.length})
-          </Button>
-        </div>
+      <Alert className="border-blue-200 bg-blue-50 dark:bg-blue-950/20 dark:border-blue-900">
+        <Info className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+        <AlertTitle className="text-blue-800 dark:text-blue-300 font-semibold">
+          Sin nichos pendientes
+        </AlertTitle>
+        <AlertDescription className="text-blue-700 dark:text-blue-400 mt-2">
+          No hay nichos disponibles para el ciclo y período seleccionados.
+        </AlertDescription>
+      </Alert>
+    );
+  };
 
-        <div className="space-y-2">
-          {nichos.map(nicho => (
-            <div
-              key={nicho.idNicho}
-              className={`flex items-center justify-between p-3 rounded-lg border transition-colors ${
-                selectedIdsNichos.includes(nicho.idNicho)
-                  ? 'bg-emerald-50/50 border-emerald-200 dark:bg-emerald-900/20 dark:border-emerald-800'
-                  : 'bg-card border-border hover:bg-muted/30'
-              }`}
-            >
-              <div className="flex items-center gap-3 flex-1 min-w-0">
-                <Checkbox
-                  checked={selectedIdsNichos.includes(nicho.idNicho)}
-                  onCheckedChange={() => toggleNicho(nicho.idNicho)}
-                  aria-label={`Seleccionar nicho ${nicho.idNicho}`}
-                />
-                <div className="min-w-0 flex-1">
-                  <div className="font-medium text-sm truncate">
-                    {nicho.nombreNicho}
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    {nicho.nombreSector} · {nicho.cantidadMedidores} medidores
-                  </div>
-                </div>
-              </div>
-              <Badge variant="outline" className="text-xs">
-                #{nicho.idNicho}
-              </Badge>
-            </div>
-          ))}
+  const renderSelectionBar = () => {
+    if (isLoading || !hasSearched || nichos.length === 0) return null;
+    return (
+      <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30 border border-border">
+        <div className="flex items-center gap-3 text-sm">
+          <span>
+            {selectedIdsNichos.length === 0
+              ? 'Selecciona los nichos a cerrar'
+              : `${selectedIdsNichos.length} de ${nichos.length} nichos seleccionados`}
+          </span>
         </div>
+        <Button
+          onClick={handleAbrirCerrar}
+          disabled={selectedIdsNichos.length === 0}
+          size="sm"
+          className="gap-2 bg-red-600 hover:bg-red-700 text-white"
+        >
+          <Lock className="h-3 w-3 sm:h-4 sm:w-4" />
+          Cerrar lecturas ({selectedIdsNichos.length})
+        </Button>
       </div>
     );
   };
@@ -426,7 +373,19 @@ export default function CerrarLecturasComponent({
               </div>
             </div>
           </CardHeader>
-          <CardContent className="p-3">{renderResultados()}</CardContent>
+          <CardContent className="p-3 space-y-3">
+            {renderSelectionBar()}
+            {isLoading || !hasSearched || nichos.length === 0 ? (
+              renderEmptyOrLoading()
+            ) : (
+              <DataTable
+                data={nichos}
+                columns={columns}
+                rowIdKey="idNicho"
+                onRowSelectionChange={handleSelectionChange}
+              />
+            )}
+          </CardContent>
         </Card>
 
         {isAlertOpen && cicloIdNumero > 0 && periodoId && (

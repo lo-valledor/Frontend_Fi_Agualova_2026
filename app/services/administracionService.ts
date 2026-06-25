@@ -29,6 +29,7 @@ import type {
   Estado,
   GuardarConfiguracionPayload,
   Marca,
+  MedidorByCodigo,
   MedidoresRow,
   MedidorProps,
   Nichos,
@@ -375,7 +376,7 @@ class AdministracionService {
 
   async getMedidoresByCodigo({ codigo }: { codigo: string }): Promise<
     AdministracionServiceResponse<{
-      medidor: MedidoresRow | null;
+      medidor: MedidorByCodigo | null;
       marca: Marca[];
       tipoMedidor: Tipo[];
       estados: Estado[];
@@ -399,7 +400,7 @@ class AdministracionService {
 
       return {
         data: {
-          medidor: (resMedidor.data as MedidoresRow) ?? null,
+          medidor: (resMedidor.data as MedidorByCodigo) ?? null,
           marca: this.processApiResponse<Marca>(resMarcas),
           tipoMedidor: this.processApiResponse<Tipo>(resTiposMedidor),
           estados: this.processApiResponse<Estado>(resEstados),

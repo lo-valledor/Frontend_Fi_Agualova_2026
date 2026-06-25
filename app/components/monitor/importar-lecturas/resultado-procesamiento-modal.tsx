@@ -104,8 +104,8 @@ export function ResultadoProcesamientoModal({
       const encabezadosDetalles = [
         'Número de Serie',
         'Tarifa',
-        'Lectura Anterior (kWh)',
-        'Consumo Energía (kWh)',
+        'Lectura Anterior (m³)',
+        'Consumo Energía (m³)',
         'Usuario Carga',
         'Estado',
         'Mensaje'
@@ -244,10 +244,10 @@ export function ResultadoProcesamientoModal({
                       </TableHead>
                       <TableHead className="min-w-20">Tarifa</TableHead>
                       <TableHead className="text-right min-w-37.5">
-                        Lectura Ant. (kWh)
+                        Lectura Ant. (m³)
                       </TableHead>
                       <TableHead className="text-right min-w-35">
-                        Consumo (kWh)
+                        Consumo (m³)
                       </TableHead>
                       <TableHead className="min-w-30">Usuario</TableHead>
                       <TableHead className="min-w-30">Estado</TableHead>

@@ -12,7 +12,7 @@ import {
   DialogHeader,
   DialogTitle
 } from '~/components/ui/dialog';
-import api from '~/lib/api';
+import { operacionesService } from '~/services/operacionesService';
 
 interface AlertCerrarLecturasProps {
   isOpen: boolean;
@@ -45,23 +45,44 @@ export default function AlertCerrarLecturas({
 
     setIsLoading(true);
     try {
-      const response = await api.post('/cerrar-lecturas/cerrar', {
+      const result = await operacionesService.postCerrarLecturas({
         idsNichos,
         cicloId,
         periodoId
       });
 
-      if (response.status >= 200 && response.status < 300) {
+      if (result.error || !result.data) {
+        toast.error(result.error ?? 'No se pudo cerrar las lecturas');
+        return;
+      }
+
+      const { exitosos, fallidos, mensaje } = result.data;
+      if (typeof exitosos === 'number' && typeof fallidos === 'number') {
+        if (fallidos === 0) {
+          toast.success(
+            mensaje ??
+              `${exitosos} nicho${exitosos === 1 ? '' : 's'} cerrado${
+                exitosos === 1 ? '' : 's'
+              } correctamente`
+          );
+        } else if (exitosos === 0) {
+          toast.error(mensaje ?? `No se pudo cerrar ningún nicho`);
+          return;
+        } else {
+          toast.warning(
+            mensaje ?? `${exitosos} cerrados, ${fallidos} con error`
+          );
+        }
+      } else {
         toast.success(
           `${idsNichos.length} nicho${idsNichos.length === 1 ? '' : 's'} cerrado${
             idsNichos.length === 1 ? '' : 's'
           } correctamente`
         );
-        onOpenChange(false);
-        await onSuccess?.();
-      } else {
-        toast.error('No se pudo cerrar las lecturas');
       }
+
+      onOpenChange(false);
+      await onSuccess?.();
     } catch (err) {
       const mensaje =
         err instanceof Error ? err.message : 'Error al cerrar las lecturas';

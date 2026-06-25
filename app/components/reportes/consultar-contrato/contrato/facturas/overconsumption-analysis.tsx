@@ -155,7 +155,7 @@ const OverconsumptionAnalysis = memo(function OverconsumptionAnalysis({
                 Total Sobreconsumo
               </p>
               <p className="text-2xl font-bold text-rose-600">
-                {analysisData.totalSobreconsumo.toLocaleString('es-CL')} kWh
+                {analysisData.totalSobreconsumo.toLocaleString('es-CL')} m³
               </p>
               <Badge variant="destructive">
                 {analysisData.porcentajeSobreconsumo.toFixed(1)}% del consumo
@@ -178,7 +178,7 @@ const OverconsumptionAnalysis = memo(function OverconsumptionAnalysis({
                 {(
                   analysisData.periodoMasProblematico?.sobreconsumo || 0
                 ).toLocaleString('es-CL')}{' '}
-                kWh excedido
+                m³ excedido
               </p>
             </div>
           </CardContent>
@@ -232,7 +232,7 @@ const OverconsumptionAnalysis = memo(function OverconsumptionAnalysis({
                   fontSize={11}
                   tickLine={false}
                   axisLine={false}
-                  tickFormatter={value => `${value} kWh`}
+                  tickFormatter={value => `${value} m³`}
                 />
                 <Tooltip
                   content={({ active, payload }) => {
@@ -255,7 +255,7 @@ const OverconsumptionAnalysis = memo(function OverconsumptionAnalysis({
                                   Energía Base:
                                 </span>
                                 <span className="font-medium">
-                                  {data.energiaBase.toLocaleString('es-CL')} kWh
+                                  {data.energiaBase.toLocaleString('es-CL')} m³
                                 </span>
                               </div>
                               <div className="flex items-center justify-between gap-4">
@@ -264,7 +264,7 @@ const OverconsumptionAnalysis = memo(function OverconsumptionAnalysis({
                                 </span>
                                 <span className="font-medium">
                                   {data.sobreconsumo.toLocaleString('es-CL')}{' '}
-                                  kWh
+                                  m³
                                 </span>
                               </div>
                               <div className="flex items-center justify-between gap-4 pt-1 border-t">
@@ -273,7 +273,7 @@ const OverconsumptionAnalysis = memo(function OverconsumptionAnalysis({
                                 </span>
                                 <span className="font-bold">
                                   {data.consumoTotal.toLocaleString('es-CL')}{' '}
-                                  kWh
+                                  m³
                                 </span>
                               </div>
                               <div className="flex items-center justify-between gap-4">

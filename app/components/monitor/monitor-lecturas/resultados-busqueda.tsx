@@ -10,7 +10,6 @@ import {
   History,
   Info,
   MapPin,
-  Pencil,
   RefreshCw
 } from 'lucide-react';
 import { motion } from 'motion/react';
@@ -54,7 +53,6 @@ import {
   TooltipProvider,
   TooltipTrigger
 } from '~/components/ui/tooltip';
-import { useApiWithLoadingBar } from '~/lib/api';
 import { cn } from '~/lib/utils';
 import { monitorService } from '~/services';
 import type {
@@ -68,9 +66,7 @@ import {
   calculatePercentage,
   calculateTotalStats
 } from '~/utils/monitor/monitor-calculations';
-import {
-  getMeterStatus,
-} from '~/utils/monitor/monitor-status';
+import { getMeterStatus } from '~/utils/monitor/monitor-status';
 
 // Type para el estado de resultados
 interface ResultsState {
@@ -96,9 +92,6 @@ export default function ResultadosBusqueda({
   const [expandedFilas, setExpandedFilas] = useState<Record<string, boolean>>(
     {}
   );
-  const [isNichoModalOpen, setIsNichoModalOpen] = useState(false);
-  const [needsNichoRefresh, setNeedsNichoRefresh] = useState(false);
-  const _api = useApiWithLoadingBar();
 
   // Validation with early returns
   const validateSearchFields = (): boolean => {
@@ -277,13 +270,6 @@ export default function ResultadosBusqueda({
     }
   }, [triggerSearch, refreshCounter]);
 
-  useEffect(() => {
-    if (!isNichoModalOpen && needsNichoRefresh) {
-      handleRefresh();
-      setNeedsNichoRefresh(false);
-    }
-  }, [isNichoModalOpen, needsNichoRefresh, handleRefresh]);
-
   type ToggleFilaFn = (nichoIndex: number, filaIndex: number) => void;
 
   const toggleFila: ToggleFilaFn = (nichoIndex, filaIndex) => {
@@ -298,20 +284,6 @@ export default function ResultadosBusqueda({
 
   const handleNichoChange: HandleNichoChangeFn = index => {
     setSelectedNichoIndex(index);
-  };
-
-  const _handleNichoModalSuccess = () => {
-    // Mostrar notificación de éxito inmediatamente
-    toast.success('Medidor actualizado correctamente');
-    setNeedsNichoRefresh(true);
-
-    // Refrescar los resultados en segundo plano sin cerrar el modal
-    // handleRefresh();
-
-    // Mostrar notificación adicional que los datos se están actualizando
-    setTimeout(() => {
-      toast.info('Datos actualizados en segundo plano');
-    }, 800);
   };
 
   return (
@@ -1022,24 +994,6 @@ export default function ResultadosBusqueda({
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
-
-                      <Dialog
-                        open={isNichoModalOpen}
-                        onOpenChange={setIsNichoModalOpen}
-                      >
-                        <DialogTrigger asChild>
-                          <Button
-                            size="sm"
-                            className="bg-green-600 hover:bg-green-700 shadow-sm hover:shadow-md transition-all"
-                            onClick={() => {
-                              setIsNichoModalOpen(true);
-                            }}
-                          >
-                            <Pencil className="h-4 w-4 mr-2" />
-                            Ingresar Lecturas
-                          </Button>
-                        </DialogTrigger>
-                      </Dialog>
                     </div>
                   </motion.div>
 

@@ -210,7 +210,7 @@ const ConsumptionDetailsTable = memo(function ConsumptionDetailsTable({
                           {lectura.consumoPeriodo?.toLocaleString('es-CL') ||
                             '-'}{' '}
                           {lectura.consumoPeriodo && (
-                            <span className="text-xs text-slate-500">kWh</span>
+                            <span className="text-xs text-slate-500">m³</span>
                           )}
                         </TableCell>
                         <TableCell className="text-right text-sm text-emerald-600 dark:text-emerald-400">
@@ -220,7 +220,7 @@ const ConsumptionDetailsTable = memo(function ConsumptionDetailsTable({
                           {tieneSobreconsumo ? (
                             <span className="text-rose-600">
                               {lectura.sobreconsumo?.toLocaleString('es-CL')}{' '}
-                              <span className="text-xs">kWh</span>
+                              <span className="text-xs">m³</span>
                             </span>
                           ) : (
                             <span className="text-slate-400">-</span>

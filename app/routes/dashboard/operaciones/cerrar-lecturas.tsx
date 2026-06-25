@@ -24,7 +24,7 @@ interface CerrarLecturasLoaderData {
 export async function clientLoader() {
   const [periodosResult, ciclosResult] = await Promise.all([
     operacionesService.getPeriodoAbierto(),
-    operacionesService.getCiclosFacturacion(),
+    operacionesService.getObtenerCiclos(),
   ]);
 
   if (

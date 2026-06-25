@@ -339,6 +339,27 @@ export type MedidoresRow = {
   codigoAcometida: string;
 };
 
+export type MedidorByCodigo = {
+  idMedidor: number;
+  codigoAcometida: string;
+  nombreEstado: string;
+  lecturaActual: string;
+  cantidadLecturas: number;
+  idMarca: string;
+  idTipo: number;
+  modelo: string;
+  serie: string;
+  idEstado: string;
+  fechaInicio: string;
+  digitos: number;
+  multiplicador: number;
+  primeraLectura: string | null;
+  fechaLectura: string | null;
+  horaLectura: string | null;
+  minutoLectura: string | null;
+  idSubEmpalme: string;
+};
+
 export type MedidorProps = {
   idMarca: string;
   idTipo: string;

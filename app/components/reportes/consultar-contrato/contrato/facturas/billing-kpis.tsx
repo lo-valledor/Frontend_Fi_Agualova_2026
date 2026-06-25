@@ -60,7 +60,7 @@ const BillingKPIs = memo(function BillingKPIs({ facturas }: BillingKPIsProps) {
       })
       .reduce((sum, f) => sum + (f.valorTotal || 0), 0);
 
-    // Costo promedio por kWh
+    // Costo promedio por m³
     const costoPromedioKwh =
       facturas.reduce((sum, f) => sum + (f.costoPorKwh || 0), 0) /
       facturas.length;
@@ -197,13 +197,13 @@ const BillingKPIs = memo(function BillingKPIs({ facturas }: BillingKPIsProps) {
         </CardContent>
       </Card>
 
-      {/* Costo Promedio por kWh */}
+      {/* Costo Promedio por m³ */}
       <Card className="border bg-linear-to-br from-amber-50 to-amber-100 dark:from-amber-950 dark:to-amber-900">
         <CardContent className="pt-4">
           <div className="flex items-center justify-between">
             <div className="flex-1">
               <p className="text-xs font-medium text-amber-700 dark:text-amber-300">
-                Costo Promedio/kWh
+                Costo Promedio/m³
               </p>
               <p className="text-2xl font-bold text-amber-900 dark:text-amber-100">
                 ${kpis.costoPromedioKwh.toFixed(0)}

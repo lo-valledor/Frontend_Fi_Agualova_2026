@@ -161,7 +161,7 @@ const ContratoComponent = memo(function ContratoComponent({
                     }}
                     locales="es-CL"
                   />{' '}
-                  kWh
+                  m³
                 </div>
                 <div className="sidebar-section-label mt-0.5">
                   Consumo Total

@@ -103,7 +103,7 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
         header: 'Valor Total',
         formatter: (value: number) => `$${value?.toLocaleString('es-CL')}`
       },
-      { key: 'consumoPeriodo', header: 'Consumo Período (kWh)' }
+      { key: 'consumoPeriodo', header: 'Consumo Período (m³)' }
     ],
     []
   );
@@ -419,11 +419,11 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
       color: '#dc2626'
     },
     consumo: {
-      label: 'Consumo (kWh)',
+      label: 'Consumo (m³)',
       color: '#7c3aed'
     },
     precioKwh: {
-      label: 'Precio/kWh',
+      label: 'Precio/m³',
       color: '#f59e0b'
     }
   };
@@ -471,10 +471,10 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
           },
           {
             label: 'Consumo Total',
-            value: `${Math.round(analyticsData.totalConsumo).toLocaleString('es-CL')} kWh`
+            value: `${Math.round(analyticsData.totalConsumo).toLocaleString('es-CL')} m³`
           },
           {
-            label: 'Precio Promedio/kWh',
+            label: 'Precio Promedio/m³',
             value: `$${analyticsData.precioPromedioKwh.toFixed(2)}`
           },
           {
@@ -513,7 +513,7 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
             key: 'consumo',
             header: 'Consumo',
             align: 'right',
-            formatter: (val: number) => `${val.toLocaleString('es-CL')} kWh`
+            formatter: (val: number) => `${val.toLocaleString('es-CL')} m³`
           }
         ]
       }
@@ -659,7 +659,7 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
                     )}
                   </p>
                   <p className="text-xs text-purple-600 dark:text-purple-400">
-                    kWh
+                    m³
                   </p>
                 </div>
                 <Activity className="h-8 w-8 text-purple-600 dark:text-purple-400 opacity-50" />
@@ -672,7 +672,7 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
               <div className="flex items-center justify-between">
                 <div className="flex-1">
                   <p className="text-xs font-medium text-amber-700 dark:text-amber-300">
-                    Precio/kWh
+                    Precio/m³
                   </p>
                   <p className="text-xl font-bold text-amber-900 dark:text-amber-100">
                     ${analyticsData.precioPromedioKwh.toFixed(2)}
@@ -767,7 +767,7 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
               <TabsList className="grid w-full grid-cols-3 mb-4">
                 <TabsTrigger value="composition">Composición</TabsTrigger>
                 <TabsTrigger value="trends">Evolución Temporal</TabsTrigger>
-                <TabsTrigger value="comparison">Precio/kWh</TabsTrigger>
+                <TabsTrigger value="comparison">Precio/m³</TabsTrigger>
               </TabsList>
 
               <TabsContent value="composition" className="mt-0">
@@ -891,7 +891,7 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
                         content={<ChartTooltipContent />}
                         formatter={value => [
                           `$${Number(value).toFixed(2)}`,
-                          'Precio por kWh'
+                          'Precio por m³'
                         ]}
                       />
                       <Bar

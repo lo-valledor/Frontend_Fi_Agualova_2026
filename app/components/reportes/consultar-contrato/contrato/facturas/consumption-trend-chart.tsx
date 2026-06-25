@@ -125,7 +125,7 @@ const ConsumptionTrendChart = memo(function ConsumptionTrendChart({
                 fontSize={11}
                 tickLine={false}
                 axisLine={false}
-                tickFormatter={value => `${value} kWh`}
+                tickFormatter={value => `${value} m³`}
               />
               <Tooltip
                 content={({ active, payload }) => {
@@ -144,7 +144,7 @@ const ConsumptionTrendChart = memo(function ConsumptionTrendChart({
                               </span>
                               <span className="font-medium">
                                 {data.consumoPeriodo.toLocaleString('es-CL')}{' '}
-                                kWh
+                                m³
                               </span>
                             </div>
                             <div className="flex items-center justify-between gap-4">
@@ -152,7 +152,7 @@ const ConsumptionTrendChart = memo(function ConsumptionTrendChart({
                                 Energía Base:
                               </span>
                               <span className="font-medium text-emerald-600">
-                                {data.energiaBase.toLocaleString('es-CL')} kWh
+                                {data.energiaBase.toLocaleString('es-CL')} m³
                               </span>
                             </div>
                             {data.tieneSobreconsumo && (
@@ -162,7 +162,7 @@ const ConsumptionTrendChart = memo(function ConsumptionTrendChart({
                                 </span>
                                 <span className="font-bold text-rose-600">
                                   {data.sobreconsumo.toLocaleString('es-CL')}{' '}
-                                  kWh
+                                  m³
                                 </span>
                               </div>
                             )}

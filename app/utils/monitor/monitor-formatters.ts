@@ -20,7 +20,7 @@ export function formatMeterReading(
 
 export function formatConsumption(
   consumption: number | null | undefined,
-  unit = 'kWh',
+  unit = 'm³',
   decimals = 2,
   fallback = '0'
 ): string {

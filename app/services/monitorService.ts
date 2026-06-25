@@ -2,6 +2,7 @@ import api from '~/lib/api';
 import type {
   MonitorAceptarMasivoLecturas,
   MonitorClaves,
+  MonitorDetalleRegistro,
   MonitorGrillaProps,
   MonitorHabilitarEdicionProps,
   MonitorHistorialLectura,
@@ -235,13 +236,13 @@ class MonitorService {
 
   async getDetalleRegistro(
     id: number
-  ): Promise<MonitorServiceResponse<unknown>> {
+  ): Promise<MonitorServiceResponse<MonitorDetalleRegistro>> {
     try {
       const response = await api.get(
         `/monitor-lecturas/detalle-registro/${id}`
       );
       return {
-        data: response.data,
+        data: response.data as MonitorDetalleRegistro,
         error: null
       };
     } catch (error) {
@@ -258,7 +259,7 @@ class MonitorService {
   ): Promise<MonitorServiceResponse<unknown>> {
     try {
       const response = await api.post(
-        '/monitor-lecturas/registro-lectura',
+        '/monitor-lecturas/registrar',
         request
       );
       return {
@@ -389,14 +390,14 @@ class MonitorService {
 
   async postHabilitarEdicionLectura(
     request: MonitorHabilitarEdicionProps
-  ): Promise<MonitorServiceResponse<unknown>> {
+  ): Promise<MonitorServiceResponse<MonitorHabilitarEdicionProps>> {
     try {
       const response = await api.post(
         '/monitor-lecturas/habilitar-edicion-lectura',
         request
       );
       return {
-        data: response.data,
+        data: response.data as MonitorHabilitarEdicionProps,
         error: null
       };
     } catch (error) {

@@ -134,9 +134,9 @@ const EnergyConsumptionDashboard = memo(function EnergyConsumptionDashboard({
       'Fecha Lectura',
       'Lectura Anterior',
       'Lectura Actual',
-      'Consumo (kWh)',
-      'Energía Base (kWh)',
-      'Sobreconsumo (kWh)',
+      'Consumo (m³)',
+      'Energía Base (m³)',
+      'Sobreconsumo (m³)',
       'Estado'
     ];
 
@@ -213,7 +213,7 @@ const EnergyConsumptionDashboard = memo(function EnergyConsumptionDashboard({
                 </p>
                 <div className="flex items-center gap-1 mt-1">
                   <p className="text-xs text-blue-600 dark:text-blue-400">
-                    kWh / mes
+                    m³ / mes
                   </p>
                   {dashboardStats.consumoUltimoPeriodo >
                   dashboardStats.consumoPromedio ? (
@@ -277,7 +277,7 @@ const EnergyConsumptionDashboard = memo(function EnergyConsumptionDashboard({
                 </p>
                 <div className="flex items-center gap-1 mt-1">
                   <p className="text-xs text-violet-600 dark:text-violet-400">
-                    kWh acumulado
+                    m³ acumulado
                   </p>
                   <Badge
                     variant={

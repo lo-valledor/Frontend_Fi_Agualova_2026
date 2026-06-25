@@ -124,7 +124,7 @@ const PaymentTimeline = memo(function PaymentTimeline({
                       {formatCurrency(factura.valorTotal!)}
                     </div>
                     <div className="text-xs text-slate-500">
-                      {factura.consumoPeriodo.toLocaleString('es-CL')} kWh
+                      {factura.consumoPeriodo.toLocaleString('es-CL')} m³
                     </div>
                   </div>
 

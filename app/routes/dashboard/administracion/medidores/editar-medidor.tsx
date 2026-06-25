@@ -14,7 +14,7 @@ import {
 } from '~/components/ui/dialog';
 import api from '~/lib/api';
 import { administracionService } from '~/services/administracionService';
-import type { Estado, Marca, MedidoresRow, Tipo } from '~/types/administracion';
+import type { Estado, Marca, MedidorByCodigo, Tipo } from '~/types/administracion';
 
 export function meta() {
   return [
@@ -40,7 +40,7 @@ export async function clientLoader({ params }: { params: { codigo: string } }) {
     }
 
     const lecturasResponse = await api.get(
-      `/medidor/lecturas/${params.codigo}`
+      `/medidores/verificar-lecturas/${params.codigo}`
     );
     const lecturasData = lecturasResponse.data as { cantidadLecturas?: string };
 
@@ -49,7 +49,10 @@ export async function clientLoader({ params }: { params: { codigo: string } }) {
       marcas: result.data.marca,
       tipos: result.data.tipoMedidor,
       estados: result.data.estados,
-      cantidadLecturas: Number(lecturasData?.cantidadLecturas) || 0
+      cantidadLecturas:
+        Number(lecturasData?.cantidadLecturas) ||
+        result.data.medidor.cantidadLecturas ||
+        0
     };
   } catch (error) {
     console.error('Error al cargar datos:', error);
@@ -64,7 +67,7 @@ export async function clientLoader({ params }: { params: { codigo: string } }) {
 }
 
 interface LoaderData {
-  medidor: MedidoresRow | null;
+  medidor: MedidorByCodigo | null;
   marcas: Marca[];
   tipos: Tipo[];
   estados: Estado[];

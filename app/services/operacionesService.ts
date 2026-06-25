@@ -3,6 +3,11 @@ import type {
   CambioMedidorBuscarAntiguoRequest,
   CambioMedidorBuscarNuevoRequest,
   CambioMedidorEjecutarCambioRequest,
+  CerrarLecturasBuscarEstadisticasRequest,
+  CerrarLecturasCerrarRequest,
+  CerrarLecturasCerrarResponse,
+  CerrarLecturasFiltrosCiclosResponse,
+  CerrarLecturasFiltrosPeriodosResponse,
   CorteReposicionBuscarRequest,
   CorteReposicionLiberarRequest,
   CorteReposicionRegistrarCorteRequest,
@@ -565,6 +570,85 @@ class OperacionesService {
       };
     }
   }
+
+  /**
+   * Cerrar Lecturas
+   */
+  async getObtenerCiclos(): Promise<OperacionesServiceResponse<CerrarLecturasFiltrosCiclosResponse>> {
+    try {
+      const response = await api.get('/cerrar-lecturas/filtros/ciclos');
+      return {
+        data: response.data as CerrarLecturasFiltrosCiclosResponse,
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  async getObtenerPeriodosCerrarLecturas(): Promise<OperacionesServiceResponse<CerrarLecturasFiltrosPeriodosResponse[]>> {
+    try {
+      const response = await api.get('/cerrar-lecturas/filtros/periodos');
+      return {
+        data: response.data as CerrarLecturasFiltrosPeriodosResponse[],
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  async getObtenerGrilla(cicloId: number, periodoId: string): Promise<OperacionesServiceResponse<CerrarLecturasBuscarEstadisticasRequest[]>> {
+    try {
+      const response = await api.get(`/cerrar-lecturas/buscar-estadisticas?cicloId=${cicloId}&periodoId=${periodoId}`);
+      return {
+        data: response.data as CerrarLecturasBuscarEstadisticasRequest[],
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  async postCerrarLecturas(request: CerrarLecturasCerrarRequest): Promise<OperacionesServiceResponse<CerrarLecturasCerrarResponse>> {
+    try {
+      const response = await api.post('/cerrar-lecturas/cerrar', request);
+      return {
+        data: response.data as CerrarLecturasCerrarResponse,
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  async getObtenerGrillaData(): Promise<OperacionesServiceResponse<CerrarLecturasBuscarEstadisticasRequest[]>> {
+    try {
+      const response = await api.get('/cerrar-lecturas/buscar-estadisticas');
+      return {
+        data: response.data as CerrarLecturasBuscarEstadisticasRequest[],
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
 
   /** Corte y Reposición */
 
