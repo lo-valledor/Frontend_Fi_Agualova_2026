@@ -31,8 +31,21 @@ import {
 } from '~/components/ui/select';
 import { useAuth } from '~/context/AuthContext';
 import { useAdministracion } from '~/hooks/use-administracion';
-import type { ActualizarUsuarioProps, Usuarios } from '~/types/administracion';
+import type { Usuarios } from '~/types/administracion';
 import { isPasswordSecure, passwordsMatch } from '~/utils/password-validation';
+
+type ActualizarUsuarioProps = {
+  username: string;
+  contrasena: string;
+  nombres: string;
+  apellidos: string;
+  departamento: number;
+  activo: boolean;
+  nombre?: string;
+  apellido?: string;
+  email?: string;
+  nuevaContrasena?: string;
+};
 
 export default function ProfileComponent() {
   const { user } = useAuth();
@@ -49,7 +62,7 @@ export default function ProfileComponent() {
   const [isSaving, setIsSaving] = useState(false);
 
   const [formData, setFormData] = useState<ActualizarUsuarioProps>({
-    nombreDeUsuario: '',
+    username: '',
     contrasena: '',
     nombres: '',
     apellidos: '',
@@ -74,15 +87,16 @@ export default function ProfileComponent() {
 
         // Inicializar formData con los datos del usuario
         setFormData({
-          nombreDeUsuario: userData.nombreDeUsuario,
+          username: userData.userName,
           contrasena: '',
-          nombres: userData.nombres,
-          apellidos: userData.apellidos,
-          departamento: userData.departamento,
-          activo: userData.activo
+          nombres: userData.nombre_Usuario,
+          apellidos: userData.apellidos_Usuario,
+          departamento: 1,
+          activo: true
         });
       } catch (error) {
-        toast.error('Error al cargar los datos del perfil', error as any);
+        if (import.meta.env.DEV) console.error('loadUserData', error);
+        toast.error('Error al cargar los datos del perfil');
       } finally {
         setLoadingUserData(false);
       }
@@ -150,7 +164,7 @@ export default function ProfileComponent() {
       }
 
       setIsSaving(true);
-      await updateUsuario(currentUserData.idUsuario, updatePayload);
+      await updateUsuario(currentUserData.id, updatePayload);
       toast.success('Perfil actualizado exitosamente');
 
       // Limpiar campos de contraseña después de actualizar
@@ -251,13 +265,11 @@ export default function ProfileComponent() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="nombreDeUsuario">Nombre de Usuario</Label>
+              <Label htmlFor="username">Nombre de Usuario</Label>
               <Input
-                id="nombreDeUsuario"
-                value={formData.nombreDeUsuario}
-                onChange={e =>
-                  handleInputChange('nombreDeUsuario', e.target.value)
-                }
+                id="username"
+                value={formData.username}
+                onChange={e => handleInputChange('username', e.target.value)}
                 placeholder="Ingresa tu nombre de usuario"
                 required
                 disabled={isLoading}

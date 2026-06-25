@@ -25,13 +25,13 @@ import {
   DialogTitle
 } from '~/components/ui/dialog';
 import { Skeleton } from '~/components/ui/skeleton';
-import type { GetComunas, GetContratante } from '~/types/administracion';
+import type { GetContratante, NombreComuna } from '~/types/administracion';
 
 interface ContratanteDetailsModalProps {
   isOpen: boolean;
   onClose: () => void;
   contratante: GetContratante | null;
-  comunas: GetComunas[];
+  comunas: NombreComuna[];
 }
 
 const InfoItem = ({
@@ -72,11 +72,11 @@ export function ContratanteDetailsModal({
     if (isOpen && contratante) {
       setIsLoading(true);
       setError(null);
-      // Simula la carga de datos
-      setTimeout(() => {
+      const timer = setTimeout(() => {
         setDetailsData(contratante);
         setIsLoading(false);
       }, 500);
+      return () => clearTimeout(timer);
     }
   }, [isOpen, contratante]);
 
@@ -84,14 +84,22 @@ export function ContratanteDetailsModal({
     ? detailsData.nombre
     : `${detailsData?.nombre || ''} ${detailsData?.apellido || ''}`.trim();
 
-  const comunaNombre = detailsData?.comuna
-    ? comunas.find(c => c.codigo === detailsData.comuna)?.nombre ||
-      detailsData.comuna
+  const comunaMatch = detailsData?.comunaNombre
+    ? comunas.find(c => {
+        if (typeof c === 'string') return c === detailsData.comunaNombre;
+        return c.nombre === detailsData.comunaNombre;
+      })
     : undefined;
+  const comunaNombre =
+    comunaMatch === undefined
+      ? undefined
+      : typeof comunaMatch === 'string'
+        ? comunaMatch
+        : comunaMatch.nombre || detailsData?.comuna;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-200 max-h-[90vh] overflow-y-auto">
         <DialogHeader className="space-y-3 pb-6">
           <div className="flex items-center gap-4">
             <div className="p-3 bg-linear-to-br from-orange-100 to-amber-100 dark:from-orange-900/30 dark:to-amber-900/30 rounded-xl shadow-sm">

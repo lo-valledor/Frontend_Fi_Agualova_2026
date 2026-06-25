@@ -104,8 +104,8 @@ export function ResultadoProcesamientoModal({
       const encabezadosDetalles = [
         'Número de Serie',
         'Tarifa',
-        'Lectura Anterior (kWh)',
-        'Consumo Energía (kWh)',
+        'Lectura Anterior (m³)',
+        'Consumo Energía (m³)',
         'Usuario Carga',
         'Estado',
         'Mensaje'
@@ -239,19 +239,19 @@ export function ResultadoProcesamientoModal({
                 <Table>
                   <TableHeader className="sticky top-0 bg-background z-10">
                     <TableRow>
-                      <TableHead className="min-w-[140px]">
+                      <TableHead className="min-w-35">
                         Número de Serie
                       </TableHead>
                       <TableHead className="min-w-20">Tarifa</TableHead>
-                      <TableHead className="text-right min-w-[150px]">
-                        Lectura Ant. (kWh)
+                      <TableHead className="text-right min-w-37.5">
+                        Lectura Ant. (m³)
                       </TableHead>
-                      <TableHead className="text-right min-w-[140px]">
-                        Consumo (kWh)
+                      <TableHead className="text-right min-w-35">
+                        Consumo (m³)
                       </TableHead>
-                      <TableHead className="min-w-[120px]">Usuario</TableHead>
-                      <TableHead className="min-w-[110px]">Estado</TableHead>
-                      <TableHead className="min-w-[250px]">Mensaje</TableHead>
+                      <TableHead className="min-w-30">Usuario</TableHead>
+                      <TableHead className="min-w-30">Estado</TableHead>
+                      <TableHead className="min-w-62.5">Mensaje</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>

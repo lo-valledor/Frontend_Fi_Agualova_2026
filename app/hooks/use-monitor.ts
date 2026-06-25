@@ -1,7 +1,4 @@
-import type {
-  MonitorPeriodos,
-  MonitorSectores
-} from '~/types/monitor';
+import type { MonitorPeriodos, MonitorSectores } from '~/types/monitor';
 
 /**
  * Convierte una fecha a formato DD-MM-YYYY.

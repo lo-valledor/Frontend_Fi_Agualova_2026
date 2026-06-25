@@ -1,202 +1,56 @@
 import type { ColumnDef } from '@tanstack/react-table';
 
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
-import {
-  EstadoBadge,
-  TableActions
-} from '~/components/data-table/table-helpers';
+import { TableActions } from '~/components/data-table/table-helpers';
 import { Badge } from '~/components/ui/badge';
-import { type GetContratos } from '~/types/administracion';
+import { type ContratosRow } from '~/types/administracion';
 
 interface TableColumnsProps {
-  onEdit: (contract: GetContratos) => void;
-  onDelete: (contract: GetContratos) => void;
-  onViewDetails: (contract: GetContratos) => void;
+  onEdit: (contract: ContratosRow) => void;
+  onDelete: (contract: ContratosRow) => void;
+  onViewDetails: (contract: ContratosRow) => void;
 }
-
-// Función para convertir string de fecha a objeto Date (para ordenamiento)
-const parseDateString = (
-  dateValue: string | Date | null | undefined
-): Date | null => {
-  if (!dateValue) return null;
-
-  if (dateValue instanceof Date) {
-    return dateValue;
-  }
-
-  if (typeof dateValue === 'string') {
-    const dateString = dateValue.trim();
-
-    // Formato DD-MM-YYYY HH:mm:ss (del backend)
-    if (/^\d{2}-\d{2}-\d{4}(\s+\d{2}:\d{2}:\d{2})?$/.test(dateString)) {
-      const [fechaParte] = dateString.split(' ');
-      const [dia, mes, año] = fechaParte.split('-');
-      const date = new Date(`${año}-${mes}-${dia}`);
-      return Number.isNaN(date.getTime()) ? null : date;
-    }
-
-    // Formato DD/MM/YYYY (con barra)
-    if (/^\d{2}\/\d{2}\/\d{4}$/.test(dateString)) {
-      const [dia, mes, año] = dateString.split('/');
-      const date = new Date(`${año}-${mes}-${dia}`);
-      return Number.isNaN(date.getTime()) ? null : date;
-    }
-
-    // Formato ISO (YYYY-MM-DD)
-    if (/^\d{4}-\d{2}-\d{2}/.test(dateString)) {
-      const date = new Date(dateString);
-      return Number.isNaN(date.getTime()) ? null : date;
-    }
-  }
-
-  return null;
-};
-
-// Función robusta para formatear fechas en formato español
-const formatDateToSpanish = (
-  dateValue: string | Date | null | undefined
-): string => {
-  if (!dateValue) return 'N/A';
-
-  let date: Date;
-
-  // Si es un string, intentar parsearlo
-  if (typeof dateValue === 'string') {
-    const dateString = dateValue.trim();
-
-    // Formato DD-MM-YYYY HH:mm:ss (del backend)
-    // Ejemplo: "31-01-2014 00:00:00" o "24-10-2025"
-    if (/^\d{2}-\d{2}-\d{4}(\s+\d{2}:\d{2}:\d{2})?$/.test(dateString)) {
-      const [fechaParte] = dateString.split(' '); // Separar fecha de hora
-      const [dia, mes, año] = fechaParte.split('-');
-
-      // Crear fecha en formato ISO para evitar ambigüedad
-      date = new Date(`${año}-${mes}-${dia}`);
-
-      // Verificar si la fecha es válida
-      if (Number.isNaN(date.getTime())) {
-        return 'Fecha inválida';
-      }
-
-      // Retornar en formato DD/MM/YYYY
-      return `${dia}/${mes}/${año}`;
-    }
-
-    // Formato DD/MM/YYYY (con barra)
-    if (/^\d{2}\/\d{2}\/\d{4}$/.test(dateString)) {
-      const [dia, mes, año] = dateString.split('/');
-
-      // Crear fecha en formato ISO
-      date = new Date(`${año}-${mes}-${dia}`);
-
-      if (Number.isNaN(date.getTime())) {
-        return 'Fecha inválida';
-      }
-
-      return `${dia}/${mes}/${año}`;
-    }
-
-    // Formato ISO (YYYY-MM-DD)
-    if (/^\d{4}-\d{2}-\d{2}/.test(dateString)) {
-      date = new Date(dateString);
-
-      if (Number.isNaN(date.getTime())) {
-        return 'Fecha inválida';
-      }
-
-      return date.toLocaleDateString('es-ES', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-      });
-    }
-
-    // Si no coincide con ningún formato conocido
-    return 'Fecha inválida';
-  } else {
-    date = dateValue;
-  }
-
-  // Verificar si la fecha es válida
-  if (Number.isNaN(date.getTime())) {
-    return 'Fecha inválida';
-  }
-
-  // Formatear en español
-  return date.toLocaleDateString('es-ES', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric'
-  });
-};
 
 export const columns = ({
   onEdit,
   onDelete,
   onViewDetails
-}: TableColumnsProps): ColumnDef<GetContratos>[] => [
+}: TableColumnsProps): ColumnDef<ContratosRow>[] => [
   {
-    accessorKey: 'codigoContrato',
+    accessorKey: 'idContrato',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Contrato" />
+      <DataTableColumnHeader column={column} title="Código" />
     ),
     cell: ({ row }) => {
       return (
-        <div className="flex items-center gap-1 sm:gap-2 min-w-0">
-          <span className="font-mono text-xs sm:text-sm truncate">
-            {row.original.codigoContrato}
-          </span>
-        </div>
+        <span className="font-mono text-xs sm:text-sm">
+          {row.original.idContrato}
+        </span>
       );
     },
-    size: 80
+    size: 120
   },
   {
-    accessorKey: 'nombreCliente',
+    accessorKey: 'subEmpalme',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Cliente / Propietario" />
+      <DataTableColumnHeader column={column} title="Sub Empalme" />
     ),
-    cell: ({ row }) => (
-      <div className="space-y-1 min-w-0">
-        <div className="flex items-center gap-1 sm:gap-2">
-          <span
-            className="text-xs sm:text-sm font-medium"
-            title={row.original.nombreCliente}
-          >
-            {row.original.nombreCliente}
-          </span>
-        </div>
-        <div className="flex items-center gap-1 sm:gap-2">
-          <span
-            className="text-xs sm:text-sm text-muted-foreground"
-            title={row.original.nombrePropietario}
-          >
-            {row.original.nombrePropietario}
-          </span>
-        </div>
-      </div>
-    ),
-    size: 250
+    cell: ({ row }) => {
+      return (
+        <span className="text-xs sm:text-sm">{row.original.subEmpalme}</span>
+      );
+    }
   },
   {
     accessorKey: 'tipoContrato',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Tipo" />
+      <DataTableColumnHeader column={column} title="Tipo Contrato" />
     ),
     cell: ({ row }) => {
       return (
-        <Badge
-          variant="outline"
-          className="text-xs px-1 sm:px-2"
-          title={row.original.tipoContrato}
-        >
-          <span className="truncate sm:max-w-none">
-            {row.original.tipoContrato}
-          </span>
-        </Badge>
+        <span className="text-xs sm:text-sm">{row.original.tipoContrato}</span>
       );
-    },
-    size: 150
+    }
   },
   {
     accessorKey: 'tarifa',
@@ -204,67 +58,139 @@ export const columns = ({
       <DataTableColumnHeader column={column} title="Tarifa" />
     ),
     cell: ({ row }) => {
-      return (
-        <Badge
-          variant="secondary"
-          className="text-xs px-1 sm:px-2"
-          title={row.original.tarifa}
-        >
-          <span className="truncate max-w-[150px] sm:max-w-none">
-            {row.original.tarifa}
-          </span>
-        </Badge>
-      );
-    },
-    size: 150
+      return <span className="text-xs sm:text-sm">{row.original.tarifa}</span>;
+    }
   },
-
   {
-    accessorKey: 'local',
+    accessorKey: 'nombrePropietario',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Local" />
+      <DataTableColumnHeader column={column} title="Propietario" />
     ),
     cell: ({ row }) => {
       return (
-        <div className="flex items-center gap-1 sm:gap-2 min-w-0">
-          <span
-            className="text-xs sm:text-sm truncate max-w-[150px]"
-            title={row.original.local}
-          >
-            {row.original.local}
-          </span>
-        </div>
+        <span className="text-xs sm:text-sm">
+          {row.original.nombrePropietario}
+        </span>
       );
-    },
-    size: 100
+    }
+  },
+  {
+    accessorKey: 'nombreCliente',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Cliente" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <span className="text-xs sm:text-sm">{row.original.nombreCliente}</span>
+      );
+    }
+  },
+  {
+    accessorKey: 'localEmpresa',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Local Empresa" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <span className="text-xs sm:text-sm">{row.original.localEmpresa}</span>
+      );
+    }
   },
   {
     accessorKey: 'fechaInicio',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="F. Inicio" />
+      <DataTableColumnHeader column={column} title="Fecha Inicio" />
     ),
     cell: ({ row }) => {
       return (
-        <div className="flex items-center gap-1 sm:gap-2">
-          <span className="text-xs sm:text-sm ">
-            {formatDateToSpanish(row.original.fechaInicio)}
-          </span>
-        </div>
+        <span className="text-xs sm:text-sm">
+          {new Date(row.original.fechaInicio).toLocaleDateString()}
+        </span>
       );
-    },
-    sortingFn: (rowA, rowB, columnId) => {
-      const dateA = parseDateString(rowA.getValue(columnId));
-      const dateB = parseDateString(rowB.getValue(columnId));
-
-      // Manejar casos donde alguna fecha es null o inválida
-      if (!dateA && !dateB) return 0;
-      if (!dateA) return 1; // Fechas inválidas van al final
-      if (!dateB) return -1;
-
-      // Comparar timestamps
-      return dateA.getTime() - dateB.getTime();
-    },
-    size: 120
+    }
+  },
+  {
+    accessorKey: 'fechaTermino',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Fecha Término" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <span className="text-xs sm:text-sm">
+          {row.original.fechaTermino
+            ? new Date(row.original.fechaTermino).toLocaleDateString()
+            : 'N/A'}
+        </span>
+      );
+    }
+  },
+  {
+    accessorKey: 'comunaEnvio',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Comuna Envío" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <span className="text-xs sm:text-sm">{row.original.comunaEnvio}</span>
+      );
+    }
+  },
+  {
+    accessorKey: 'direccionEnvio',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Dirección Envío" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <span className="text-xs sm:text-sm">
+          {row.original.direccionEnvio}
+        </span>
+      );
+    }
+  },
+  {
+    accessorKey: 'limiteInvierno',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Límite Invierno" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <span className="text-xs sm:text-sm">
+          {row.original.limiteInvierno}
+        </span>
+      );
+    }
+  },
+  {
+    accessorKey: 'ciclo',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Ciclo" />
+    ),
+    cell: ({ row }) => {
+      return <span className="text-xs sm:text-sm">{row.original.ciclo}</span>;
+    }
+  },
+  {
+    accessorKey: 'potencia',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Potencia" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <span className="text-xs sm:text-sm">{row.original.potencia}</span>
+      );
+    }
+  },
+  {
+    accessorKey: 'liberadoCorte',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Liberado Corte" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <span className="text-xs sm:text-sm">{row.original.liberadoCorte}</span>
+      );
+    }
   },
   {
     accessorKey: 'activo',
@@ -272,99 +198,9 @@ export const columns = ({
       <DataTableColumnHeader column={column} title="Estado" />
     ),
     cell: ({ row }) => {
-      return <EstadoBadge estado={row.original.activo} />;
-    },
-    size: 80
-  },
-  {
-    accessorKey: 'fechaTermino',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="F. Término" />
-    ),
-    cell: ({ row }) => {
-      const fechaTermino = formatDateToSpanish(row.original.fechaTermino);
-      if (fechaTermino === 'N/A' || fechaTermino === 'Fecha inválida') {
-        return (
-          <Badge variant="outline" className="text-xs px-1 sm:px-2">
-            Indefinido
-          </Badge>
-        );
-      }
       return (
-        <div className="flex items-center gap-1 sm:gap-2">
-          <span className="text-xs sm:text-sm ">{fechaTermino}</span>
-        </div>
-      );
-    },
-    sortingFn: (rowA, rowB, columnId) => {
-      const dateA = parseDateString(rowA.getValue(columnId));
-      const dateB = parseDateString(rowB.getValue(columnId));
-
-      // Manejar casos donde alguna fecha es null o inválida
-      if (!dateA && !dateB) return 0;
-      if (!dateA) return 1; // Fechas inválidas/indefinidas van al final
-      if (!dateB) return -1;
-
-      // Comparar timestamps
-      return dateA.getTime() - dateB.getTime();
-    },
-    size: 120
-  },
-  {
-    accessorKey: 'cicloFacturacion',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Ciclo" />
-    ),
-    cell: ({ row }) => {
-      return (
-        <Badge
-          variant="outline"
-          className="bg-purple-100 text-purple-800 border-purple-200 dark:bg-purple-900/20 dark:text-purple-300 dark:border-purple-800 text-xs px-1 sm:px-2"
-          title={row.original.cicloFacturacion}
-        >
-          <span className="truncate max-w-[60px] sm:max-w-none">
-            {row.original.cicloFacturacion}
-          </span>
-        </Badge>
-      );
-    },
-    size: 130
-  },
-  {
-    accessorKey: 'potenciaContratada',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Potencia" />
-    ),
-    cell: ({ row }) => {
-      return (
-        <div className="flex items-center gap-1 sm:gap-2">
-          <span className="text-xs sm:text-sm font-semibold ">
-            {row.original.potenciaContratada}
-          </span>
-        </div>
-      );
-    },
-    size: 110
-  },
-  {
-    accessorKey: 'liberadoCorte',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Lib. Corte" />
-    ),
-    cell: ({ row }) => {
-      return row.original.liberadoCorte ? (
-        <Badge
-          variant="default"
-          className="bg-green-100 text-green-800 border-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800 text-xs px-1 sm:px-2"
-        >
-          <span className="hidden sm:inline">Sí</span>
-        </Badge>
-      ) : (
-        <Badge
-          variant="destructive"
-          className="bg-red-100 text-red-800 border-red-200 dark:bg-red-900/20 dark:text-red-300 dark:border-red-800 text-xs px-1 sm:px-2"
-        >
-          <span className="hidden sm:inline">No</span>
+        <Badge variant="secondary" className="text-xs">
+          {row.original.activo ? 'Activo' : 'Inactivo'}
         </Badge>
       );
     },

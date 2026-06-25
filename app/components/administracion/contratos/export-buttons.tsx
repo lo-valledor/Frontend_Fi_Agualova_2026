@@ -3,11 +3,11 @@ import {
   ExportFilteredButton
 } from '~/components/shared/export-button';
 import { useExportContratos } from '~/hooks/administracion/use-export-contratos';
-import type { GetContratos } from '~/types/administracion';
+import type { ContratosRow } from '~/types/administracion';
 
 interface ExportButtonsProps {
-  allContratos: GetContratos[];
-  filteredContratos: GetContratos[];
+  allContratos: ContratosRow[];
+  filteredContratos: ContratosRow[];
   isFiltered: boolean;
 }
 

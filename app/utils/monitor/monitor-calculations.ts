@@ -1,7 +1,7 @@
 import type {
   MonitorFilas,
   MonitorMedidores,
-  MonitorNichos
+  MonitorNichosGet
 } from '~/types/monitor';
 import { getMeterStatus } from './monitor-status';
 
@@ -16,7 +16,7 @@ export interface StatsData {
 }
 
 export function calculateNichoStats(
-  nicho: MonitorNichos | null | undefined
+  nicho: MonitorNichosGet | null | undefined
 ): StatsData {
   const defaultStats: StatsData = {
     total: 0,
@@ -83,7 +83,7 @@ export function calculateNichoStats(
 }
 
 export function calculateTotalStats(
-  nichos: MonitorNichos[] | null | undefined
+  nichos: MonitorNichosGet[] | null | undefined
 ): StatsData {
   const defaultStats: StatsData = {
     total: 0,
@@ -182,7 +182,7 @@ export function aggregateMetersByStatus(
 }
 
 export function getAllMetersFromNicho(
-  nicho: MonitorNichos | null | undefined
+  nicho: MonitorNichosGet | null | undefined
 ): MonitorMedidores[] {
   // Handle null/undefined nicho
   if (!nicho || !Array.isArray(nicho.filas)) {
@@ -199,7 +199,7 @@ export function getAllMetersFromNicho(
 }
 
 export function getProblemMeters(
-  nicho: MonitorNichos | null | undefined
+  nicho: MonitorNichosGet | null | undefined
 ): MonitorMedidores[] {
   const allMeters = getAllMetersFromNicho(nicho);
 

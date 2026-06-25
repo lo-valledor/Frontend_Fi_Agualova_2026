@@ -12,14 +12,7 @@ import {
   DialogTrigger
 } from '~/components/ui/dialog';
 import { Label } from '~/components/ui/label';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow
-} from '~/components/ui/table';
+import { Table, TableBody, TableCell, TableRow } from '~/components/ui/table';
 import { Textarea } from '~/components/ui/textarea';
 import {
   Tooltip,
@@ -41,15 +34,6 @@ interface ConsultaAcometidaDetalle {
   reCantDocumentos?: number;
   reDeudaTotal?: number;
   reFechaIngreso?: string;
-}
-
-interface FacturaImpaga {
-  clRut?: string;
-  seCodigo?: string;
-  faNumero?: number;
-  faFechaVencimiento?: string;
-  faTotal?: number;
-  faSaldo?: number;
 }
 
 interface ConsultarAcometidaDialogProps {

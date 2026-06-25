@@ -1,11 +1,9 @@
-import { FileText, LayoutList, Plus } from 'lucide-react';
+import type { PaginationState } from '@tanstack/react-table';
+import { LayoutList, Plus } from 'lucide-react';
 import { motion } from 'motion/react';
-
-import { useCallback, useMemo, useState } from 'react';
-
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
-
-import { VirtualDataTable } from '~/components/data-table/virtual-data-table';
+import { DataTable } from '~/components/data-table/data-table';
 import { ModernHeader } from '~/components/shared/modern-header';
 import { Button } from '~/components/ui/button';
 import {
@@ -15,33 +13,27 @@ import {
   CardHeader,
   CardTitle
 } from '~/components/ui/card';
-import { useContractFilters } from '~/hooks/administracion/use-contract-filters';
-import type { ContratoModalState, GetContratos } from '~/types/administracion';
+import { administracionService } from '~/services/administracionService';
+import type { ContratoModalState, ContratosRow } from '~/types/administracion';
 import {
   createInitialContratoModalState,
   getContratoCreateUrl,
   getContratoEditUrl,
   isValidContratoForOperation
 } from '~/utils/administracion';
-
 import { columns } from './columns';
 import { ContractDetailsModal } from './contract-details-modal';
-import {
-  type ContractFilters,
-  ContractFiltersComponent
-} from './contract-filters';
 import { DeleteConfirmationDialog } from './delete-confirmation-dialog';
 import { ExportButtons } from './export-buttons';
-import { FilterSummary } from './filter-summary';
 
 export default function ContratosComponent({
   contratos
 }: {
-  readonly contratos: GetContratos[];
+  readonly contratos: ContratosRow[];
 }) {
   // Estado de datos
-  const [contracts, setContracts] = useState<GetContratos[]>(contratos);
-  const [selectedContract, setSelectedContract] = useState<GetContratos | null>(
+  const [contracts, setContracts] = useState<ContratosRow[]>(contratos);
+  const [selectedContract, setSelectedContract] = useState<ContratosRow | null>(
     null
   );
 
@@ -49,56 +41,139 @@ export default function ContratosComponent({
   const [modalsState, setModalsState] = useState<ContratoModalState>(
     createInitialContratoModalState()
   );
-
-  // Estado de filtros
-  const [filters, setFilters] = useState<ContractFilters>({
-    tipoContrato: 'all',
-    cicloFacturacion: 'all',
-    tarifa: 'all',
-    comuna: 'all',
-    liberadoCorte: 'all',
-    fechaTerminoDesde: '',
-    fechaTerminoHasta: '',
-    activo: 'all'
+  // Estado de paginación/búsqueda server-side de la tabla
+  const DEFAULT_PAGE_SIZE = 10;
+  const [tableData, setTableData] = useState<ContratosRow[]>(contratos);
+  const [tableLoading, setTableLoading] = useState(false);
+  const [tableError, setTableError] = useState<string | null>(null);
+  const [tablePagination, setTablePagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: DEFAULT_PAGE_SIZE
   });
+  // Campo de búsqueda actual + valor tipeado. El campo determina a qué
+  // query param del backend se mapea el valor.
+  const [searchField, setSearchField] = useState('nombreCliente');
+  const [searchValue, setSearchValue] = useState('');
+  // El backend no devuelve total, así que usamos heurística: si una página
+  // trae menos filas que pageSize, sabemos que es la última. Si trae la
+  // cantidad completa, asumimos que puede haber más (hasMore=true).
+  const [hasMore, setHasMore] = useState(true);
+  // Evita condiciones de carrera si el usuario pagina/ busca muy rápido
+  const requestIdRef = useRef(0);
+
+  const searchFields = useMemo(
+    () => [
+      { value: 'nombreCliente', label: 'Nombre del cliente' },
+      { value: 'rutCliente', label: 'RUT del cliente' },
+      { value: 'nombrePropietario', label: 'Nombre del propietario' },
+      { value: 'rutPropietario', label: 'RUT del propietario' },
+      { value: 'numeroLocal', label: 'Número de local' },
+      { value: 'numeroContrato', label: 'Número de contrato' }
+    ],
+    []
+  );
 
   // Dependencias
   const navigate = useNavigate();
 
-  const { filteredContracts, filterStats, filterOptions } = useContractFilters(
-    contracts,
-    filters
+  const fetchContratosPage = useCallback(
+    async ({
+      pageIndex,
+      pageSize,
+      field,
+      value
+    }: {
+      pageIndex: number;
+      pageSize: number;
+      field: string;
+      value: string;
+    }) => {
+      const requestId = ++requestIdRef.current;
+      setTableLoading(true);
+      setTableError(null);
+      const result = await administracionService.getContratosByLimitAndOffset({
+        Limit: pageSize,
+        Offset: pageIndex * pageSize,
+        ...(value.trim() ? { [field]: value.trim() } : {})
+      });
+
+      // Si el usuario ya disparó otra request, descartar este resultado
+      if (requestId !== requestIdRef.current) return;
+
+      if (result.error || !result.data) {
+        setTableData([]);
+        setHasMore(false);
+        setTableError(result.error ?? 'Error desconocido');
+      } else {
+        setTableData(result.data);
+        // Heurística: si la respuesta trae menos filas que pageSize, es la
+        // última página. Si trae la cantidad completa, asumimos que hay más.
+        setHasMore(result.data.length >= pageSize);
+      }
+      setTableLoading(false);
+    },
+    []
   );
 
-  const handleFiltersChange = useCallback((newFilters: ContractFilters) => {
-    setFilters(newFilters);
+  // Carga inicial: reemplaza los datos del prop por la primera página del server
+  useEffect(() => {
+    fetchContratosPage({
+      pageIndex: 0,
+      pageSize: DEFAULT_PAGE_SIZE,
+      field: searchField,
+      value: ''
+    });
+    // Sólo al montar — el efecto siguiente cubre los cambios de page/search
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleClearFilters = useCallback(() => {
-    setFilters({
-      tipoContrato: 'all',
-      cicloFacturacion: 'all',
-      tarifa: 'all',
-      comuna: 'all',
-      liberadoCorte: 'all',
-      fechaTerminoDesde: '',
-      fechaTerminoHasta: '',
-      activo: 'all'
-    });
-  }, []);
+  const handleTablePaginationChange = useCallback(
+    (next: PaginationState) => {
+      setTablePagination(next);
+      fetchContratosPage({
+        pageIndex: next.pageIndex,
+        pageSize: next.pageSize,
+        field: searchField,
+        value: searchValue
+      });
+    },
+    [fetchContratosPage, searchField, searchValue]
+  );
+
+  const handleTableSearchChange = useCallback(
+    ({ field, value }: { field: string; value: string }) => {
+      // Si cambia el campo pero el value es vacío, sólo actualizamos el
+      // campo (no refetcheamos). Si hay valor, sí refetcheamos.
+      setSearchField(field);
+      setSearchValue(value);
+      // Reset a la primera página al cambiar la búsqueda
+      const next: PaginationState = {
+        pageIndex: 0,
+        pageSize: tablePagination.pageSize
+      };
+      setTablePagination(next);
+      fetchContratosPage({
+        pageIndex: next.pageIndex,
+        pageSize: next.pageSize,
+        field,
+        value
+      });
+    },
+    [fetchContratosPage, tablePagination.pageSize]
+  );
 
   const handleAddContract = useCallback(() => {
     navigate(getContratoCreateUrl());
   }, [navigate]);
 
   const handleEditContract = useCallback(
-    (contract: GetContratos) => {
-      navigate(getContratoEditUrl(contract.codigoContrato));
+    (contract: ContratosRow) => {
+      navigate(getContratoEditUrl(contract.idContrato.toString()));
     },
     [navigate]
   );
 
-  const handleDeleteContract = useCallback((contract: GetContratos) => {
+  const handleDeleteContract = useCallback((contract: ContratosRow) => {
     setSelectedContract(contract);
     setModalsState(prev => ({
       ...prev,
@@ -106,7 +181,7 @@ export default function ContratosComponent({
     }));
   }, []);
 
-  const handleViewDetails = useCallback((contract: GetContratos) => {
+  const handleViewDetails = useCallback((contract: ContratosRow) => {
     setSelectedContract(contract);
     setModalsState(prev => ({
       ...prev,
@@ -115,7 +190,6 @@ export default function ContratosComponent({
   }, []);
 
   const handleConfirmDelete = useCallback(() => {
-    // Early return: validar que exista contrato seleccionado
     if (!isValidContratoForOperation(selectedContract)) {
       setModalsState(prev => ({
         ...prev,
@@ -124,15 +198,13 @@ export default function ContratosComponent({
       return;
     }
 
-    // Eliminar contrato de la lista
     setContracts(prev =>
       prev.filter(
-        contract => contract.codigoContrato !== selectedContract.codigoContrato
+        contract => contract.idContrato !== selectedContract.idContrato
       )
     );
     setSelectedContract(null);
 
-    // Cerrar diálogo
     setModalsState(prev => ({
       ...prev,
       delete: { isOpen: false }
@@ -162,8 +234,8 @@ export default function ContratosComponent({
               <div className="flex items-center gap-2">
                 <ExportButtons
                   allContratos={contracts}
-                  filteredContratos={filteredContracts}
-                  isFiltered={filterStats.isFiltered}
+                  filteredContratos={contracts}
+                  isFiltered={false}
                 />
                 <Button onClick={handleAddContract} variant="default" size="sm">
                   <Plus className="mr-2 h-4 w-4" />
@@ -174,20 +246,6 @@ export default function ContratosComponent({
           />
           <div className="industrial-divider mt-4" />
         </header>
-
-        <ContractFiltersComponent
-          filters={filters}
-          onFiltersChange={handleFiltersChange}
-          onClearFilters={handleClearFilters}
-          filterOptions={filterOptions}
-        />
-
-        <FilterSummary
-          totalContracts={contracts.length}
-          filteredContracts={filteredContracts.length}
-          activeFilters={filterStats.activeFilters}
-          isFiltered={filterStats.isFiltered}
-        />
 
         <motion.div
           initial={{ opacity: 0, y: 8 }}
@@ -205,44 +263,46 @@ export default function ContratosComponent({
                     Listado de Contratos
                   </CardTitle>
                   <CardDescription className="text-xs mt-0.5 text-muted-foreground">
-                    {filteredContracts.length} contrato
-                    {filteredContracts.length !== 1 ? 's' : ''}
+                    {tableLoading
+                      ? 'Cargando…'
+                      : `${tableData.length} contrato${tableData.length !== 1 ? 's' : ''} en esta página`}
                   </CardDescription>
                 </div>
               </div>
             </CardHeader>
             <div className="industrial-divider" />
             <CardContent className="relative p-4">
-              {filteredContracts.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-8 sm:py-12">
-                  <div className="flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center rounded-full bg-linear-to-r from-slate-100 to-gray-100 dark:from-slate-800 dark:to-gray-800 mb-4">
-                    <FileText className="h-6 w-6 sm:h-8 sm:w-8" />
-                  </div>
-                  <p className="text-base sm:text-lg font-medium text-center">
-                    No se encontraron contratos
-                  </p>
-                  <p className="text-xs sm:text-sm text-center max-w-md px-4">
-                    {filterStats.isFiltered
-                      ? 'No hay contratos que coincidan con los filtros aplicados'
-                      : 'No hay contratos registrados en el sistema'}
-                  </p>
+              <div className="rounded-xl border border-slate-200/60 dark:border-slate-800/60 bg-background backdrop-blur-sm shadow-lg overflow-hidden">
+                <div className="overflow-x-auto">
+                  <DataTable
+                    columns={columnsData}
+                    data={tableData}
+                    defaultPageSize={DEFAULT_PAGE_SIZE}
+                    searchFields={searchFields}
+                    manualPagination
+                    manualFiltering
+                    pageCount={-1}
+                    onPaginationChange={handleTablePaginationChange}
+                    onSearchChange={handleTableSearchChange}
+                    isLoading={tableLoading}
+                    hasMore={hasMore}
+                    error={tableError}
+                    onRetry={() =>
+                      fetchContratosPage({
+                        pageIndex: tablePagination.pageIndex,
+                        pageSize: tablePagination.pageSize,
+                        field: searchField,
+                        value: searchValue
+                      })
+                    }
+                    emptyMessage={
+                      searchValue.trim()
+                        ? `Sin resultados para "${searchValue.trim()}"`
+                        : 'No hay contratos registrados en el sistema'
+                    }
+                  />
                 </div>
-              ) : (
-                <div className="space-y-4">
-                  {/* Tabla moderna con scroll horizontal para móvil */}
-                  <div className="rounded-xl border border-slate-200/60 dark:border-slate-800/60 bg-background backdrop-blur-sm shadow-lg overflow-hidden">
-                    <div className="overflow-x-auto">
-                      <VirtualDataTable
-                        columns={columnsData}
-                        data={filteredContracts}
-                        searchPlaceholder="Buscar por código, propietario o local..."
-                        estimateRowHeight={60}
-                        maxHeight="700px"
-                      />
-                    </div>
-                  </div>
-                </div>
-              )}
+              </div>
             </CardContent>
           </Card>
         </motion.div>

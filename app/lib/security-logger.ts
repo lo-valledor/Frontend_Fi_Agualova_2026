@@ -131,7 +131,7 @@ async function sendToExternalService(entry: LogEntry): Promise<void> {
   if (!import.meta.env.PROD) return;
 
   if (entry.level === LogLevel.SECURITY || entry.level === LogLevel.ERROR) {
-    // TODO: Implement actual external logging service
+    // FIXME: pendiente conectar con servicio externo (Sentry/Loggly)
     // Example: await fetch('/api/logs', { method: 'POST', body: JSON.stringify(entry) });
     // Example: Sentry.captureMessage(entry.message, { extra: entry.context });
   }

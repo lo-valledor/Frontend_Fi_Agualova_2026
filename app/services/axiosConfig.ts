@@ -88,23 +88,26 @@ const refreshAxiosInstance: AxiosInstance = axios.create(AXIOS_CONFIG);
 const axiosInstance: AxiosInstance = axios.create(AXIOS_CONFIG);
 
 // ============================================================================
-// FUNCIONES PRIVADAS
+// HELPERS DE TOKEN (única fuente de verdad para localStorage)
 // ============================================================================
 
-function getStoredToken(): string | null {
+export function getAuthToken(): string | null {
+  if (typeof localStorage === 'undefined') return null;
   return localStorage.getItem('token');
 }
 
-function saveToken(token: string): void {
+export function setAuthToken(token: string): void {
+  if (typeof localStorage === 'undefined') return;
   localStorage.setItem('token', token);
 }
 
-function clearToken(): void {
+export function clearAuthToken(): void {
+  if (typeof localStorage === 'undefined') return;
   localStorage.removeItem('token');
 }
 
 function redirectToSessionExpired(): void {
-  clearToken();
+  clearAuthToken();
   globalThis.location.href = '/session-expired';
 }
 
@@ -208,7 +211,7 @@ async function handleUnauthorizedError(
 
   try {
     const newToken = await attemptTokenRefresh();
-    saveToken(newToken);
+    setAuthToken(newToken);
     originalRequest.headers.Authorization = `Bearer ${newToken}`;
     return axiosInstance(originalRequest);
   } catch {
@@ -263,7 +266,7 @@ async function handleErrorResponse(error: AxiosError): Promise<void> {
 
 axiosInstance.interceptors.request.use(
   config => {
-    const token = getStoredToken();
+    const token = getAuthToken();
 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;

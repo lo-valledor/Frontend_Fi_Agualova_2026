@@ -15,11 +15,11 @@ import {
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router';
-import Select from 'react-select';
+import Select, { type SingleValue } from 'react-select';
 import { toast } from 'sonner';
 import { z } from 'zod';
-
 import { ModernHeader } from '~/components/shared/modern-header';
+import type { OptionType } from '~/components/shared/react-select-styles';
 import { getReactSelectStyles } from '~/components/shared/react-select-styles';
 import { useTheme } from '~/components/theme-provider';
 import { Alert, AlertDescription } from '~/components/ui/alert';
@@ -35,7 +35,7 @@ import {
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
 import { administracionService } from '~/services/administracionService';
-import type { GetComunas, GetGiros } from '~/types/administracion';
+import type { NombreComuna, NombreGiro } from '~/types/administracion';
 import { formatRut, isValidRutFormat } from '~/utils/rut-utils';
 
 const createContratanteSchema = (existingContratantes: string[]) =>
@@ -74,9 +74,9 @@ export default function CrearContratanteComponent() {
   const navigate = useNavigate();
   const { theme } = useTheme();
 
-  const [, setGiros] = useState<GetGiros[]>([]);
-  const [comunas, setComunas] = useState<GetComunas[]>([]);
-  const [existingContratantes, setExistingContratantes] = useState<string[]>(
+  const [, setGiros] = useState<NombreGiro[]>([]);
+  const [comunas, setComunas] = useState<NombreComuna[]>([]);
+  const [existingContratantes, _setExistingContratantes] = useState<string[]>(
     []
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -106,23 +106,16 @@ export default function CrearContratanteComponent() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const contratantesDataResult =
-          await administracionService.getContratantesData();
+        const [girosResult, comunasResult] = await Promise.all([
+          administracionService.getGiros(),
+          administracionService.getComunas()
+        ]);
 
-        if (contratantesDataResult.error) {
-          toast.error(contratantesDataResult.error);
-          return;
-        }
-
-        if (contratantesDataResult.data) {
-          setGiros(contratantesDataResult.data.giros);
-          setComunas(contratantesDataResult.data.comunas);
-          setExistingContratantes(
-            contratantesDataResult.data.contratantes.map(c => c.rut)
-          );
-        }
+        if (girosResult.data) setGiros(girosResult.data);
+        if (comunasResult.data) setComunas(comunasResult.data);
       } catch (error) {
-        toast.error('Error al cargar datos del formulario', error as any);
+        if (import.meta.env.DEV) console.error('loadData', error);
+        toast.error('Error al cargar datos del formulario');
       }
     };
 
@@ -174,7 +167,8 @@ export default function CrearContratanteComponent() {
       toast.success('Contratante creado exitosamente');
       navigate('/dashboard/administracion/contratantes');
     } catch (error) {
-      toast.error('Error al crear el contratante', error as any);
+      if (import.meta.env.DEV) console.error('crearContratante', error);
+      toast.error('Error al crear el contratante');
     } finally {
       setIsSubmitting(false);
     }
@@ -403,8 +397,17 @@ export default function CrearContratanteComponent() {
                     control={form.control}
                     name="codComuna"
                     render={({ field }) => {
-                      const comunaActual = comunas.find(
-                        c => c.codigo === field.value
+                      const comunaOptions = comunas.map(c => {
+                        if (typeof c === 'string') {
+                          return { value: c, label: c };
+                        }
+                        return {
+                          value: c.codigo,
+                          label: `${c.nombre} (${c.codigo})`
+                        };
+                      });
+                      const comunaActual = comunaOptions.find(
+                        option => option.value === field.value
                       );
 
                       return (
@@ -416,20 +419,12 @@ export default function CrearContratanteComponent() {
                           <FormControl>
                             <Select
                               instanceId="comuna-select"
-                              options={comunas.map(comuna => ({
-                                value: comuna.codigo,
-                                label: `${comuna.nombre} (${comuna.codigo})`
-                              }))}
-                              value={
-                                comunaActual
-                                  ? {
-                                      value: comunaActual.codigo,
-                                      label: `${comunaActual.nombre} (${comunaActual.codigo})`
-                                    }
-                                  : null
-                              }
-                              onChange={(option: any) =>
-                                field.onChange(option ? option.value : '')
+                              options={comunaOptions}
+                              value={comunaActual ?? null}
+                              onChange={(option: SingleValue<OptionType>) =>
+                                field.onChange(
+                                  option ? String(option.value) : ''
+                                )
                               }
                               placeholder="Seleccione la comuna"
                               isClearable

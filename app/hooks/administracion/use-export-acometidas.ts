@@ -13,7 +13,7 @@ export function useExportAcometidas() {
     .addString('sector', 'Sector')
     .addString('empalme', 'Empalme')
     .addString('nicho', 'Nicho')
-    .addString('limitePotencia', 'Límite Potencia (kW)')
+    .addString('limitePotencia', 'Límite Potencia (m³)')
     .addString('medidor', 'Medidor Asignado')
     .build();
 

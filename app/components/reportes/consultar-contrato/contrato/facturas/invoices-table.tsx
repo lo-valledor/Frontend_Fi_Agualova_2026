@@ -178,7 +178,7 @@ const InvoicesTable = memo(function InvoicesTable({
                     <SortButton field="valorTotal">Total</SortButton>
                   </TableHead>
                   <TableHead className="text-right">
-                    <SortButton field="costoPorKwh">$/kWh</SortButton>
+                    <SortButton field="costoPorKwh">$/m³</SortButton>
                   </TableHead>
                   <TableHead>Estado</TableHead>
                   <TableHead>Acciones</TableHead>
@@ -225,7 +225,7 @@ const InvoicesTable = memo(function InvoicesTable({
                       </TableCell>
                       <TableCell className="text-right font-medium">
                         {factura.consumoPeriodo.toLocaleString('es-CL')}
-                        <span className="text-xs text-slate-500 ml-1">kWh</span>
+                        <span className="text-xs text-slate-500 ml-1">m³</span>
                       </TableCell>
                       <TableCell className="text-right text-sm">
                         {formatCurrency(factura.valorNeto!)}

@@ -1,10 +1,9 @@
-import type { AxiosError } from 'axios';
-
 import type {
   MedidorErrorInfo,
   MedidorListItem,
   MedidorModalState
 } from '~/components/administracion/medidores/medidores-types';
+import { extractApiErrorMessage } from './api-error';
 
 export const MEDIDORES_ROUTE = '/dashboard/administracion/medidores';
 export const MEDIDORES_CREAR_ROUTE =
@@ -13,46 +12,13 @@ export const MEDIDORES_CREAR_ROUTE =
 export const createInitialMedidorModalState = (): MedidorModalState => ({
   delete: {
     isOpen: false
-  },
-  asociarSubempalme: {
-    isOpen: false
   }
 });
 
 export const extractMedidorErrorMessage = (
   error: unknown,
   defaultMessage: string
-): MedidorErrorInfo => {
-  if (isNetworkError(error)) {
-    return {
-      message: 'Error de conexión. Por favor, intenta nuevamente.',
-      isNetworkError: true
-    };
-  }
-
-  const serverMessage = extractServerMessage(error);
-  if (serverMessage) {
-    return {
-      message: serverMessage,
-      isNetworkError: false
-    };
-  }
-
-  return {
-    message: defaultMessage,
-    isNetworkError: false
-  };
-};
-
-const isNetworkError = (error: unknown): boolean => {
-  const axiosError = error as AxiosError;
-  return !axiosError?.response;
-};
-
-const extractServerMessage = (error: unknown): string | null => {
-  const axiosError = error as AxiosError<{ message?: string }>;
-  return axiosError?.response?.data?.message || null;
-};
+): MedidorErrorInfo => extractApiErrorMessage(error, defaultMessage);
 
 export const isValidMedidorForOperation = (
   medidor: MedidorListItem | null | undefined

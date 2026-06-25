@@ -1,6 +1,6 @@
 import { LayoutList, Plus } from 'lucide-react';
 import { motion } from 'motion/react';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useRevalidator } from 'react-router';
 import { toast } from 'sonner';
 
@@ -14,6 +14,7 @@ import {
   CardHeader,
   CardTitle
 } from '~/components/ui/card';
+import { mantencionService } from '~/services/mantencionService';
 import type { Concepto, ConceptoAsociables } from '~/types/mantencion';
 
 import { createColumns } from './columns';
@@ -23,60 +24,66 @@ const mechanicalEase = [0.25, 0.1, 0.25, 1] as const;
 
 interface ConceptosComponentProps {
   conceptos: Concepto[];
-  comboAsociadoConceptos: ConceptoAsociables[];
+  conceptoAsociables: ConceptoAsociables[];
 }
 
 export default function ConceptosComponent({
   conceptos,
-  comboAsociadoConceptos
+  conceptoAsociables
 }: Readonly<ConceptosComponentProps>) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedConcepto, setSelectedConcepto] = useState<
-    Concepto | undefined
-  >(undefined);
+  const [selectedConcepto, setSelectedConcepto] = useState<Concepto | null>(
+    null
+  );
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
 
   const revalidator = useRevalidator();
 
-  const handleAdd = () => {
-    setSelectedConcepto(undefined);
+  const handleAdd = useCallback(() => {
+    setSelectedConcepto(null);
     setModalMode('add');
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const handleEdit = (concepto: Concepto) => {
+  const handleEdit = useCallback((concepto: Concepto) => {
     setSelectedConcepto(concepto);
     setModalMode('edit');
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const handleDelete = async (concepto: Concepto) => {
-    if (
-      globalThis.confirm(
-        `¿Está seguro de que desea eliminar el concepto "${concepto.denominacion}"?`
-      )
-    ) {
-      try {
-        const { default: api } = await import('~/lib/api');
-        await api.delete(`/eliminarConceptos/${concepto.id}`);
+  const handleDelete = useCallback(
+    async (concepto: Concepto) => {
+      if (
+        globalThis.confirm(
+          `¿Está seguro de que desea eliminar el concepto "${concepto.denominacion}"?`
+        )
+      ) {
+        try {
+          const result = await mantencionService.deleteConcepto(concepto.id);
+          if (result.error) {
+            throw new Error(result.error);
+          }
 
-        toast.success('Concepto eliminado exitosamente');
-        revalidator.revalidate();
-      } catch (error) {
-        console.error('Error al eliminar el concepto:', error);
-        toast.error('Error al eliminar el concepto');
+          toast.success('Concepto eliminado exitosamente');
+          revalidator.revalidate();
+        } catch (error) {
+          console.error('Error al eliminar el concepto:', error);
+          toast.error('Error al eliminar el concepto');
+        }
       }
-    }
-  };
+    },
+    [revalidator]
+  );
 
-  const handleSuccess = () => {
+  const handleSuccess = useCallback(() => {
+    revalidator.revalidate();
+    setIsModalOpen(false);
     toast.success(
       modalMode === 'add'
         ? 'Concepto creado exitosamente'
         : 'Concepto actualizado exitosamente'
     );
-    revalidator.revalidate();
-  };
+  }, [modalMode, revalidator]);
 
   const columns = useMemo(
     () =>
@@ -142,7 +149,7 @@ export default function ConceptosComponent({
           onSuccess={handleSuccess}
           concepto={selectedConcepto}
           mode={modalMode}
-          comboAsociadoConceptos={comboAsociadoConceptos}
+          conceptoAsociables={conceptoAsociables}
         />
       </div>
     </div>

@@ -1,5 +1,7 @@
 import { jwtDecode } from 'jwt-decode';
 
+import { clearAuthToken, getAuthToken } from '~/services/axiosConfig';
+
 interface DecodedToken {
   id: string;
   username: string;
@@ -11,7 +13,7 @@ interface DecodedToken {
 }
 
 export function getAuthenticatedUser(): DecodedToken | null {
-  const token = localStorage.getItem('token');
+  const token = getAuthToken();
 
   if (!token) {
     return null;
@@ -20,16 +22,15 @@ export function getAuthenticatedUser(): DecodedToken | null {
   try {
     const decoded = jwtDecode<DecodedToken>(token);
 
-    // Check if the token is expired
     if (decoded.exp * 1000 < Date.now()) {
-      localStorage.removeItem('token');
+      clearAuthToken();
       return null;
     }
 
     return decoded;
   } catch (error) {
-    console.error('Error decoding token:', error);
-    localStorage.removeItem('token');
+    if (import.meta.env.DEV) console.error('Error decoding token:', error);
+    clearAuthToken();
     return null;
   }
 }

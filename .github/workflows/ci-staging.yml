@@ -1,12 +1,8 @@
 name: CI & Deploy Staging (develop)
 
 on:
-  pull_request:
-    branches: [develop, main]
-    types: [opened, synchronize, reopened]
   push:
     branches: [develop]
-  workflow_dispatch:
 
 concurrency:
   group: staging-${{ github.ref }}
@@ -49,12 +45,12 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build (Vite)
+      - name: Run CI
         env:
           VITE_API_URL: ${{ secrets.STAGING_API_URL || 'http://localhost:8081/Agualova' }}
           VITE_ENV_MODE: uat
           VITE_APP_ENV: staging
-        run: pnpm run build
+        run: pnpm run ci
 
   deploy-staging:
     name: Deploy Staging

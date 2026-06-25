@@ -1,7 +1,8 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2 } from 'lucide-react';
-import React from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { z } from 'zod';
 
 import { Button } from '~/components/ui/button';
@@ -23,17 +24,19 @@ import {
   FormMessage
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
-import type { Tarifa } from '~/types/mantencion';
+import { mantencionService } from '~/services/mantencionService';
+import type { Tarifa, TarifaFormValues } from '~/types/mantencion';
 
 const tarifaSchema = z.object({
+  id: z.number().optional(),
   codigo: z
     .string()
-    .min(1, 'El código es requerido')
-    .max(20, 'El código no debe exceder 20 caracteres'),
+    .min(1, { message: 'El código es requerido.' })
+    .max(20, { message: 'El código no debe exceder 20 caracteres.' }),
   nombre: z
     .string()
-    .min(1, 'El nombre es requerido')
-    .max(100, 'El nombre no debe exceder 100 caracteres')
+    .min(1, { message: 'El nombre es requerido.' })
+    .max(100, { message: 'El nombre no debe exceder 100 caracteres.' })
 });
 
 type TarifaFormData = z.infer<typeof tarifaSchema>;
@@ -42,7 +45,7 @@ interface TarifaFormModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
-  tarifa?: Tarifa;
+  tarifa: Tarifa | null;
   mode: 'add' | 'edit';
 }
 
@@ -52,40 +55,66 @@ export default function TarifaFormModal({
   onSuccess,
   tarifa,
   mode
-}: TarifaFormModalProps) {
+}: Readonly<TarifaFormModalProps>) {
+  const [isLoading, setIsLoading] = useState(false);
+
   const form = useForm<TarifaFormData>({
     resolver: zodResolver(tarifaSchema),
     defaultValues: {
-      codigo: tarifa?.codigo || '',
-      nombre: tarifa?.nombre || ''
+      id: 0,
+      codigo: '',
+      nombre: ''
     }
   });
 
-  const isLoading = form.formState.isSubmitting;
+  useEffect(() => {
+    if (!isOpen) return;
 
-  React.useEffect(() => {
-    if (isOpen) {
+    if (mode === 'edit' && tarifa) {
       form.reset({
-        codigo: tarifa?.codigo || '',
-        nombre: tarifa?.nombre || ''
+        id: tarifa.id,
+        codigo: tarifa.codigo,
+        nombre: tarifa.nombre
+      });
+    } else {
+      form.reset({
+        id: 0,
+        codigo: '',
+        nombre: ''
       });
     }
-  }, [isOpen, tarifa, form]);
+  }, [isOpen, mode, tarifa, form]);
 
   const onSubmit = async (data: TarifaFormData) => {
+    setIsLoading(true);
     try {
-      const { default: api } = await import('~/lib/api');
+      const payload: TarifaFormValues = {
+        id: mode === 'edit' && tarifa ? tarifa.id : 0,
+        codigo: data.codigo,
+        nombre: data.nombre
+      };
 
+      let result;
       if (mode === 'add') {
-        await api.post('/tarifas/crear', data);
-      } else {
-        await api.put(`/tarifas/editar`, { ...data, id: tarifa?.id });
+        result = await mantencionService.createTarifa(payload);
+      } else if (mode === 'edit' && tarifa) {
+        result = await mantencionService.updateTarifa(payload);
+      }
+
+      if (result?.error) {
+        throw new Error(result.error);
       }
 
       onSuccess();
-      onClose();
     } catch (error) {
       console.error('Error al guardar la tarifa:', error);
+      toast.error(
+        mode === 'add'
+          ? 'Error al crear la tarifa'
+          : 'Error al actualizar la tarifa'
+      );
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -98,8 +127,8 @@ export default function TarifaFormModal({
           </DialogTitle>
           <DialogDescription>
             {mode === 'add'
-              ? 'Complete los datos para crear una nueva tarifa'
-              : 'Modifique los datos de la tarifa seleccionada'}
+              ? 'Complete los datos para crear una nueva tarifa.'
+              : 'Modifique los datos de la tarifa seleccionada.'}
           </DialogDescription>
         </DialogHeader>
 

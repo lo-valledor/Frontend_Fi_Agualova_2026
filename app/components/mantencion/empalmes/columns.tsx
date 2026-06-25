@@ -40,7 +40,7 @@ export const columns = ({
     cell: ({ row }) => {
       const nombre = row.getValue('nombre');
       return (
-        <div className="max-w-[150px] truncate font-medium">
+        <div className="max-w-37.5 truncate font-medium">
           {nombre as string}
         </div>
       );
@@ -66,7 +66,7 @@ export const columns = ({
     cell: ({ row }) => {
       const nombreEmpresa = row.getValue('nombreEmpresa');
       return (
-        <div className="max-w-[150px] truncate font-medium">
+        <div className="max-w-37.5 truncate font-medium">
           {nombreEmpresa as string}
         </div>
       );
@@ -83,7 +83,7 @@ export const columns = ({
       return (
         <div className="text-right">
           <span className="font-medium">{(potencia as number).toFixed(2)}</span>
-          <span className="text-xs text-muted-foreground ml-1">kW</span>
+          <span className="text-xs text-muted-foreground ml-1">m³</span>
         </div>
       );
     },

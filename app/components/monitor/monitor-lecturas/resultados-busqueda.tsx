@@ -1,352 +1,72 @@
-import NumberFlow from "@number-flow/react";
+import NumberFlow from '@number-flow/react';
 import {
   AlertCircle,
   AlertTriangle,
   BarChart3,
-  Calendar,
   ChevronDown,
   ChevronUp,
-  Eye,
   FileUp,
-  Gauge,
   Grid3X3,
   History,
   Info,
   MapPin,
-  Pencil,
-  RefreshCw,
-} from "lucide-react";
-import { motion } from "motion/react";
-import Skeleton from "react-loading-skeleton";
-import "react-loading-skeleton/dist/skeleton.css";
+  RefreshCw
+} from 'lucide-react';
+import { motion } from 'motion/react';
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 
-import { useCallback, useEffect, useState } from "react";
-import { toast } from "sonner";
+import { useCallback, useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
-import DetallesMedidor from "~/components/monitor/monitor-lecturas/detalles-medidor";
-import { Alert, AlertDescription } from "~/components/ui/alert";
-import { Badge } from "~/components/ui/badge";
-import { Button } from "~/components/ui/button";
-import { Card, CardContent } from "~/components/ui/card";
+import { MeterCard } from '~/components/monitor/monitor-lecturas/meter-card';
+import { MeterRowDetailed } from '~/components/monitor/monitor-lecturas/meter-row-detailed';
+import { StatusIndicator } from '~/components/monitor/monitor-lecturas/status-indicator';
+import { Alert, AlertDescription } from '~/components/ui/alert';
+import { Badge } from '~/components/ui/badge';
+import { Button } from '~/components/ui/button';
+import { Card, CardContent } from '~/components/ui/card';
 import {
   Collapsible,
   CollapsibleContent,
-  CollapsibleTrigger,
-} from "~/components/ui/collapsible";
+  CollapsibleTrigger
+} from '~/components/ui/collapsible';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
-} from "~/components/ui/dialog";
+  DialogTrigger
+} from '~/components/ui/dialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "~/components/ui/dropdown-menu";
-import { EmptyState } from "~/components/ui/empty-state";
-import { ScrollArea } from "~/components/ui/scroll-area";
-import { Separator } from "~/components/ui/separator";
+  DropdownMenuTrigger
+} from '~/components/ui/dropdown-menu';
+import { EmptyState } from '~/components/ui/empty-state';
+import { ScrollArea } from '~/components/ui/scroll-area';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
-  TooltipTrigger,
-} from "~/components/ui/tooltip";
-import { useApiWithLoadingBar } from "~/lib/api";
-import { cn } from "~/lib/utils";
-import { monitorService } from "~/services";
+  TooltipTrigger
+} from '~/components/ui/tooltip';
+import { cn } from '~/lib/utils';
+import { monitorService } from '~/services';
 import type {
   MonitorFilas,
   MonitorGrillaProps,
   MonitorMedidores,
   MonitorNichosGet
-} from "~/types/monitor";
+} from '~/types/monitor';
 import {
   calculateNichoStats,
   calculatePercentage,
-  calculateTotalStats,
-} from "~/utils/monitor/monitor-calculations";
-import {
-  getMeterStatus,
-  isImportedReading,
-} from "~/utils/monitor/monitor-status";
-
-// Component for status circle indicator with subtle pulse animation
-const StatusIndicator = ({
-  status,
-  size = "md",
-}: {
-  status: any;
-  size?: "sm" | "md" | "lg";
-}) => {
-  const sizeClasses: { [key in "sm" | "md" | "lg"]: string } = {
-    sm: "h-2 w-2",
-    md: "h-3 w-3",
-    lg: "h-4 w-4",
-  };
-
-  return (
-    <motion.div
-      initial={{ scale: 0.8, opacity: 0 }}
-      animate={{ scale: 1, opacity: 1 }}
-      transition={{ duration: 0.2 }}
-      className={`rounded-full ${status.bgColor} ${
-        sizeClasses[size ?? "md"]
-      } shrink-0`}
-    />
-  );
-};
-
-// Meter card component for reuse with motion
-const MeterCard = ({
-  medidor,
-  onRefresh,
-}: {
-  medidor: any;
-  onRefresh: any;
-}) => {
-  const status = getMeterStatus(medidor.claveHtml);
-  const isImported = isImportedReading(medidor);
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.2 }}
-      whileHover={{ y: -2 }}
-    >
-      <Card
-        className={cn(
-          "overflow-hidden transition-all duration-200 hover:shadow-lg border-l-4",
-          status.borderColor,
-          isImported && "bg-pink-100/80 dark:bg-pink-950/30 shadow-pink-200/50",
-        )}
-      >
-        <CardContent className="p-2">
-          <div className="flex justify-between items-start">
-            <div className="flex items-center gap-1 sm:gap-2 min-w-0">
-              <StatusIndicator status={status} size="sm" />
-              <div className="min-w-0">
-                <div className="font-medium text-xs truncate">
-                  {medidor.nSerie}
-                </div>
-                <div className="text-[10px] text-muted-foreground">
-                  ID: {medidor.id}
-                </div>
-              </div>
-            </div>
-
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
-                  <Eye className="h-3 w-3" />
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-[95vw] w-full max-h-[95vh] h-auto sm:max-w-xl md:max-w-2xl lg:max-w-4xl overflow-hidden flex flex-col">
-                <DialogHeader className="shrink-0 pb-3 sm:pb-4 border-b border-border/40 px-4 sm:px-6">
-                  <DialogTitle className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
-                    <div className="flex items-center gap-2 sm:gap-3">
-                      <div
-                        className={`p-1.5 sm:p-2 rounded-xl ${status.bgColor}`}
-                      >
-                        {status.icon}
-                      </div>
-                      <div>
-                        <h2 className="text-lg sm:text-xl font-semibold tracking-tight">
-                          Detalle de Lectura
-                        </h2>
-                        <p className="text-xs sm:text-sm text-muted-foreground mt-1">
-                          ID: {medidor.id} | Medidor: {medidor.nSerie}
-                        </p>
-                      </div>
-                    </div>
-                    <Badge className={`${status.bgColor} text-xs sm:text-sm`}>
-                      {status.label}
-                    </Badge>
-                  </DialogTitle>
-                </DialogHeader>
-                <div className="flex-1 overflow-y-auto">
-                  <div className="p-3 sm:p-6">
-                    <DetallesMedidor
-                      lecturaId={medidor.id}
-                      onSuccess={onRefresh}
-                    />
-                  </div>
-                </div>
-              </DialogContent>
-            </Dialog>
-          </div>
-
-          <div className="mt-2 grid grid-cols-2 gap-1 text-xs">
-            <div>
-              <div className="text-muted-foreground text-[10px]">Lectura</div>
-              <div className="font-semibold text-xs">
-                {medidor.consumo || "0"}
-              </div>
-            </div>
-            <div>
-              <div className="text-muted-foreground text-[10px]">Consumo</div>
-              <div className="font-semibold text-xs">
-                {medidor.ultimaLectura || "-"}
-              </div>
-            </div>
-            <div className="col-span-2">
-              <div className="font-medium text-xs flex items-center gap-1">
-                <Calendar className="h-3 w-3" />
-                <span className="truncate">
-                  {medidor.fechaLectura
-                    ? new Date(medidor.fechaLectura).toLocaleString()
-                    : "Sin registro"}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <Separator className="my-2" />
-
-          <div className="flex justify-center">
-            <Badge
-              variant="outline"
-              className={`${status.borderColor} ${status.textColor} text-[10px] px-1 py-0`}
-            >
-              <span className="mr-1">{status.icon}</span>
-              <span className="truncate">{medidor.clave || status.label}</span>
-            </Badge>
-          </div>
-        </CardContent>
-      </Card>
-    </motion.div>
-  );
-};
-
-// Componente de fila compacta para vista detallada
-const MeterRowDetailed = ({
-  medidor,
-  onRefresh,
-}: {
-  medidor: any;
-  onRefresh: any;
-}) => {
-  const status = getMeterStatus(medidor.claveHtml);
-  const isImported = isImportedReading(medidor);
-
-  return (
-    <div
-      className={cn(
-        "group grid items-center gap-2 sm:gap-4 p-2 sm:p-3 rounded-xl border hover:bg-muted/50 transition-all duration-200 border-l-4",
-        "grid-cols-[minmax(0,1fr)_auto] sm:grid-cols-[minmax(0,2fr)_repeat(4,minmax(0,1fr))_auto]",
-        status.borderColor,
-        isImported && "bg-pink-100/80 dark:bg-pink-950/30 shadow-pink-200/50",
-      )}
-    >
-      {/* Status Indicator & Name/ID */}
-      <div className="flex items-center gap-2 min-w-0">
-        <StatusIndicator status={status} size="sm" />
-        <div className="min-w-0">
-          <div className="font-medium text-sm truncate">{medidor.nSerie}</div>
-          <div className="text-xs text-muted-foreground">ID: {medidor.id}</div>
-          {/* Mobile-only additional info */}
-          <div className="sm:hidden flex items-center gap-2 mt-1">
-            <Badge
-              variant="outline"
-              className={cn("text-xs", status.borderColor, status.textColor)}
-            >
-              <span className="mr-1">{status.icon}</span>
-              <span className="truncate">{medidor.clave || status.label}</span>
-            </Badge>
-          </div>
-        </div>
-      </div>
-
-      {/* Lectura */}
-      <div className="hidden sm:block text-left">
-        <div className="text-xs text-muted-foreground">Lectura</div>
-        <div className="font-semibold text-sm">{medidor.consumo || "-"}</div>
-      </div>
-
-      {/* Consumo */}
-      <div className="hidden sm:block text-left">
-        <div className="text-xs text-muted-foreground">Consumo</div>
-        <div className="font-semibold text-sm">
-          {medidor.ultimaLectura || "0"}
-        </div>
-      </div>
-
-      {/* Fecha */}
-      <div className="hidden sm:block min-w-0 text-left">
-        <div className="text-xs text-muted-foreground">Fecha</div>
-        <div className="text-sm font-medium truncate">
-          {medidor.fechaLectura
-            ? new Date(medidor.fechaLectura).toLocaleString("es-CL", {
-                dateStyle: "short",
-                timeStyle: "short",
-                hour12: false,
-              })
-            : "Sin registro"}
-        </div>
-      </div>
-
-      {/* Estado */}
-      <div className="hidden sm:flex justify-start">
-        <Badge
-          variant="outline"
-          className={cn("text-xs ", status.borderColor, status.textColor)}
-        >
-          <span className="mr-1">{status.icon}</span>
-          <span className="truncate">{medidor.clave || status.label}</span>
-        </Badge>
-      </div>
-
-      {/* Acción */}
-      <div className="flex justify-end">
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
-            >
-              <Eye className="h-4 w-4" />
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-[95vw] w-full max-h-[95vh] h-auto sm:max-w-xl md:max-w-2xl lg:max-w-4xl overflow-hidden flex flex-col">
-            <DialogHeader className="shrink-0 pb-3 sm:pb-4 border-b border-border/40 px-4 sm:px-6">
-              <DialogTitle className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
-                <div className="flex items-center gap-2 sm:gap-3">
-                  <div
-                    className={cn("p-1.5 sm:p-2 rounded-xl", status.bgColor)}
-                  >
-                    {status.icon}
-                  </div>
-                  <div>
-                    <h2 className="text-lg sm:text-xl font-semibold tracking-tight">
-                      Detalle de Lectura
-                    </h2>
-                    <p className="text-xs sm:text-sm text-muted-foreground mt-1">
-                      ID: {medidor.id} | Medidor: {medidor.nSerie}
-                    </p>
-                  </div>
-                </div>
-                <Badge className={cn(status.bgColor, "text-xs sm:text-sm")}>
-                  {status.label}
-                </Badge>
-              </DialogTitle>
-            </DialogHeader>
-            <div className="flex-1 overflow-y-auto">
-              <div className="p-3 sm:p-6">
-                <DetallesMedidor lecturaId={medidor.id} onSuccess={onRefresh} />
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
-      </div>
-    </div>
-  );
-};
+  calculateTotalStats
+} from '~/utils/monitor/monitor-calculations';
+import { getMeterStatus } from '~/utils/monitor/monitor-status';
 
 // Type para el estado de resultados
 interface ResultsState {
@@ -361,40 +81,37 @@ export default function ResultadosBusqueda({
   fechaFin: endDate,
   clave: claveId,
   criterio: keyType,
-  triggerSearch,
+  triggerSearch
 }: Readonly<MonitorGrillaProps & { triggerSearch: number }>) {
   const [isSearching, setIsSearching] = useState(false);
   const [searchError, setSearchError] = useState(null);
   const [results, setResults] = useState<ResultsState>({ nichos: [] });
   const [refreshCounter, setRefreshCounter] = useState(0);
-  const [viewMode, setViewMode] = useState("default"); // 'default', 'compact', 'detailed'
+  const [viewMode, setViewMode] = useState('default'); // 'default', 'compact', 'detailed'
   const [selectedNichoIndex, setSelectedNichoIndex] = useState(0);
   const [expandedFilas, setExpandedFilas] = useState<Record<string, boolean>>(
-    {},
+    {}
   );
-  const [isNichoModalOpen, setIsNichoModalOpen] = useState(false);
-  const [needsNichoRefresh, setNeedsNichoRefresh] = useState(false);
-  const api = useApiWithLoadingBar();
 
   // Validation with early returns
   const validateSearchFields = (): boolean => {
     if (!sector) {
-      toast.error("Sector no seleccionado");
+      toast.error('Sector no seleccionado');
       return false;
     }
 
     if (!periodo) {
-      toast.error("Periodo no seleccionado");
+      toast.error('Periodo no seleccionado');
       return false;
     }
 
-    if (!startDate || startDate.trim() === "") {
-      toast.error("Fecha de inicio no seleccionada");
+    if (!startDate || startDate.trim() === '') {
+      toast.error('Fecha de inicio no seleccionada');
       return false;
     }
 
-    if (!endDate || endDate.trim() === "") {
-      toast.error("Fecha de fin no seleccionada");
+    if (!endDate || endDate.trim() === '') {
+      toast.error('Fecha de fin no seleccionada');
       return false;
     }
 
@@ -425,7 +142,7 @@ export default function ResultadosBusqueda({
     if (Array.isArray(response)) {
       if (response.length === 0) return [];
       const first = response[0];
-      if (first && typeof first === "object" && "filas" in first) {
+      if (first && typeof first === 'object' && 'filas' in first) {
         return response.map((n: any, i: number) => ({
           nombre: n?.nombre ?? `Nicho ${i + 1}`,
           filas: Array.isArray(n?.filas) ? n.filas : []
@@ -434,7 +151,7 @@ export default function ResultadosBusqueda({
       // Array plano de medidores → envolver en un nicho virtual
       return [
         {
-          nombre: "Resultados",
+          nombre: 'Resultados',
           filas: response.map((m: any, idx: number) => ({
             numero: idx + 1,
             medidores: Array.isArray(m) ? m : [m]
@@ -445,7 +162,7 @@ export default function ResultadosBusqueda({
 
     // Si es un objeto, buscar nichos en varios paths
     const responseData =
-      response.data && typeof response.data === "object"
+      response.data && typeof response.data === 'object'
         ? response.data
         : response;
 
@@ -453,23 +170,23 @@ export default function ResultadosBusqueda({
     let rawNichos: any[] = [];
 
     if (
-      "data" in responseData &&
+      'data' in responseData &&
       responseData.data &&
-      typeof responseData.data === "object"
+      typeof responseData.data === 'object'
     ) {
       rawNichos = Array.isArray(responseData.data.nichos)
         ? responseData.data.nichos
         : [];
-    } else if ("nichos" in responseData && Array.isArray(responseData.nichos)) {
+    } else if ('nichos' in responseData && Array.isArray(responseData.nichos)) {
       rawNichos = responseData.nichos;
     } else if (
-      "medidores" in responseData &&
+      'medidores' in responseData &&
       Array.isArray(responseData.medidores)
     ) {
       // Array plano de medidores dentro de un objeto
       return [
         {
-          nombre: "Resultados",
+          nombre: 'Resultados',
           filas: responseData.medidores.map((m: any, idx: number) => ({
             numero: idx + 1,
             medidores: [m]
@@ -484,7 +201,7 @@ export default function ResultadosBusqueda({
     // Map and validate each nicho structure
     return rawNichos.map((nicho: any, index: number) => ({
       nombre: nicho?.nombre || `Nicho ${index + 1}`,
-      filas: Array.isArray(nicho?.filas) ? nicho.filas : [],
+      filas: Array.isArray(nicho?.filas) ? nicho.filas : []
     }));
   };
 
@@ -528,9 +245,9 @@ export default function ResultadosBusqueda({
       const newExpandedState = initializeExpandedState(nichos);
       setExpandedFilas(newExpandedState);
     } catch (error) {
-      console.error("Error al buscar lecturas:", error);
+      console.error('Error al buscar lecturas:', error);
       setSearchError(null);
-      toast.error("Error al buscar lecturas. Por favor, intente nuevamente.");
+      toast.error('Error al buscar lecturas. Por favor, intente nuevamente.');
     } finally {
       setIsSearching(false);
     }
@@ -539,12 +256,12 @@ export default function ResultadosBusqueda({
   const handleRefresh = useCallback(() => {
     // Early return if required fields are missing
     if (!sector || !periodo || !startDate || !endDate) {
-      toast.info("Seleccione Sector, Periodo y Fechas para refrescar.");
+      toast.info('Seleccione Sector, Periodo y Fechas para refrescar.');
       return;
     }
 
     // Increment refresh counter to trigger reload
-    setRefreshCounter((prev) => prev + 1);
+    setRefreshCounter(prev => prev + 1);
   }, [sector, periodo, startDate, endDate]);
 
   useEffect(() => {
@@ -553,41 +270,20 @@ export default function ResultadosBusqueda({
     }
   }, [triggerSearch, refreshCounter]);
 
-  useEffect(() => {
-    if (!isNichoModalOpen && needsNichoRefresh) {
-      handleRefresh();
-      setNeedsNichoRefresh(false);
-    }
-  }, [isNichoModalOpen, needsNichoRefresh, handleRefresh]);
-
   type ToggleFilaFn = (nichoIndex: number, filaIndex: number) => void;
 
   const toggleFila: ToggleFilaFn = (nichoIndex, filaIndex) => {
     const key = `${nichoIndex}-${filaIndex}`;
-    setExpandedFilas((prev) => ({
+    setExpandedFilas(prev => ({
       ...prev,
-      [key]: !prev[key],
+      [key]: !prev[key]
     }));
   };
 
   type HandleNichoChangeFn = (index: number) => void;
 
-  const handleNichoChange: HandleNichoChangeFn = (index) => {
+  const handleNichoChange: HandleNichoChangeFn = index => {
     setSelectedNichoIndex(index);
-  };
-
-  const handleNichoModalSuccess = () => {
-    // Mostrar notificación de éxito inmediatamente
-    toast.success("Medidor actualizado correctamente");
-    setNeedsNichoRefresh(true);
-
-    // Refrescar los resultados en segundo plano sin cerrar el modal
-    // handleRefresh();
-
-    // Mostrar notificación adicional que los datos se están actualizando
-    setTimeout(() => {
-      toast.info("Datos actualizados en segundo plano");
-    }, 800);
   };
 
   return (
@@ -610,7 +306,7 @@ export default function ResultadosBusqueda({
             className="gap-1 text-foreground"
           >
             <RefreshCw
-              className={`h-4 w-4 ${isSearching ? "animate-spin" : ""}`}
+              className={`h-4 w-4 ${isSearching ? 'animate-spin' : ''}`}
             />
             <span className="hidden sm:inline">Refrescar</span>
           </Button>
@@ -727,7 +423,7 @@ export default function ResultadosBusqueda({
                                 </p>
                                 <p className="text-xl sm:text-2xl font-semibold">
                                   {results.nichos.length} nicho
-                                  {results.nichos.length === 1 ? "" : "s"}
+                                  {results.nichos.length === 1 ? '' : 's'}
                                 </p>
                               </div>
                             </div>
@@ -769,7 +465,7 @@ export default function ResultadosBusqueda({
                                     <p className="text-xs sm:text-sm text-red-600/70 dark:text-red-400/70">
                                       {calculatePercentage(
                                         stats.critical,
-                                        stats.total,
+                                        stats.total
                                       )}
                                       %
                                     </p>
@@ -780,7 +476,7 @@ export default function ResultadosBusqueda({
                                   <motion.div
                                     initial={{ width: 0 }}
                                     animate={{
-                                      width: `${calculatePercentage(stats.critical, stats.total)}%`,
+                                      width: `${calculatePercentage(stats.critical, stats.total)}%`
                                     }}
                                     transition={{ duration: 0.5, delay: 0.2 }}
                                     className="h-full bg-red-500 rounded-full"
@@ -816,7 +512,7 @@ export default function ResultadosBusqueda({
                                     <p className="text-xs sm:text-sm text-orange-600/70 dark:text-orange-400/70">
                                       {calculatePercentage(
                                         stats.warning,
-                                        stats.total,
+                                        stats.total
                                       )}
                                       %
                                     </p>
@@ -826,7 +522,7 @@ export default function ResultadosBusqueda({
                                   <motion.div
                                     initial={{ width: 0 }}
                                     animate={{
-                                      width: `${calculatePercentage(stats.warning, stats.total)}%`,
+                                      width: `${calculatePercentage(stats.warning, stats.total)}%`
                                     }}
                                     transition={{ duration: 0.5, delay: 0.25 }}
                                     className="h-full bg-orange-500 rounded-full"
@@ -862,7 +558,7 @@ export default function ResultadosBusqueda({
                                     <p className="text-xs sm:text-sm text-yellow-600/70 dark:text-yellow-400/70">
                                       {calculatePercentage(
                                         stats.info,
-                                        stats.total,
+                                        stats.total
                                       )}
                                       %
                                     </p>
@@ -872,7 +568,7 @@ export default function ResultadosBusqueda({
                                   <motion.div
                                     initial={{ width: 0 }}
                                     animate={{
-                                      width: `${calculatePercentage(stats.info, stats.total)}%`,
+                                      width: `${calculatePercentage(stats.info, stats.total)}%`
                                     }}
                                     transition={{ duration: 0.5, delay: 0.3 }}
                                     className="h-full bg-yellow-500 rounded-full"
@@ -910,7 +606,7 @@ export default function ResultadosBusqueda({
                                     <p className="text-xs sm:text-sm text-gray-600/70 dark:text-gray-400/70">
                                       {calculatePercentage(
                                         stats.sinlec - stats.imported,
-                                        stats.total,
+                                        stats.total
                                       )}
                                       %
                                     </p>
@@ -920,7 +616,7 @@ export default function ResultadosBusqueda({
                                   <motion.div
                                     initial={{ width: 0 }}
                                     animate={{
-                                      width: `${calculatePercentage(stats.sinlec - stats.imported, stats.total)}%`,
+                                      width: `${calculatePercentage(stats.sinlec - stats.imported, stats.total)}%`
                                     }}
                                     transition={{ duration: 0.5, delay: 0.35 }}
                                     className="h-full bg-gray-500 rounded-full"
@@ -956,7 +652,7 @@ export default function ResultadosBusqueda({
                                     <p className="text-xs sm:text-sm text-emerald-600/70 dark:text-emerald-400/70">
                                       {calculatePercentage(
                                         stats.normal,
-                                        stats.total,
+                                        stats.total
                                       )}
                                       %
                                     </p>
@@ -966,7 +662,7 @@ export default function ResultadosBusqueda({
                                   <motion.div
                                     initial={{ width: 0 }}
                                     animate={{
-                                      width: `${calculatePercentage(stats.normal, stats.total)}%`,
+                                      width: `${calculatePercentage(stats.normal, stats.total)}%`
                                     }}
                                     transition={{ duration: 0.5, delay: 0.4 }}
                                     className="h-full bg-emerald-500 rounded-full"
@@ -1002,7 +698,7 @@ export default function ResultadosBusqueda({
                                     <p className="text-xs sm:text-sm text-pink-600/70 dark:text-pink-400/70">
                                       {calculatePercentage(
                                         stats.imported,
-                                        stats.total,
+                                        stats.total
                                       )}
                                       %
                                     </p>
@@ -1012,7 +708,7 @@ export default function ResultadosBusqueda({
                                   <motion.div
                                     initial={{ width: 0 }}
                                     animate={{
-                                      width: `${calculatePercentage(stats.imported, stats.total)}%`,
+                                      width: `${calculatePercentage(stats.imported, stats.total)}%`
                                     }}
                                     transition={{ duration: 0.5, delay: 0.45 }}
                                     className="h-full bg-pink-500 rounded-full"
@@ -1036,107 +732,109 @@ export default function ResultadosBusqueda({
             <div className="space-y-4">
               <ScrollArea className="w-full">
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-1 p-1 bg-muted/30 rounded-xl border backdrop-blur-sm">
-                  {results.nichos.map((nicho: MonitorNichosGet, index: number) => {
-                    const stats = calculateNichoStats(nicho);
-                    const isActive = index === selectedNichoIndex;
+                  {results.nichos.map(
+                    (nicho: MonitorNichosGet, index: number) => {
+                      const stats = calculateNichoStats(nicho);
+                      const isActive = index === selectedNichoIndex;
 
-                    return (
-                      <TooltipProvider key={`nicho-${nicho.nombre}-${index}`}>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              onClick={() => handleNichoChange(index)}
-                              variant="ghost"
-                              className={cn(
-                                "flex flex-col items-center justify-center p-2 gap-2 h-16 rounded-lg border transition-all",
-                                isActive
-                                  ? "bg-primary/10 border-primary"
-                                  : "bg-background hover:bg-accent border-transparent",
-                              )}
-                            >
-                              <span className="font-medium text-center leading-tight">
-                                {nicho.nombre}
-                              </span>
+                      return (
+                        <TooltipProvider key={`nicho-${nicho.nombre}-${index}`}>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                onClick={() => handleNichoChange(index)}
+                                variant="ghost"
+                                className={cn(
+                                  'flex flex-col items-center justify-center p-2 gap-2 h-16 rounded-lg border transition-all',
+                                  isActive
+                                    ? 'bg-primary/10 border-primary'
+                                    : 'bg-background hover:bg-accent border-transparent'
+                                )}
+                              >
+                                <span className="font-medium text-center leading-tight">
+                                  {nicho.nombre}
+                                </span>
 
-                              {/* Status indicators */}
-                              <div className="flex items-center justify-center gap-1 flex-wrap text-white mt-1">
-                                {stats.critical > 0 && (
-                                  <span className="inline-flex items-center justify-center h-4 w-4 md:h-5 md:w-5 text-xs font-bold bg-red-500 rounded-full">
-                                    {stats.critical}
-                                  </span>
-                                )}
-                                {stats.warning > 0 && (
-                                  <span className="inline-flex items-center justify-center h-4 w-4 md:h-5 md:w-5 text-xs font-bold bg-orange-500 rounded-full">
-                                    {stats.warning}
-                                  </span>
-                                )}
-                                {stats.info > 0 && (
-                                  <span className="inline-flex items-center justify-center h-4 w-4 md:h-5 md:w-5 text-xs font-bold text-slate-700 bg-yellow-400 rounded-full">
-                                    {stats.info}
-                                  </span>
-                                )}
-                                {stats.sinlec > 0 && (
-                                  <span className="inline-flex items-center justify-center h-4 w-4 md:h-5 md:w-5 text-xs font-bold bg-gray-500 rounded-full">
-                                    {stats.sinlec}
-                                  </span>
-                                )}
-                                {stats.normal > 0 &&
-                                  stats.critical === 0 &&
-                                  stats.warning === 0 &&
-                                  stats.info === 0 &&
-                                  stats.sinlec === 0 && (
-                                    <span className="inline-flex items-center justify-center h-4 w-4 md:h-5 md:w-5 text-xs font-bold bg-green-500 rounded-full">
-                                      {stats.normal}
+                                {/* Status indicators */}
+                                <div className="flex items-center justify-center gap-1 flex-wrap text-white mt-1">
+                                  {stats.critical > 0 && (
+                                    <span className="inline-flex items-center justify-center h-4 w-4 md:h-5 md:w-5 text-xs font-bold bg-red-500 rounded-full">
+                                      {stats.critical}
                                     </span>
                                   )}
-                              </div>
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent
-                            side="bottom"
-                            className="bg-background border shadow-lg"
-                          >
-                            <div className="space-y-1">
-                              <p className="font-semibold text-foreground">
-                                Nicho: {nicho.nombre}
-                              </p>
-                              <div className="text-xs text-muted-foreground space-y-0.5">
-                                <div>
-                                  {nicho.filas.length} filas • {stats.total}{" "}
-                                  medidores
+                                  {stats.warning > 0 && (
+                                    <span className="inline-flex items-center justify-center h-4 w-4 md:h-5 md:w-5 text-xs font-bold bg-orange-500 rounded-full">
+                                      {stats.warning}
+                                    </span>
+                                  )}
+                                  {stats.info > 0 && (
+                                    <span className="inline-flex items-center justify-center h-4 w-4 md:h-5 md:w-5 text-xs font-bold text-slate-700 bg-yellow-400 rounded-full">
+                                      {stats.info}
+                                    </span>
+                                  )}
+                                  {stats.sinlec > 0 && (
+                                    <span className="inline-flex items-center justify-center h-4 w-4 md:h-5 md:w-5 text-xs font-bold bg-gray-500 rounded-full">
+                                      {stats.sinlec}
+                                    </span>
+                                  )}
+                                  {stats.normal > 0 &&
+                                    stats.critical === 0 &&
+                                    stats.warning === 0 &&
+                                    stats.info === 0 &&
+                                    stats.sinlec === 0 && (
+                                      <span className="inline-flex items-center justify-center h-4 w-4 md:h-5 md:w-5 text-xs font-bold bg-green-500 rounded-full">
+                                        {stats.normal}
+                                      </span>
+                                    )}
                                 </div>
-                                {stats.critical > 0 && (
-                                  <div className="text-red-600 font-medium">
-                                    • {stats.critical} críticos
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent
+                              side="bottom"
+                              className="bg-background border shadow-lg"
+                            >
+                              <div className="space-y-1">
+                                <p className="font-semibold text-foreground">
+                                  Nicho: {nicho.nombre}
+                                </p>
+                                <div className="text-xs text-muted-foreground space-y-0.5">
+                                  <div>
+                                    {nicho.filas.length} filas • {stats.total}{' '}
+                                    medidores
                                   </div>
-                                )}
-                                {stats.warning > 0 && (
-                                  <div className="text-orange-600 font-medium">
-                                    • {stats.warning} relevantes
-                                  </div>
-                                )}
-                                {stats.info > 0 && (
-                                  <div className="text-yellow-600 font-medium">
-                                    • {stats.info} informativos
-                                  </div>
-                                )}
-                                {stats.sinlec > 0 && (
-                                  <div className="text-gray-600 font-medium">
-                                    • {stats.sinlec} sin lectura
-                                  </div>
-                                )}
-                                {stats.normal > 0 && (
-                                  <div className="text-green-600 font-medium">
-                                    • {stats.normal} normales
-                                  </div>
-                                )}
+                                  {stats.critical > 0 && (
+                                    <div className="text-red-600 font-medium">
+                                      • {stats.critical} críticos
+                                    </div>
+                                  )}
+                                  {stats.warning > 0 && (
+                                    <div className="text-orange-600 font-medium">
+                                      • {stats.warning} relevantes
+                                    </div>
+                                  )}
+                                  {stats.info > 0 && (
+                                    <div className="text-yellow-600 font-medium">
+                                      • {stats.info} informativos
+                                    </div>
+                                  )}
+                                  {stats.sinlec > 0 && (
+                                    <div className="text-gray-600 font-medium">
+                                      • {stats.sinlec} sin lectura
+                                    </div>
+                                  )}
+                                  {stats.normal > 0 && (
+                                    <div className="text-green-600 font-medium">
+                                      • {stats.normal} normales
+                                    </div>
+                                  )}
+                                </div>
                               </div>
-                            </div>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    );
-                  })}
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      );
+                    }
+                  )}
                 </div>
               </ScrollArea>
 
@@ -1159,12 +857,12 @@ export default function ResultadosBusqueda({
                           {results.nichos[selectedNichoIndex].nombre}
                         </h3>
                         <p className="text-xs text-muted-foreground">
-                          {results.nichos[selectedNichoIndex].filas.length}{" "}
-                          filas •{" "}
+                          {results.nichos[selectedNichoIndex].filas.length}{' '}
+                          filas •{' '}
                           {results.nichos[selectedNichoIndex].filas.reduce(
                             (acc, fila) => acc + fila.medidores.length,
-                            0,
-                          )}{" "}
+                            0
+                          )}{' '}
                           medidores
                         </p>
                       </div>
@@ -1199,15 +897,15 @@ export default function ResultadosBusqueda({
                               <div className="space-y-2">
                                 {/* Lista estática de todos los estados posibles */}
                                 {[
-                                  "SINLEC",
-                                  "SINCLA",
-                                  "CLAINF",
-                                  "CLAREL",
-                                  "CLACRI",
-                                  "LECCER",
-                                  "LECIMP",
-                                  "IMPORT",
-                                ].map((claveHtml) => {
+                                  'SINLEC',
+                                  'SINCLA',
+                                  'CLAINF',
+                                  'CLAREL',
+                                  'CLACRI',
+                                  'LECCER',
+                                  'LECIMP',
+                                  'IMPORT'
+                                ].map(claveHtml => {
                                   const status = getMeterStatus(claveHtml);
                                   return (
                                     <div
@@ -1243,20 +941,20 @@ export default function ResultadosBusqueda({
                         <DropdownMenuTrigger asChild>
                           <Button variant="outline" size="sm" className="gap-1">
                             {/* ✅ REFACTOR: Extraer lógica de ícono */}
-                            {viewMode === "detailed" && (
+                            {viewMode === 'detailed' && (
                               <BarChart3 className="h-4 w-4" />
                             )}
-                            {viewMode === "compact" && (
+                            {viewMode === 'compact' && (
                               <AlertCircle className="h-4 w-4" />
                             )}
-                            {viewMode === "cards" && (
+                            {viewMode === 'cards' && (
                               <Grid3X3 className="h-4 w-4" />
                             )}
                             <span className="hidden sm:inline">
                               {(() => {
-                                if (viewMode === "detailed") return "Lista";
-                                if (viewMode === "compact") return "Problemas";
-                                return "Tarjetas";
+                                if (viewMode === 'detailed') return 'Lista';
+                                if (viewMode === 'compact') return 'Problemas';
+                                return 'Tarjetas';
                               })()}
                             </span>
                           </Button>
@@ -1264,20 +962,20 @@ export default function ResultadosBusqueda({
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem
                             className={cn(
-                              viewMode === "default" && "bg-accent",
+                              viewMode === 'default' && 'bg-accent'
                             )}
                             onClick={() => {
-                              setViewMode("default");
+                              setViewMode('default');
                             }}
                           >
                             <Grid3X3 className="mr-2 h-4 w-4" /> Tarjetas
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             className={cn(
-                              viewMode === "detailed" && "bg-accent",
+                              viewMode === 'detailed' && 'bg-accent'
                             )}
                             onClick={() => {
-                              setViewMode("detailed");
+                              setViewMode('detailed');
                             }}
                           >
                             <BarChart3 className="mr-2 h-4 w-4" /> Lista
@@ -1285,10 +983,10 @@ export default function ResultadosBusqueda({
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             className={cn(
-                              viewMode === "compact" && "bg-accent",
+                              viewMode === 'compact' && 'bg-accent'
                             )}
                             onClick={() => {
-                              setViewMode("compact");
+                              setViewMode('compact');
                             }}
                           >
                             <AlertCircle className="mr-2 h-4 w-4" /> Solo
@@ -1296,24 +994,6 @@ export default function ResultadosBusqueda({
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
-
-                      <Dialog
-                        open={isNichoModalOpen}
-                        onOpenChange={setIsNichoModalOpen}
-                      >
-                        <DialogTrigger asChild>
-                          <Button
-                            size="sm"
-                            className="bg-green-600 hover:bg-green-700 shadow-sm hover:shadow-md transition-all"
-                            onClick={() => {
-                              setIsNichoModalOpen(true);
-                            }}
-                          >
-                            <Pencil className="h-4 w-4 mr-2" />
-                            Ingresar Lecturas
-                          </Button>
-                        </DialogTrigger>
-                      </Dialog>
                     </div>
                   </motion.div>
 
@@ -1326,7 +1006,7 @@ export default function ResultadosBusqueda({
                             getMeterStatus(m.claveHtml).severity > 2
                         ).length;
 
-                        if (viewMode === "compact" && problemCount === 0) {
+                        if (viewMode === 'compact' && problemCount === 0) {
                           return null;
                         }
 
@@ -1370,14 +1050,14 @@ export default function ResultadosBusqueda({
                                           className="ml-2"
                                         >
                                           {problemCount} problema
-                                          {problemCount !== 1 && "s"}
+                                          {problemCount !== 1 && 's'}
                                         </Badge>
                                       )}
                                     </div>
 
                                     <div className="flex items-center gap-3">
                                       <div className="text-sm text-muted-foreground">
-                                        {isExpanded ? "Ocultar" : "Mostrar"}
+                                        {isExpanded ? 'Ocultar' : 'Mostrar'}
                                       </div>
                                       {isExpanded ? (
                                         <ChevronUp className="h-5 w-5 text-muted-foreground" />
@@ -1389,7 +1069,7 @@ export default function ResultadosBusqueda({
                                 </CollapsibleTrigger>
                                 <CollapsibleContent>
                                   <div className="p-3 pt-0">
-                                    {viewMode === "detailed" ? (
+                                    {viewMode === 'detailed' ? (
                                       <div className="space-y-2">
                                         {fila.medidores.map(
                                           (medidor: MonitorMedidores) => {
@@ -1408,7 +1088,7 @@ export default function ResultadosBusqueda({
                                         {fila.medidores.map(
                                           (medidor: MonitorMedidores) => {
                                             if (
-                                              viewMode === "compact" &&
+                                              viewMode === 'compact' &&
                                               getMeterStatus(medidor.claveHtml)
                                                 .severity <= 1
                                             ) {
@@ -1449,10 +1129,10 @@ export default function ResultadosBusqueda({
           title="No se encontraron resultados"
           description="No hay lecturas para los filtros y rango de fechas seleccionados"
           suggestions={[
-            "Verifica que el período tenga lecturas registradas",
-            "Intenta expandir el rango de fechas",
-            "Prueba seleccionando otro sector o clave",
-            "Revisa que los filtros aplicados sean correctos",
+            'Verifica que el período tenga lecturas registradas',
+            'Intenta expandir el rango de fechas',
+            'Prueba seleccionando otro sector o clave',
+            'Revisa que los filtros aplicados sean correctos'
           ]}
         />
       )}

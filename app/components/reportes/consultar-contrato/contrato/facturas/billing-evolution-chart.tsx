@@ -173,7 +173,7 @@ const BillingEvolutionChart = memo(function BillingEvolutionChart({
         </div>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig} className="h-[400px] w-full">
+        <ChartContainer config={chartConfig} className="h-100 w-full">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={chartData}>
               <CartesianGrid
@@ -252,12 +252,12 @@ const BillingEvolutionChart = memo(function BillingEvolutionChart({
                                 Consumo:
                               </span>
                               <span className="font-medium">
-                                {data.consumo.toLocaleString('es-CL')} kWh
+                                {data.consumo.toLocaleString('es-CL')} m³
                               </span>
                             </div>
                             <div className="flex items-center justify-between gap-4">
                               <span className="text-slate-600 dark:text-slate-400">
-                                Costo/kWh:
+                                Costo/m³:
                               </span>
                               <span className="font-medium">
                                 ${data.costoPorKwh.toFixed(0)}

@@ -1,6 +1,7 @@
+import type { PaginationState } from '@tanstack/react-table';
 import { LayoutList, Plus } from 'lucide-react';
 import { motion } from 'motion/react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { toast } from 'sonner';
 
@@ -8,8 +9,7 @@ import type {
   MedidorListItem,
   MedidorModalState
 } from '~/components/administracion/medidores/medidores-types';
-import { VirtualDataTable } from '~/components/data-table/virtual-data-table';
-import { LoadingSpinner } from '~/components/loading-spinner';
+import { DataTable } from '~/components/data-table/data-table';
 import { ExportButton } from '~/components/shared/export-button';
 import { ModernHeader } from '~/components/shared/modern-header';
 import { Button } from '~/components/ui/button';
@@ -21,7 +21,6 @@ import {
   CardTitle
 } from '~/components/ui/card';
 import { useExportMedidores } from '~/hooks/administracion/use-export-medidores';
-import { useMedidorFilters } from '~/hooks/administracion/use-medidor-filters';
 import { administracionService } from '~/services/administracionService';
 import {
   createInitialMedidorModalState,
@@ -31,14 +30,8 @@ import {
   MEDIDORES_CREAR_ROUTE
 } from '~/utils/administracion';
 
-import { AsociarSubempalmeModal } from './asociar-subempalme-modal';
 import { columns } from './columns';
 import { DeleteConfirmationDialog } from './delete-confirm-dialog';
-import { FilterSummary } from './filter-summary';
-import {
-  type MedidorFilters,
-  MedidorFiltersComponent
-} from './medidor-filters';
 
 interface MedidoresComponentProps {
   readonly medidores: MedidorListItem[];
@@ -47,75 +40,129 @@ interface MedidoresComponentProps {
 export default function MedidoresComponent({
   medidores: initialMedidores
 }: MedidoresComponentProps) {
-  const [medidores, setMedidores] =
-    useState<MedidorListItem[]>(initialMedidores);
   const [selectedMedidor, setSelectedMedidor] =
     useState<MedidorListItem | null>(null);
   const [modalsState, setModalsState] = useState<MedidorModalState>(
     createInitialMedidorModalState()
   );
-  const [isFetching, setIsFetching] = useState(false);
-  const [filters, setFilters] = useState<MedidorFilters>({
-    marca: '',
-    tipo: '',
-    modelo: '',
-    estado: '',
-    digitosMin: '',
-    digitosMax: '',
-    multiplicarMin: '',
-    multiplicarMax: '',
-    fechaInicioDesde: '',
-    fechaInicioHasta: '',
-    tieneUbicacion: '',
-    tieneAcometida: ''
+  // ─── Estado de paginación/búsqueda server-side de la tabla ─────────
+  const DEFAULT_PAGE_SIZE = 10;
+  const [tableData, setTableData] =
+    useState<MedidorListItem[]>(initialMedidores);
+  const [tableLoading, setTableLoading] = useState(false);
+  const [tableError, setTableError] = useState<string | null>(null);
+  const [searchField, setSearchField] = useState('modelo');
+  const [searchValue, setSearchValue] = useState('');
+  const [tablePagination, setTablePagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: DEFAULT_PAGE_SIZE
   });
+  const [hasMore, setHasMore] = useState(true);
+  const requestIdRef = useRef(0);
+
+  const searchFields = useMemo(
+    () => [
+      { value: 'modelo', label: 'Modelo' },
+      { value: 'serie', label: 'Serie' }
+    ],
+    []
+  );
 
   const { medidorColumns } = useExportMedidores();
-  const { filteredMedidores, filterStats, filterOptions } = useMedidorFilters(
-    medidores,
-    filters
-  );
   const navigate = useNavigate();
 
+  const fetchMedidoresPage = useCallback(
+    async ({
+      pageIndex,
+      pageSize,
+      field,
+      value
+    }: {
+      pageIndex: number;
+      pageSize: number;
+      field: string;
+      value: string;
+    }) => {
+      const requestId = ++requestIdRef.current;
+      setTableLoading(true);
+      setTableError(null);
+      const result = await administracionService.getMedidoresByLimitAndOffset({
+        limit: pageSize,
+        offset: pageIndex * pageSize,
+        ...(value.trim() ? { [field]: value.trim() } : {})
+      });
+
+      if (requestId !== requestIdRef.current) return;
+
+      if (result.error || !result.data) {
+        setTableData([]);
+        setHasMore(false);
+        setTableError(result.error ?? 'Error desconocido');
+      } else {
+        setTableData(result.data);
+        setHasMore(result.data.length >= pageSize);
+      }
+      setTableLoading(false);
+    },
+    []
+  );
+
   useEffect(() => {
-    setMedidores(initialMedidores);
-  }, [initialMedidores]);
-
-  const handleFiltersChange = useCallback((newFilters: MedidorFilters) => {
-    setFilters(newFilters);
-  }, []);
-
-  const handleClearFilters = useCallback(() => {
-    setFilters({
-      marca: '',
-      tipo: '',
-      modelo: '',
-      estado: '',
-      digitosMin: '',
-      digitosMax: '',
-      multiplicarMin: '',
-      multiplicarMax: '',
-      fechaInicioDesde: '',
-      fechaInicioHasta: '',
-      tieneUbicacion: '',
-      tieneAcometida: ''
+    fetchMedidoresPage({
+      pageIndex: 0,
+      pageSize: DEFAULT_PAGE_SIZE,
+      field: searchField,
+      value: ''
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const handleTablePaginationChange = useCallback(
+    (next: PaginationState) => {
+      setTablePagination(next);
+      fetchMedidoresPage({
+        pageIndex: next.pageIndex,
+        pageSize: next.pageSize,
+        field: searchField,
+        value: searchValue
+      });
+    },
+    [fetchMedidoresPage, searchField, searchValue]
+  );
+
+  const handleTableSearchChange = useCallback(
+    ({ field, value }: { field: string; value: string }) => {
+      setSearchField(field);
+      setSearchValue(value);
+      const next: PaginationState = {
+        pageIndex: 0,
+        pageSize: tablePagination.pageSize
+      };
+      setTablePagination(next);
+      fetchMedidoresPage({
+        pageIndex: next.pageIndex,
+        pageSize: next.pageSize,
+        field,
+        value
+      });
+    },
+    [fetchMedidoresPage, tablePagination.pageSize]
+  );
 
   const refetchMedidores = useCallback(async () => {
-    setIsFetching(true);
-    try {
-      const result = await administracionService.getMedidoresData();
-      if (result.data?.medidores) {
-        setMedidores(result.data.medidores);
-      }
-    } catch (error) {
-      console.error('Error al recargar los medidores', error);
-      toast.error('Error al recargar los medidores.');
-    } finally {
-      setIsFetching(false);
-    }
-  }, []);
+    await fetchMedidoresPage({
+      pageIndex: tablePagination.pageIndex,
+      pageSize: tablePagination.pageSize,
+      field: searchField,
+      value: searchValue
+    });
+  }, [
+    fetchMedidoresPage,
+    tablePagination.pageIndex,
+    tablePagination.pageSize,
+    searchField,
+    searchValue
+  ]);
 
   const handleAdd = useCallback(() => {
     navigate(MEDIDORES_CREAR_ROUTE);
@@ -127,14 +174,6 @@ export default function MedidoresComponent({
     },
     [navigate]
   );
-
-  const handleAsociarSubempalme = useCallback((medidor: MedidorListItem) => {
-    setSelectedMedidor(medidor);
-    setModalsState(prev => ({
-      ...prev,
-      asociarSubempalme: { isOpen: true }
-    }));
-  }, []);
 
   const handleDeleteMedidor = useCallback((medidor: MedidorListItem) => {
     setSelectedMedidor(medidor);
@@ -176,18 +215,6 @@ export default function MedidoresComponent({
 
   const mechanicalEase = [0.25, 0.1, 0.25, 1] as const;
 
-  if (isFetching && medidores.length === 0) {
-    return (
-      <div className="min-h-screen bg-background">
-        <div className="container mx-auto p-4 sm:p-6">
-          <div className="flex items-center justify-center py-12 sm:py-20">
-            <LoadingSpinner />
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto p-4 sm:p-6 space-y-6">
@@ -198,7 +225,7 @@ export default function MedidoresComponent({
             actions={
               <div className="flex gap-2">
                 <ExportButton
-                  data={filteredMedidores}
+                  data={tableData}
                   columns={medidorColumns}
                   filename="medidores"
                   size="sm"
@@ -212,20 +239,6 @@ export default function MedidoresComponent({
           />
           <div className="industrial-divider mt-4" />
         </header>
-
-        <MedidorFiltersComponent
-          filters={filters}
-          onFiltersChange={handleFiltersChange}
-          onClearFilters={handleClearFilters}
-          filterOptions={filterOptions}
-        />
-
-        <FilterSummary
-          totalMedidores={filterStats.total}
-          filteredMedidores={filterStats.filtered}
-          activeFilters={filterStats.activeFilters}
-          isFiltered={filterStats.isFiltered}
-        />
 
         <motion.div
           initial={{ opacity: 0, y: 8 }}
@@ -243,30 +256,38 @@ export default function MedidoresComponent({
                     Listado de Medidores
                   </CardTitle>
                   <CardDescription className="text-xs mt-0.5 text-muted-foreground">
-                    {filteredMedidores.length} medidor
-                    {filteredMedidores.length !== 1 ? 'es' : ''}
+                    {tableLoading
+                      ? 'Cargando…'
+                      : `${tableData.length} medidor${tableData.length !== 1 ? 'es' : ''} en esta página`}
                   </CardDescription>
                 </div>
               </div>
             </CardHeader>
             <div className="industrial-divider" />
-            <CardContent className="relative p-4">
-              {isFetching && (
-                <div className="absolute inset-0 bg-background flex items-center justify-center rounded-xl z-10">
-                  <LoadingSpinner />
-                </div>
-              )}
+            <CardContent className="p-4">
               <div className="overflow-x-auto -mx-1">
-                <VirtualDataTable
+                <DataTable
                   columns={columns({
                     onEdit: handleEdit,
-                    onAsociarSubempalme: handleAsociarSubempalme,
                     onDelete: handleDeleteMedidor
                   })}
-                  data={filteredMedidores}
-                  searchPlaceholder="Buscar por serie, modelo o acometida..."
-                  estimateRowHeight={55}
-                  maxHeight="650px"
+                  data={tableData}
+                  defaultPageSize={DEFAULT_PAGE_SIZE}
+                  searchFields={searchFields}
+                  manualPagination
+                  manualFiltering
+                  pageCount={-1}
+                  onPaginationChange={handleTablePaginationChange}
+                  onSearchChange={handleTableSearchChange}
+                  isLoading={tableLoading}
+                  hasMore={hasMore}
+                  error={tableError}
+                  onRetry={refetchMedidores}
+                  emptyMessage={
+                    searchValue.trim()
+                      ? `Sin resultados para "${searchValue.trim()}"`
+                      : 'No hay medidores registrados en el sistema'
+                  }
                 />
               </div>
             </CardContent>
@@ -283,18 +304,6 @@ export default function MedidoresComponent({
           }
           onConfirm={handleConfirmDelete}
           medidor={selectedMedidor}
-        />
-
-        <AsociarSubempalmeModal
-          isOpen={modalsState.asociarSubempalme.isOpen}
-          onClose={() =>
-            setModalsState(prev => ({
-              ...prev,
-              asociarSubempalme: { isOpen: false }
-            }))
-          }
-          medidor={selectedMedidor}
-          onSuccess={refetchMedidores}
         />
       </div>
     </div>

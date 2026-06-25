@@ -1,13 +1,7 @@
 import { useMemo } from 'react';
 
 import type { ContractFilters } from '~/components/administracion/contratos/contract-filters';
-import type { GetContratos } from '~/types/administracion';
-import {
-  extractUniqueOptions,
-  filterByBoolean,
-  filterByDateRange,
-  filterByString
-} from './utils/filter-utilities';
+import type { ContratosRow } from '~/types/administracion';
 import { calculateFilterStats } from './utils/stats-calculator';
 
 export interface ContractFilterOptions {
@@ -19,59 +13,55 @@ export interface ContractFilterOptions {
 
 export type FilterOptions = ContractFilterOptions;
 
+function uniqueSorted(values: string[]): string[] {
+  return Array.from(new Set(values.filter(Boolean))).sort((a, b) =>
+    a.localeCompare(b, 'es')
+  );
+}
+
 export function useContractFilters(
-  contracts: GetContratos[],
+  contracts: ContratosRow[],
   filters: ContractFilters
 ) {
   const filterOptions = useMemo((): ContractFilterOptions => {
     return {
-      tiposContrato: extractUniqueOptions(contracts, c => c.tipoContrato),
-      ciclosFacturacion: extractUniqueOptions(
-        contracts,
-        c => c.cicloFacturacion
-      ),
-      tarifas: extractUniqueOptions(contracts, c => c.tarifa),
-      comunas: extractUniqueOptions(contracts, c => c.comunaEnvio)
+      tiposContrato: uniqueSorted(contracts.map(c => c.tipoContrato)),
+      ciclosFacturacion: uniqueSorted(contracts.map(c => c.ciclo)),
+      tarifas: uniqueSorted(contracts.map(c => c.tarifa)),
+      comunas: uniqueSorted(contracts.map(c => c.comunaEnvio))
     };
   }, [contracts]);
 
   const filteredContracts = useMemo(() => {
     return contracts.filter(contract => {
-      // Filtros de string simples
-      if (!filterByString(contract.tipoContrato, filters.tipoContrato)) {
-        return false;
-      }
-
       if (
-        !filterByString(contract.cicloFacturacion, filters.cicloFacturacion)
+        filters.tipoContrato &&
+        filters.tipoContrato !== 'all' &&
+        contract.tipoContrato !== filters.tipoContrato
       ) {
         return false;
       }
 
-      if (!filterByString(contract.tarifa, filters.tarifa)) {
-        return false;
-      }
-
-      if (!filterByString(contract.comunaEnvio, filters.comuna)) {
-        return false;
-      }
-
-      // Filtros booleanos
-      if (!filterByBoolean(contract.activo, filters.activo)) {
-        return false;
-      }
-
-      if (!filterByBoolean(contract.liberadoCorte, filters.liberadoCorte)) {
-        return false;
-      }
-
-      // Filtro de rango de fechas
       if (
-        !filterByDateRange(
-          contract.fechaTermino,
-          filters.fechaTerminoDesde,
-          filters.fechaTerminoHasta
-        )
+        filters.cicloFacturacion &&
+        filters.cicloFacturacion !== 'all' &&
+        contract.ciclo !== filters.cicloFacturacion
+      ) {
+        return false;
+      }
+
+      if (
+        filters.tarifa &&
+        filters.tarifa !== 'all' &&
+        contract.tarifa !== filters.tarifa
+      ) {
+        return false;
+      }
+
+      if (
+        filters.comuna &&
+        filters.comuna !== 'all' &&
+        contract.comunaEnvio !== filters.comuna
       ) {
         return false;
       }

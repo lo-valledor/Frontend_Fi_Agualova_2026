@@ -4,6 +4,11 @@ import ContractHydrateFallback from '~/components/administracion/contratos/contr
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import { ErrorBoundary as ErrorBoundaryComponent } from '~/components/error-boundary';
 import { administracionService } from '~/services/administracionService';
+import type {
+  GetContratante,
+  NombreComuna,
+  NombreGiro
+} from '~/types/administracion';
 import type { Route } from './+types/contratantes';
 
 export function meta(_args: Route.MetaArgs) {
@@ -14,13 +19,14 @@ export function meta(_args: Route.MetaArgs) {
 }
 
 export async function clientLoader(_args: Route.ClientActionArgs) {
-  const result = await administracionService.getContratantesData();
+  const girosResult = await administracionService.getGiros();
+  const comunas: NombreComuna[] = [];
 
-  if (result.error || !result.data) {
-    throw new Response('Error al cargar los contratantes', { status: 500 });
-  }
-
-  return result.data;
+  return {
+    contratantes: [] as GetContratante[],
+    comunas,
+    giros: (girosResult.data ?? []) as NombreGiro[]
+  };
 }
 
 export default function Contratantes({

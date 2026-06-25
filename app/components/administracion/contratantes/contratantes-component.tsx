@@ -17,9 +17,9 @@ import {
   CardTitle
 } from '~/components/ui/card';
 import type {
-  GetComunas,
   GetContratante,
-  GetGiros
+  NombreComuna,
+  NombreGiro
 } from '~/types/administracion';
 
 import { columns } from './columns';
@@ -32,8 +32,8 @@ import { FilterSummary } from './filter-summary';
 
 interface ContratantesComponentProps {
   contratantes: GetContratante[];
-  comunas: GetComunas[];
-  giros: GetGiros[];
+  comunas: NombreComuna[];
+  giros: NombreGiro[];
 }
 
 interface FilterOptions {

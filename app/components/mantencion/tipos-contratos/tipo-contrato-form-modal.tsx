@@ -1,7 +1,8 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2 } from 'lucide-react';
-import React from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { z } from 'zod';
 
 import { Button } from '~/components/ui/button';
@@ -24,13 +25,15 @@ import {
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
 import { Switch } from '~/components/ui/switch';
-import type { TiposContrato } from '~/types/mantencion';
+import { mantencionService } from '~/services/mantencionService';
+import type { TipoContrato, TipoContratoFormValues } from '~/types/mantencion';
 
 const tipoContratoSchema = z.object({
+  id: z.number().optional(),
   nombre: z
     .string()
-    .min(1, 'El nombre es requerido')
-    .max(100, 'El nombre no debe exceder 100 caracteres'),
+    .min(1, { message: 'El nombre es requerido.' })
+    .max(100, { message: 'El nombre no puede exceder 100 caracteres.' }),
   estado: z.boolean()
 });
 
@@ -40,7 +43,7 @@ interface TipoContratoFormModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
-  tipoContrato?: TiposContrato;
+  tipoContrato: TipoContrato | null;
   mode: 'add' | 'edit';
 }
 
@@ -51,42 +54,65 @@ export default function TipoContratoFormModal({
   tipoContrato,
   mode
 }: Readonly<TipoContratoFormModalProps>) {
+  const [isLoading, setIsLoading] = useState(false);
+
   const form = useForm<TipoContratoFormData>({
     resolver: zodResolver(tipoContratoSchema),
     defaultValues: {
-      nombre: tipoContrato?.nombre || '',
-      estado: tipoContrato?.estado !== false
+      id: 0,
+      nombre: '',
+      estado: true
     }
   });
 
-  const isLoading = form.formState.isSubmitting;
-
-  React.useEffect(() => {
+  useEffect(() => {
     if (isOpen) {
-      form.reset({
-        nombre: tipoContrato?.nombre || '',
-        estado: tipoContrato?.estado !== false
-      });
+      if (mode === 'edit' && tipoContrato) {
+        form.reset({
+          id: tipoContrato.id,
+          nombre: tipoContrato.nombre,
+          estado: tipoContrato.estado
+        });
+      } else {
+        form.reset({
+          id: 0,
+          nombre: '',
+          estado: true
+        });
+      }
     }
-  }, [isOpen, tipoContrato, form]);
+  }, [isOpen, mode, tipoContrato, form]);
 
   const onSubmit = async (data: TipoContratoFormData) => {
+    setIsLoading(true);
     try {
-      const { default: api } = await import('~/lib/api');
+      const payload: TipoContratoFormValues = {
+        id: mode === 'edit' && tipoContrato ? tipoContrato.id : 0,
+        nombre: data.nombre,
+        estado: data.estado
+      };
 
+      let result;
       if (mode === 'add') {
-        await api.post('/crearTipoContrato', data);
-      } else {
-        await api.put(`/modificarTipoContrato`, {
-          ...data,
-          id: tipoContrato?.id
-        });
+        result = await mantencionService.createTipoContrato(payload);
+      } else if (mode === 'edit' && tipoContrato) {
+        result = await mantencionService.updateTipoContrato(payload);
+      }
+
+      if (result?.error) {
+        throw new Error(result.error);
       }
 
       onSuccess();
-      onClose();
     } catch (error) {
       console.error('Error al guardar el tipo de contrato:', error);
+      toast.error(
+        mode === 'add'
+          ? 'Error al crear el tipo de contrato'
+          : 'Error al actualizar el tipo de contrato'
+      );
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -101,8 +127,8 @@ export default function TipoContratoFormModal({
           </DialogTitle>
           <DialogDescription>
             {mode === 'add'
-              ? 'Complete los datos para crear un nuevo tipo de contrato'
-              : 'Modifique los datos del tipo de contrato seleccionado'}
+              ? 'Complete los datos para crear un nuevo tipo de contrato.'
+              : 'Modifique los datos del tipo de contrato seleccionado.'}
           </DialogDescription>
         </DialogHeader>
 

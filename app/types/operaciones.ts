@@ -54,12 +54,37 @@ export type CerrarLecturasFiltrosPeriodosResponse = {
 }[];
 
 //Todo: GET /cerrar-lecturas/buscar-estadisticas
+export type CerrarLecturasBuscarEstadisticasRequest = {
+  idSector: number;
+  nombreNicho: string;
+  cantidadSinLectura: number;
+  cantidadOk: number;
+  cantidadClaveRoja: number;
+  cantidadClaveNaranja: number;
+  cantidadCorregidas: number;
+  cantidadTotal: number;
+  idNicho: number;
+  nombreSector: string;
+};
 
 // POST cerrar-lecturas/cerrar
 export type CerrarLecturasCerrarRequest = {
   idsNichos: number[];
   cicloId: number;
   periodoId: string;
+};
+
+/**
+ * Respuesta del endpoint POST /cerrar-lecturas/cerrar.
+ * La forma exacta del backend no está documentada; este tipo
+ * es flexible mientras se valida con el equipo del backend.
+ */
+export type CerrarLecturasCerrarResponse = {
+  ok?: boolean;
+  mensaje?: string;
+  exitosos?: number;
+  fallidos?: number;
+  [key: string]: unknown;
 };
 
 /**
@@ -150,12 +175,14 @@ export type PreciosConsultarRequest = {
 };
 
 // POST /precios/guardar-masivo
-export type PreciosGuardarMasivoRequest = {
+export type PrecioMasivoItem = {
   mes: string;
   anio: string;
   codigoCargo: number;
   nuevoValor: number;
 };
+
+export type PreciosGuardarMasivoRequest = PrecioMasivoItem[];
 
 /**
  * Preparar Lecturas
@@ -221,7 +248,39 @@ export type RevisarCalculosLanzarCalculoRequest = {
   procesoId: number;
 };
 
-//Todo: POST /revisar-calculos/buscar-prefacturas
+export type LanzarCalculoResponse = {
+  procesoId: number;
+  mensaje: string;
+  esError: boolean;
+};
+
+export type RevisarCalculosPrefacturaCargo = {
+  codigoCargo: string;
+  descripcion: string;
+  cantidad: number;
+  precioUnitario: number;
+  subTotal: number;
+};
+
+export type RevisarCalculosPrefactura = {
+  contratoId: number;
+  lecturaId: number;
+  sector: string;
+  tarifa: string;
+  rutCliente: string;
+  nombreCliente: string;
+  direccion: string;
+  comuna: string;
+  numeroMedidor: string;
+  local: string;
+  fechaLectura: string;
+  consumo: number;
+  totalFacturado: number;
+  detalleCargos: RevisarCalculosPrefacturaCargo[];
+};
+
+export type RevisarCalculosBuscarPrefacturasResponse =
+  RevisarCalculosPrefactura[];
 
 /**
  * Revisión Precios
@@ -243,7 +302,16 @@ export type RevisionPreciosConfirmarRequest = {
   passwordConfirmacion: string;
 };
 
-//Todo: GET /revision-precios/detalle-correccion
+// GET /revision-precios/detalle-correccion/:indice
+export type RevisionPreciosDetalleCorreccionParams = {
+  indice: number;
+};
+
+export type RevisionPreciosDetalleCorreccionResponse = {
+  codigoCargo: number;
+  descripcion?: string;
+  valorActual?: string;
+};
 
 // POST /revision-precios/corregir
 export type RevisionPreciosCorregirRequest = {
@@ -256,20 +324,12 @@ export type RevisionPreciosCorregirRequest = {
 /**
  * SAP
  */
-export type EmpresaSAP = {
-  id: number;
+export type SAPEmpresas = {
+  id: string;
   nombre: string;
 };
 
-export type NombreSugeridoSAP = {
+export type SAPSugeridos = {
   nombreEncabezado: string;
   nombreDetalle: string;
-};
-
-/**
- * Anular Factura
- */
-export type AnularFacturaRequest = {
-  numeroFactura: string;
-  conTomaLectura: boolean;
 };

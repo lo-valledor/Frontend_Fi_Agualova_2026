@@ -14,6 +14,7 @@ import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import * as XLSX from 'xlsx';
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
+import { ForceReprocessDialog } from '~/components/monitor/importar-lecturas/force-reprocess-dialog';
 import { ModernHeader } from '~/components/shared/modern-header';
 import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert';
 import { Badge } from '~/components/ui/badge';
@@ -25,20 +26,12 @@ import {
   CardHeader,
   CardTitle
 } from '~/components/ui/card';
-import { Checkbox } from '~/components/ui/checkbox';
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger
 } from '~/components/ui/collapsible';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle
-} from '~/components/ui/dialog';
-import { Input } from '~/components/ui/input';
+import { getAuthToken } from '~/services/axiosConfig';
 import { ResultadoProcesamientoModal } from './resultado-procesamiento-modal';
 
 interface EstadoProcesamiento {
@@ -111,8 +104,6 @@ export default function ImportarLecturasComponent() {
   const [_showDetallesPendientes, _setShowDetallesPendientes] = useState(false);
   const [yaProcesado, setYaProcesado] = useState(false);
   const [forceReprocessOpen, setForceReprocessOpen] = useState(false);
-  const [confirmPeriodInput, setConfirmPeriodInput] = useState('');
-  const [ackRiskChecked, setAckRiskChecked] = useState(false);
 
   const pageBreadcrumbs = [
     { label: 'Monitor' },
@@ -127,13 +118,13 @@ export default function ImportarLecturasComponent() {
     'Fecha de Emisión',
     'Tarifa',
     'Fecha Última Lectura',
-    'Última Lectura (kWh)',
+    'Última Lectura (m³)',
     'Fecha Lectura Anterior',
-    'Lectura Anterior (kWh)',
-    'Consumo Energía (kWh)',
-    'Demanda Máx. Suministrada (kW)',
-    'Demanda Máx. Hora Punta (kW)',
-    'Demanda Máx. Potencia Leída Punta (kW)',
+    'Lectura Anterior (m³)',
+    'Consumo Energía (m³)',
+    'Demanda Máx. Suministrada (m³)',
+    'Demanda Máx. Hora Punta (m³)',
+    'Demanda Máx. Potencia Leída Punta (m³)',
     'Cargo Fijo',
     'Servicio Público Base',
     'Tramo Fondo Estabilización',
@@ -150,15 +141,15 @@ export default function ImportarLecturasComponent() {
     'Cobro Potencia Adicional',
     'Cobro Potencia Adicional de Invierno',
     'Cobro por Electricidad Consumida Sobre Límite',
-    'Promedio D.M. Suministrada (kW)',
+    'Promedio D.M. Suministrada (m³)',
     'Cobro D.M. Suministrada',
     'Demanda en Horas de Punta',
     'Cobro Demanda en Horas de Punta',
     'Cobro por Demanda Máxima de Potencia',
     'Presencia en Punta',
-    'Potencia Contratada (kW)',
+    'Potencia Contratada (m³)',
     'Cobro Potencia Contratada',
-    'Prom. D.M. Pot. Leída en Punta (kW)',
+    'Prom. D.M. Pot. Leída en Punta (m³)',
     'Cobro D.M. Pot. Leída en Punta',
     'Factor de Potencia Medio',
     'Multa Factor de Potencia',
@@ -353,7 +344,7 @@ export default function ImportarLecturasComponent() {
       const formData = new FormData();
       formData.append('file', file);
 
-      const token = localStorage.getItem('token');
+      const token = getAuthToken();
       const ENERLINK_API_URL = import.meta.env.VITE_API_URL;
       const baseUrl = ENERLINK_API_URL || '';
       const url = `${baseUrl}/upload`;
@@ -389,7 +380,7 @@ export default function ImportarLecturasComponent() {
   const fetchEstadoProcesamiento = async () => {
     setLoadingEstado(true);
     try {
-      const token = localStorage.getItem('token');
+      const token = getAuthToken();
       const VITE_API_URL = import.meta.env.VITE_API_URL;
       const baseUrl = VITE_API_URL || '';
       const url = `${baseUrl}/estado-procesamiento`;
@@ -420,7 +411,7 @@ export default function ImportarLecturasComponent() {
   const fetchRegistrosPendientes = async () => {
     setLoadingRegistros(true);
     try {
-      const token = localStorage.getItem('token');
+      const token = getAuthToken();
       const VITE_API_URL = import.meta.env.VITE_API_URL;
       const baseUrl = VITE_API_URL || '';
       const url = `${baseUrl}/registros-pendientes`;
@@ -461,7 +452,7 @@ export default function ImportarLecturasComponent() {
     }
     setProcessingBT(true);
     try {
-      const token = localStorage.getItem('token');
+      const token = getAuthToken();
       const ENERLINK_API_URL = import.meta.env.VITE_API_URL;
       const baseUrl = ENERLINK_API_URL || '';
       const url = `${baseUrl}/procesar-bt1-bt2`;
@@ -506,7 +497,7 @@ export default function ImportarLecturasComponent() {
   const fetchValidacionLecturasPendientes = async () => {
     setLoadingValidacion(true);
     try {
-      const token = localStorage.getItem('token');
+      const token = getAuthToken();
       const VITE_API_URL = import.meta.env.VITE_API_URL;
       const baseUrl = VITE_API_URL || '';
 
@@ -986,85 +977,12 @@ export default function ImportarLecturasComponent() {
         />
 
         {/* Diálogo para forzar reprocesamiento */}
-        <Dialog open={forceReprocessOpen} onOpenChange={setForceReprocessOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Forzar reprocesamiento</DialogTitle>
-              <DialogDescription>
-                Esta acción permitirá procesar BT1-BT2 nuevamente para el
-                período actual. Úsalo solo si estás seguro de que es necesario.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="space-y-3">
-              <div className="text-sm text-muted-foreground">
-                Período activo:{' '}
-                <code className="font-mono">
-                  {estadoProcesamiento?.periodoActivo || 'N/D'}
-                </code>
-              </div>
-              <div className="space-y-2">
-                <label className="text-xs font-medium">
-                  Escribe el período activo para confirmar
-                </label>
-                <Input
-                  value={confirmPeriodInput}
-                  onChange={e => setConfirmPeriodInput(e.target.value)}
-                  placeholder="Ej: 102025"
-                />
-              </div>
-              <div className="flex items-center gap-2">
-                <Checkbox
-                  checked={ackRiskChecked}
-                  onCheckedChange={checked =>
-                    setAckRiskChecked(Boolean(checked))
-                  }
-                  id="ack-risk"
-                />
-                <label
-                  htmlFor="ack-risk"
-                  className="text-xs text-muted-foreground"
-                >
-                  Entiendo el riesgo de reprocesar lecturas en el mismo período.
-                </label>
-              </div>
-              <div className="flex justify-end gap-2 mt-2">
-                <Button
-                  variant="ghost"
-                  onClick={() => {
-                    setForceReprocessOpen(false);
-                    setConfirmPeriodInput('');
-                    setAckRiskChecked(false);
-                  }}
-                >
-                  Cancelar
-                </Button>
-                <Button
-                  disabled={
-                    !estadoProcesamiento?.periodoActivo ||
-                    confirmPeriodInput !== estadoProcesamiento?.periodoActivo ||
-                    !ackRiskChecked
-                  }
-                  onClick={() => {
-                    const periodo = estadoProcesamiento?.periodoActivo;
-                    if (periodo) {
-                      const key = `bt1bt2_processed_period:${periodo}`;
-                      localStorage.removeItem(key);
-                      setYaProcesado(false);
-                      toast.success(
-                        'Se habilitó el reprocesamiento para este período'
-                      );
-                    }
-                    setForceReprocessOpen(false);
-                    setConfirmPeriodInput('');
-                    setAckRiskChecked(false);
-                  }}
-                >
-                  Habilitar reprocesar
-                </Button>
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
+        <ForceReprocessDialog
+          open={forceReprocessOpen}
+          onOpenChange={setForceReprocessOpen}
+          periodoActivo={estadoProcesamiento?.periodoActivo ?? ''}
+          onConfirm={() => setYaProcesado(false)}
+        />
 
         {/* Zona de Carga de Archivos */}
         <Card>

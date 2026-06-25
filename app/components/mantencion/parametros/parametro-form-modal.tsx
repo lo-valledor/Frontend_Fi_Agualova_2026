@@ -1,7 +1,8 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2 } from 'lucide-react';
-import React from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { z } from 'zod';
 
 import { Button } from '~/components/ui/button';
@@ -25,21 +26,23 @@ import {
 import { Input } from '~/components/ui/input';
 import { Switch } from '~/components/ui/switch';
 import { Textarea } from '~/components/ui/textarea';
-import type { Parametro } from '~/types/mantencion';
+import { mantencionService } from '~/services/mantencionService';
+import type { Parametro, ParametroFormValues } from '~/types/mantencion';
 
 const parametroSchema = z.object({
+  id: z.number().optional(),
   nombre: z
     .string()
-    .min(1, 'El nombre es requerido')
-    .max(200, 'El nombre no debe exceder 200 caracteres'),
+    .min(1, { message: 'El nombre es requerido.' })
+    .max(200, { message: 'El nombre no debe exceder 200 caracteres.' }),
   valor: z
     .string()
-    .min(1, 'El valor es requerido')
-    .max(100, 'El valor no debe exceder 100 caracteres'),
+    .min(1, { message: 'El valor es requerido.' })
+    .max(100, { message: 'El valor no debe exceder 100 caracteres.' }),
   sigla: z
     .string()
-    .min(1, 'La sigla es requerida')
-    .max(10, 'La sigla no debe exceder 10 caracteres'),
+    .min(1, { message: 'La sigla es requerida.' })
+    .max(10, { message: 'La sigla no debe exceder 10 caracteres.' }),
   estado: z.boolean()
 });
 
@@ -49,7 +52,7 @@ interface ParametroFormModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
-  parametro?: Parametro;
+  parametro: Parametro | null;
   mode: 'add' | 'edit';
 }
 
@@ -60,43 +63,73 @@ export default function ParametroFormModal({
   parametro,
   mode
 }: Readonly<ParametroFormModalProps>) {
+  const [isLoading, setIsLoading] = useState(false);
+
   const form = useForm<ParametroFormData>({
     resolver: zodResolver(parametroSchema),
     defaultValues: {
-      nombre: parametro?.nombre || '',
-      valor: parametro?.valor || '',
-      sigla: parametro?.sigla || '',
-      estado: parametro?.estado ?? true
+      id: 0,
+      nombre: '',
+      valor: '',
+      sigla: '',
+      estado: true
     }
   });
 
-  const isLoading = form.formState.isSubmitting;
+  useEffect(() => {
+    if (!isOpen) return;
 
-  React.useEffect(() => {
-    if (isOpen) {
+    if (mode === 'edit' && parametro) {
       form.reset({
-        nombre: parametro?.nombre || '',
-        valor: parametro?.valor || '',
-        sigla: parametro?.sigla || '',
-        estado: parametro?.estado ?? true
+        id: parametro.id,
+        nombre: parametro.nombre,
+        valor: parametro.valor,
+        sigla: parametro.sigla,
+        estado: parametro.estado
+      });
+    } else {
+      form.reset({
+        id: 0,
+        nombre: '',
+        valor: '',
+        sigla: '',
+        estado: true
       });
     }
-  }, [isOpen, parametro, form]);
+  }, [isOpen, mode, parametro, form]);
 
   const onSubmit = async (data: ParametroFormData) => {
+    setIsLoading(true);
     try {
-      const { default: api } = await import('~/lib/api');
+      const payload: ParametroFormValues = {
+        id: mode === 'edit' && parametro ? parametro.id : 0,
+        nombre: data.nombre,
+        valor: data.valor,
+        sigla: data.sigla,
+        estado: data.estado
+      };
 
+      let result;
       if (mode === 'add') {
-        await api.post('/parametros/crear', data);
-      } else {
-        await api.put(`/parametros/editar`, { ...data, id: parametro?.id });
+        result = await mantencionService.createParametro(payload);
+      } else if (mode === 'edit' && parametro) {
+        result = await mantencionService.updateParametro(payload);
+      }
+
+      if (result?.error) {
+        throw new Error(result.error);
       }
 
       onSuccess();
-      onClose();
     } catch (error) {
       console.error('Error al guardar el parámetro:', error);
+      toast.error(
+        mode === 'add'
+          ? 'Error al crear el parámetro'
+          : 'Error al actualizar el parámetro'
+      );
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -109,8 +142,8 @@ export default function ParametroFormModal({
           </DialogTitle>
           <DialogDescription>
             {mode === 'add'
-              ? 'Complete los datos para crear un nuevo parámetro'
-              : 'Modifique los datos del parámetro seleccionado'}
+              ? 'Complete los datos para crear un nuevo parámetro.'
+              : 'Modifique los datos del parámetro seleccionado.'}
           </DialogDescription>
         </DialogHeader>
 

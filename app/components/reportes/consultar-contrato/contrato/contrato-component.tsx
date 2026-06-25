@@ -161,7 +161,7 @@ const ContratoComponent = memo(function ContratoComponent({
                     }}
                     locales="es-CL"
                   />{' '}
-                  kWh
+                  m³
                 </div>
                 <div className="sidebar-section-label mt-0.5">
                   Consumo Total
@@ -207,14 +207,6 @@ const ContratoComponent = memo(function ContratoComponent({
               <span className="hidden sm:inline">Lecturas</span>
               <span className="sm:hidden text-xs">Lect.</span>
             </TabsTrigger>
-            {/* <TabsTrigger
-              value='consumo-electrico'
-              className='gap-2 h-10 sm:h-9'
-            >
-              <Activity className='h-4 w-4 shrink-0' />
-              <span className='hidden sm:inline'>Consumo Eléctrico</span>
-              <span className='sm:hidden text-xs'>Cons.</span>
-            </TabsTrigger> */}
             <TabsTrigger value="facturas" className="gap-2 h-10 sm:h-9">
               <FileText className="h-4 w-4 shrink-0" />
               <span className="hidden sm:inline">Facturas</span>
@@ -350,7 +342,7 @@ const ContratoComponent = memo(function ContratoComponent({
                       <div className="grid grid-cols-2 gap-2">
                         <span className="text-sm">Potencia Contratada:</span>
                         <span className="text-sm font-medium">
-                          {contratoInfo.potenciaContratada} kW
+                          {contratoInfo.potenciaContratada} m³
                         </span>
                       </div>
                       <Separator />

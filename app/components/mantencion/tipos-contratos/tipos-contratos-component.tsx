@@ -1,6 +1,6 @@
 import { LayoutList, Plus } from 'lucide-react';
 import { motion } from 'motion/react';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useRevalidator } from 'react-router';
 import { toast } from 'sonner';
 
@@ -14,7 +14,8 @@ import {
   CardHeader,
   CardTitle
 } from '~/components/ui/card';
-import type { TiposContrato } from '~/types/mantencion';
+import { mantencionService } from '~/services/mantencionService';
+import type { TipoContrato } from '~/types/mantencion';
 
 import { createColumns } from './columns';
 import TipoContratoFormModal from './tipo-contrato-form-modal';
@@ -22,59 +23,66 @@ import TipoContratoFormModal from './tipo-contrato-form-modal';
 const mechanicalEase = [0.25, 0.1, 0.25, 1] as const;
 
 interface TiposContratosComponentProps {
-  tiposContratos: TiposContrato[];
+  tiposContratos: TipoContrato[];
 }
 
 export default function TiposContratosComponent({
   tiposContratos
 }: Readonly<TiposContratosComponentProps>) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedTipoContrato, setSelectedTipoContrato] = useState<
-    TiposContrato | undefined
-  >(undefined);
+  const [selectedTipoContrato, setSelectedTipoContrato] =
+    useState<TipoContrato | null>(null);
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
 
   const revalidator = useRevalidator();
 
-  const handleAdd = () => {
-    setSelectedTipoContrato(undefined);
+  const handleAdd = useCallback(() => {
+    setSelectedTipoContrato(null);
     setModalMode('add');
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const handleEdit = (tipoContrato: TiposContrato) => {
+  const handleEdit = useCallback((tipoContrato: TipoContrato) => {
     setSelectedTipoContrato(tipoContrato);
     setModalMode('edit');
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const handleDelete = async (tipoContrato: TiposContrato) => {
-    if (
-      globalThis.confirm(
-        `¿Está seguro de que desea eliminar el tipo de contrato "${tipoContrato.nombre}"?`
-      )
-    ) {
-      try {
-        const { default: api } = await import('~/lib/api');
-        await api.delete(`/eliminarTipoContrato/${tipoContrato.id}`);
+  const handleDelete = useCallback(
+    async (tipoContrato: TipoContrato) => {
+      if (
+        globalThis.confirm(
+          `¿Está seguro de que desea eliminar el tipo de contrato "${tipoContrato.nombre}"?`
+        )
+      ) {
+        try {
+          const result = await mantencionService.deleteTipoContrato(
+            tipoContrato.id
+          );
+          if (result.error) {
+            throw new Error(result.error);
+          }
 
-        toast.success('Tipo de contrato eliminado exitosamente');
-        revalidator.revalidate();
-      } catch (error) {
-        console.error('Error al eliminar el tipo de contrato:', error);
-        toast.error('Error al eliminar el tipo de contrato');
+          toast.success('Tipo de contrato eliminado exitosamente');
+          revalidator.revalidate();
+        } catch (error) {
+          console.error('Error al eliminar el tipo de contrato:', error);
+          toast.error('Error al eliminar el tipo de contrato');
+        }
       }
-    }
-  };
+    },
+    [revalidator]
+  );
 
-  const handleSuccess = () => {
+  const handleSuccess = useCallback(() => {
+    revalidator.revalidate();
+    setIsModalOpen(false);
     toast.success(
       modalMode === 'add'
         ? 'Tipo de contrato creado exitosamente'
         : 'Tipo de contrato actualizado exitosamente'
     );
-    revalidator.revalidate();
-  };
+  }, [modalMode, revalidator]);
 
   const columns = useMemo(
     () =>

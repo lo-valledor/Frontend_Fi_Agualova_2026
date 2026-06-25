@@ -23,6 +23,7 @@ import { ThemeProvider } from './components/theme-provider';
 import { AuthProvider } from './context/AuthContext';
 import { BreadcrumbProvider } from './context/BreadcrumbContext';
 import { LoadingBarProvider, useLoadingBar } from './context/LoadingBarContext';
+import { getAuthToken } from './services/axiosConfig';
 import { initPerformanceMonitoring } from './utils/performance-monitor';
 
 export const links = () => [
@@ -41,19 +42,13 @@ export const links = () => [
 export function Layout({ children }: Readonly<{ children: React.ReactNode }>) {
   const isDev =
     import.meta.env.VITE_APP_ENV === 'development' || import.meta.env.DEV;
-  const useHttps = import.meta.env.VITE_HTTPS_ENABLED === 'true';
+  const _useHttps = import.meta.env.VITE_HTTPS_ENABLED === 'true';
 
   return (
     <html lang="en">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        {false ? (
-          <meta
-            http-equiv="Content-Security-Policy"
-            content="upgrade-insecure-requests"
-          ></meta>
-        ) : null}
         <Meta />
         <Links />
       </head>
@@ -113,7 +108,7 @@ export function ErrorBoundary({ error }: Readonly<{ error: unknown }>) {
   const currentUrl = isBrowser
     ? globalThis.location.href
     : 'No disponible en SSR';
-  const hasToken = isBrowser ? localStorage.getItem('token') : null;
+  const hasToken = isBrowser ? getAuthToken() : null;
 
   if (isRouteErrorResponse(error)) {
     message = error.status === 404 ? '404' : 'Error';

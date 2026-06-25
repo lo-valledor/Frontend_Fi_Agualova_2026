@@ -28,10 +28,12 @@ if (typeof window !== 'undefined') {
     rootMargin = '';
     thresholds = [];
   }
-  (window as unknown as { IntersectionObserver: unknown }).IntersectionObserver =
-    IntersectionObserverMock;
-  (globalThis as unknown as { IntersectionObserver: unknown }).IntersectionObserver =
-    IntersectionObserverMock;
+  (
+    window as unknown as { IntersectionObserver: unknown }
+  ).IntersectionObserver = IntersectionObserverMock;
+  (
+    globalThis as unknown as { IntersectionObserver: unknown }
+  ).IntersectionObserver = IntersectionObserverMock;
 
   class ResizeObserverMock {
     observe() {}

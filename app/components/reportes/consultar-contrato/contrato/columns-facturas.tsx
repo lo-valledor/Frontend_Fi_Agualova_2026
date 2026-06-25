@@ -178,7 +178,7 @@ export const facturasTableColumns: ColumnDef<DetalleFacturas>[] = [
 
       return (
         <div className={`text-start ${colorClass}`}>
-          {consumo.toLocaleString('es-CL')} kWh
+          {consumo.toLocaleString('es-CL')} m³
           {icon}
         </div>
       );

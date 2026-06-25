@@ -3,7 +3,7 @@ import type { ColumnDef } from '@tanstack/react-table';
 import { useNavigate } from 'react-router';
 
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
-import type { BuscarContratos } from '~/types/reportes';
+import type { BuscarContrato } from '~/types/reportes';
 
 // Componente para hacer clickeable el ID del contrato
 function ContratoIdCell({ id }: { id: number }) {
@@ -24,38 +24,38 @@ function ContratoIdCell({ id }: { id: number }) {
   );
 }
 
-export const columns: ColumnDef<BuscarContratos>[] = [
+export const columns: ColumnDef<BuscarContrato>[] = [
   {
-    accessorKey: 'cT_ID',
+    accessorKey: 'idContrato',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="ID" />
     ),
     cell: ({ row }) => {
-      const id = row.getValue('cT_ID') as number;
+      const id = row.getValue('idContrato') as number;
       return <ContratoIdCell id={id} />;
     },
     enableSorting: true,
     enableHiding: false
   },
   {
-    accessorKey: 'lC_ID',
+    accessorKey: 'nroLocal',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Local" />
     ),
     cell: ({ row }) => {
-      const id = row.getValue('lC_ID') as string;
+      const id = row.getValue('nroLocal') as string;
       return <div className="max-w-[200px] truncate font-medium">{id}</div>;
     },
     enableSorting: true,
     enableHiding: false
   },
   {
-    accessorKey: 'cL_RUT',
+    accessorKey: 'rutCliente',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="RUT Cliente" />
     ),
     cell: ({ row }) => {
-      const rut = row.getValue('cL_RUT') as string;
+      const rut = row.getValue('rutCliente') as string;
       return <div className="max-w-[200px] truncate font-medium">{rut}</div>;
     },
     enableSorting: true,
@@ -74,12 +74,12 @@ export const columns: ColumnDef<BuscarContratos>[] = [
     enableHiding: false
   },
   {
-    accessorKey: 'pR_RUT',
+    accessorKey: 'rutPropietario',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="RUT Propietario" />
     ),
     cell: ({ row }) => {
-      const rut = row.getValue('pR_RUT') as string;
+      const rut = row.getValue('rutPropietario') as string;
       return <div className="max-w-[200px] truncate font-medium">{rut}</div>;
     },
     enableSorting: true,
@@ -98,53 +98,27 @@ export const columns: ColumnDef<BuscarContratos>[] = [
     enableHiding: false
   },
   {
-    accessorKey: 'mE_NSerie',
+    accessorKey: 'nroMedidor',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="N° Serie" />
     ),
     cell: ({ row }) => {
-      const nSerie = row.getValue('mE_NSerie') as string;
+      const nSerie = row.getValue('nroMedidor') as string;
       return <div className="max-w-[200px] truncate font-medium">{nSerie}</div>;
     },
     enableSorting: true,
     enableHiding: false
   },
   {
-    accessorKey: 'cT_ID_Madre',
+    accessorKey: 'acometida',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="ID Contrato Madre" />
+      <DataTableColumnHeader column={column} title="Acometida" />
     ),
     cell: ({ row }) => {
-      const id = row.getValue('cT_ID_Madre') as number;
-      return <div className="max-w-[200px] truncate font-medium">{id}</div>;
-    },
-    enableSorting: true,
-    enableHiding: false
-  },
-  {
-    accessorKey: 'cT_esMadre',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Es Madre" />
-    ),
-    cell: ({ row }) => {
-      const esMadre = row.getValue('cT_esMadre') as boolean;
+      const acometida = row.getValue('acometida') as string;
       return (
-        <div className="max-w-[200px] truncate font-medium">
-          {esMadre ? 'Sí' : 'No'}
-        </div>
+        <div className="max-w-[200px] truncate font-medium">{acometida}</div>
       );
-    },
-    enableSorting: true,
-    enableHiding: false
-  },
-  {
-    accessorKey: 'se_codigo',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Código Servicio" />
-    ),
-    cell: ({ row }) => {
-      const codigo = row.getValue('se_codigo') as string;
-      return <div className="max-w-[200px] truncate font-medium">{codigo}</div>;
     },
     enableSorting: true,
     enableHiding: false

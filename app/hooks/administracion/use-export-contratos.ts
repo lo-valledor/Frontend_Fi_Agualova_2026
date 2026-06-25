@@ -1,32 +1,19 @@
 import { useExportData } from '~/hooks/shared/use-export-data';
-import type { GetContratos } from '~/types/administracion';
+import type { ContratosRow } from '~/types/administracion';
 import { ExportColumnBuilder, getExportConfig } from './utils/export-utilities';
 
 export function useExportContratos() {
-  const { isExporting, exportData } = useExportData<GetContratos>();
+  const { isExporting, exportData } = useExportData<ContratosRow>();
 
   const contractColumns = new ExportColumnBuilder()
-    .addString('codigoContrato', 'Código Contrato')
-    .addString('acometida', 'Acometida')
-    .addString('tipoContrato', 'Tipo Contrato')
-    .addString('tarifa', 'Tarifa')
-    .addString('nombrePropietario', 'Propietario')
-    .addString('nombreCliente', 'Cliente')
-    .addString('local', 'Local')
-    .addDate('fechaInicio', 'Fecha Inicio')
-    .addBoolean('activo', 'Estado', 'Activo', 'Inactivo')
-    .addDate('fechaTermino', 'Fecha Término')
-    .addString('comunaEnvio', 'Comuna Envío')
-    .addString('direccionEnvio', 'Dirección Envío')
-    .addString('limiteInvierno', 'Límite Invierno')
-    .addString('promedioAnual', 'Promedio Anual')
-    .addString('cicloFacturacion', 'Ciclo Facturación')
-    .addString('potenciaContratada', 'Potencia Contratada')
-    .addBoolean('liberadoCorte', 'Liberado Corte', 'Sí', 'No')
+    .addString('id', 'ID')
+    .addString('codigo', 'Código')
+    .addString('descripcion', 'Descripción')
+    .addString('estado', 'Estado')
     .build();
 
   const exportAllContratos = async (
-    allData: GetContratos[],
+    allData: ContratosRow[],
     format: 'csv' | 'xlsx' = 'xlsx'
   ): Promise<void> => {
     // Early return si no hay datos
@@ -43,7 +30,7 @@ export function useExportContratos() {
   };
 
   const exportFilteredContratos = async (
-    filteredData: GetContratos[],
+    filteredData: ContratosRow[],
     format: 'csv' | 'xlsx' = 'xlsx'
   ): Promise<void> => {
     // Early return si no hay datos

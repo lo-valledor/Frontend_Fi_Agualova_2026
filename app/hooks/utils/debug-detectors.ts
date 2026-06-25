@@ -1,3 +1,5 @@
+import { getAuthToken } from '~/services/axiosConfig';
+
 export interface ProxyDetectionResult {
   detected: boolean;
   evidence: string[];
@@ -97,7 +99,7 @@ export function getTokenPreview(token: string | null): string | undefined {
 
 export async function gatherDebugInfo(): Promise<DebugDetectionResult> {
   const userAgent = navigator.userAgent;
-  const token = localStorage.getItem('token');
+  const token = getAuthToken();
   const isPrivate = await detectPrivateMode();
   const proxyInfo = detectProxyOrInterception();
 

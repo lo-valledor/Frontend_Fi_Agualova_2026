@@ -163,7 +163,7 @@ const PeriodComparison = memo(function PeriodComparison({
               {/* Consumo */}
               <div className="p-4 rounded-lg bg-slate-50 dark:bg-slate-900/50">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium">Consumo (kWh)</span>
+                  <span className="text-sm font-medium">Consumo (m³)</span>
                   {comparison.consumo.porcentaje !== 0 && (
                     <div className="flex items-center gap-1">
                       {comparison.consumo.porcentaje > 0 ? (
@@ -218,10 +218,10 @@ const PeriodComparison = memo(function PeriodComparison({
                 </div>
               </div>
 
-              {/* Costo por kWh */}
+              {/* Costo por m³ */}
               <div className="p-4 rounded-lg bg-slate-50 dark:bg-slate-900/50">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium">Costo por kWh</span>
+                  <span className="text-sm font-medium">Costo por m³</span>
                   {comparison.costoPorKwh.porcentaje !== 0 && (
                     <div className="flex items-center gap-1">
                       {comparison.costoPorKwh.porcentaje > 0 ? (

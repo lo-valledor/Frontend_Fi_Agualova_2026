@@ -1,15 +1,19 @@
-import type { Estado, Marca, MedidoresRow, Tipo } from '~/types/administracion';
+import type {
+  Estado,
+  Marca,
+  MedidorByCodigo,
+  MedidoresRow,
+  Tipo
+} from '~/types/administracion';
 
 export type MedidorListItem = MedidoresRow;
+export type MedidorForEdit = MedidorByCodigo;
 export type MedidorMarcaOption = Marca;
 export type MedidorTipoOption = Tipo;
 export type MedidorEstadoOption = Estado;
 
 export interface MedidorModalState {
   delete: {
-    isOpen: boolean;
-  };
-  asociarSubempalme: {
     isOpen: boolean;
   };
 }

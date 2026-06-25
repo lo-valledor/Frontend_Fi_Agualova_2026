@@ -23,9 +23,9 @@ export class RolesService extends BaseApiService {
       const roles = this.processResponseArray<Roles>(response);
 
       // Mapear los datos del backend al formato esperado
-      // El backend devuelve idUsuario pero debería ser idRol
+      // El backend devuelve id pero debería ser idRol
       return roles.map((rol: any) => ({
-        idRol: rol.idRol || rol.idUsuario,
+        idRol: rol.idRol || rol.id,
         nombreRol: rol.nombreRol,
         descripcion: rol.descripcion,
         estadoRol: rol.estadoRol

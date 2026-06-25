@@ -31,7 +31,7 @@ import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
 import { Separator } from '~/components/ui/separator';
 import { Switch } from '~/components/ui/switch';
-import { operacionesService } from '~/services/operacionesService';
+import api from '~/lib/api';
 
 export default function AnularFacturaImpresaComponent() {
   const [numeroFactura, setNumeroFactura] = useState<string>('');
@@ -55,31 +55,21 @@ export default function AnularFacturaImpresaComponent() {
       setShowAlert(false);
       setShowConfirmDialog(false);
 
-      const response = await operacionesService.postAnularFactura({
-        numeroFactura,
-        conTomaLectura
+      const response = await api.post('/anular-factura/ejecutar', {
+        numeroFolio: numeroFactura,
+        alcance: conTomaLectura ? 1 : 2
       });
 
-      if (response.error) {
-        setAlertMessage(
-          response.error ||
-            'Ocurrió un error al anular la factura. Por favor, intente nuevamente.'
-        );
+      if (response.status === 200) {
+        setAlertMessage('Factura anulada correctamente.');
         setShowAlert(true);
-        return;
+        setNumeroFactura('');
+        setConTomaLectura(false);
       }
-
-      setAlertMessage('Factura anulada correctamente.');
-      setShowAlert(true);
-      setNumeroFactura('');
-      setConTomaLectura(false);
     } catch (error) {
       console.error(error);
-      const message = error instanceof Error ? error.message : '';
       setAlertMessage(
-        message
-          ? `Ocurrió un error al anular la factura: ${message}`
-          : 'Ocurrió un error al anular la factura. Por favor, intente nuevamente.'
+        'Ocurrió un error al anular la factura. Por favor, intente nuevamente.'
       );
       setShowAlert(true);
     } finally {
@@ -96,11 +86,13 @@ export default function AnularFacturaImpresaComponent() {
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto p-3 space-y-4">
+        {/* Header */}
         <ModernHeader
           title="Anular Factura"
           description="Gestión de anulación de facturas impresas"
         />
 
+        {/* Alert */}
         {showAlert && (
           <Alert
             variant={
@@ -138,6 +130,7 @@ export default function AnularFacturaImpresaComponent() {
           </Alert>
         )}
 
+        {/* Main Form */}
         <Card className="border border-border shadow-sm">
           <CardHeader className="border-b border-border bg-background p-4">
             <div className="flex items-center gap-3">
@@ -156,6 +149,7 @@ export default function AnularFacturaImpresaComponent() {
           </CardHeader>
 
           <CardContent className="p-4 space-y-4">
+            {/* Número de Factura */}
             <div className="space-y-2">
               <Label htmlFor="numeroFactura" className="text-sm font-medium">
                 Número de Factura
@@ -166,7 +160,7 @@ export default function AnularFacturaImpresaComponent() {
                   type="text"
                   placeholder="Ej: FAC001234"
                   value={numeroFactura}
-                  onChange={(e) => setNumeroFactura(e.target.value)}
+                  onChange={e => setNumeroFactura(e.target.value)}
                   className="pr-10"
                 />
                 {numeroFactura && (
@@ -185,6 +179,7 @@ export default function AnularFacturaImpresaComponent() {
 
             <Separator />
 
+            {/* Configuración de Anulación */}
             <div className="space-y-4">
               <Label className="text-sm font-medium">
                 Configuración de Anulación
@@ -215,6 +210,7 @@ export default function AnularFacturaImpresaComponent() {
               </div>
             </div>
 
+            {/* Actions */}
             <div className="flex flex-col sm:flex-row gap-3 pt-4">
               <Button
                 variant="outline"

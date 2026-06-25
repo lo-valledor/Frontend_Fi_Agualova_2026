@@ -25,8 +25,8 @@ import {
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
 import { Switch } from '~/components/ui/switch';
-import api from '~/lib/api';
-import type { Zona } from '~/types/mantencion';
+import { mantencionService } from '~/services/mantencionService';
+import type { Zona, ZonaFormValues, ZonaProps } from '~/types/mantencion';
 
 const zonaFormSchema = z.object({
   nombre: z
@@ -40,7 +40,7 @@ const zonaFormSchema = z.object({
   estado: z.boolean()
 });
 
-type ZonaFormValues = z.infer<typeof zonaFormSchema>;
+type ZonaFormInput = z.infer<typeof zonaFormSchema>;
 
 interface ZonaFormModalProps {
   isOpen: boolean;
@@ -59,7 +59,7 @@ export default function ZonaFormModal({
 }: ZonaFormModalProps) {
   const [isLoading, setIsLoading] = useState(false);
 
-  const form = useForm<ZonaFormValues>({
+  const form = useForm<ZonaFormInput>({
     resolver: zodResolver(zonaFormSchema),
     defaultValues: {
       nombre: '',
@@ -86,13 +86,24 @@ export default function ZonaFormModal({
     }
   }, [isOpen, mode, zona, form]);
 
-  const handleSubmit = async (data: ZonaFormValues) => {
+  const handleSubmit = async (data: ZonaFormInput) => {
     setIsLoading(true);
     try {
       if (mode === 'add') {
-        await api.post('/zonas/crear', data);
+        const payload: ZonaProps = {
+          nombre: data.nombre,
+          referencia: data.referencia,
+          estado: data.estado
+        };
+        await mantencionService.createZona(payload);
       } else if (mode === 'edit' && zona) {
-        await api.put('/zonas/editar/', { ...data, id: zona.id });
+        const payload: ZonaFormValues = {
+          id: zona.id,
+          nombre: data.nombre,
+          referencia: data.referencia,
+          estado: data.estado
+        };
+        await mantencionService.updateZona(payload);
       }
       onSuccess();
     } catch (error) {

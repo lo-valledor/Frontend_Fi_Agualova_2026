@@ -1,6 +1,6 @@
 {
   "name": "res",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -15,17 +15,17 @@
     "test:watch": "vitest watch",
     "coverage": "vitest run --coverage",
     "typecheck": "react-router typegen && tsc",
-    "lint": "biome lint --write",
-    "format": "biome format --write",
-    "check": "biome check --write",
-    "ci": "pnpm run typecheck && pnpm run lint && pnpm run test:run && pnpm run build",
+    "lint": "biome lint .",
+    "lint:fix": "biome lint --write .",
+    "format": "biome format --write .",
+    "format:check": "biome format .",
+    "check": "biome check .",
+    "check:fix": "biome check --write .",
+    "ci": "pnpm run typecheck && pnpm run check && pnpm run test:run && pnpm run build",
     "prepare": "husky",
     "perf:analyze": "pnpm run build:analyze",
     "perf:preview": "pnpm run build && pnpm run start",
-    "sonar:optimize": "node scripts/sonar-optimizer.js",
-    "sonar:analyze": "bash scripts/sonar-analyzer.sh",
-    "sonar:fix": "pnpm run sonar:optimize && pnpm run lint:fix",
-    "quality:check": "pnpm run lint && pnpm run typecheck && pnpm run test:coverage"
+    "quality:check": "pnpm run check && pnpm run typecheck && pnpm run test:coverage"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

@@ -88,9 +88,9 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
       { key: 'fechaLectura', header: 'Fecha Lectura' },
       { key: 'lecturaAnterior', header: 'Lectura Anterior' },
       { key: 'lecturaActual', header: 'Lectura Actual' },
-      { key: 'consumoPeriodo', header: 'Consumo Período (kWh)' },
-      { key: 'energiaBase', header: 'Energía Base (kWh)' },
-      { key: 'sobreconsumo', header: 'Sobreconsumo (kWh)' }
+      { key: 'consumoPeriodo', header: 'Consumo Período (m³)' },
+      { key: 'energiaBase', header: 'Energía Base (m³)' },
+      { key: 'sobreconsumo', header: 'Sobreconsumo (m³)' }
     ],
     []
   );
@@ -342,7 +342,7 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
 
   const chartConfig = {
     consumo: {
-      label: 'Consumo (kWh)',
+      label: 'Consumo (m³)',
       color: '#3b82f6'
     },
     energiaBase: {
@@ -394,23 +394,23 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
         kpis: [
           {
             label: 'Total Consumo',
-            value: `${analyticsData.totalConsumo.toLocaleString('es-CL')} kWh`
+            value: `${analyticsData.totalConsumo.toLocaleString('es-CL')} m³`
           },
           {
             label: 'Promedio Período',
-            value: `${analyticsData.promedioConsumo.toLocaleString('es-CL')} kWh`
+            value: `${analyticsData.promedioConsumo.toLocaleString('es-CL')} m³`
           },
           {
             label: 'Consumo Máximo',
-            value: `${analyticsData.maxConsumo.toLocaleString('es-CL')} kWh`
+            value: `${analyticsData.maxConsumo.toLocaleString('es-CL')} m³`
           },
           {
             label: 'Consumo Mínimo',
-            value: `${analyticsData.minConsumo.toLocaleString('es-CL')} kWh`
+            value: `${analyticsData.minConsumo.toLocaleString('es-CL')} m³`
           },
           {
             label: 'Total Sobreconsumo',
-            value: `${analyticsData.totalSobreconsumo.toLocaleString('es-CL')} kWh`
+            value: `${analyticsData.totalSobreconsumo.toLocaleString('es-CL')} m³`
           },
           {
             label: 'Variación Promedio',
@@ -442,13 +442,13 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
             key: 'consumo',
             header: 'Consumo',
             align: 'right',
-            formatter: (val: number) => `${val.toLocaleString('es-CL')} kWh`
+            formatter: (val: number) => `${val.toLocaleString('es-CL')} m³`
           },
           {
             key: 'sobreconsumo',
             header: 'Sobreconsumo',
             align: 'right',
-            formatter: (val: number) => `${val.toLocaleString('es-CL')} kWh`
+            formatter: (val: number) => `${val.toLocaleString('es-CL')} m³`
           }
         ]
       }
@@ -547,9 +547,7 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
                   <p className="text-xl font-bold text-blue-900 dark:text-blue-100">
                     {analyticsData.totalConsumo.toLocaleString('es-CL')}
                   </p>
-                  <p className="text-xs text-blue-600 dark:text-blue-400">
-                    kWh
-                  </p>
+                  <p className="text-xs text-blue-600 dark:text-blue-400">m³</p>
                 </div>
                 <Zap className="h-8 w-8 text-blue-600 dark:text-blue-400 opacity-50" />
               </div>
@@ -567,7 +565,7 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
                     {analyticsData.promedioConsumo.toLocaleString('es-CL')}
                   </p>
                   <p className="text-xs text-emerald-600 dark:text-emerald-400">
-                    kWh
+                    m³
                   </p>
                 </div>
                 <Activity className="h-8 w-8 text-emerald-600 dark:text-emerald-400 opacity-50" />
@@ -585,9 +583,7 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
                   <p className="text-xl font-bold text-rose-900 dark:text-rose-100">
                     {analyticsData.maxConsumo.toLocaleString('es-CL')}
                   </p>
-                  <p className="text-xs text-rose-600 dark:text-rose-400">
-                    kWh
-                  </p>
+                  <p className="text-xs text-rose-600 dark:text-rose-400">m³</p>
                 </div>
                 <TrendingUp className="h-8 w-8 text-rose-600 dark:text-rose-400 opacity-50" />
               </div>
@@ -604,9 +600,7 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
                   <p className="text-xl font-bold text-cyan-900 dark:text-cyan-100">
                     {analyticsData.minConsumo.toLocaleString('es-CL')}
                   </p>
-                  <p className="text-xs text-cyan-600 dark:text-cyan-400">
-                    kWh
-                  </p>
+                  <p className="text-xs text-cyan-600 dark:text-cyan-400">m³</p>
                 </div>
                 <TrendingDown className="h-8 w-8 text-cyan-600 dark:text-cyan-400 opacity-50" />
               </div>
@@ -697,10 +691,7 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
               </TabsList>
 
               <TabsContent value="evolution" className="mt-0">
-                <ChartContainer
-                  config={chartConfig}
-                  className="h-[350px] w-full"
-                >
+                <ChartContainer config={chartConfig} className="h-87.5 w-full">
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={analyticsData.filteredLecturas}>
                       <XAxis
@@ -723,7 +714,7 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
                           return label;
                         }}
                         formatter={value => [
-                          `${Number(value).toLocaleString('es-CL')} kWh`,
+                          `${Number(value).toLocaleString('es-CL')} m³`,
                           'Consumo'
                         ]}
                       />
@@ -759,10 +750,7 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
               </TabsContent>
 
               <TabsContent value="comparison" className="mt-0">
-                <ChartContainer
-                  config={chartConfig}
-                  className="h-[350px] w-full"
-                >
+                <ChartContainer config={chartConfig} className="h-87.5 w-full">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={analyticsData.filteredLecturas}>
                       <XAxis
@@ -776,7 +764,7 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
                       <ChartTooltip
                         content={<ChartTooltipContent />}
                         formatter={(value, name) => [
-                          `${Number(value).toLocaleString('es-CL')} kWh`,
+                          `${Number(value).toLocaleString('es-CL')} m³`,
                           name === 'energiaBase'
                             ? 'Energía Base'
                             : 'Sobreconsumo'
@@ -802,10 +790,7 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
               </TabsContent>
 
               <TabsContent value="analysis" className="mt-0">
-                <ChartContainer
-                  config={chartConfig}
-                  className="h-[350px] w-full"
-                >
+                <ChartContainer config={chartConfig} className="h-87.5 w-full">
                   <ResponsiveContainer width="100%" height="100%">
                     <ComposedChart data={analyticsData.filteredLecturas}>
                       <XAxis
@@ -887,7 +872,7 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
                           return (
                             <TableHead
                               key={header.id}
-                              className="h-[50px] px-3 text-xs font-medium border-b border-border"
+                              className="h-12.5 px-3 text-xs font-medium border-b border-border"
                               style={{
                                 width: `${width}px`,
                                 minWidth: `${width}px`,
@@ -935,7 +920,7 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
                             return (
                               <TableCell
                                 key={cell.id}
-                                className="h-[50px] px-3 py-1 text-sm"
+                                className="h-12.5 px-3 py-1 text-sm"
                                 style={{
                                   width: `${width}px`,
                                   minWidth: `${width}px`,

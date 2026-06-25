@@ -33,9 +33,13 @@ import {
 } from '~/components/ui/select';
 import { Switch } from '~/components/ui/switch';
 import { mantencionService } from '~/services/mantencionService';
-import type { Nicho, Sector } from '~/types/mantencion';
+import type { Nicho, NichoFormValues, Sector } from '~/types/mantencion';
 
 const nichoFormSchema = z.object({
+  id: z.coerce
+    .number({ message: 'El código es requerido.' })
+    .int()
+    .positive({ message: 'El código debe ser mayor a 0.' }),
   sectorId: z.string().min(1, { message: 'El sector es requerido.' }),
   nombre: z
     .string()
@@ -72,6 +76,7 @@ export default function NichoFormModal({
   const form = useForm<NichoFormSchemaValues>({
     resolver: zodResolver(nichoFormSchema),
     defaultValues: {
+      id: 0,
       sectorId: '',
       nombre: '',
       ubicacion: '',
@@ -104,35 +109,35 @@ export default function NichoFormModal({
   }, [isOpen]);
 
   useEffect(() => {
-    if (isOpen) {
-      if (mode === 'edit' && nicho) {
-        const sector = sectores.find(s => s.nombre === nicho.nombre);
-        const formData = {
-          sectorId: sector?.id.toString() || '',
+    if (!isOpen) return;
+
+    if (mode === 'edit' && nicho) {
+      if (sectores.length > 0) {
+        const idSector = sectores.find(s => s.nombre === nicho.sector)?.id ?? 0;
+        form.reset({
+          id: nicho.id,
+          sectorId: idSector ? String(idSector) : '',
           nombre: nicho.nombre,
           ubicacion: nicho.ubicacion,
           estado: nicho.estado
-        };
-
-        form.reset(formData);
-      } else {
-        const formData = {
-          sectorId: '',
-          nombre: '',
-          ubicacion: '',
-          estado: true
-        };
-
-        form.reset(formData);
+        });
       }
+    } else {
+      form.reset({
+        id: 0,
+        sectorId: '',
+        nombre: '',
+        ubicacion: '',
+        estado: true
+      });
     }
   }, [isOpen, mode, nicho, sectores, form]);
 
   const handleSubmit = async (data: NichoFormSchemaValues) => {
     setIsLoading(true);
     try {
-      const payload = {
-        id: nicho?.id,
+      const payload: NichoFormValues = {
+        id: data.id,
         idSector: Number.parseInt(data.sectorId, 10),
         nombre: data.nombre,
         ubicacion: data.ubicacion,
@@ -143,7 +148,7 @@ export default function NichoFormModal({
       if (mode === 'add') {
         result = await mantencionService.createNicho(payload);
       } else if (mode === 'edit' && nicho) {
-        result = await mantencionService.updateNicho(nicho.id, payload);
+        result = await mantencionService.updateNicho(payload);
       }
 
       if (result?.error) {
@@ -192,6 +197,41 @@ export default function NichoFormModal({
             onSubmit={form.handleSubmit(handleSubmit)}
             className="space-y-4"
           >
+            <FormField
+              control={form.control}
+              name="id"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Código</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      min={1}
+                      placeholder="Ej: 101"
+                      disabled={mode === 'edit'}
+                      value={field.value ?? ''}
+                      onChange={event =>
+                        field.onChange(
+                          event.target.value === ''
+                            ? 0
+                            : Number.parseInt(event.target.value, 10)
+                        )
+                      }
+                      onBlur={field.onBlur}
+                      name={field.name}
+                      ref={field.ref}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    {mode === 'edit'
+                      ? 'El código no se puede modificar'
+                      : 'Ingrese un código numérico mayor a 0'}
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <FormField
               control={form.control}
               name="sectorId"

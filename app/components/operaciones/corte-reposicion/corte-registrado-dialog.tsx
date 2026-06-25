@@ -119,7 +119,9 @@ export function CorteRegistradoDialog({
                 id="fecha"
                 type="date"
                 value={form.fecha}
-                onChange={e => setForm(prev => ({ ...prev, fecha: e.target.value }))}
+                onChange={e =>
+                  setForm(prev => ({ ...prev, fecha: e.target.value }))
+                }
                 className="text-xs h-8"
               />
             </div>
@@ -132,7 +134,9 @@ export function CorteRegistradoDialog({
                 id="hora"
                 type="time"
                 value={form.hora}
-                onChange={e => setForm(prev => ({ ...prev, hora: e.target.value }))}
+                onChange={e =>
+                  setForm(prev => ({ ...prev, hora: e.target.value }))
+                }
                 className="text-xs h-8"
               />
             </div>

@@ -9,12 +9,11 @@ import { z } from 'zod';
 import { ModernHeader } from '~/components/shared/modern-header';
 import { Button } from '~/components/ui/button';
 import { Form } from '~/components/ui/form';
-import api from '~/lib/api';
 import { administracionService } from '~/services/administracionService';
 import type {
-  GetComunas,
   GetContratante,
-  GetGiros
+  NombreComuna,
+  NombreGiro
 } from '~/types/administracion';
 import { formatRut, isValidRutFormat } from '~/utils/rut-utils';
 
@@ -55,9 +54,9 @@ export default function EditarContratanteComponent() {
   const { id: rut } = useParams<{ id: string }>();
 
   const [contratante, setContratante] = useState<GetContratante | null>(null);
-  const [, setGiros] = useState<GetGiros[]>([]);
-  const [, setComunas] = useState<GetComunas[]>([]);
-  const [existingContratantes, setExistingContratantes] = useState<string[]>(
+  const [, setGiros] = useState<NombreGiro[]>([]);
+  const [, setComunas] = useState<NombreComuna[]>([]);
+  const [existingContratantes, _setExistingContratantes] = useState<string[]>(
     []
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -95,23 +94,15 @@ export default function EditarContratanteComponent() {
       }
 
       try {
-        const [contratantesDataResult, contratanteResult] = await Promise.all([
-          administracionService.getContratantesData(),
-          administracionService.getContratanteByRut(rut)
-        ]);
+        const [girosResult, comunasResult, contratanteResult] =
+          await Promise.all([
+            administracionService.getGiros(),
+            administracionService.getComunas(),
+            administracionService.getContratanteByRut(rut)
+          ]);
 
-        if (contratantesDataResult.error) {
-          toast.error(contratantesDataResult.error);
-          return;
-        }
-
-        if (contratantesDataResult.data) {
-          setGiros(contratantesDataResult.data.giros);
-          setComunas(contratantesDataResult.data.comunas);
-          setExistingContratantes(
-            contratantesDataResult.data.contratantes.map(c => c.rut)
-          );
-        }
+        if (girosResult.data) setGiros(girosResult.data);
+        if (comunasResult.data) setComunas(comunasResult.data);
 
         if (contratanteResult.error) {
           toast.error(contratanteResult.error);
@@ -120,18 +111,19 @@ export default function EditarContratanteComponent() {
         }
 
         if (contratanteResult.data) {
-          const formattedRut = formatRut(contratanteResult.data.rut || '');
-          setContratante({ ...contratanteResult.data, rut: formattedRut });
+          const data = contratanteResult.data as Partial<GetContratante>;
+          const formattedRut = formatRut(data.rut || '');
+          setContratante({ ...(data as GetContratante), rut: formattedRut });
           form.reset({
             rut: formattedRut,
-            nombre: contratanteResult.data.nombre || '',
-            apellido: contratanteResult.data.apellido || '',
-            esEmpresa: contratanteResult.data.esEmpresa || false,
-            direccion: contratanteResult.data.direccion || '',
-            codComuna: contratanteResult.data.comuna || '',
-            contacto: contratanteResult.data.contacto || '',
-            telefono: contratanteResult.data.telefono || '',
-            correo: contratanteResult.data.email || ''
+            nombre: data.nombre || '',
+            apellido: data.apellido || '',
+            esEmpresa: data.esEmpresa || false,
+            direccion: data.direccion || '',
+            codComuna: data.comuna || '',
+            contacto: data.contacto || '',
+            telefono: data.telefono || '',
+            correo: data.email || ''
           });
         }
       } catch (error) {
@@ -185,7 +177,7 @@ export default function EditarContratanteComponent() {
         rut: formatRut(data.rut)
       };
 
-      await api.put('/contratante/modificar', {
+      await administracionService.modificarContratante({
         ...formattedData,
         id: contratante?.rut
       });

@@ -1,7 +1,7 @@
 import api from '~/lib/api';
 import type { ServiceResponse } from '~/services/core/api-response';
 import { BaseApiService } from '~/services/core/base-service';
-import type { FacturacionPorCargo } from '~/types/reportes';
+import type { Facturas } from '~/types/reportes';
 
 export class BillingReportService extends BaseApiService {
   constructor(httpClient: any = api) {
@@ -11,7 +11,7 @@ export class BillingReportService extends BaseApiService {
   async getFacturacionPorCargo(
     periodo: string,
     emId: number
-  ): Promise<ServiceResponse<FacturacionPorCargo[]>> {
+  ): Promise<ServiceResponse<Facturas[]>> {
     if (!periodo || !emId) {
       return this.handleError(
         new Error('Missing required parameters'),
@@ -23,7 +23,7 @@ export class BillingReportService extends BaseApiService {
       const response = await this.httpClient.get(
         `/facturacion-por-cargo?periodo=${periodo}&emId=${emId}`
       );
-      return this.processResponseArray<FacturacionPorCargo>(response);
+      return this.processResponseArray<Facturas>(response);
     }, 'Error getting billing by charges');
   }
 }

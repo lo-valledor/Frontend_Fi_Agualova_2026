@@ -268,7 +268,7 @@ export function useAdministracion() {
   };
 
   const updateUsuario = async (
-    idUsuario: number,
+    id: string | number,
     userData: Partial<Usuarios>
   ): Promise<unknown> => {
     setLoadingState(prev => ({
@@ -277,7 +277,7 @@ export function useAdministracion() {
     }));
 
     try {
-      const response = await api.put(`/actualizar/${idUsuario}`, userData);
+      const response = await api.put(`/actualizar/${id}`, userData);
       return response.data;
     } finally {
       setLoadingState(prev => ({
@@ -287,14 +287,14 @@ export function useAdministracion() {
     }
   };
 
-  const deleteUsuario = async (idUsuario: number): Promise<unknown> => {
+  const deleteUsuario = async (id: string): Promise<unknown> => {
     setLoadingState(prev => ({
       ...prev,
       deleteUsuario: { isLoading: true }
     }));
 
     try {
-      const response = await api.delete(`/eliminar/${idUsuario}`);
+      const response = await api.delete(`/eliminar/${id}`);
       return response.data;
     } finally {
       setLoadingState(prev => ({
@@ -321,9 +321,9 @@ export function useAdministracion() {
     }
   };
 
-  const getUsuarioById = async (idUsuario: number): Promise<Usuarios> => {
+  const getUsuarioById = async (id: number): Promise<Usuarios> => {
     try {
-      const response = await api.get(`/GetUserById/${idUsuario}`);
+      const response = await api.get(`/GetUserById/${id}`);
       return response.data as Usuarios;
     } catch (error) {
       console.error('Error al obtener el usuario:', error);

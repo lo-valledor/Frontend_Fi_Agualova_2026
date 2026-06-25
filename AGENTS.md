@@ -20,6 +20,10 @@ This repository is a React Router 7 + Vite frontend. Application code lives in `
 
 Use TypeScript with strict mode enabled. Prettier is the formatting source of truth: 2-space indentation, single quotes, semicolons, max line width of 80, and LF line endings. ESLint enforces React, import hygiene, and unused import cleanup. Use the `~/*` alias for imports from `app/`. Prefer kebab-case for feature folders (`consultar-contrato`), PascalCase for React components, and colocated test files named `*.test.ts` or `*.test.tsx`.
 
+## Protected Files
+
+Do not modify files under `app/types/` or any `*Service.ts` file unless the user explicitly asks for that exact change. Default to adapting components, routes, hooks, or local UI logic without changing shared types or service layers.
+
 ## Testing Guidelines
 
 Vitest runs in `jsdom` and discovers `**/*.{test,spec}.{ts,tsx}`. Keep tests close to the code they validate, as seen in `app/components/.../*.test.tsx` and `app/hooks/.../*.test.ts`. Focus new tests on hooks, utilities, and critical UI behavior. Run `pnpm test:coverage` before opening larger changes.

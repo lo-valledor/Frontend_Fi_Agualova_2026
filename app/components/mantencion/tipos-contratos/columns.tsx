@@ -3,17 +3,17 @@ import type { ColumnDef } from '@tanstack/react-table';
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
 import { TableActions } from '~/components/data-table/table-helpers';
 import { Badge } from '~/components/ui/badge';
-import type { TiposContrato } from '~/types/mantencion';
+import type { TipoContrato } from '~/types/mantencion';
 
 interface TiposContratoColumnsProps {
-  onEdit: (tipoContrato: TiposContrato) => void;
-  onDelete: (tipoContrato: TiposContrato) => void;
+  onEdit: (tipoContrato: TipoContrato) => void;
+  onDelete: (tipoContrato: TipoContrato) => void;
 }
 
 export const createColumns = ({
   onEdit,
   onDelete
-}: TiposContratoColumnsProps): ColumnDef<TiposContrato>[] => [
+}: TiposContratoColumnsProps): ColumnDef<TipoContrato>[] => [
   {
     accessorKey: 'nombre',
     header: ({ column }) => (

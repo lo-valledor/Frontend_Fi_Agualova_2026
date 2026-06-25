@@ -1,10 +1,9 @@
 import { LayoutList, Plus } from 'lucide-react';
 import { motion } from 'motion/react';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useRevalidator } from 'react-router';
 import { toast } from 'sonner';
-
-import { VirtualDataTable } from '~/components/data-table/virtual-data-table';
+import { DataTable } from '~/components/data-table/data-table';
 import { ModernHeader } from '~/components/shared/modern-header';
 import { Button } from '~/components/ui/button';
 import {
@@ -25,7 +24,6 @@ import { ScrollArea } from '~/components/ui/scroll-area';
 import { Separator } from '~/components/ui/separator';
 import type { CondicionesContratoRow } from '~/types/administracion';
 import type { Concepto } from '~/types/mantencion';
-
 import { columns } from './columns';
 import CondicionesContratoModalForm from './condiciones-contrato-modal-form';
 import DetallesCondicionesContrato from './detalles-condiciones-contrato';
@@ -40,9 +38,8 @@ export default function CondicionesContratoComponent({
   conceptos
 }: Readonly<CondicionesContratoComponentProps>) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedCondicionContrato, setSelectedCondicionContrato] = useState<
-    CondicionesContratoRow | undefined
-  >(undefined);
+  const [selectedCondicionContrato, setSelectedCondicionContrato] =
+    useState<CondicionesContratoRow | null>(null);
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [selectedCondicionId, setSelectedCondicionId] = useState<number | null>(
@@ -51,30 +48,32 @@ export default function CondicionesContratoComponent({
 
   const revalidator = useRevalidator();
 
-  const handleAddCondicionContrato = () => {
-    setSelectedCondicionContrato(undefined);
+  const handleAddCondicionContrato = useCallback(() => {
+    setSelectedCondicionContrato(null);
     setModalMode('add');
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const handleEditCondicionContrato = (
-    condicionContrato: CondicionesContratoRow
-  ) => {
-    setSelectedCondicionContrato(condicionContrato);
-    setModalMode('edit');
-    setIsModalOpen(true);
-  };
+  const handleEditCondicionContrato = useCallback(
+    (condicionContrato: CondicionesContratoRow) => {
+      setSelectedCondicionContrato(condicionContrato);
+      setModalMode('edit');
+      setIsModalOpen(true);
+    },
+    []
+  );
 
-  const handleViewCondicionContrato = (
-    condicionContrato: CondicionesContratoRow
-  ) => {
-    setSelectedCondicionId(condicionContrato.id);
-    setIsDetailsOpen(true);
-  };
+  const handleViewCondicionContrato = useCallback(
+    (condicionContrato: CondicionesContratoRow) => {
+      setSelectedCondicionId(condicionContrato.id);
+      setIsDetailsOpen(true);
+    },
+    []
+  );
 
-  const handleSuccess = () => {
+  const handleSuccess = useCallback(() => {
     setIsModalOpen(false);
-    setSelectedCondicionContrato(undefined);
+    setSelectedCondicionContrato(null);
     setModalMode('add');
     revalidator.revalidate();
     toast.success(
@@ -82,7 +81,7 @@ export default function CondicionesContratoComponent({
         ? 'Condición de contrato creada exitosamente'
         : 'Condición de contrato actualizada exitosamente'
     );
-  };
+  }, [modalMode, revalidator]);
 
   const mechanicalEase = [0.25, 0.1, 0.25, 1] as const;
 
@@ -132,7 +131,7 @@ export default function CondicionesContratoComponent({
             <div className="industrial-divider" />
             <CardContent className="p-4">
               <div className="overflow-x-auto -mx-1">
-                <VirtualDataTable
+                <DataTable
                   columns={columns({
                     onEdit: handleEditCondicionContrato,
                     onView: handleViewCondicionContrato,
@@ -140,8 +139,6 @@ export default function CondicionesContratoComponent({
                   })}
                   data={condicionesContrato}
                   searchPlaceholder="Buscar condiciones..."
-                  estimateRowHeight={60}
-                  maxHeight="600px"
                 />
               </div>
             </CardContent>

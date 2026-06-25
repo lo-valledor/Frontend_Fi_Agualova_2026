@@ -10,6 +10,7 @@ import {
   CardHeader,
   CardTitle
 } from '~/components/ui/card';
+import { clearAuthToken } from '~/services/axiosConfig';
 
 interface SessionExpiredProps {
   message?: string;
@@ -21,9 +22,8 @@ const SessionExpired: React.FC<SessionExpiredProps> = ({
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Limpiar el sessionStorage y localStorage
     sessionStorage.removeItem('token');
-    localStorage.removeItem('token');
+    clearAuthToken();
 
     // Redirigir automáticamente al login después de un breve delay
     const timer = setTimeout(() => {

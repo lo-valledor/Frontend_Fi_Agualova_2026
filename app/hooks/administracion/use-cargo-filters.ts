@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 
 import type { CargoFilters } from '~/components/administracion/cargo-facturable/cargo-filters';
-import type { BuscarCargoFacturable } from '~/types/administracion';
+import type { CargoFacturableRow } from '~/types/administracion';
 import {
   extractUniqueOptions,
   filterByNormalizedString,
@@ -32,18 +32,18 @@ export interface CargoFilterOptions {
 }
 
 export interface UseCargoFiltersReturn {
-  filteredCargos: BuscarCargoFacturable[];
+  filteredCargos: CargoFacturableRow[];
   filterStats: FilterStats;
   filterOptions: CargoFilterOptions;
 }
 
 export function useCargoFilters(
-  cargos: BuscarCargoFacturable[],
+  cargos: CargoFacturableRow[],
   filters: CargoFilters
 ): UseCargoFiltersReturn {
   const filterOptions = useMemo((): CargoFilterOptions => {
     return {
-      tipos: extractUniqueOptions(cargos, c => c.tipo),
+      tipos: extractUniqueOptions(cargos, c => c.tipoCargo ?? ''),
       fijoVariable: [
         ...new Set(
           cargos
@@ -78,8 +78,7 @@ export function useCargoFilters(
 
   const filteredCargos = useMemo(() => {
     return cargos.filter(cargo => {
-      // Filtros simples de string
-      if (!filterByString(cargo.tipo, filters.tipo)) {
+      if (!filterByString(cargo.tipoCargo ?? '', filters.tipo)) {
         return false;
       }
 
@@ -95,7 +94,6 @@ export function useCargoFilters(
         return false;
       }
 
-      // Filtros normalizados (backend usa abreviaturas)
       if (
         !filterByNormalizedString(
           cargo.fijoVariable,

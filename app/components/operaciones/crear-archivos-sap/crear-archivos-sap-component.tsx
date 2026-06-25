@@ -1,11 +1,5 @@
-import {
-  Building2,
-  ChevronDown,
-  Download,
-  FileArchive,
-  Loader2
-} from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { ChevronDown, Download, FileArchive, Loader2 } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
 import { ModernHeader } from '~/components/shared/modern-header';
@@ -31,162 +25,196 @@ import {
   SelectValue
 } from '~/components/ui/select';
 import { operacionesService } from '~/services/operacionesService';
-import type { EmpresaSAP, NombreSugeridoSAP } from '~/types/operaciones';
+import type { SAPSugeridos } from '~/types/operaciones';
 
-const ENCABEZADO_PREFIX = 'FAC';
-const DETALLE_PREFIX = 'DET';
-const TIMESTAMP_FORMAT = (date: Date): string => {
-  const day = date.getDate().toString().padStart(2, '0');
-  const month = (date.getMonth() + 1).toString().padStart(2, '0');
-  const year = date.getFullYear();
-  const hours = date.getHours().toString().padStart(2, '0');
-  const minutes = date.getMinutes().toString().padStart(2, '0');
-  return `${day}${month}${year}-${hours}${minutes}`;
+type SAPEmpresaOption = {
+  id: string;
+  nombre: string;
 };
 
-const buildCsvBlob = (data: BlobPart): Blob =>
-  new Blob([data], { type: 'text/csv;charset=utf-8;' });
+interface CrearArchivosSapComponentProps {
+  empresas: SAPEmpresaOption[];
+  nombresSugeridos: SAPSugeridos | null;
+  error: string | null;
+}
 
-const downloadBlob = (blob: Blob, filename: string): void => {
-  const url = globalThis.URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = filename;
-  link.style.display = 'none';
-  document.body.appendChild(link);
-  link.click();
-  setTimeout(() => {
-    document.body.removeChild(link);
-    globalThis.URL.revokeObjectURL(url);
-  }, 100);
-};
-
-export default function CrearArchivosSapComponent() {
+export default function CrearArchivosSapComponent({
+  empresas,
+  nombresSugeridos,
+  error
+}: CrearArchivosSapComponentProps) {
   const [isConfigOpen, setIsConfigOpen] = useState(true);
-  const [empresas, setEmpresas] = useState<EmpresaSAP[]>([]);
-  const [empresaId, setEmpresaId] = useState<number | null>(null);
-  const [nombreEncabezado, setNombreEncabezado] = useState('');
-  const [nombreDetalle, setNombreDetalle] = useState('');
-  const [isLoadingEmpresas, setIsLoadingEmpresas] = useState(false);
   const [isDownloadingEncabezado, setIsDownloadingEncabezado] = useState(false);
   const [isDownloadingDetalle, setIsDownloadingDetalle] = useState(false);
+  const [empresaId, setEmpresaId] = useState('');
+  const [nombreEncabezado, setNombreEncabezado] = useState('');
+  const [nombreDetalle, setNombreDetalle] = useState('');
 
   useEffect(() => {
-    const cargarEmpresas = async () => {
-      setIsLoadingEmpresas(true);
-      const response = await operacionesService.getListadoEmpresasSAP();
-      setIsLoadingEmpresas(false);
-      if (response.error || !response.data) {
-        toast.error('No se pudieron cargar las empresas SAP');
-        return;
-      }
-      setEmpresas(response.data);
-    };
-    void cargarEmpresas();
-  }, []);
-
-  useEffect(() => {
-    if (empresaId === null) {
-      setNombreEncabezado('');
-      setNombreDetalle('');
-      return;
+    if (empresas.length > 0 && !empresaId) {
+      setEmpresaId(empresas[0].id);
     }
-    const empresa = empresas.find((e) => e.id === empresaId);
-    const cargarNombresSugeridos = async () => {
-      const response = await operacionesService.getNombreSugeridoSAP(
-        empresa?.nombre
-      );
-      if (response.error || !response.data) {
-        const stamp = TIMESTAMP_FORMAT(new Date());
-        setNombreEncabezado(`${ENCABEZADO_PREFIX}-${stamp}.csv`);
-        setNombreDetalle(`${DETALLE_PREFIX}-${stamp}.csv`);
-        return;
-      }
-      const sugeridos: NombreSugeridoSAP = response.data;
-      setNombreEncabezado(
-        sugeridos.nombreEncabezado || `${ENCABEZADO_PREFIX}-${stamp}.csv`
-      );
-      setNombreDetalle(
-        sugeridos.nombreDetalle || `${DETALLE_PREFIX}-${stamp}.csv`
-      );
-    };
-    const stamp = TIMESTAMP_FORMAT(new Date());
-    void cargarNombresSugeridos();
-  }, [empresaId, empresas]);
+  }, [empresas, empresaId]);
+
+  useEffect(() => {
+    if (nombresSugeridos?.nombreEncabezado) {
+      setNombreEncabezado(nombresSugeridos.nombreEncabezado);
+    }
+
+    if (nombresSugeridos?.nombreDetalle) {
+      setNombreDetalle(nombresSugeridos.nombreDetalle);
+    }
+  }, [nombresSugeridos]);
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+    }
+  }, [error]);
+
+  const selectedEmpresa = useMemo(
+    () => empresas.find(empresa => empresa.id === empresaId) ?? null,
+    [empresas, empresaId]
+  );
+
+  const generateFallbackFilename = (type: 'FAC' | 'DET'): string => {
+    const now = new Date();
+    const day = now.getDate().toString().padStart(2, '0');
+    const month = (now.getMonth() + 1).toString().padStart(2, '0');
+    const year = now.getFullYear();
+    const hours = now.getHours().toString().padStart(2, '0');
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+
+    return `${type}-${day}${month}${year}-${hours}${minutes}.csv`;
+  };
+
+  const downloadBlobFile = (blob: Blob, filename: string) => {
+    const url = globalThis.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    link.style.display = 'none';
+
+    document.body.appendChild(link);
+    link.click();
+
+    setTimeout(() => {
+      document.body.removeChild(link);
+      globalThis.URL.revokeObjectURL(url);
+    }, 100);
+  };
 
   const handleDescargarEncabezado = async () => {
-    if (empresaId === null) {
-      toast.error('Debe seleccionar una empresa');
+    if (!empresaId) {
+      toast.error('Debes seleccionar una empresa antes de descargar.');
       return;
     }
+
     if (!nombreEncabezado.trim()) {
-      toast.error('Debe ingresar un nombre para el archivo de encabezado');
+      toast.error('Debes indicar un nombre para el archivo de encabezado.');
       return;
     }
+
     setIsDownloadingEncabezado(true);
     try {
       toast.info('Generando archivo de encabezado...');
-      const response = await operacionesService.getDescargarEncabezadoSAP(
+
+      const response = await operacionesService.getDescargarEnacabezado(
         empresaId,
         nombreEncabezado.trim()
       );
+
       if (response.error || !response.data) {
-        toast.error(`Error: ${response.error ?? 'No se pudo generar el archivo'}`);
-        return;
+        throw new Error(
+          response.error || 'No fue posible descargar el archivo'
+        );
       }
-      const blob = buildCsvBlob(response.data as BlobPart);
-      downloadBlob(blob, nombreEncabezado.trim());
-      toast.success(`Archivo "${nombreEncabezado.trim()}" descargado exitosamente`);
-    } catch (error) {
-      const message = error instanceof Error ? error.message : 'Error desconocido';
-      toast.error(`Error: ${message}`);
+
+      const filename =
+        response.data.filename || generateFallbackFilename('FAC');
+      const blob = new Blob([response.data.blob], {
+        type: response.data.contentType || 'text/csv;charset=utf-8;'
+      });
+
+      downloadBlobFile(blob, filename);
+
+      toast.success(`Archivo "${filename}" descargado exitosamente`);
+    } catch (error: unknown) {
+      const typedError = error as {
+        response?: { data?: { message?: string } };
+        message?: string;
+      };
+      const errorMessage =
+        typedError.response?.data?.message ||
+        typedError.message ||
+        'Error al descargar el archivo';
+      toast.error(`Error: ${errorMessage}`);
     } finally {
       setIsDownloadingEncabezado(false);
     }
   };
 
   const handleDescargarDetalle = async () => {
-    if (empresaId === null) {
-      toast.error('Debe seleccionar una empresa');
+    if (!empresaId) {
+      toast.error('Debes seleccionar una empresa antes de descargar.');
       return;
     }
+
     if (!nombreDetalle.trim()) {
-      toast.error('Debe ingresar un nombre para el archivo de detalle');
+      toast.error('Debes indicar un nombre para el archivo de detalle.');
       return;
     }
+
     setIsDownloadingDetalle(true);
     try {
       toast.info('Generando archivo de detalle...');
-      const response = await operacionesService.getDescargarDetalleSAP(
+
+      const response = await operacionesService.getDescargarDetalle(
         empresaId,
         nombreDetalle.trim()
       );
+
       if (response.error || !response.data) {
-        toast.error(`Error: ${response.error ?? 'No se pudo generar el archivo'}`);
-        return;
+        throw new Error(
+          response.error || 'No fue posible descargar el archivo'
+        );
       }
-      const blob = buildCsvBlob(response.data as BlobPart);
-      downloadBlob(blob, nombreDetalle.trim());
-      toast.success(`Archivo "${nombreDetalle.trim()}" descargado exitosamente`);
-    } catch (error) {
-      const message = error instanceof Error ? error.message : 'Error desconocido';
-      toast.error(`Error: ${message}`);
+
+      const filename =
+        response.data.filename || generateFallbackFilename('DET');
+      const blob = new Blob([response.data.blob], {
+        type: response.data.contentType || 'text/csv;charset=utf-8;'
+      });
+
+      downloadBlobFile(blob, filename);
+
+      toast.success(`Archivo "${filename}" descargado exitosamente`);
+    } catch (error: unknown) {
+      const typedError = error as {
+        response?: { data?: { message?: string } };
+        message?: string;
+      };
+      const errorMessage =
+        typedError.response?.data?.message ||
+        typedError.message ||
+        'Error al descargar el archivo';
+      toast.error(`Error: ${errorMessage}`);
     } finally {
       setIsDownloadingDetalle(false);
     }
   };
 
-  const downloadDisabled = empresaId === null || isDownloadingEncabezado;
-
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto p-3 space-y-4">
+        {/* Header */}
         <ModernHeader
           title="Archivos SAP"
           description="Generación y descarga de archivos CSV para integración con SAP"
         />
 
         <div className="space-y-4">
+          {/* Panel de Configuración */}
           <Card className="border-border bg-background">
             <Collapsible open={isConfigOpen} onOpenChange={setIsConfigOpen}>
               <CollapsibleTrigger asChild>
@@ -201,7 +229,7 @@ export default function CrearArchivosSapComponent() {
                           Descarga de Archivos
                         </CardTitle>
                         <CardDescription className="text-sm">
-                          Seleccione la empresa y descargue los archivos CSV
+                          Haz clic en los botones para descargar los archivos
                         </CardDescription>
                       </div>
                     </div>
@@ -216,60 +244,70 @@ export default function CrearArchivosSapComponent() {
 
               <CollapsibleContent>
                 <CardContent className="p-4 space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="empresa" className="text-sm font-medium">
-                      Empresa
-                    </Label>
-                    <Select
-                      value={empresaId === null ? '' : String(empresaId)}
-                      onValueChange={(value) => setEmpresaId(Number(value))}
-                      disabled={isLoadingEmpresas}
-                    >
-                      <SelectTrigger id="empresa" className="w-full">
-                        <Building2 className="mr-2 h-4 w-4 text-muted-foreground" />
-                        <SelectValue
-                          placeholder={
-                            isLoadingEmpresas
-                              ? 'Cargando empresas...'
-                              : 'Seleccione una empresa'
-                          }
-                        />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {empresas.map((empresa) => (
-                          <SelectItem key={empresa.id} value={String(empresa.id)}>
-                            {empresa.nombre}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                  <div className="grid gap-4 rounded-xl border border-border bg-muted/20 p-4 md:grid-cols-2">
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium">Empresa SAP</Label>
+                      <Select value={empresaId} onValueChange={setEmpresaId}>
+                        <SelectTrigger className="w-full bg-background">
+                          <SelectValue placeholder="Selecciona una empresa" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {empresas.map(empresa => (
+                            <SelectItem key={empresa.id} value={empresa.id}>
+                              {empresa.nombre}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <p className="text-xs text-muted-foreground">
+                        {selectedEmpresa
+                          ? `Empresa seleccionada: ${selectedEmpresa.nombre}`
+                          : 'No hay empresas disponibles para descargar archivos.'}
+                      </p>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium">
+                        Estado de configuración
+                      </Label>
+                      <div className="rounded-lg border border-dashed border-border bg-background px-3 py-2 text-sm text-muted-foreground">
+                        {nombresSugeridos
+                          ? 'Se cargaron nombres sugeridos desde SAP.'
+                          : 'No se recibieron nombres sugeridos; puedes escribirlos manualmente.'}
+                      </div>
+                    </div>
                   </div>
 
+                  {/* Archivo de Encabezado */}
                   <div className="flex items-center justify-between gap-4 p-4 rounded-xl border border-border bg-background">
-                    <div className="space-y-2 flex-1">
-                      <Label
-                        htmlFor="nombreEncabezado"
-                        className="text-sm font-medium"
-                      >
+                    <div className="space-y-3 flex-1">
+                      <Label className="text-sm font-medium">
                         Archivo de Encabezado Factura
                       </Label>
                       <p className="text-sm">
                         Archivo CSV con los encabezados de facturas para SAP
                       </p>
-                      <Input
-                        id="nombreEncabezado"
-                        type="text"
-                        value={nombreEncabezado}
-                        onChange={(e) => setNombreEncabezado(e.target.value)}
-                        placeholder="FAC-AAAA.csv"
-                        disabled={empresaId === null}
-                      />
+                      <div className="space-y-2">
+                        <Label className="text-xs text-muted-foreground">
+                          Nombre del archivo
+                        </Label>
+                        <Input
+                          value={nombreEncabezado}
+                          onChange={event =>
+                            setNombreEncabezado(event.target.value)
+                          }
+                          placeholder="Ej: FAC-24062026-1030.csv"
+                          className="bg-background"
+                        />
+                      </div>
                     </div>
                     <Button
                       variant="default"
                       size="sm"
                       onClick={handleDescargarEncabezado}
-                      disabled={downloadDisabled}
+                      disabled={
+                        isDownloadingEncabezado || empresas.length === 0
+                      }
                       className="gap-1.5 bg-primary disabled:opacity-50"
                     >
                       {isDownloadingEncabezado ? (
@@ -286,31 +324,34 @@ export default function CrearArchivosSapComponent() {
                     </Button>
                   </div>
 
+                  {/* Archivo Detalle */}
                   <div className="flex items-center justify-between gap-4 p-4 rounded-xl border border-border bg-background">
-                    <div className="space-y-2 flex-1">
-                      <Label
-                        htmlFor="nombreDetalle"
-                        className="text-sm font-medium"
-                      >
+                    <div className="space-y-3 flex-1">
+                      <Label className="text-sm font-medium">
                         Archivo Detalle Factura
                       </Label>
                       <p className="text-sm">
                         Archivo CSV con los detalles de facturas para SAP
                       </p>
-                      <Input
-                        id="nombreDetalle"
-                        type="text"
-                        value={nombreDetalle}
-                        onChange={(e) => setNombreDetalle(e.target.value)}
-                        placeholder="DET-AAAA.csv"
-                        disabled={empresaId === null}
-                      />
+                      <div className="space-y-2">
+                        <Label className="text-xs text-muted-foreground">
+                          Nombre del archivo
+                        </Label>
+                        <Input
+                          value={nombreDetalle}
+                          onChange={event =>
+                            setNombreDetalle(event.target.value)
+                          }
+                          placeholder="Ej: DET-24062026-1030.csv"
+                          className="bg-background"
+                        />
+                      </div>
                     </div>
                     <Button
                       variant="default"
                       size="sm"
                       onClick={handleDescargarDetalle}
-                      disabled={downloadDisabled}
+                      disabled={isDownloadingDetalle || empresas.length === 0}
                       className="gap-1.5 bg-primary disabled:opacity-50"
                     >
                       {isDownloadingDetalle ? (

@@ -11,6 +11,11 @@ export function matchesShortcut(
   event: KeyboardEvent,
   shortcut: KeyboardShortcut
 ): boolean {
+  // Skip malformed shortcuts that lack a key (defensive: should never happen,
+  // but a single bad entry crashes every keydown on the page).
+  if (!shortcut || !shortcut.key) {
+    return false;
+  }
   const keyMatch = event.key.toLowerCase() === shortcut.key.toLowerCase();
   const ctrlMatch = !!shortcut.ctrlKey === event.ctrlKey;
   const shiftMatch = !!shortcut.shiftKey === event.shiftKey;

@@ -140,9 +140,9 @@ class RolesPermisosService {
       const roles = this.processApiResponse<any>(response);
 
       // Mapear los datos del backend al formato esperado
-      // El backend devuelve idUsuario pero debería ser idRol
+      // El backend devuelve id pero debería ser idRol
       const mappedRoles = roles.map((rol: any) => ({
-        idRol: rol.idRol || rol.idUsuario, // Usar idRol si existe, sino idUsuario
+        idRol: rol.idRol || rol.id, // Usar idRol si existe, sino id
         nombreRol: rol.nombreRol,
         descripcion: rol.descripcion,
         estadoRol: rol.estadoRol
@@ -692,15 +692,7 @@ class RolesPermisosService {
       // El API espera un array directo, no un objeto con propiedad roles
       const rolesArray = rolesData.roles;
 
-      console.log('📤 API Request:', {
-        endpoint: `${codigoUsuario}/roles`,
-        method: 'POST',
-        body: rolesArray
-      });
-
       const response = await api.post(`${codigoUsuario}/roles`, rolesArray);
-
-      console.log('📥 API Response:', response);
 
       // Si la respuesta es 204 (No Content), la operación fue exitosa
       if (response.status === 204) {
@@ -738,14 +730,7 @@ class RolesPermisosService {
     idRol: number
   ): Promise<RolesPermisosServiceResponse<boolean>> {
     try {
-      console.log('📤 API Request:', {
-        endpoint: `${codigoUsuario}/roles/${idRol}`,
-        method: 'DELETE'
-      });
-
       await api.delete(`${codigoUsuario}/roles/${idRol}`);
-
-      console.log('📥 API Response: Success');
 
       return {
         data: true,

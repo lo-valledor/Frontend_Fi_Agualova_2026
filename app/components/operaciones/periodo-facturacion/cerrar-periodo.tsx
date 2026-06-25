@@ -1,6 +1,5 @@
 import { AlertCircle, Loader2, XCircle } from 'lucide-react';
 import { useState } from 'react';
-import { useNavigate } from 'react-router';
 import { toast } from 'sonner';
 import {
   AlertDialog,
@@ -14,8 +13,8 @@ import {
   AlertDialogTrigger
 } from '~/components/ui/alert-dialog';
 import { Button } from '~/components/ui/button';
-import api from '~/lib/api';
 import { cn } from '~/lib/utils';
+import { operacionesService } from '~/services/operacionesService';
 
 interface CerrarPeriodoProps {
   periodoId: string;
@@ -32,37 +31,23 @@ export default function CerrarPeriodo({
 }: CerrarPeriodoProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
 
   const handleCerrarPeriodo = async () => {
     setIsLoading(true);
     try {
-      const response = await api.post(
-        '/cerrar-periodo',
-        JSON.stringify(periodoId),
-        {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }
-      );
+      const result =
+        await operacionesService.postCerrarPeriodoFacturacion(periodoId);
 
-      if (response.status === 200) {
-        toast.success('Periodo cerrado correctamente');
-        setIsOpen(false);
-
-        // Llamar a onSuccess si existe
-        if (onSuccess) {
-          onSuccess();
-        } else {
-          // Recargar la página si no hay onSuccess
-          navigate(0);
-        }
-      } else {
-        toast.error('Error al cerrar el periodo');
+      if (result.error) {
+        toast.error(result.error);
+        return;
       }
-    } catch (error) {
-      toast.error('Error al cerrar el periodo', error as any);
+
+      toast.success('Periodo cerrado correctamente');
+      setIsOpen(false);
+      onSuccess?.();
+    } catch {
+      toast.error('Error inesperado al cerrar el periodo');
     } finally {
       setIsLoading(false);
     }

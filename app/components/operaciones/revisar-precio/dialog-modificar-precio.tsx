@@ -95,8 +95,13 @@ export default function DialogModificarPrecio({
       return false;
     }
 
-    if (!form.motivo.trim() || form.motivo.trim().length < MIN_LONGITUD_MOTIVO) {
-      setError(`El motivo debe tener al menos ${MIN_LONGITUD_MOTIVO} caracteres`);
+    if (
+      !form.motivo.trim() ||
+      form.motivo.trim().length < MIN_LONGITUD_MOTIVO
+    ) {
+      setError(
+        `El motivo debe tener al menos ${MIN_LONGITUD_MOTIVO} caracteres`
+      );
       return false;
     }
 
@@ -252,7 +257,9 @@ export default function DialogModificarPrecio({
               type="password"
               placeholder="Tu contraseña"
               value={form.passwordConfirmacion}
-              onChange={e => updateField('passwordConfirmacion', e.target.value)}
+              onChange={e =>
+                updateField('passwordConfirmacion', e.target.value)
+              }
               autoComplete="current-password"
               className="bg-background border h-8 sm:h-10 text-xs sm:text-sm"
             />

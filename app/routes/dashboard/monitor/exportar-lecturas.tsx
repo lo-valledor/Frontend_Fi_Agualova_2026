@@ -17,7 +17,8 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export async function clientLoader({}: Route.ClientLoaderArgs) {
-  const result = await monitorService.getPeriodosAndSectores();
+  const result = await monitorService.getBasicData();
+  const resSectores = await monitorService.getSectores();
 
   if (result.error || !result.data) {
     return {
@@ -30,8 +31,10 @@ export async function clientLoader({}: Route.ClientLoaderArgs) {
 
   return {
     periodos: result.data.periodos,
-    sectores: result.data.sectores,
-    activePeriodoId: result.data.activePeriodoId,
+    activePeriodoId: result.data.activePeriodoId
+      ? Number(result.data.activePeriodoId)
+      : null,
+    sectores: resSectores.data || [],
     error: null
   };
 }

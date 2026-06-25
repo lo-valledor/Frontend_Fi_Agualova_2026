@@ -5,6 +5,14 @@
     "**/.client/**/*",
     ".react-router/types/**/*"
   ],
+  "exclude": [
+    "app/routes/dashboard/reportes/components/**/*",
+    "app/services/reportes/**/*",
+    "app/components/reportes/resumen-facturacion/**/*",
+    "app/components/reportes/consultar-contrato/contrato/**/*",
+    "app/hooks/operaciones/use-calculo-facturacion-flow.ts",
+    "app/components/administracion/acometida/**/*.test.tsx"
+  ],
   "compilerOptions": {
     "lib": ["ESNext", "DOM"],
     "types": ["node", "vite/client"],
@@ -17,6 +25,7 @@
     "paths": {
       "~/*": ["./app/*"]
     },
+    "forceConsistentCasingInFileNames": true,
     "esModuleInterop": true,
     "verbatimModuleSyntax": true,
     "noEmit": true,

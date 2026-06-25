@@ -1,4 +1,4 @@
-const isDevelopment = process.env.NODE_ENV === 'development';
+const isDevelopment = import.meta.env.DEV;
 
 type PerformanceRating = 'good' | 'needs-improvement' | 'poor';
 
@@ -74,7 +74,7 @@ export function initPerformanceMonitoring() {
 
     lcpObserver.observe({ type: 'largest-contentful-paint', buffered: true });
   } catch (e) {
-    console.warn('LCP monitoring not supported', e);
+    if (isDevelopment) console.warn('LCP monitoring not supported', e);
   }
 
   // FID - First Input Delay
@@ -98,7 +98,7 @@ export function initPerformanceMonitoring() {
 
     fidObserver.observe({ type: 'first-input', buffered: true });
   } catch (e) {
-    console.warn('FID monitoring not supported', e);
+    if (isDevelopment) console.warn('FID monitoring not supported', e);
   }
 
   // CLS - Cumulative Layout Shift
@@ -124,7 +124,7 @@ export function initPerformanceMonitoring() {
 
     clsObserver.observe({ type: 'layout-shift', buffered: true });
   } catch (e) {
-    console.warn('CLS monitoring not supported', e);
+    if (isDevelopment) console.warn('CLS monitoring not supported', e);
   }
 
   // FCP - First Contentful Paint
@@ -145,7 +145,7 @@ export function initPerformanceMonitoring() {
 
     fcpObserver.observe({ type: 'paint', buffered: true });
   } catch (e) {
-    console.warn('FCP monitoring not supported', e);
+    if (isDevelopment) console.warn('FCP monitoring not supported', e);
   }
 
   // TTFB - Time to First Byte
@@ -167,7 +167,7 @@ export function initPerformanceMonitoring() {
       sendToAnalytics(metric);
     }
   } catch (e) {
-    console.warn('TTFB monitoring not supported', e);
+    if (isDevelopment) console.warn('TTFB monitoring not supported', e);
   }
 }
 

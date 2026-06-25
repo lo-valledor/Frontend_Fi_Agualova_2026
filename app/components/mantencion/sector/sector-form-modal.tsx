@@ -1,19 +1,19 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2 } from "lucide-react";
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
-import { z } from "zod";
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Loader2 } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { z } from 'zod';
 
-import { Button } from "~/components/ui/button";
+import { Button } from '~/components/ui/button';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
-} from "~/components/ui/dialog";
+  DialogTitle
+} from '~/components/ui/dialog';
 import {
   Form,
   FormControl,
@@ -21,37 +21,38 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
-} from "~/components/ui/form";
-import { Input } from "~/components/ui/input";
+  FormMessage
+} from '~/components/ui/form';
+import { Input } from '~/components/ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
-} from "~/components/ui/select";
-import { Switch } from "~/components/ui/switch";
-import api from "~/lib/api";
-import type { Sector, SectorZona } from "~/types/mantencion";
+  SelectValue
+} from '~/components/ui/select';
+import { Switch } from '~/components/ui/switch';
+import { mantencionService } from '~/services/mantencionService';
+import type { Sector, SectorFormValues, SectorZona } from '~/types/mantencion';
 
 const SectorFormSchema = z.object({
+  id: z.number().optional(),
   nombre: z
     .string()
-    .min(1, { message: "El nombre es requerido." })
-    .max(50, { message: "El nombre no puede exceder 50 caracteres." }),
-  zona: z.string().min(1, { message: "La zona es requerida." }),
-  estado: z.boolean(),
+    .min(1, { message: 'El nombre es requerido.' })
+    .max(50, { message: 'El nombre no puede exceder 50 caracteres.' }),
+  idZona: z.coerce.number().int().min(1, { message: 'La zona es requerida.' }),
+  estado: z.boolean()
 });
 
-type SectorFormValues = z.infer<typeof SectorFormSchema>;
+type SectorFormInput = z.infer<typeof SectorFormSchema>;
 
 interface SectorFormModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
   sector: Sector | null;
-  mode: "add" | "edit";
+  mode: 'add' | 'edit';
 }
 
 export default function SectorFormModal({
@@ -59,43 +60,36 @@ export default function SectorFormModal({
   onClose,
   onSuccess,
   sector,
-  mode,
+  mode
 }: SectorFormModalProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [zonas, setZonas] = useState<SectorZona[]>([]);
   const [isLoadingZonas, setIsLoadingZonas] = useState(false);
 
-  const form = useForm<SectorFormValues>({
+  const form = useForm<SectorFormInput>({
     resolver: zodResolver(SectorFormSchema),
     defaultValues: {
-      nombre: "",
-      zona: "",
-      estado: true,
-    },
+      id: 0,
+      nombre: '',
+      idZona: 0,
+      estado: true
+    }
   });
 
   useEffect(() => {
     const fetchZonas = async () => {
       setIsLoadingZonas(true);
       try {
-        const response = await api.get("/sectores/zonas");
+        const response = await mantencionService.getSectoresZonas();
 
-        // Manejar diferentes formatos de respuesta de la API
         let zonasData: SectorZona[] = [];
-        if (
-          response.data &&
-          typeof response.data === "object" &&
-          "data" in response.data &&
-          Array.isArray((response.data as any).data)
-        ) {
-          zonasData = (response.data as { data: SectorZona[] }).data;
-        } else if (Array.isArray(response.data)) {
+        if (response.data && Array.isArray(response.data)) {
           zonasData = response.data;
         }
 
         setZonas(zonasData);
-      } catch (error) {
-        toast.error("No se pudieron cargar las zonas.", error as any);
+      } catch (_error) {
+        toast.error('No se pudieron cargar las zonas.');
       } finally {
         setIsLoadingZonas(false);
       }
@@ -107,51 +101,52 @@ export default function SectorFormModal({
   }, [isOpen]);
 
   useEffect(() => {
-    if (isOpen) {
-      if (mode === "edit" && sector) {
+    if (!isOpen) return;
+
+    if (mode === 'edit' && sector) {
+      if (zonas.length > 0) {
+        const idZona = Number(
+          zonas.find(z => z.descripcion === sector.zona)?.id ?? 0
+        );
         form.reset({
+          id: sector.id,
           nombre: sector.nombre,
-          zona: sector.zona,
-          estado: sector.estado,
-        });
-      } else {
-        form.reset({
-          nombre: "",
-          zona: "",
-          estado: true,
+          idZona,
+          estado: sector.estado
         });
       }
+    } else {
+      form.reset({
+        id: 0,
+        nombre: '',
+        idZona: 0,
+        estado: true
+      });
     }
-  }, [isOpen, mode, sector, form]);
+  }, [isOpen, mode, sector, form, zonas]);
 
-  const handleSubmit = async (data: SectorFormValues) => {
+  const handleSubmit = async (data: SectorFormInput) => {
     setIsLoading(true);
     try {
-      // Buscar el ID de la zona seleccionada
-      const zonaSeleccionada = zonas.find((z) => z.descripcion === data.zona);
-      const zonaId = zonaSeleccionada?.id;
-
-      // Preparar el payload según lo que espera la API
-      const apiPayload = {
+      const payload: SectorFormValues = {
+        id: mode === 'edit' && sector ? sector.id : 0,
         nombre: data.nombre,
-        zonaId: zonaId, // La API espera zonaId, no zona (nombre)
-        estado: data.estado,
+        idZona: data.idZona,
+        estado: data.estado
       };
 
-      if (mode === "add") {
-        await api.post("/sectores/crear", apiPayload);
-      } else if (mode === "edit" && sector) {
-        await api.put("/sectores/editar", {
-          ...apiPayload,
-          id: sector.id,
-        });
+      if (mode === 'add') {
+        await mantencionService.postSectores(payload);
+      } else if (mode === 'edit' && sector) {
+        await mantencionService.updateSector(payload);
       }
       onSuccess();
-    } catch (_error: any) {
+    } catch (error) {
+      if (import.meta.env.DEV) console.error('guardarSector', error);
       toast.error(
-        mode === "add"
-          ? "Error al crear el sector"
-          : "Error al actualizar el sector",
+        mode === 'add'
+          ? 'Error al crear el sector'
+          : 'Error al actualizar el sector'
       );
     } finally {
       setIsLoading(false);
@@ -168,12 +163,12 @@ export default function SectorFormModal({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>
-            {mode === "add" ? "Agregar Nuevo Sector" : "Editar Sector"}
+            {mode === 'add' ? 'Agregar Nuevo Sector' : 'Editar Sector'}
           </DialogTitle>
           <DialogDescription>
-            {mode === "add"
-              ? "Complete la información para crear un nuevo sector."
-              : "Modifique los campos que desea actualizar."}
+            {mode === 'add'
+              ? 'Complete la información para crear un nuevo sector.'
+              : 'Modifique los campos que desea actualizar.'}
           </DialogDescription>
         </DialogHeader>
 
@@ -199,13 +194,13 @@ export default function SectorFormModal({
 
             <FormField
               control={form.control}
-              name="zona"
+              name="idZona"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Zona</FormLabel>
                   <Select
-                    onValueChange={field.onChange}
-                    value={field.value}
+                    onValueChange={value => field.onChange(Number(value))}
+                    value={field.value ? String(field.value) : ''}
                     disabled={isLoadingZonas}
                   >
                     <FormControl>
@@ -213,15 +208,15 @@ export default function SectorFormModal({
                         <SelectValue
                           placeholder={
                             isLoadingZonas
-                              ? "Cargando zonas..."
-                              : "Selecciona una zona"
+                              ? 'Cargando zonas...'
+                              : 'Selecciona una zona'
                           }
                         />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {zonas.map((zona) => (
-                        <SelectItem key={zona.id} value={zona.descripcion}>
+                      {zonas.map(zona => (
+                        <SelectItem key={zona.id} value={String(zona.id)}>
                           {zona.descripcion}
                         </SelectItem>
                       ))}
@@ -243,7 +238,7 @@ export default function SectorFormModal({
                   <div className="space-y-0.5">
                     <FormLabel>Estado del Sector</FormLabel>
                     <FormDescription>
-                      {field.value ? "Sector activo" : "Sector inactivo"}
+                      {field.value ? 'Sector activo' : 'Sector inactivo'}
                     </FormDescription>
                   </div>
                   <FormControl>
@@ -271,7 +266,7 @@ export default function SectorFormModal({
                 variant="default"
               >
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {mode === "add" ? "Crear Sector" : "Actualizar Sector"}
+                {mode === 'add' ? 'Crear Sector' : 'Actualizar Sector'}
               </Button>
             </DialogFooter>
           </form>

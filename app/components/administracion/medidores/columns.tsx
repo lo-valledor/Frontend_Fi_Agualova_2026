@@ -7,11 +7,9 @@ import {
   TableActions
 } from '~/components/data-table/table-helpers';
 import { Badge } from '~/components/ui/badge';
-import { Button } from '~/components/ui/button';
 
 interface MedidoresColumnsProps {
   onEdit: (medidor: MedidorListItem) => void;
-  onAsociarSubempalme: (medidor: MedidorListItem) => void;
   onDelete: (medidor: MedidorListItem) => void;
 }
 
@@ -56,7 +54,6 @@ const getTipoBadgeProps = (tipo: string) => {
 
 export const columns = ({
   onEdit,
-  onAsociarSubempalme,
   onDelete
 }: MedidoresColumnsProps): ColumnDef<MedidorListItem>[] => [
   {
@@ -196,27 +193,6 @@ export const columns = ({
             item={medidor}
             showView={false}
           />
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={() => onAsociarSubempalme(medidor)}
-            className="h-8 w-8 p-0"
-            title="Asociar subempalme"
-          >
-            <svg
-              className="h-4 w-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
-              />
-            </svg>
-          </Button>
         </div>
       );
     },

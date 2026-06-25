@@ -3,12 +3,12 @@ import { format } from 'rut.js';
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
 import { TableActions } from '~/components/data-table/table-helpers';
 import { Badge } from '~/components/ui/badge';
-import type { GetComunas, GetContratante } from '~/types/administracion';
+import type { GetContratante, NombreComuna } from '~/types/administracion';
 
 interface ContratantesColumnsProps {
   onDetails: (contratante: GetContratante) => void;
   detailingContratanteRut: string | null;
-  comunas: GetComunas[];
+  comunas: NombreComuna[];
 }
 
 export const columns = ({
@@ -75,9 +75,12 @@ export const columns = ({
       <DataTableColumnHeader column={column} title="Dirección" />
     ),
     cell: ({ row }) => {
-      // Buscar el nombre de la comuna por su código
+      const matchComuna = comunas.find(c => {
+        if (typeof c === 'string') return c === row.original.comuna;
+        return c.codigo === row.original.comuna;
+      });
       const comunaNombre =
-        comunas.find(c => c.codigo === row.original.comuna)?.nombre ||
+        (typeof matchComuna === 'string' ? matchComuna : matchComuna?.nombre) ||
         row.original.comuna;
 
       return (

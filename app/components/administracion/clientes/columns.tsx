@@ -4,11 +4,11 @@ import { format } from 'rut.js';
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
 import { TableActions } from '~/components/data-table/table-helpers';
 import { Badge } from '~/components/ui/badge';
-import type { GetClientes } from '~/types/administracion';
+import type { ClientesRow } from '~/types/administracion';
 
 interface ClientesColumnsProps {
-  onEdit: (cliente: GetClientes) => void;
-  onDetails: (cliente: GetClientes) => void;
+  onEdit: (cliente: ClientesRow) => void;
+  onDetails: (cliente: ClientesRow) => void;
   editingClienteRut: string | null;
   detailingClienteRut: string | null;
 }
@@ -18,7 +18,7 @@ export const columns = ({
   onDetails,
   editingClienteRut,
   detailingClienteRut
-}: ClientesColumnsProps): ColumnDef<GetClientes>[] => [
+}: ClientesColumnsProps): ColumnDef<ClientesRow>[] => [
   {
     accessorKey: 'rut',
     header: ({ column }) => (
@@ -30,9 +30,9 @@ export const columns = ({
           <div className="flex-1">
             <div
               className="font-medium text-xs sm:text-sm"
-              title={row.original.nombreCompleto}
+              title={row.original.razonSocialNombre}
             >
-              {row.original.nombreCompleto}
+              {row.original.razonSocialNombre}
             </div>
             <div className="text-xs font-mono">
               {format(row.getValue('rut'))}

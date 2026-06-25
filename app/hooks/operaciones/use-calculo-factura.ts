@@ -1,56 +1,41 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 import { operacionesService } from '~/services/operacionesService';
-
-import { validarCicloYPeriodo } from './utils/cycle-utilities';
-import { es404 } from './utils/error-handler';
+import type { RevisarCalculosPrefactura } from '~/types/operaciones';
+import { convertirCicloParaAPI } from './utils/cycle-utilities';
 
 interface UseCalculoFacturaProps {
   periodoFormateado: string;
   cicloId: string;
 }
 
-/**
- * Forma esperada del item de prefactura. La respuesta del endpoint
- * `/revisar-calculos/buscar-prefacturas` no está completamente tipada
- * en el source-of-truth, así que usamos un shape mínimo.
- */
-export interface PrefacturaItem {
-  lecturaId?: number;
-  contratoId?: number;
-  rut?: string;
-  nombre?: string;
-  sector?: string;
-  local?: string;
-  totalFacturado?: number;
-  consumoPeriodo?: number;
-  [key: string]: unknown;
-}
-
 export interface UseCalculoFacturaResult {
-  data: PrefacturaItem[];
-  filteredData: PrefacturaItem[];
+  data: RevisarCalculosPrefactura[];
+  filteredData: RevisarCalculosPrefactura[];
   isLoading: boolean;
   error: string | null;
   searchTerm: string;
   setSearchTerm: (term: string) => void;
   handleRevisarCalculo: () => Promise<void>;
-  setData: (data: PrefacturaItem[]) => void;
+  setData: (data: RevisarCalculosPrefactura[]) => void;
 }
 
 export function useCalculoFactura({
   periodoFormateado,
   cicloId
 }: UseCalculoFacturaProps): UseCalculoFacturaResult {
-  const [data, setData] = useState<PrefacturaItem[]>([]);
-  const [filteredData, setFilteredData] = useState<PrefacturaItem[]>([]);
+  const [data, setData] = useState<RevisarCalculosPrefactura[]>([]);
+  const [filteredData, setFilteredData] = useState<RevisarCalculosPrefactura[]>(
+    []
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>('');
 
   const handleRevisarCalculo = async (): Promise<void> => {
-    if (!validarCicloYPeriodo(periodoFormateado, cicloId)) {
+    // Early return si faltan parámetros
+    if (!periodoFormateado || !cicloId) {
       toast.error(
         !periodoFormateado
           ? 'No hay un periodo abierto disponible'
@@ -63,48 +48,41 @@ export function useCalculoFactura({
     setError(null);
 
     try {
-      const cicloNumero = Number.parseInt(cicloId, 10);
-      const result = await operacionesService.getRevisarCalculosBuscarPrefacturas(
-        cicloNumero,
-        periodoFormateado
-      );
+      const cicloParaAPI = convertirCicloParaAPI(cicloId);
+      const requestParams = {
+        cicloId: Number.parseInt(cicloParaAPI, 10),
+        periodo: periodoFormateado
+      };
+
+      const result =
+        await operacionesService.getRevisarCalculosBuscarPrefacturas(
+          requestParams.cicloId,
+          requestParams.periodo
+        );
 
       if (result.error) {
         setError(result.error);
-        toast.error(result.error);
         setData([]);
+        toast.error(`Error: ${result.error}`);
         return;
       }
 
-      const prefacturas = Array.isArray(result.data)
-        ? (result.data as PrefacturaItem[])
-        : [];
+      const datosCombinados = Array.isArray(result.data) ? result.data : [];
 
-      if (prefacturas.length === 0) {
+      if (datosCombinados.length === 0) {
         setData([]);
         toast.info(
-          'No se encontraron prefacturas para el ciclo y período elegidos'
+          'No se encontraron prefacturas para el ciclo y periodo elegidos'
         );
         return;
       }
 
-      setData(prefacturas);
-      toast.success(`Se encontraron ${prefacturas.length} registros`);
+      setData(datosCombinados);
+      toast.success(`Se encontraron ${datosCombinados.length} registros`);
     } catch (err) {
-      if (es404(err)) {
-        setError('NO_LECTURAS_CERRADAS');
-        toast.success('No hay lecturas pendientes de facturar', {
-          duration: 6000,
-          description:
-            'Todas las lecturas cerradas ya están facturadas. Para procesar nuevas facturas, cierra las lecturas pendientes y ejecuta "Preparar Cálculo".'
-        });
-      } else {
-        const { message } = err instanceof Error
-          ? { message: err.message }
-          : { message: 'Error desconocido' };
-        setError(message);
-        toast.error(`Error: ${message}`);
-      }
+      const message = err instanceof Error ? err.message : 'Error desconocido';
+      setError(message);
+      toast.error(`Error: ${message}`);
       setData([]);
     } finally {
       setIsLoading(false);
@@ -121,11 +99,9 @@ export function useCalculoFactura({
     setFilteredData(filtered);
   }, [searchTerm, data]);
 
-  const memoFiltered = useMemo(() => filteredData, [filteredData]);
-
   return {
     data,
-    filteredData: memoFiltered,
+    filteredData,
     isLoading,
     error,
     searchTerm,

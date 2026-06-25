@@ -33,10 +33,10 @@ import {
   TableRow
 } from '~/components/ui/table';
 import type {
+  AcometidaFormValues,
+  AcometidaProps,
   AcometidaRow,
-  ActualizarAcometidaProps,
   BuscarContratosLibres,
-  CrearAcometidaProps,
   Empalmes,
   Nichos,
   Sectores
@@ -52,9 +52,7 @@ interface SelectOption {
 interface AcometidaFormProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (
-    data: CrearAcometidaProps | ActualizarAcometidaProps
-  ) => Promise<void>;
+  onSubmit: (data: AcometidaProps | AcometidaFormValues) => Promise<void>;
   acometida?: AcometidaRow | null;
   isLoading?: boolean;
   comboEmpalmes: Empalmes[];
@@ -138,13 +136,18 @@ export function AcometidaForm({
       // Siempre establecer el contratoId original, independientemente de si está en la lista
       const contratoId = acometida.contratoId || '';
 
+      // Normalizar el límite a formato "123,4" (coma decimal) para edición
+      const limitePotenciaInicial = (acometida.limitePotencia || '0')
+        .toString()
+        .replace('.', ',');
+
       form.reset({
         ubicacion: acometida.ubicacion || '',
         empalmeId,
         nichoId,
         contratoId,
         codigo: acometida.codigo || '',
-        limitePotencia: acometida.limitePotencia || '0'
+        limitePotencia: limitePotenciaInicial
       });
     } else {
       form.reset({
@@ -170,8 +173,9 @@ export function AcometidaForm({
     const empalmeId = Number(data.empalmeId);
     const nichoId = Number(data.nichoId);
     const codigo = data.codigo.trim();
+    // La API exige "123,4": parseamos coma decimal correctamente
     const limitePotencia = data.limitePotencia
-      ? Number(data.limitePotencia)
+      ? Number(String(data.limitePotencia).replace(',', '.'))
       : 0;
     const contratoId = data.contratoId.trim();
 
@@ -221,30 +225,34 @@ export function AcometidaForm({
       const { empalmeId, nichoId, codigo, limitePotencia, contratoIdFinal } =
         validated;
 
+      // La API exige el Límite de Potencia en formato "123,4" (coma decimal).
+      const limitePotenciaFormato = String(limitePotencia).replace('.', ',');
+
       if (isEdit && acometida) {
-        const submitData: ActualizarAcometidaProps = {
+        // PUT: usar AcometidaFormValues con idAcometida separado.
+        // El `codigo` es el código real de la acometida (no el id).
+        const submitData: AcometidaFormValues = {
           idAcometida: acometida.idAcometida,
+          codigo,
           ubicacion: data.ubicacion.trim(),
-          idEmpalme: empalmeId,
-          idNicho: nichoId,
+          idEmpalme: String(empalmeId),
+          idNicho: String(nichoId),
           idContrato: contratoIdFinal,
-          limitePotencia: String(limitePotencia)
+          limitePotencia: limitePotenciaFormato
         };
         await onSubmit(submitData);
       } else {
-        const submitData: CrearAcometidaProps = {
+        // POST: usar AcometidaProps (sin idAcometida).
+        const submitData: AcometidaProps = {
           ubicacion: data.ubicacion.trim(),
           idEmpalme: empalmeId,
           idNicho: nichoId,
           idContrato: contratoIdFinal,
           codigo,
-          limitePotencia: String(limitePotencia)
+          limitePotencia: limitePotenciaFormato
         };
         await onSubmit(submitData);
       }
-
-      form.reset();
-      onClose();
     } catch (error: any) {
       handleError(error);
     }
@@ -559,15 +567,30 @@ export function AcometidaForm({
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-sm font-medium">
-                          Límite Potencia (kW)
+                          Límite Potencia (m³)
                         </FormLabel>
                         <FormControl>
                           <Input
-                            placeholder="Ej: 50"
+                            inputMode="decimal"
+                            placeholder="Ej: 123,4"
                             className="h-12 text-base"
-                            {...field}
+                            value={field.value ?? ''}
+                            onChange={event => {
+                              // Permitir solo dígitos, coma y punto
+                              const sanitized = event.target.value
+                                .replace(/[^0-9.,]/g, '')
+                                .replace(/\./g, ',');
+                              field.onChange(sanitized);
+                            }}
+                            onBlur={field.onBlur}
+                            name={field.name}
+                            ref={field.ref}
                           />
                         </FormControl>
+                        <p className="text-xs text-muted-foreground">
+                          Formato: <span className="font-mono">123,4</span>{' '}
+                          (coma decimal).
+                        </p>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -658,17 +681,15 @@ export function AcometidaForm({
             {/* Tabla de contratos con scroll horizontal */}
             <div className="border rounded-xl bg-background h-[50vh] overflow-hidden">
               <div className="h-full overflow-auto">
-                <Table className="min-w-[800px] relative">
+                <Table className="min-w-200 relative">
                   <TableHeader className="bg-muted/50 sticky top-0 z-10">
                     <TableRow>
-                      <TableHead className="min-w-[140px]">
-                        ID Contrato
-                      </TableHead>
-                      <TableHead className="min-w-[200px]">Cliente</TableHead>
-                      <TableHead className="min-w-[180px]">Empresa</TableHead>
-                      <TableHead className="min-w-[120px]">Local</TableHead>
-                      <TableHead className="min-w-[100px]">Tarifa</TableHead>
-                      <TableHead className="text-center min-w-[120px] sticky right-0 bg-muted/50 z-20">
+                      <TableHead className="min-w-35">ID Contrato</TableHead>
+                      <TableHead className="min-w-200">Cliente</TableHead>
+                      <TableHead className="min-w-180">Empresa</TableHead>
+                      <TableHead className="min-w-120">Local</TableHead>
+                      <TableHead className="min-w-100">Tarifa</TableHead>
+                      <TableHead className="text-center min-w-120 sticky right-0 bg-muted/50 z-20">
                         Acción
                       </TableHead>
                     </TableRow>

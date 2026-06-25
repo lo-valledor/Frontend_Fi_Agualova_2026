@@ -90,7 +90,7 @@ const CostAnalysisChart = memo(function CostAnalysisChart({
 
   const chartConfig = {
     costoPorKwh: {
-      label: 'Costo por kWh',
+      label: 'Costo por m³',
       color: '#f59e0b'
     }
   };
@@ -98,7 +98,7 @@ const CostAnalysisChart = memo(function CostAnalysisChart({
   return (
     <Card className="border bg-background">
       <CardHeader>
-        <CardTitle className="text-base">Análisis de Costo por kWh</CardTitle>
+        <CardTitle className="text-base">Análisis de Costo por m³</CardTitle>
         <CardDescription>
           Últimos 12 periodos con indicador de promedio
         </CardDescription>
@@ -135,7 +135,7 @@ const CostAnalysisChart = memo(function CostAnalysisChart({
                           <div className="text-xs space-y-1">
                             <div className="flex items-center justify-between gap-4">
                               <span className="text-slate-600 dark:text-slate-400">
-                                Costo/kWh:
+                                Costo/m³:
                               </span>
                               <span className="font-bold">
                                 ${data.costoPorKwh.toFixed(0)}
@@ -146,7 +146,7 @@ const CostAnalysisChart = memo(function CostAnalysisChart({
                                 Consumo:
                               </span>
                               <span className="font-medium">
-                                {data.consumo.toLocaleString('es-CL')} kWh
+                                {data.consumo.toLocaleString('es-CL')} m³
                               </span>
                             </div>
                             {data.esAnormal && (
@@ -167,7 +167,7 @@ const CostAnalysisChart = memo(function CostAnalysisChart({
               <Bar
                 dataKey="costoPorKwh"
                 radius={[0, 4, 4, 0]}
-                name="Costo por kWh"
+                name="Costo por m³"
               >
                 {chartData.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={entry.color} />
@@ -190,7 +190,7 @@ const CostAnalysisChart = memo(function CostAnalysisChart({
 
         <div className="mt-4 text-xs text-center text-slate-600 dark:text-slate-400">
           Costo promedio:{' '}
-          <span className="font-bold">${costoPromedio.toFixed(0)}</span> /kWh
+          <span className="font-bold">${costoPromedio.toFixed(0)}</span> /m³
         </div>
       </CardContent>
     </Card>

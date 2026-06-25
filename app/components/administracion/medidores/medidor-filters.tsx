@@ -41,7 +41,7 @@ interface MedidorFiltersProps {
   filters: MedidorFilters;
   onFiltersChange: (filters: MedidorFilters) => void;
   onClearFilters: () => void;
-  filterOptions: FilterOptions;
+  filterOptions?: FilterOptions;
 }
 
 export function MedidorFiltersComponent({
@@ -50,6 +50,12 @@ export function MedidorFiltersComponent({
   onClearFilters,
   filterOptions
 }: Readonly<MedidorFiltersProps>) {
+  const safeOptions = filterOptions ?? {
+    marcas: [],
+    tipos: [],
+    modelos: [],
+    estados: []
+  };
   const [isOpen, setIsOpen] = useState(false);
 
   const handleFilterChange = (key: keyof MedidorFilters, value: string) => {
@@ -129,7 +135,7 @@ export function MedidorFiltersComponent({
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Todas las marcas</SelectItem>
-                    {filterOptions.marcas.map(marca => (
+                    {safeOptions.marcas.map(marca => (
                       <SelectItem key={marca} value={marca}>
                         {marca}
                       </SelectItem>
@@ -152,7 +158,7 @@ export function MedidorFiltersComponent({
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Todos los tipos</SelectItem>
-                    {filterOptions.tipos.map(tipo => (
+                    {safeOptions.tipos.map(tipo => (
                       <SelectItem key={tipo} value={tipo}>
                         {tipo}
                       </SelectItem>
@@ -175,7 +181,7 @@ export function MedidorFiltersComponent({
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Todos los modelos</SelectItem>
-                    {filterOptions.modelos.map(modelo => (
+                    {safeOptions.modelos.map(modelo => (
                       <SelectItem key={modelo} value={modelo}>
                         {modelo}
                       </SelectItem>
@@ -198,7 +204,7 @@ export function MedidorFiltersComponent({
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Todos los estados</SelectItem>
-                    {filterOptions.estados.map(estado => (
+                    {safeOptions.estados.map(estado => (
                       <SelectItem key={estado} value={estado}>
                         {estado}
                       </SelectItem>

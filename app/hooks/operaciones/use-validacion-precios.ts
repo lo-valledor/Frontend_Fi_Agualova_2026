@@ -48,7 +48,7 @@ export function useValidacionPrecios({
 
     try {
       const { mes, anio } = extraerMesYAnio(periodoFormateado);
-      const result = await operacionesService.gerRevisarPreciosData(mes, anio);
+      const result = await operacionesService.getRevisarPreciosData(mes, anio);
 
       if (result.error || !result.data) {
         setError(result.error || 'Error al consultar precios');

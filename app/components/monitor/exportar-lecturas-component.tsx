@@ -43,7 +43,9 @@ export default function ExportarLecturasComponent({
   activePeriodoId,
   error
 }: ExportarLecturasComponentProps) {
-  const [selectedPeriodos, setSelectedPeriodos] = useState<MonitorPeriodos[]>([]);
+  const [selectedPeriodos, setSelectedPeriodos] = useState<MonitorPeriodos[]>(
+    []
+  );
   const [isExporting, setIsExporting] = useState(false);
   const [selectedSectores, setSelectedSectores] = useState<string[]>([]);
   const [selectedNichos, _setSelectedNichos] = useState<string[]>([]);
@@ -63,8 +65,7 @@ export default function ExportarLecturasComponent({
   useEffect(() => {
     if (periodos && periodos.length > 0 && selectedPeriodos.length === 0) {
       const periodoActivo =
-        periodos.find(p => p.value === String(activePeriodoId)) ||
-        periodos[0];
+        periodos.find(p => p.value === String(activePeriodoId)) || periodos[0];
 
       if (periodoActivo) {
         setSelectedPeriodos([periodoActivo]);
@@ -184,9 +185,7 @@ export default function ExportarLecturasComponent({
 
       // Obtener el nombre del archivo del header Content-Disposition
       const contentDisposition = response.headers['content-disposition'];
-      const periodosDescripcion = selectedPeriodos
-        .map(p => p.text)
-        .join('-');
+      const periodosDescripcion = selectedPeriodos.map(p => p.text).join('-');
       let filename = `Lecturas_${
         periodosDescripcion
       }_${selectedSectores.join(',')}_${selectedNichos.join(

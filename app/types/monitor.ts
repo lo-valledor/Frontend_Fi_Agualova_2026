@@ -114,14 +114,49 @@ export type MonitorCabecera = {
   tarifa: string;
 };
 
+export type MonitorMedidorClaves = {
+  codigo: string;
+  descripcion: string;
+  tipo: string;
+  fecha: string;
+};
+
+export type MonitorLecturasAnteriores = {
+  periodo: string;
+  fechaLectura: string;
+  ultimaLectura: string;
+  lecturaActual: string;
+  consumoPeriodo: string;
+  consumoAdicional: string;
+  observacion: string;
+};
+
 export type MonitorHistorialLectura = {
   estadoFacturar: number;
   permiteAceptar: boolean;
   permiteIngresar: boolean;
   cabecera: MonitorCabecera;
-  claves: string[];
-  lecturasAnteriores: string[];
+  claves: MonitorMedidorClaves[];
+  lecturasAnteriores: MonitorLecturasAnteriores[];
   complementoBT43: string | null;
+};
+
+export type MonitorDetalleRegistro = {
+  lmId: number;
+  ultimaLectura: number;
+  serieMedidor: string;
+  digitos: number;
+  constante: number;
+  codigoSubempalme: string;
+  ubicacion: string;
+  modelo: number;
+  tieneAdicional: boolean;
+  serieAdicional: null | string;
+  digitosAdicional: number;
+  constanteAdicional: number;
+  tipoMedidorAdicional: number;
+  subempalmeAdicional: null | string;
+  ultimaLecturaAdicional: number;
 };
 
 export type MonitorProps = {
@@ -172,14 +207,14 @@ export interface StatsData {
 }
 
 export type MeterStatusType =
-  | "SINLEC" // Sin Lectura
-  | "SINCLA" // Lectura Normal
-  | "CLAINF" // Clave Informativa
-  | "CLAREL" // Clave Relevante
-  | "CLACRI" // Clave Crítica
-  | "LECCER" // Lectura Cerrada
-  | "LECIMP" // En Facturación
-  | "IMPORT"; // Lecturas Importadas
+  | 'SINLEC' // Sin Lectura
+  | 'SINCLA' // Lectura Normal
+  | 'CLAINF' // Clave Informativa
+  | 'CLAREL' // Clave Relevante
+  | 'CLACRI' // Clave Crítica
+  | 'LECCER' // Lectura Cerrada
+  | 'LECIMP' // En Facturación
+  | 'IMPORT'; // Lecturas Importadas
 
 export interface MeterStatusInfo {
   color: string;

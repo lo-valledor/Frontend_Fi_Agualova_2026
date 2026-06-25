@@ -38,7 +38,7 @@ export const columns = ({
       return (
         <div className="flex items-center gap-2 min-w-0">
           <span
-            className="font-mono text-xs sm:text-sm font-medium truncate max-w-[100px] lg:max-w-[140px]"
+            className="font-mono text-xs sm:text-sm font-medium truncate max-w-100 lg:max-w-140"
             title={codigo}
           >
             {codigo}
@@ -59,7 +59,7 @@ export const columns = ({
       return (
         <div className="flex items-center gap-2 min-w-0">
           <span
-            className="text-xs sm:text-sm truncate max-w-[120px] lg:max-w-[200px]"
+            className="text-xs sm:text-sm truncate max-w-30 lg:max-w-200"
             title={ubicacion}
           >
             {ubicacion}
@@ -104,7 +104,7 @@ export const columns = ({
       return (
         <div className="flex items-center gap-2 min-w-0">
           <span
-            className="text-xs sm:text-sm font-medium truncate max-w-[100px] lg:max-w-[140px]"
+            className="text-xs sm:text-sm font-medium truncate max-w-25 lg:max-w-140"
             title={empalme}
           >
             {empalme}
@@ -125,7 +125,7 @@ export const columns = ({
       return (
         <div className="flex items-center gap-2 min-w-0">
           <span
-            className="text-xs sm:text-sm font-medium truncate max-w-[100px] lg:max-w-[140px]"
+            className="text-xs sm:text-sm font-medium truncate max-w-100 lg:max-w-140"
             title={nicho}
           >
             {nicho}
@@ -161,7 +161,7 @@ export const columns = ({
   {
     accessorKey: 'limitePotencia',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Límite kW" />
+      <DataTableColumnHeader column={column} title="Límite m³" />
     ),
     cell: ({ row }) => {
       const limite = Number(row.getValue('limitePotencia') || 0);
@@ -184,7 +184,7 @@ export const columns = ({
         <div className="flex items-center gap-2">
           <div className="space-y-0.5">
             <div className="text-xs sm:text-sm font-medium ">
-              {limite.toLocaleString('es-CL')} kW
+              {limite.toLocaleString('es-CL')} m³
             </div>
           </div>
         </div>
@@ -203,7 +203,7 @@ export const columns = ({
       return (
         <div className="flex items-center gap-2 min-w-0">
           <span
-            className="font-mono text-xs sm:text-sm font-medium truncate max-w-[100px] lg:max-w-[120px]"
+            className="font-mono text-xs sm:text-sm font-medium truncate max-w-25 lg:max-w-120"
             title={numeroMedidor}
           >
             {numeroMedidor}

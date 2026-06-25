@@ -26,12 +26,12 @@ import {
   DialogTitle
 } from '~/components/ui/dialog';
 import { Skeleton } from '~/components/ui/skeleton';
-import type { GetClientesByRut } from '~/types/administracion';
+import type { Cliente } from '~/types/administracion';
 
 interface ClienteDetailsModalProps {
   isOpen: boolean;
   onClose: () => void;
-  cliente: GetClientesByRut | null;
+  cliente: Cliente | null;
 }
 
 const InfoItem = ({
@@ -63,7 +63,7 @@ export function ClienteDetailsModal({
   onClose,
   cliente
 }: Readonly<ClienteDetailsModalProps>) {
-  const [detailsData, setDetailsData] = useState<GetClientesByRut | null>(null);
+  const [detailsData, setDetailsData] = useState<Cliente | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -71,11 +71,11 @@ export function ClienteDetailsModal({
     if (isOpen && cliente) {
       setIsLoading(true);
       setError(null);
-      // Simula la carga de datos, como en el modal de contratos
-      setTimeout(() => {
+      const timer = setTimeout(() => {
         setDetailsData(cliente);
         setIsLoading(false);
       }, 500);
+      return () => clearTimeout(timer);
     }
   }, [isOpen, cliente]);
 
@@ -190,7 +190,7 @@ export function ClienteDetailsModal({
             />
             <InfoItem
               label="Correo Electrónico"
-              value={detailsData.correo}
+              value={detailsData.email}
               icon={
                 <div className="p-2 bg-background rounded-xl">
                   <Mail className="h-4 w-4" />
@@ -221,7 +221,7 @@ export function ClienteDetailsModal({
             />
             <InfoItem
               label="Comuna"
-              value={detailsData.comuna}
+              value={detailsData.nombreComuna}
               icon={
                 <div className="p-2 bg-background rounded-xl">
                   <Building className="h-4 w-4" />
@@ -253,7 +253,7 @@ export function ClienteDetailsModal({
               />
               <InfoItem
                 label="Giro Comercial"
-                value={detailsData.giro}
+                value={detailsData.nombreGiro}
                 icon={
                   <div className="p-2 bg-background rounded-xl">
                     <Briefcase className="h-4 w-4" />

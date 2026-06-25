@@ -58,8 +58,6 @@ describe('useExportData - Load Tests', () => {
 
   describe('CSV Export Load Tests', () => {
     it('should format 10000 records for CSV export in < 5s', () => {
-      const { result } = renderHook(() => useExportData());
-
       // Crear 10000 registros de ejemplo
       const records = Array.from({ length: 10000 }, (_, i) => ({
         id: i + 1,
@@ -285,8 +283,6 @@ describe('useExportData - Load Tests', () => {
 
   describe('Concurrent Export Operations', () => {
     it('should handle 10 simultaneous export operations', async () => {
-      const { result } = renderHook(() => useExportData());
-
       const promises = Array.from({ length: 10 }, async (_, batchNum) => {
         const records = Array.from({ length: 5000 }, (_, i) => ({
           id: batchNum * 5000 + i + 1,
@@ -315,8 +311,6 @@ describe('useExportData - Load Tests', () => {
 
   describe('Memory Stress during Export', () => {
     it('should maintain consistent performance across multiple export cycles', () => {
-      const { result } = renderHook(() => useExportData());
-
       const cycles = 5;
       const recordsPerCycle = 20000;
       const times: number[] = [];

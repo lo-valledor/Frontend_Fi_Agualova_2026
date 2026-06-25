@@ -14,11 +14,11 @@ import {
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router';
-import Select from 'react-select';
+import Select, { type SingleValue } from 'react-select';
 import { toast } from 'sonner';
 import { z } from 'zod';
-
 import { ModernHeader } from '~/components/shared/modern-header';
+import type { OptionType } from '~/components/shared/react-select-styles';
 import { getReactSelectStyles } from '~/components/shared/react-select-styles';
 import { useTheme } from '~/components/theme-provider';
 import { Button } from '~/components/ui/button';
@@ -32,9 +32,8 @@ import {
   FormMessage
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
-import api from '~/lib/api';
 import { administracionService } from '~/services/administracionService';
-import type { GetComunas, GetGiros } from '~/types/administracion';
+import type { NombreComuna, NombreGiro } from '~/types/administracion';
 import { formatRut, isValidRut, isValidRutFormat } from '~/utils/rut-utils';
 
 const createClienteSchema = (existingClients: string[]) =>
@@ -77,8 +76,8 @@ export default function CrearClienteComponent() {
   const navigate = useNavigate();
   const { theme } = useTheme();
 
-  const [giros, setGiros] = useState<GetGiros[]>([]);
-  const [comunas, setComunas] = useState<GetComunas[]>([]);
+  const [giros, setGiros] = useState<NombreGiro[]>([]);
+  const [comunas, setComunas] = useState<NombreComuna[]>([]);
   const [existingClients, setExistingClients] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [rutValidationStatus, setRutValidationStatus] = useState<
@@ -169,7 +168,7 @@ export default function CrearClienteComponent() {
         rut: formatRut(data.rut)
       };
 
-      await api.post('/cliente/crear', formattedData);
+      await administracionService.createCliente(formattedData);
       toast.success('Cliente creado exitosamente');
       navigate('/dashboard/administracion/clientes');
     } catch (error) {
@@ -398,8 +397,17 @@ export default function CrearClienteComponent() {
                     control={form.control}
                     name="codComuna"
                     render={({ field }) => {
-                      const comunaActual = comunas.find(
-                        c => c.codigo === field.value
+                      const comunaOptions = comunas.map(c => {
+                        if (typeof c === 'string') {
+                          return { value: c, label: c };
+                        }
+                        return {
+                          value: c.codigo,
+                          label: `${c.nombre} (${c.codigo})`
+                        };
+                      });
+                      const comunaActual = comunaOptions.find(
+                        option => option.value === field.value
                       );
 
                       return (
@@ -411,20 +419,12 @@ export default function CrearClienteComponent() {
                           <FormControl>
                             <Select
                               instanceId="comuna-select"
-                              options={comunas.map(comuna => ({
-                                value: comuna.codigo,
-                                label: `${comuna.nombre} (${comuna.codigo})`
-                              }))}
-                              value={
-                                comunaActual
-                                  ? {
-                                      value: comunaActual.codigo,
-                                      label: `${comunaActual.nombre} (${comunaActual.codigo})`
-                                    }
-                                  : null
-                              }
-                              onChange={(option: any) =>
-                                field.onChange(option ? option.value : '')
+                              options={comunaOptions}
+                              value={comunaActual ?? null}
+                              onChange={(option: SingleValue<OptionType>) =>
+                                field.onChange(
+                                  option ? String(option.value) : ''
+                                )
                               }
                               placeholder="Seleccione la comuna"
                               isClearable
@@ -526,8 +526,17 @@ export default function CrearClienteComponent() {
                     control={form.control}
                     name="codigoGiro"
                     render={({ field }) => {
-                      const giroActual = giros.find(
-                        g => g.codigo === field.value
+                      const giroOptions = giros.map(g => {
+                        if (typeof g === 'string') {
+                          return { value: g, label: g };
+                        }
+                        return {
+                          value: g.codigo,
+                          label: `${g.codigo} - ${g.actividad}`
+                        };
+                      });
+                      const giroActual = giroOptions.find(
+                        option => option.value === field.value
                       );
 
                       return (
@@ -540,20 +549,12 @@ export default function CrearClienteComponent() {
                           <FormControl>
                             <Select
                               instanceId="giro-select"
-                              options={giros.map(giro => ({
-                                value: giro.codigo,
-                                label: `${giro.codigo} - ${giro.actividadEconomica}`
-                              }))}
-                              value={
-                                giroActual
-                                  ? {
-                                      value: giroActual.codigo,
-                                      label: `${giroActual.codigo} - ${giroActual.actividadEconomica}`
-                                    }
-                                  : null
-                              }
-                              onChange={(option: any) =>
-                                field.onChange(option ? option.value : '')
+                              options={giroOptions}
+                              value={giroActual ?? null}
+                              onChange={(option: SingleValue<OptionType>) =>
+                                field.onChange(
+                                  option ? String(option.value) : ''
+                                )
                               }
                               placeholder="Seleccione el giro"
                               isClearable

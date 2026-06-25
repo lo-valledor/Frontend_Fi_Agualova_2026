@@ -5,7 +5,6 @@ import {
   ArrowUpToLine,
   CheckCircle2,
   ChevronDown,
-  FileSpreadsheet,
   FileText,
   HelpCircle,
   ListChecks,
@@ -90,7 +89,8 @@ export default function CorteReposicionComponent({
   const handleActualizar = async (): Promise<void> => {
     setIsActivating(true);
     try {
-      const result = await operacionesService.postActualizarProcesoCorteReposicion();
+      const result =
+        await operacionesService.postActualizarProcesoCorteReposicion();
       if (result.error) {
         toast.error(result.error);
         return;
@@ -109,7 +109,8 @@ export default function CorteReposicionComponent({
   const handleIniciar = async (): Promise<void> => {
     setIsStarting(true);
     try {
-      const result = await operacionesService.postIniciarProcesoCorteReposicion();
+      const result =
+        await operacionesService.postIniciarProcesoCorteReposicion();
       if (result.error) {
         toast.error(result.error);
         return;
@@ -129,7 +130,8 @@ export default function CorteReposicionComponent({
     setIsFinalizing(true);
     setShowFinalizarDialog(false);
     try {
-      const result = await operacionesService.postFinalizarProcesoCorteReposicion();
+      const result =
+        await operacionesService.postFinalizarProcesoCorteReposicion();
       if (result.error) {
         toast.error(result.error);
         return;
@@ -222,11 +224,19 @@ export default function CorteReposicionComponent({
 
   const renderResumen = () => {
     if (!resumen) return null;
-    const items: Array<{ key: keyof CorteReposicionResumenResponse; label: string; tone: string }> = [
+    const items: Array<{
+      key: keyof CorteReposicionResumenResponse;
+      label: string;
+      tone: string;
+    }> = [
       { key: 'pendientes', label: 'Pendientes', tone: 'amber' },
       { key: 'liberados', label: 'Liberados', tone: 'emerald' },
       { key: 'cortados', label: 'Cortados', tone: 'red' },
-      { key: 'reposicionSolicitada', label: 'Reposición Solicitada', tone: 'sky' }
+      {
+        key: 'reposicionSolicitada',
+        label: 'Reposición Solicitada',
+        tone: 'sky'
+      }
     ];
     return (
       <div
@@ -388,7 +398,9 @@ export default function CorteReposicionComponent({
                 <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-muted/30 mb-4">
                   <FileText className="h-8 w-8 text-muted-foreground" />
                 </div>
-                <p className="text-lg font-medium">No se encontraron registros</p>
+                <p className="text-lg font-medium">
+                  No se encontraron registros
+                </p>
                 <p className="text-sm text-muted-foreground">
                   No hay datos de mantenimiento disponibles
                 </p>

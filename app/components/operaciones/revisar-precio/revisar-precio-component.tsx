@@ -82,18 +82,14 @@ export default function RevisarPrecioComponent({
     try {
       setIsLoading(true);
       setIsFiltersOpen(false);
-      const result = await operacionesService.gerRevisarPreciosData(mes, anio);
+      const result = await operacionesService.getRevisarPreciosData(mes, anio);
 
       if (result.error || !result.data) {
         toast.error(result.error || 'Error al buscar precios de revisión');
         return;
       }
 
-      const data = Array.isArray(result.data)
-        ? (result.data as RevisionPreciosBuscarRequest[])
-        : [];
-
-      setPrecios(data);
+      setPrecios(result.data);
       setSelectedCodigosCargo([]);
       toast.success('Búsqueda completada');
     } catch (err) {
@@ -113,17 +109,13 @@ export default function RevisarPrecioComponent({
   };
 
   const refreshData = async (): Promise<void> => {
-    const result = await operacionesService.gerRevisarPreciosData(mes, anio);
+    const result = await operacionesService.getRevisarPreciosData(mes, anio);
     if (result.error || !result.data) return;
-    const data = Array.isArray(result.data)
-      ? (result.data as RevisionPreciosBuscarRequest[])
-      : [];
-    setPrecios(data);
+    setPrecios(result.data);
   };
 
   const pendientes = useMemo(
-    () =>
-      filterPendingConfirmations(precios, selectedCodigosCargo),
+    () => filterPendingConfirmations(precios, selectedCodigosCargo),
     [precios, selectedCodigosCargo]
   );
 
@@ -192,7 +184,8 @@ export default function RevisarPrecioComponent({
       element: '#buscar-btn',
       popover: {
         title: 'Buscar Precios',
-        description: 'Carga los precios de revisión para el período seleccionado.',
+        description:
+          'Carga los precios de revisión para el período seleccionado.',
         side: 'bottom' as const,
         align: 'center' as const
       }
@@ -239,7 +232,8 @@ export default function RevisarPrecioComponent({
       prevBtnText: 'Anterior',
       doneBtnText: 'Finalizar',
       onHighlightStarted: element => {
-        if (element) element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        if (element)
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
     });
     driverjs.setSteps(tourSteps);
@@ -254,7 +248,9 @@ export default function RevisarPrecioComponent({
             <div className="inline-flex items-center justify-center w-12 h-12 bg-destructive/10 rounded-xl mb-3">
               <TrendingUp className="w-6 h-6 text-destructive" />
             </div>
-            <h1 className="text-xl font-semibold mb-2">Error al cargar datos</h1>
+            <h1 className="text-xl font-semibold mb-2">
+              Error al cargar datos
+            </h1>
             <p className="text-sm text-muted-foreground">{error}</p>
           </div>
         </div>
@@ -292,7 +288,9 @@ export default function RevisarPrecioComponent({
                     <Calendar className="h-4 w-4" />
                   </div>
                   <div>
-                    <h3 className="text-base font-medium">Período de Consulta</h3>
+                    <h3 className="text-base font-medium">
+                      Período de Consulta
+                    </h3>
                     <p className="text-xs text-muted-foreground">
                       Selecciona mes y año para revisar los precios
                     </p>
@@ -399,9 +397,7 @@ export default function RevisarPrecioComponent({
                 <Button
                   id="confirmar-btn"
                   onClick={handleOpenConfirmDialog}
-                  disabled={
-                    isConfirming || selectedCodigosCargo.length === 0
-                  }
+                  disabled={isConfirming || selectedCodigosCargo.length === 0}
                   className="bg-primary hover:bg-primary/90 text-primary-foreground"
                   size="sm"
                 >
@@ -423,7 +419,7 @@ export default function RevisarPrecioComponent({
               className="rounded-xl border border-border overflow-hidden bg-card"
             >
               <DataTableVirtualized
-                columns={columns}
+                columns={columns(refreshData)}
                 data={precios}
                 enableSelection
                 selectedRowIds={selectedCodigosCargo.map(String)}
@@ -438,10 +434,7 @@ export default function RevisarPrecioComponent({
         </Card>
       </div>
 
-      <Dialog
-        open={isConfirmDialogOpen}
-        onOpenChange={setIsConfirmDialogOpen}
-      >
+      <Dialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
         <DialogContent className="max-w-[95vw] sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-base sm:text-lg">

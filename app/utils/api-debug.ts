@@ -1,4 +1,4 @@
-const isDevelopment = process.env.NODE_ENV === 'development';
+const isDevelopment = import.meta.env.DEV;
 
 export interface ApiDebugOptions {
   endpoint: string;
@@ -143,7 +143,7 @@ export const API_TEMPLATES = {
 
   // Usuarios
   usuario: {
-    idUsuario: 0,
+    id: 0,
     nombreUsuario: '',
     email: '',
     activo: true

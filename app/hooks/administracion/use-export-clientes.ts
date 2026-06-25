@@ -1,13 +1,13 @@
 import { useExportData } from '~/hooks/shared/use-export-data';
-import type { GetClientes } from '~/types/administracion';
+import type { ClientesRow } from '~/types/administracion';
 import { ExportColumnBuilder, getExportConfig } from './utils/export-utilities';
 
 export function useExportClientes() {
-  const { isExporting, exportData } = useExportData<GetClientes>();
+  const { isExporting, exportData } = useExportData<ClientesRow>();
 
   const clientColumns = new ExportColumnBuilder()
     .addString('rut', 'RUT')
-    .addString('nombreCompleto', 'Nombre Completo')
+    .addString('razonSocialNombre', 'Nombre Completo')
     .addBoolean('esEmpresa', 'Tipo', 'Empresa', 'Persona')
     .addString('direccion', 'Dirección')
     .addString('comuna', 'Comuna')
@@ -18,7 +18,7 @@ export function useExportClientes() {
     .build();
 
   const exportClientes = async (
-    data: GetClientes[],
+    data: ClientesRow[],
     format: 'csv' | 'xlsx' = 'xlsx',
     filename: string = 'clientes'
   ): Promise<void> => {

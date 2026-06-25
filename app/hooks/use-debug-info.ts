@@ -14,7 +14,7 @@ export const useDebugInfo = (): DebugDetectionResult | null => {
       setDebugInfo(info);
 
       // Warn if proxy or network interception is detected
-      if (info.proxyDetected) {
+      if (info.proxyDetected && import.meta.env.DEV) {
         console.warn(
           'Deteccion de proxy/interceptor de red:',
           info.networkInterception

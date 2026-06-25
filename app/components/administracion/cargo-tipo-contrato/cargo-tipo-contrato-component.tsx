@@ -23,7 +23,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '~/components/ui/select';
-import api from '~/lib/api';
+import { administracionService } from '~/services/administracionService';
 import type { CargoTipoContrato } from '~/types/administracion';
 
 import { columns } from './columns';
@@ -57,8 +57,13 @@ export default function CargoTipoContratoComponent({
   const refetchData = async () => {
     setIsLoading(true);
     try {
-      const response = await api.get('/cargos-tipos-contrato/buscar');
-      setData(response.data as CargoTipoContrato[]);
+      const result = await administracionService.getCargosTiposContrato();
+      if (result.error) {
+        throw new Error(result.error);
+      }
+      if (result.data) {
+        setData(result.data);
+      }
     } catch (error) {
       console.error(error);
       toast.error('Error al recargar los datos.');

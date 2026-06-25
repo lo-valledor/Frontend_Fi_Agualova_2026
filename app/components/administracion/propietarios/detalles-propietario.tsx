@@ -67,11 +67,11 @@ export function PropietarioDetailsModal({
     if (isOpen && propietario) {
       setIsLoading(true);
       setError(null);
-      // Simula la carga de datos
-      setTimeout(() => {
+      const timer = setTimeout(() => {
         setDetailsData(propietario);
         setIsLoading(false);
       }, 500);
+      return () => clearTimeout(timer);
     }
   }, [isOpen, propietario]);
 

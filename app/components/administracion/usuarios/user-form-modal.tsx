@@ -7,35 +7,35 @@ import {
   Lock,
   Mail,
   User,
-  UserCircle,
-} from "lucide-react";
-import type React from "react";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
-import { Alert, AlertDescription } from "~/components/ui/alert";
-import { Button } from "~/components/ui/button";
+  UserCircle
+} from 'lucide-react';
+import type React from 'react';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
+import { Alert, AlertDescription } from '~/components/ui/alert';
+import { Button } from '~/components/ui/button';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
-} from "~/components/ui/dialog";
-import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
-import { PasswordStrengthIndicator } from "~/components/ui/password-strength-indicator";
-import { Separator } from "~/components/ui/separator";
-import { useAdministracion } from "~/hooks/use-administracion";
-import type { UpdateUsuario, Usuarios } from "~/types/administracion";
-import { isPasswordSecure, passwordsMatch } from "~/utils/password-validation";
+  DialogTitle
+} from '~/components/ui/dialog';
+import { Input } from '~/components/ui/input';
+import { Label } from '~/components/ui/label';
+import { PasswordStrengthIndicator } from '~/components/ui/password-strength-indicator';
+import { Separator } from '~/components/ui/separator';
+import { useAdministracion } from '~/hooks/use-administracion';
+import type { UpdateUsuario, Usuarios } from '~/types/administracion';
+import { isPasswordSecure, passwordsMatch } from '~/utils/password-validation';
 
 interface UserFormModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess?: () => void;
   user?: Usuarios | null;
-  mode: "add" | "edit";
+  mode: 'add' | 'edit';
 }
 
 export function UserFormModal({
@@ -43,78 +43,78 @@ export function UserFormModal({
   onClose,
   onSuccess,
   user,
-  mode,
+  mode
 }: UserFormModalProps) {
   const { createUsuario, updateUsuario, loadingState } = useAdministracion();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [passwordError, setPasswordError] = useState<string>("");
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordError, setPasswordError] = useState<string>('');
 
   const [formData, setFormData] = useState<UpdateUsuario>({
-    nombre: "",
-    apellido: "",
-    email: "",
-    username: "",
-    newPassword: "",
+    nombre: '',
+    apellido: '',
+    email: '',
+    username: '',
+    newPassword: ''
   });
 
   const [updateData, setUpdateData] = useState<UpdateUsuario>({
-    nombre: "",
-    apellido: "",
-    email: "",
-    username: "",
-    newPassword: "",
+    nombre: '',
+    apellido: '',
+    email: '',
+    username: '',
+    newPassword: ''
   });
 
   useEffect(() => {
-    if (user && mode === "edit") {
+    if (user && mode === 'edit') {
       setUpdateData({
         nombre: user.nombre_Usuario,
         apellido: user.apellidos_Usuario,
         email: user.email,
         username: user.userName,
-        newPassword: "",
+        newPassword: ''
       });
       setFormData({
         username: user.userName,
-        newPassword: "",
-        email: user.email || "",
+        newPassword: '',
+        email: user.email || '',
         nombre: user.nombre_Usuario,
-        apellido: user.apellidos_Usuario,
+        apellido: user.apellidos_Usuario
       });
     } else {
       setFormData({
-        username: "",
-        newPassword: "",
-        email: "",
-        nombre: "",
-        apellido: "",
+        username: '',
+        newPassword: '',
+        email: '',
+        nombre: '',
+        apellido: ''
       });
       setUpdateData({
-        username: "",
-        newPassword: "",
-        nombre: "",
-        apellido: "",
-        email: "",
+        username: '',
+        newPassword: '',
+        nombre: '',
+        apellido: '',
+        email: ''
       });
     }
     // Resetear estados de contraseña
-    setConfirmPassword("");
-    setPasswordError("");
+    setConfirmPassword('');
+    setPasswordError('');
   }, [user, mode, isOpen]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setPasswordError("");
+    setPasswordError('');
 
     try {
       // Validaciones de contraseña
-      if (mode === "add") {
+      if (mode === 'add') {
         // Modo crear: contraseña es obligatoria
         if (!formData.newPassword || !formData.newPassword.trim()) {
-          setPasswordError("La contraseña es requerida para crear un usuario");
-          toast.error("La contraseña es requerida");
+          setPasswordError('La contraseña es requerida para crear un usuario');
+          toast.error('La contraseña es requerida');
           return;
         }
 
@@ -123,29 +123,29 @@ export function UserFormModal({
         if (!passwordCheck.isSecure) {
           setPasswordError(
             passwordCheck.reason ||
-              "La contraseña no cumple con los requisitos de seguridad",
+              'La contraseña no cumple con los requisitos de seguridad'
           );
-          toast.error("La contraseña no es suficientemente segura");
+          toast.error('La contraseña no es suficientemente segura');
           return;
         }
 
         // Validar que las contraseñas coincidan
         if (!passwordsMatch(formData.newPassword, confirmPassword)) {
-          setPasswordError("Las contraseñas no coinciden");
-          toast.error("Las contraseñas no coinciden");
+          setPasswordError('Las contraseñas no coinciden');
+          toast.error('Las contraseñas no coinciden');
           return;
         }
 
         await createUsuario(formData);
-        toast.success("Usuario creado exitosamente");
-      } else if (mode === "edit" && user) {
+        toast.success('Usuario creado exitosamente');
+      } else if (mode === 'edit' && user) {
         // Modo editar
         const updatePayload: UpdateUsuario = {
           username: updateData.username,
-          newPassword: "", // No se requiere contraseña actual para actualizar
+          newPassword: '', // No se requiere contraseña actual para actualizar
           nombre: updateData.nombre,
           apellido: updateData.apellido,
-          email: updateData.email,
+          email: updateData.email
         };
 
         // Si se proporciona una nueva contraseña, validarla
@@ -155,16 +155,16 @@ export function UserFormModal({
           if (!passwordCheck.isSecure) {
             setPasswordError(
               passwordCheck.reason ||
-                "La contraseña no cumple con los requisitos de seguridad",
+                'La contraseña no cumple con los requisitos de seguridad'
             );
-            toast.error("La nueva contraseña no es suficientemente segura");
+            toast.error('La nueva contraseña no es suficientemente segura');
             return;
           }
 
           // Validar que las contraseñas coincidan
           if (!passwordsMatch(formData.newPassword, confirmPassword)) {
-            setPasswordError("Las contraseñas no coinciden");
-            toast.error("Las contraseñas no coinciden");
+            setPasswordError('Las contraseñas no coinciden');
+            toast.error('Las contraseñas no coinciden');
             return;
           }
 
@@ -172,7 +172,7 @@ export function UserFormModal({
         }
 
         await updateUsuario(Number(user.id), updatePayload);
-        toast.success("Usuario actualizado exitosamente");
+        toast.success('Usuario actualizado exitosamente');
       }
 
       onSuccess?.();
@@ -181,20 +181,20 @@ export function UserFormModal({
       const errorMessage =
         error.response?.data?.message ||
         error.message ||
-        "Error al procesar la solicitud";
+        'Error al procesar la solicitud';
       toast.error(errorMessage);
     }
   };
 
   const handleInputChange = (
     field: keyof UpdateUsuario,
-    value: string | number | boolean,
+    value: string | number | boolean
   ) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    setFormData(prev => ({ ...prev, [field]: value }));
 
     // También actualizar updateData para modo edición
-    if (mode === "edit") {
-      setUpdateData((prev) => ({ ...prev, [field]: value }));
+    if (mode === 'edit') {
+      setUpdateData(prev => ({ ...prev, [field]: value }));
     }
   };
 
@@ -210,12 +210,12 @@ export function UserFormModal({
             <div className="p-2 bg-sky-100 dark:bg-sky-900/30 rounded-xl">
               <User className="h-6 w-6" />
             </div>
-            {mode === "add" ? "Crear Nuevo Usuario" : "Editar Usuario"}
+            {mode === 'add' ? 'Crear Nuevo Usuario' : 'Editar Usuario'}
           </DialogTitle>
           <DialogDescription className="text-base text-muted-foreground">
-            {mode === "add"
-              ? "Complete toda la información requerida para crear un nuevo usuario en el sistema."
-              : "Modifique los campos que desee actualizar. Los campos vacíos mantendrán su valor actual."}
+            {mode === 'add'
+              ? 'Complete toda la información requerida para crear un nuevo usuario en el sistema.'
+              : 'Modifique los campos que desee actualizar. Los campos vacíos mantendrán su valor actual.'}
           </DialogDescription>
         </DialogHeader>
 
@@ -235,7 +235,7 @@ export function UserFormModal({
                 <Input
                   id="nombres"
                   value={formData.nombre}
-                  onChange={(e) => handleInputChange("nombre", e.target.value)}
+                  onChange={e => handleInputChange('nombre', e.target.value)}
                   placeholder="Ej: Juan Carlos"
                   required
                   disabled={isLoading}
@@ -250,9 +250,7 @@ export function UserFormModal({
                 <Input
                   id="apellidos"
                   value={formData.apellido}
-                  onChange={(e) =>
-                    handleInputChange("apellido", e.target.value)
-                  }
+                  onChange={e => handleInputChange('apellido', e.target.value)}
                   placeholder="Ej: Pérez García"
                   required
                   disabled={isLoading}
@@ -271,17 +269,14 @@ export function UserFormModal({
               <span>Credenciales de Acceso</span>
             </div>
             <div className="space-y-2">
-              <Label
-                htmlFor="nombreDeUsuario"
-                className="flex items-center gap-2"
-              >
+              <Label htmlFor="username" className="flex items-center gap-2">
                 <User className="h-3.5 w-3.5 text-muted-foreground" />
                 Nombre de Usuario
               </Label>
               <Input
-                id="nombreDeUsuario"
+                id="username"
                 value={formData.username}
-                onChange={(e) => handleInputChange("username", e.target.value)}
+                onChange={e => handleInputChange('username', e.target.value)}
                 placeholder="Ej: jperez"
                 required
                 disabled={isLoading}
@@ -299,13 +294,13 @@ export function UserFormModal({
                 id="email"
                 type="email"
                 value={formData.email}
-                onChange={(e) => handleInputChange("email", e.target.value)}
+                onChange={e => handleInputChange('email', e.target.value)}
                 placeholder="Ej: jperez@lovalledor.cl"
-                required={mode === "add"}
-                disabled={isLoading || mode === "edit"}
+                required={mode === 'add'}
+                disabled={isLoading || mode === 'edit'}
                 className="transition-all"
               />
-              {mode === "edit" && (
+              {mode === 'edit' && (
                 <p className="text-xs text-muted-foreground">
                   El correo electrónico no se puede modificar
                 </p>
@@ -316,23 +311,23 @@ export function UserFormModal({
             <div className="space-y-2">
               <Label htmlFor="contrasena" className="flex items-center gap-2">
                 <Lock className="h-3.5 w-3.5 text-muted-foreground" />
-                {mode === "add" ? "Contraseña" : "Nueva Contraseña (opcional)"}
+                {mode === 'add' ? 'Contraseña' : 'Nueva Contraseña (opcional)'}
               </Label>
               <div className="relative">
                 <Input
                   id="contrasena"
-                  type={showPassword ? "text" : "password"}
+                  type={showPassword ? 'text' : 'password'}
                   value={formData.newPassword}
-                  onChange={(e) => {
-                    handleInputChange("newPassword", e.target.value);
-                    setPasswordError("");
+                  onChange={e => {
+                    handleInputChange('newPassword', e.target.value);
+                    setPasswordError('');
                   }}
                   placeholder={
-                    mode === "add"
-                      ? "Ingresa una contraseña segura"
-                      : "Dejar vacío para mantener la actual"
+                    mode === 'add'
+                      ? 'Ingresa una contraseña segura'
+                      : 'Dejar vacío para mantener la actual'
                   }
-                  required={mode === "add"}
+                  required={mode === 'add'}
                   disabled={isLoading}
                   className="pr-10 transition-all"
                 />
@@ -361,7 +356,7 @@ export function UserFormModal({
             </div>
 
             {/* Confirmar Contraseña */}
-            {(mode === "add" ||
+            {(mode === 'add' ||
               (formData.newPassword && formData.newPassword.trim())) && (
               <div className="space-y-2">
                 <Label
@@ -374,15 +369,15 @@ export function UserFormModal({
                 <div className="relative">
                   <Input
                     id="confirmPassword"
-                    type={showConfirmPassword ? "text" : "password"}
+                    type={showConfirmPassword ? 'text' : 'password'}
                     value={confirmPassword}
-                    onChange={(e) => {
+                    onChange={e => {
                       setConfirmPassword(e.target.value);
-                      setPasswordError("");
+                      setPasswordError('');
                     }}
                     placeholder="Confirma tu contraseña"
                     required={
-                      mode === "add" || Boolean(formData.newPassword?.trim())
+                      mode === 'add' || Boolean(formData.newPassword?.trim())
                     }
                     disabled={isLoading}
                     className="pr-10 transition-all"
@@ -462,11 +457,11 @@ export function UserFormModal({
               {isLoading ? (
                 <span className="flex items-center gap-2">
                   <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                  {mode === "add" ? "Creando..." : "Guardando..."}
+                  {mode === 'add' ? 'Creando...' : 'Guardando...'}
                 </span>
               ) : (
                 <span>
-                  {mode === "add" ? "Crear Usuario" : "Guardar Cambios"}
+                  {mode === 'add' ? 'Crear Usuario' : 'Guardar Cambios'}
                 </span>
               )}
             </Button>

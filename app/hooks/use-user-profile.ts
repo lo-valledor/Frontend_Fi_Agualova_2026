@@ -2,7 +2,19 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { useAuth } from '~/context/AuthContext';
 import api from '~/lib/api';
-import type { ActualizarUsuarioProps, Usuarios } from '~/types/administracion';
+import type { Usuarios } from '~/types/administracion';
+
+type ActualizarUsuarioProps = {
+  username?: string;
+  nombre?: string;
+  apellido?: string;
+  email?: string;
+  contrasena?: string;
+  nombres?: string;
+  apellidos?: string;
+  departamento?: number;
+  activo?: boolean;
+};
 
 interface UseUserProfileReturn {
   userData: Usuarios | null;
@@ -19,20 +31,27 @@ function createMockUserData(user: {
   fullName: string;
 }): Usuarios {
   const nameParts = user.fullName.split(' ');
-  const nombres = nameParts[0] || '';
-  const apellidos = nameParts.slice(1).join(' ') || '';
+  const nombre = nameParts[0] || '';
+  const apellido = nameParts.slice(1).join(' ') || '';
 
   return {
-    idUsuario: Number.parseInt(user.id),
-    nombreDeUsuario: user.username,
-    perfilId: Number.parseInt(user.profileId),
-    nombres,
-    apellidos,
-    departamento: 1, // Default value
-    activo: true,
-    fechaCreacion: new Date().toISOString(),
-    email: null,
-    roles: []
+    id: user.id,
+    userName: user.username,
+    normalizedUserName: user.username.toUpperCase(),
+    email: '',
+    normalizedEmail: '',
+    emailConfirmed: false,
+    passwordHash: '',
+    securityStamp: '',
+    concurrencyStamp: '',
+    phoneNumber: null,
+    phoneNumberConfirmed: false,
+    twoFactorEnabled: false,
+    lockoutEnd: null,
+    lockoutEnabled: false,
+    accessFailedCount: 0,
+    nombre_Usuario: nombre,
+    apellidos_Usuario: apellido
   };
 }
 
@@ -56,25 +75,25 @@ export function useUserProfile(): UseUserProfileReturn {
       const response = await api.get('/GetAllUsers');
       const usuarios = response.data as Usuarios[];
 
-      const usuarioEncontrado = usuarios.find(
-        u => u.idUsuario === Number.parseInt(user.id)
-      );
+      const usuarioEncontrado = usuarios.find(u => u.id === user.id);
 
       if (usuarioEncontrado) {
         setUserData(usuarioEncontrado);
       } else {
-        // User not found in database, create mock data
-        console.warn(
-          'Usuario no encontrado en la lista, usando datos del token'
-        );
+        if (import.meta.env.DEV) {
+          console.warn(
+            'Usuario no encontrado en la lista, usando datos del token'
+          );
+        }
         throw new Error('Usuario no encontrado');
       }
     } catch (apiError) {
-      // Fallback: create mock data from token
-      console.warn(
-        'No se pudo obtener datos del usuario desde la API, usando datos del token',
-        apiError
-      );
+      if (import.meta.env.DEV) {
+        console.warn(
+          'No se pudo obtener datos del usuario desde la API, usando datos del token',
+          apiError
+        );
+      }
 
       const mockUserData = createMockUserData(user);
       setUserData(mockUserData);
@@ -95,45 +114,49 @@ export function useUserProfile(): UseUserProfileReturn {
         setError(null);
 
         // Attempt API update
-        const response = await api.put(
-          `/actualizar/${userData.idUsuario}`,
-          data
-        );
+        const response = await api.put(`/actualizar/${userData.id}`, data);
 
         // Update with API response if available
         if (response.data) {
           setUserData(response.data as Usuarios);
         } else {
           // Fallback: update locally
-          setUserData(prev =>
+          setUserData((prev): Usuarios | null =>
             prev
               ? {
                   ...prev,
-                  nombreDeUsuario: data.nombreDeUsuario,
-                  nombres: data.nombres,
-                  apellidos: data.apellidos,
-                  departamento: data.departamento,
-                  activo: data.activo
+                  userName: data.username ?? prev.userName,
+                  normalizedUserName: (
+                    data.username ?? prev.userName
+                  ).toUpperCase(),
+                  nombre_Usuario: data.nombre ?? prev.nombre_Usuario,
+                  apellidos_Usuario: data.apellido ?? prev.apellidos_Usuario,
+                  email: data.email ?? prev.email,
+                  normalizedEmail: (data.email ?? prev.email).toUpperCase()
                 }
               : null
           );
         }
       } catch (apiError) {
-        // Fallback: update locally only
-        console.warn(
-          'No se pudo actualizar en la API, actualizando solo localmente',
-          apiError
-        );
+        if (import.meta.env.DEV) {
+          console.warn(
+            'No se pudo actualizar en la API, actualizando solo localmente',
+            apiError
+          );
+        }
 
-        setUserData(prev =>
+        setUserData((prev): Usuarios | null =>
           prev
             ? {
                 ...prev,
-                nombreDeUsuario: data.nombreDeUsuario,
-                nombres: data.nombres,
-                apellidos: data.apellidos,
-                departamento: data.departamento,
-                activo: data.activo
+                userName: data.username ?? prev.userName,
+                normalizedUserName: (
+                  data.username ?? prev.userName
+                ).toUpperCase(),
+                nombre_Usuario: data.nombre ?? prev.nombre_Usuario,
+                apellidos_Usuario: data.apellido ?? prev.apellidos_Usuario,
+                email: data.email ?? prev.email,
+                normalizedEmail: (data.email ?? prev.email).toUpperCase()
               }
             : null
         );

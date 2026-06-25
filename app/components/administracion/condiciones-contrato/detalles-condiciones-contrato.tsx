@@ -12,12 +12,12 @@ import {
   TrendingUp,
   XCircle
 } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 import { Badge } from '~/components/ui/badge';
-import api from '~/lib/api';
-import type { GetCondicionesContratoPorId } from '~/types/administracion';
+import { administracionService } from '~/services/administracionService';
+import type { CondicionContrato } from '~/types/administracion';
 
 interface DetallesCondicionesContratoProps {
   condicionId: number;
@@ -91,8 +91,7 @@ const SectionTitle = ({
 export default function DetallesCondicionesContrato({
   condicionId
 }: Readonly<DetallesCondicionesContratoProps>) {
-  const [condicion, setCondicion] =
-    useState<GetCondicionesContratoPorId | null>(null);
+  const [condicion, setCondicion] = useState<CondicionContrato | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -100,10 +99,16 @@ export default function DetallesCondicionesContrato({
     const fetchCondicion = async () => {
       try {
         setLoading(true);
-        const response = await api.get(
-          `condicion-contrato/obtieneDatosEdicion/${condicionId}`
-        );
-        setCondicion(response.data as GetCondicionesContratoPorId);
+        const response =
+          await administracionService.getCondicionContratoById(condicionId);
+
+        if (response.error || !response.data) {
+          throw new Error(
+            response.error || 'No se encontraron datos de la condición.'
+          );
+        }
+
+        setCondicion(response.data);
         setError(null);
       } catch (err) {
         console.error(
@@ -124,7 +129,7 @@ export default function DetallesCondicionesContrato({
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
+      <div className="flex items-center justify-center min-h-100">
         <div className="flex items-center gap-2">
           <Loader2 className="h-6 w-6 animate-spin" />
           <span>Cargando detalles...</span>
@@ -135,7 +140,7 @@ export default function DetallesCondicionesContrato({
 
   if (error || !condicion) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
+      <div className="flex flex-col items-center justify-center min-h-100 space-y-4">
         <XCircle className="h-12 w-12 text-destructive" />
         <div className="text-center">
           <h3 className="text-lg font-semibold text-destructive mb-2">
@@ -193,10 +198,16 @@ export default function DetallesCondicionesContrato({
               />
               <DetailItem
                 label="ID de Concepto"
-                value={condicion.conceptoId}
+                value={condicion.id}
                 icon={Hash}
               />
-              <DetailItem label="Tipo" value={condicion.tipo} icon={Settings} />
+              <DetailItem
+                label="Tipo"
+                value={
+                  condicion.tipoCondicion === 1 ? 'Porcentual' : 'Valor Fijo'
+                }
+                icon={Settings}
+              />
               <DetailItem
                 label="Estado"
                 value={condicion.estado}
@@ -213,23 +224,15 @@ export default function DetallesCondicionesContrato({
             <div className="divide-y divide-border">
               <DetailItem
                 label="Tipo de Cálculo"
-                value={condicion.usaPorcentaje ? 'Porcentual' : 'Valor Fijo'}
-                icon={condicion.usaPorcentaje ? Percent : DollarSign}
+                value={
+                  condicion.tipoCondicion === 1 ? 'Porcentual' : 'Valor Fijo'
+                }
+                icon={condicion.tipoCondicion === 1 ? Percent : DollarSign}
               />
               <DetailItem
                 label="Valor Principal"
-                value={condicion.valor}
+                value={condicion.valor ?? condicion.valor}
                 icon={TrendingUp}
-              />
-              <DetailItem
-                label="Factor Porcentual"
-                value={condicion.factorPorcentual}
-                icon={Percent}
-              />
-              <DetailItem
-                label="Valor Fijo"
-                value={condicion.valorFijo}
-                icon={DollarSign}
               />
             </div>
           </div>
@@ -246,23 +249,6 @@ export default function DetallesCondicionesContrato({
                 <p className="text-sm font-medium text-muted-foreground">
                   Tipo de Cálculo
                 </p>
-                <div className="flex items-center gap-2">
-                  {condicion.usaPorcentaje ? (
-                    <>
-                      <Percent className="w-4 h-4 text-green-600" />
-                      <span className="text-sm font-medium">
-                        Porcentual ({condicion.valor}%)
-                      </span>
-                    </>
-                  ) : (
-                    <>
-                      <DollarSign className="w-4 h-4 text-blue-600" />
-                      <span className="text-sm font-medium">
-                        Valor Fijo ({condicion.valor})
-                      </span>
-                    </>
-                  )}
-                </div>
               </div>
 
               <div className="space-y-2">

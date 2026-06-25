@@ -9,8 +9,7 @@ export function formatToDate(
   try {
     return format(new Date(dateString), 'dd-MM-yyyy');
   } catch (error) {
-    // Try to extract date if it's an ISO string
-    console.error('Error formatting date:', error);
+    if (import.meta.env.DEV) console.error('Error formatting date:', error);
     return String(dateString).split('T')[0] || fallback;
   }
 }
@@ -23,9 +22,8 @@ export function formatToTime(
 
   try {
     return format(new Date(dateString), 'HH:mm:ss');
-  } catch (_error) {
-    // Try to extract time if it's an ISO string
-    console.error('Error formatting time:', _error);
+  } catch (error) {
+    if (import.meta.env.DEV) console.error('Error formatting time:', error);
     return String(dateString).split('T')[1]?.split('.')[0] || fallback;
   }
 }

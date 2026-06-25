@@ -6,14 +6,14 @@ import { useValidacionPrecios } from './use-validacion-precios';
 
 vi.mock('~/services/operacionesService', () => ({
   operacionesService: {
-    gerRevisarPreciosData: vi.fn()
+    getRevisarPreciosData: vi.fn()
   }
 }));
 
 describe('useValidacionPrecios', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(operacionesService.gerRevisarPreciosData).mockResolvedValue({
+    vi.mocked(operacionesService.getRevisarPreciosData).mockResolvedValue({
       data: [],
       error: null
     });
@@ -54,7 +54,7 @@ describe('useValidacionPrecios', () => {
     );
 
     await waitFor(() => {
-      expect(operacionesService.gerRevisarPreciosData).toHaveBeenCalledWith(
+      expect(operacionesService.getRevisarPreciosData).toHaveBeenCalledWith(
         '01',
         '2026'
       );
@@ -126,7 +126,7 @@ describe('useValidacionPrecios', () => {
   });
 
   it('debería confirmar precios cuando todos están confirmados', async () => {
-    vi.mocked(operacionesService.gerRevisarPreciosData).mockResolvedValue({
+    vi.mocked(operacionesService.getRevisarPreciosData).mockResolvedValue({
       data: [
         {
           indice: 1,
@@ -166,7 +166,7 @@ describe('useValidacionPrecios', () => {
   });
 
   it('debería marcar pendiente cuando hay precios sin confirmar', async () => {
-    vi.mocked(operacionesService.gerRevisarPreciosData).mockResolvedValue({
+    vi.mocked(operacionesService.getRevisarPreciosData).mockResolvedValue({
       data: [
         {
           indice: 1,
@@ -205,7 +205,7 @@ describe('useValidacionPrecios', () => {
   });
 
   it('debería ignorar precios con indice 0', async () => {
-    vi.mocked(operacionesService.gerRevisarPreciosData).mockResolvedValue({
+    vi.mocked(operacionesService.getRevisarPreciosData).mockResolvedValue({
       data: [
         {
           indice: 0,
@@ -243,7 +243,7 @@ describe('useValidacionPrecios', () => {
   });
 
   it('debería manejar error del servicio', async () => {
-    vi.mocked(operacionesService.gerRevisarPreciosData).mockResolvedValue({
+    vi.mocked(operacionesService.getRevisarPreciosData).mockResolvedValue({
       data: null,
       error: 'Error de red'
     });

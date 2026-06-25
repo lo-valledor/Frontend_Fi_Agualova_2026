@@ -28,5 +28,10 @@ function envCssPlugin(): Plugin {
 }
 
 export default defineConfig({
-  plugins: [envCssPlugin(), tailwindcss(), reactRouter(), tsconfigPaths()]
+  plugins: [envCssPlugin(), tailwindcss(), reactRouter(), tsconfigPaths()],
+  resolve: {
+    alias: {
+      '~': path.resolve(__dirname, './app')
+    }
+  }
 });
