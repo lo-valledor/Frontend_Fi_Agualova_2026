@@ -19,6 +19,8 @@ if (isUAT) {
   import('./app.uat.css');
 }
 
+const isDev = import.meta.env.DEV;
+
 import { ThemeProvider } from './components/theme-provider';
 import { AuthProvider } from './context/AuthContext';
 import { BreadcrumbProvider } from './context/BreadcrumbContext';
@@ -104,11 +106,10 @@ export function ErrorBoundary({ error }: Readonly<{ error: unknown }>) {
   let details = 'Ha ocurrido un error inesperado.';
   let stack: string | undefined;
   const isBrowser = typeof window !== 'undefined';
-  const userAgent = isBrowser ? navigator.userAgent : 'No disponible en SSR';
-  const currentUrl = isBrowser
-    ? globalThis.location.href
-    : 'No disponible en SSR';
-  const hasToken = isBrowser ? getAuthToken() : null;
+  const isDev = import.meta.env.DEV;
+  const userAgent = isBrowser && isDev ? navigator.userAgent : undefined;
+  const currentUrl = isBrowser && isDev ? globalThis.location.href : undefined;
+  const hasToken = isBrowser && isDev ? getAuthToken() : null;
 
   if (isRouteErrorResponse(error)) {
     message = error.status === 404 ? '404' : 'Error';
@@ -127,22 +128,24 @@ export function ErrorBoundary({ error }: Readonly<{ error: unknown }>) {
         <h1 className="text-3xl font-bold text-red-600 mb-4">{message}</h1>
         <p className="text-lg mb-4">{details}</p>
 
-        <div className="bg-card p-4 rounded-xl mb-4">
-          <h2 className="font-semibold mb-2">Información de depuración:</h2>
-          <ul className="text-sm space-y-1">
-            <li>
-              <strong>Navegador:</strong> {userAgent}
-            </li>
-            <li>
-              <strong>URL:</strong> {currentUrl}
-            </li>
-            <li>
-              <strong>Token en localStorage:</strong> {hasToken ? 'SÍ' : 'NO'}
-            </li>
-          </ul>
-        </div>
+        {isDev && (
+          <div className="bg-card p-4 rounded-xl mb-4">
+            <h2 className="font-semibold mb-2">Información de depuración:</h2>
+            <ul className="text-sm space-y-1">
+              <li>
+                <strong>Navegador:</strong> {userAgent}
+              </li>
+              <li>
+                <strong>URL:</strong> {currentUrl}
+              </li>
+              <li>
+                <strong>Token en localStorage:</strong> {hasToken ? 'SÍ' : 'NO'}
+              </li>
+            </ul>
+          </div>
+        )}
 
-        {stack && (
+        {isDev && stack && (
           <details className="mb-4">
             <summary className="cursor-pointer font-semibold">
               Ver stack trace completo
