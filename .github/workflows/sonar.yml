@@ -45,6 +45,8 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Run coverage tests
+        env:
+          VITE_API_URL: ${{ secrets.STAGING_API_URL || 'http://localhost:8081/Agualova' }}
         run: pnpm run test:coverage
 
       - name: SonarCloud Scan
