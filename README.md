@@ -33,6 +33,18 @@ Este repositorio usa `release-please` para formalizar el versionado y documentar
 - `feat!:` o `fix!:` incrementa major
 - `chore:`, `docs:`, `refactor:`, `test:`, `build:` y `ci:` no se publican en el changelog de release
 
+### Titulos de PR
+
+Los PRs tambien deben seguir una convencion semantica parecida a los commits.
+
+Ejemplos validos:
+
+- `feat: align auth, admin, and release workflows`
+- `fix: remove staging environment from pr checks`
+- `chore: prepare release automation`
+
+El workflow `PR Title Check` valida automaticamente ese formato en cada pull request.
+
 ### Guardas locales
 
 Antes de commit:
@@ -56,8 +68,9 @@ Configurar en GitHub Branch Protection Rules para `main`:
 
 Checks recomendados:
 
-- `CI`
+- `PR Title Check / Validate PR Title`
 - `PR Validation / CI`
 - `PR Validation / Docker Build`
+- `CI`
 
 Si usan el PR de release generado por `release-please`, ese PR tambien debe pasar los mismos checks antes de mergearse.
