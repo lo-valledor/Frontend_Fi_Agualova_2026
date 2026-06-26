@@ -1,63 +1,22 @@
-export interface Roles {
-  idRol: number;
-  nombreRol: string;
+export type Roles = {
+  id: string;
+  name: string;
+  normalizedName: string;
+  concurrencyStamp: string | null;
+};
+export type Permisos = {
+  id: number;
+  nombre: string;
   descripcion: string;
-  estadoRol: boolean;
-}
+  modulo: string;
+};
 
-export interface Menus {
-  idMenu: number;
-  nombreMenu: string;
-  ruta: string;
-  orden: number;
-  icono: string;
-  esVisible: boolean;
-}
+export type UpdateRolePermissions = {
+  roleId: string;
+  permisos: Permisos[];
+};
 
-export interface ObtenerPermisoUsuario {
-  idMenu: number;
-  nombreMenu: string;
-  ruta: string;
-  puedeVer: boolean;
-  puedeCrear: boolean;
-  puedeEditar: boolean;
-  puedeEliminar: boolean;
-}
-
-export interface RolMenu {
-  idRol: number;
-  idMenu: number;
-  puedeVer: boolean;
-  puedeCrear: boolean;
-  puedeEditar: boolean;
-  puedeEliminar: boolean;
-  fechaAsignacion: string;
-}
-
-export interface UsuarioRol {
-  idRol: number;
-  nombreRol: string;
-  descripcion: string;
-  estadoRol: boolean;
-}
-
-// Interfaces para la matriz de permisos
-export interface PermisoRolMenu {
-  idRol: number;
-  idMenu: number;
-  puedeVer: boolean;
-  puedeCrear: boolean;
-  puedeEditar: boolean;
-  puedeEliminar: boolean;
-  fechaAsignacion: string;
-}
-
-export interface AsignarPermisoData {
-  idRol: number;
-  idMenu: number;
-  puedeVer: boolean;
-  puedeCrear: boolean;
-  puedeEditar: boolean;
-  puedeEliminar: boolean;
-  fechaAsignacion?: string;
-}
+export type CreateRolUser = {
+  email: string;
+  rol: string;
+};

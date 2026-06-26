@@ -169,7 +169,7 @@ export function useCargoTipoContrato() {
 
   useEffect(() => {
     handleDataLoad(
-      () => administracionService.getCargoTipoContrato(),
+      () => administracionService.getCargosTiposContrato(),
       result => setData(result || []),
       setError,
       setLoading

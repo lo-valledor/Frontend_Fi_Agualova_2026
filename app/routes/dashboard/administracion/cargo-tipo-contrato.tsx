@@ -14,7 +14,7 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export async function clientLoader({}: Route.ClientActionArgs) {
-  const result = await administracionService.getCargoTipoContrato();
+  const result = await administracionService.getCargosTiposContrato();
 
   if (result.error || !result.data) {
     return {

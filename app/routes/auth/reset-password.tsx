@@ -16,10 +16,11 @@ export function meta({}: Route.MetaArgs) {
 const ResetPassword = () => {
   const [searchParams] = useSearchParams();
   const token = searchParams.get('token');
+  const email = searchParams.get('email');
 
   return (
     <AuthLayout title="Restablecer Contraseña">
-      <ResetForm token={token || undefined} />
+      <ResetForm email={email || undefined} token={token || undefined} />
     </AuthLayout>
   );
 };

@@ -448,12 +448,26 @@ export type Usuarios = {
   accessFailedCount: number;
 };
 
+export type PermisosUsuario = {
+  id: number;
+  nombre: string;
+  descripcion: string;
+  modulo: string;
+};
+
+export type GetUserById = {
+  id: string;
+  userName: string;
+  email: string;
+  nombre_Usuario: string;
+  apellidos_Usuario: string;
+  rol: string;
+  permisos: PermisosUsuario[];
+};
+
 export type UpdateUsuario = {
   nombre: string;
   apellido: string;
-  email: string;
-  username: string;
-  newPassword?: string;
 };
 
 export type RegistrarUsuario = {
@@ -463,10 +477,26 @@ export type RegistrarUsuario = {
   nombre: string;
 };
 
+export type ForgotPassword = {
+  email: string;
+};
+
+export type ResetPassword = {
+  email: string;
+  token: string;
+  newPassword: string;
+};
+
 export type UpdateRolUsuario = {
   nuevoRol: string;
 };
 
+export type Roles = {
+  id: string;
+  name: string;
+  normalizedName: string;
+  concurrencyStamp: string | null;
+};
 export type Permisos = {
   id: number;
   nombre: string;
@@ -474,10 +504,19 @@ export type Permisos = {
   modulo: string;
 };
 
-export type CrearUsuario = {
+export type UpdateRolePermissions = {
+  roleId: string;
+  permisos: Permisos[];
+};
+
+export type CreateRolUser = {
   email: string;
   rol: string;
 };
+
+/**
+ * Contratantes
+ */
 
 export type GetContratante = {
   rut: string;

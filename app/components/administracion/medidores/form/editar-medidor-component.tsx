@@ -2,6 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Calendar,
   Clock,
+  CodeIcon,
   Gauge,
   Hash,
   Power,
@@ -33,7 +34,7 @@ import {
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
 import { administracionService } from '~/services/administracionService';
-import type { MedidorProps } from '~/types/administracion';
+import type { MedidorFormValues } from '~/types/administracion';
 
 const medidorSchema = z.object({
   idMarca: z.string().min(1, 'La marca es requerida'),
@@ -47,7 +48,8 @@ const medidorSchema = z.object({
   primeraLectura: z.string().optional(),
   fechaPrimeraLectura: z.string().optional(),
   horaPrimeraLectura: z.string().optional(),
-  idSubEmpalme: z.string().optional()
+  idSubEmpalme: z.string().optional(),
+  codigoMedidor: z.string().min(1, 'El código de medidor es requerido')
 });
 
 type MedidorFormData = z.infer<typeof medidorSchema>;
@@ -125,7 +127,8 @@ export default function EditarMedidorComponent({
       primeraLectura: '',
       fechaPrimeraLectura: '',
       horaPrimeraLectura: '',
-      idSubEmpalme: ''
+      idSubEmpalme: '',
+      codigoMedidor: ''
     }
   });
 
@@ -142,9 +145,10 @@ export default function EditarMedidorComponent({
       idSubEmpalme: medidor.idSubEmpalme ?? medidor.codigoAcometida ?? '',
       primeraLectura: medidor.primeraLectura ?? '',
       fechaPrimeraLectura: '',
-      horaPrimeraLectura: ''
+      horaPrimeraLectura: '',
+      codigoMedidor: codigoMedidor ?? ''
     });
-  }, [form, medidor]);
+  }, [codigoMedidor, form, medidor]);
 
   const handleFormSubmit = async (data: MedidorFormData) => {
     setIsSubmitting(true);
@@ -152,7 +156,7 @@ export default function EditarMedidorComponent({
     try {
       const { horaLectura, minutoLectura } = splitTime(data.horaPrimeraLectura);
 
-      const submitData: MedidorProps = {
+      const submitData: MedidorFormValues = {
         idMarca: data.idMarca,
         idTipo: data.idTipo,
         modelo: data.modelo.trim(),
@@ -167,7 +171,8 @@ export default function EditarMedidorComponent({
           : '',
         horaLectura,
         minutoLectura,
-        idSubEmpalme: data.idSubEmpalme || ''
+        idSubEmpalme: data.idSubEmpalme || '',
+        codigoMedidor: data.codigoMedidor?.trim() || ''
       };
 
       const result = await administracionService.modificarMedidor(submitData);
@@ -229,6 +234,26 @@ export default function EditarMedidorComponent({
                 </h3>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 lg:gap-6">
+                <FormField
+                  control={form.control}
+                  name="codigoMedidor"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex items-center gap-2">
+                        <CodeIcon className="h-4 w-4" />
+                        Código Medidor
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Código del medidor"
+                          {...field}
+                          className="h-11"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 <FormField
                   control={form.control}
                   name="serie"
