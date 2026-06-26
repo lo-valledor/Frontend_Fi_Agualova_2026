@@ -17,14 +17,10 @@ const api = {
   auth: {
     login: (credentials: { email: string; password: string }) =>
       axiosInstance.post<ApiResponse<{ token: string }> | { token: string }>(
-        '/login',
+        '/Login',
         credentials
       ),
-    logout: () => axiosInstance.post<ApiResponse<void> | void>('/logout'),
-    refreshToken: () =>
-      axiosInstance.post<ApiResponse<{ token: string }> | { token: string }>(
-        '/refresh-token'
-      )
+    logout: () => Promise.resolve({ data: undefined })
   },
 
   // Generic CRUD operations con tipos flexibles

@@ -1,7 +1,14 @@
 import type { ServiceResponse } from '~/services/core/api-response';
 import { BaseApiService } from '~/services/core/base-service';
-import type { Menus } from '~/types/roles-permisos';
-import { API_TEMPLATES, debugApi } from '~/utils/api-debug';
+
+export interface MenuItem {
+  idMenu: number;
+  nombreMenu: string;
+  ruta: string;
+  orden: number;
+  icono: string | null;
+  esVisible: boolean;
+}
 
 export interface CreateMenuRequest {
   nombreMenu: string;
@@ -20,198 +27,110 @@ export class MenusService extends BaseApiService {
     super(httpClient);
   }
 
-  async getAll(): Promise<ServiceResponse<Menus[]>> {
-    const endpoint = 'ListarMenus';
-
+  async getAll(): Promise<ServiceResponse<MenuItem[]>> {
     return this.executeDataOperation(async () => {
-      debugApi({
-        endpoint,
-        method: 'GET',
-        expectedTemplate: [API_TEMPLATES.menu]
-      });
-
-      const response = await this.httpClient.get(endpoint);
-      const data = this.processResponseArray<Menus>(response);
-
-      debugApi({
-        endpoint,
-        method: 'GET',
-        response: data,
-        expectedTemplate: [API_TEMPLATES.menu]
-      });
-
-      return data;
-    }, 'Error al obtener menús');
+      const response = await this.httpClient.get('ListarMenus');
+      return this.processResponseArray<MenuItem>(response);
+    }, 'Error al obtener menus');
   }
 
-  async getById(idMenu: number): Promise<ServiceResponse<Menus>> {
+  async getById(idMenu: number): Promise<ServiceResponse<MenuItem>> {
     if (!idMenu) {
       return this.handleError(
-        new Error('ID inválido'),
-        'El ID del menú es requerido'
+        new Error('ID invalido'),
+        'El ID del menu es requerido'
       );
     }
 
     return this.executeDataOperation(async () => {
       const response = await this.httpClient.get(`ObtenerMenu/${idMenu}`);
-      return this.processResponseSingle<Menus>(response);
-    }, `Error al obtener el menú ${idMenu}`) as Promise<ServiceResponse<Menus>>;
+      return this.processResponseSingle<MenuItem>(response);
+    }, `Error al obtener el menu ${idMenu}`) as Promise<
+      ServiceResponse<MenuItem>
+    >;
   }
 
-  async create(request: CreateMenuRequest): Promise<ServiceResponse<Menus>> {
+  async create(request: CreateMenuRequest): Promise<ServiceResponse<MenuItem>> {
     if (!request.nombreMenu?.trim()) {
       return this.handleError(
-        new Error('Nombre vacío'),
-        'El nombre del menú es requerido'
+        new Error('Nombre vacio'),
+        'El nombre del menu es requerido'
       );
     }
 
     if (!request.ruta?.trim()) {
       return this.handleError(
-        new Error('Ruta vacía'),
-        'La ruta del menú es requerida'
+        new Error('Ruta vacia'),
+        'La ruta del menu es requerida'
       );
     }
 
-    const endpoint = 'CrearMenu';
-
     return this.executeDataOperation(async () => {
-      debugApi({
-        endpoint,
-        method: 'POST',
-        payload: request,
-        expectedTemplate: API_TEMPLATES.menu
-      });
+      const response = await this.httpClient.post('CrearMenu', request);
 
-      const response = await this.httpClient.post(endpoint, request);
-
-      // Respuesta 204 significa éxito sin contenido
       if (response.status === 204) {
-        debugApi({
-          endpoint,
-          method: 'POST',
-          response: { status: 204, message: 'Success - No Content' }
-        });
-
         return {
           idMenu: 0,
-          ...request
-        } as Menus;
+          nombreMenu: request.nombreMenu,
+          ruta: request.ruta,
+          orden: request.orden,
+          icono: request.icono ?? null,
+          esVisible: request.esVisible
+        };
       }
 
-      const data = this.processResponseSingle<Menus>(response);
-
-      debugApi({
-        endpoint,
-        method: 'POST',
-        response: data
-      });
-
-      return data;
-    }, 'Error al crear el menú') as Promise<ServiceResponse<Menus>>;
+      return this.processResponseSingle<MenuItem>(response);
+    }, 'Error al crear el menu') as Promise<ServiceResponse<MenuItem>>;
   }
 
-  async update(request: UpdateMenuRequest): Promise<ServiceResponse<Menus>> {
+  async update(request: UpdateMenuRequest): Promise<ServiceResponse<MenuItem>> {
     if (!request.idMenu) {
       return this.handleError(
-        new Error('ID inválido'),
-        'El ID del menú es requerido'
+        new Error('ID invalido'),
+        'El ID del menu es requerido'
       );
     }
 
     if (!request.nombreMenu?.trim()) {
       return this.handleError(
-        new Error('Nombre vacío'),
-        'El nombre del menú es requerido'
+        new Error('Nombre vacio'),
+        'El nombre del menu es requerido'
       );
     }
 
-    const endpoint = `ActualizarMenu/${request.idMenu}`;
-
     return this.executeDataOperation(async () => {
-      debugApi({
-        endpoint,
-        method: 'PUT',
-        payload: request,
-        expectedTemplate: API_TEMPLATES.menu
-      });
+      const response = await this.httpClient.put(
+        `ActualizarMenu/${request.idMenu}`,
+        request
+      );
 
-      const response = await this.httpClient.put(endpoint, request);
-
-      // Respuesta 204 significa éxito sin contenido
       if (response.status === 204) {
-        debugApi({
-          endpoint,
-          method: 'PUT',
-          response: { status: 204, message: 'Success - No Content' }
-        });
-
         return {
+          idMenu: request.idMenu,
           nombreMenu: request.nombreMenu,
           ruta: request.ruta,
           orden: request.orden,
-          icono: request.icono,
-          esVisible: request.esVisible,
-          idMenu: request.idMenu
-        } as Menus;
+          icono: request.icono ?? null,
+          esVisible: request.esVisible
+        };
       }
 
-      const data = this.processResponseSingle<Menus>(response);
-
-      debugApi({
-        endpoint,
-        method: 'PUT',
-        response: data
-      });
-
-      return data;
-    }, 'Error al actualizar el menú') as Promise<ServiceResponse<Menus>>;
+      return this.processResponseSingle<MenuItem>(response);
+    }, 'Error al actualizar el menu') as Promise<ServiceResponse<MenuItem>>;
   }
 
   async delete(idMenu: number): Promise<ServiceResponse<boolean>> {
     if (!idMenu) {
       return this.handleError(
-        new Error('ID inválido'),
-        'El ID del menú es requerido'
+        new Error('ID invalido'),
+        'El ID del menu es requerido'
       );
     }
 
     return this.executeDataOperation(async () => {
       await this.httpClient.delete(`BorrarMenu/${idMenu}`);
       return true;
-    }, `Error al eliminar el menú ${idMenu}`);
-  }
-
-  async getByRol(idRol: number): Promise<ServiceResponse<Menus[]>> {
-    if (!idRol) {
-      return this.handleError(
-        new Error('ID inválido'),
-        'El ID del rol es requerido'
-      );
-    }
-
-    const endpoint = `ListarMenu/${idRol}`;
-
-    return this.executeDataOperation(async () => {
-      debugApi({
-        endpoint,
-        method: 'GET',
-        payload: { idRol },
-        expectedTemplate: [API_TEMPLATES.permisoRolMenu]
-      });
-
-      const response = await this.httpClient.get(endpoint);
-      const data = this.processResponseArray<Menus>(response);
-
-      debugApi({
-        endpoint,
-        method: 'GET',
-        response: data,
-        expectedTemplate: [API_TEMPLATES.permisoRolMenu]
-      });
-
-      return data;
-    }, `Error al obtener menús del rol ${idRol}`);
+    }, `Error al eliminar el menu ${idMenu}`);
   }
 }
 

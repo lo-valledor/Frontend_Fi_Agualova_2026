@@ -27,6 +27,7 @@ import type {
   ContratosRow,
   Empalmes,
   Estado,
+  GetUserById,
   GuardarConfiguracionPayload,
   Marca,
   MedidorByCodigo,
@@ -35,9 +36,13 @@ import type {
   Nichos,
   NombreComuna,
   NombreGiro,
+  Permisos,
+  Roles,
   Sectores,
   Tipo,
   TiposContrato,
+  UpdateRolePermissions,
+  UpdateUsuario,
   Usuarios
 } from '~/types/administracion';
 
@@ -417,6 +422,11 @@ class AdministracionService {
     }
   }
 
+  /**
+   *
+   * Usuarios
+   */
+
   async getUsuarios(): Promise<AdministracionServiceResponse<Usuarios[]>> {
     try {
       const response = await api.get('GetAllUsers');
@@ -432,13 +442,13 @@ class AdministracionService {
     }
   }
 
-  async getCargoTipoContrato(): Promise<
-    AdministracionServiceResponse<CargoTipoContrato[]>
-  > {
+  async getUserById(
+    id: string
+  ): Promise<AdministracionServiceResponse<GetUserById>> {
     try {
-      const response = await api.get('/cargos-tipos-contrato/buscar');
+      const response = await api.get(`/GetUserById/${id}`);
       return {
-        data: this.processApiResponse<CargoTipoContrato>(response),
+        data: response.data as GetUserById,
         error: null
       };
     } catch (error) {
@@ -448,6 +458,132 @@ class AdministracionService {
       };
     }
   }
+
+  async putUpdateUsuario(
+    id: string,
+    data: UpdateUsuario
+  ): Promise<AdministracionServiceResponse<any>> {
+    try {
+      const response = await api.put(`/UpdateUser/${id}`, data);
+      return {
+        data: response.data as any,
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  async putUpdateRole(
+    id: string,
+    idNuevoRol: string
+  ): Promise<AdministracionServiceResponse<any>> {
+    try {
+      const response = await api.put(`/UpdateRole/${id}/${idNuevoRol}`);
+      return {
+        data: response.data as any,
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  async getAllRoles(): Promise<AdministracionServiceResponse<Roles[]>> {
+    try {
+      const response = await api.get('/GetAllRoles');
+      return {
+        data: response.data as Roles[],
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  async getAllPermissions(): Promise<
+    AdministracionServiceResponse<Permisos[]>
+  > {
+    try {
+      const response = await api.get('/GetAllPermissions');
+      return {
+        data: response.data as Permisos[],
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  async getRolePermissions(
+    roleId: string
+  ): Promise<AdministracionServiceResponse<Permisos[]>> {
+    try {
+      const response = await api.get(`/GetRolePermissions/${roleId}`);
+      return {
+        data: response.data as Permisos[],
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  async updateRolePermissions(
+    roleId: string,
+    permisos: UpdateRolePermissions[]
+  ): Promise<AdministracionServiceResponse<any>> {
+    try {
+      const response = await api.put(`/UpdateRolePermissions`, permisos);
+      return {
+        data: response.data,
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  async forgotPassword(
+    email: string
+  ): Promise<AdministracionServiceResponse<any>> {
+    try {
+      const response = await api.post('/ForgotPassword', { email });
+      return {
+        data: response.data,
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  /**
+   *
+   * @param cargoTipoContratoId
+   * @returns
+   */
 
   async getCargoTipoContratoById(cargoTipoContratoId: number): Promise<
     AdministracionServiceResponse<{

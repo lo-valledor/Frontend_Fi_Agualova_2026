@@ -15,6 +15,7 @@ import {
   CardTitle
 } from '~/components/ui/card';
 import { useAdministracion } from '~/hooks/use-administracion';
+import { administracionService } from '~/services/administracionService';
 import type { UsuarioModalState, Usuarios } from '~/types/administracion';
 import {
   createInitialModalState,
@@ -103,6 +104,16 @@ export default function UsuariosComponent({
     }));
     toast.success(successMessage);
   }, [modalsState.userForm.mode, revalidator]);
+
+  const handleRolesSuccess = useCallback(async () => {
+    const result = await administracionService.getUsuarios();
+
+    if (!result.error && result.data) {
+      setUsuarios(result.data);
+    }
+
+    revalidator.revalidate();
+  }, [revalidator]);
 
   const handleConfirmDelete = useCallback(async () => {
     // Early return: validar que exista usuario seleccionado
@@ -222,7 +233,7 @@ export default function UsuariosComponent({
               roles: { isOpen: false }
             }))
           }
-          onSuccess={() => revalidator.revalidate()}
+          onSuccess={handleRolesSuccess}
           user={selectedUser}
         />
         <DeleteConfirmationDialog

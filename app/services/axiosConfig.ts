@@ -63,8 +63,7 @@ const EXPECTED_ERROR_ROUTES: readonly ExpectedErrorRoutes[] = [
   {
     status: 401,
     routes: [
-      '/login',
-      '/refresh-token',
+      '/Login',
       'validar-usuario-modificacion',
       'cambiar-contrasena'
     ] as const
@@ -82,8 +81,6 @@ const EXPECTED_ERROR_ROUTES: readonly ExpectedErrorRoutes[] = [
 // ============================================================================
 // INSTANCIAS
 // ============================================================================
-
-const refreshAxiosInstance: AxiosInstance = axios.create(AXIOS_CONFIG);
 
 const axiosInstance: AxiosInstance = axios.create(AXIOS_CONFIG);
 
@@ -177,19 +174,6 @@ function handleGenericError(errorData: unknown): void {
   toast.error(message);
 }
 
-async function attemptTokenRefresh(): Promise<string> {
-  const response = await refreshAxiosInstance.post<{ token: string }>(
-    '/refresh-token'
-  );
-
-  const newToken = response.data?.token;
-  if (!newToken) {
-    throw new Error('No se recibió token válido del servidor');
-  }
-
-  return newToken;
-}
-
 async function handleUnauthorizedError(
   error: AxiosError,
   originalRequest: any
@@ -207,18 +191,9 @@ async function handleUnauthorizedError(
     throw error;
   }
 
-  originalRequest._retry = true;
-
-  try {
-    const newToken = await attemptTokenRefresh();
-    setAuthToken(newToken);
-    originalRequest.headers.Authorization = `Bearer ${newToken}`;
-    return axiosInstance(originalRequest);
-  } catch {
-    toast.error('Tu sesión ha expirado. Por favor, inicia sesión de nuevo.');
-    redirectToSessionExpired();
-    throw error;
-  }
+  toast.error('Tu sesión ha expirado. Por favor, inicia sesión de nuevo.');
+  redirectToSessionExpired();
+  throw error;
 }
 
 async function handleErrorResponse(error: AxiosError): Promise<void> {

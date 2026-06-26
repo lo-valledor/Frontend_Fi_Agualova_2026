@@ -1,6 +1,7 @@
 import { AxiosError } from 'axios';
 import { toast } from 'sonner';
 
+import type { ForgotPassword, ResetPassword } from '~/types/administracion';
 import axiosInstance, { clearAuthToken, setAuthToken } from './axiosConfig';
 
 // ============================================================================
@@ -14,6 +15,7 @@ interface LoginCredentials {
 
 interface AuthTokenResponse {
   token: string;
+  expiration?: string;
 }
 
 class AuthenticationError extends Error {
@@ -110,7 +112,7 @@ class AuthService {
   async login(credentials: LoginCredentials): Promise<string> {
     try {
       const response = await axiosInstance.post<AuthTokenResponse>(
-        '/login',
+        '/Login',
         credentials
       );
 
@@ -132,43 +134,14 @@ class AuthService {
   }
 
   async logout(): Promise<void> {
-    try {
-      await axiosInstance.post('/logout');
-      clearStoredToken();
-      toast.success('Cierre de sesión exitoso');
-    } catch (error) {
-      // Log del error para debugging pero no lanzamos excepción
-      // El logout local siempre se ejecuta
-      console.error('Error durante logout:', error);
-      clearStoredToken();
-      toast.error('Error al cerrar sesión');
-    }
-  }
-
-  async refreshToken(): Promise<string> {
-    try {
-      const response =
-        await axiosInstance.post<AuthTokenResponse>('/refresh-token');
-
-      validateTokenResponse(response);
-
-      return response.data.token;
-    } catch (error) {
-      console.error('Error al refrescar token:', error);
-
-      const message = extractErrorMessage(error, 'Error al refrescar el token');
-      const statusCode =
-        error instanceof AxiosError
-          ? (error as AxiosError).response?.status
-          : undefined;
-
-      throw new AuthenticationError(statusCode, message);
-    }
+    clearStoredToken();
+    toast.success('Cierre de sesión exitoso');
   }
 
   async requestPasswordRecovery(email: string): Promise<void> {
     try {
-      await axiosInstance.post('/forgot-password', { email });
+      const payload: ForgotPassword = { email };
+      await axiosInstance.post('/ForgotPassword', payload);
     } catch (error) {
       console.error('Error al solicitar recuperación de contraseña:', error);
 
@@ -185,12 +158,41 @@ class AuthService {
     return this.requestPasswordRecovery(email);
   }
 
-  async resetPassword(resetToken: string, newPassword: string): Promise<void> {
+  async register(
+    username: string,
+    email: string,
+    password: string,
+    nombre: string
+  ): Promise<void> {
     try {
-      await axiosInstance.post('/reset-password', {
+      await axiosInstance.post('/Register', {
+        username,
+        email,
+        password,
+        nombre
+      });
+    } catch (error) {
+      const message = extractErrorMessage(
+        error,
+        'Error al registrar el usuario'
+      );
+      throw new Error(message);
+    }
+  }
+
+  async resetPassword(
+    email: string,
+    resetToken: string,
+    newPassword: string
+  ): Promise<void> {
+    try {
+      const payload: ResetPassword = {
+        email,
         token: resetToken,
         newPassword
-      });
+      };
+
+      await axiosInstance.post('/ResetPassword', payload);
 
       toast.success('Contraseña restablecida exitosamente');
     } catch (error) {

@@ -26,9 +26,19 @@ import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
 import { PasswordStrengthIndicator } from '~/components/ui/password-strength-indicator';
 import { Separator } from '~/components/ui/separator';
-import { useAdministracion } from '~/hooks/use-administracion';
-import type { UpdateUsuario, Usuarios } from '~/types/administracion';
+import { administracionService } from '~/services/administracionService';
+import type {
+  GetUserById,
+  UpdateUsuario,
+  Usuarios
+} from '~/types/administracion';
 import { isPasswordSecure, passwordsMatch } from '~/utils/password-validation';
+
+type UserFormData = UpdateUsuario & {
+  email: string;
+  username: string;
+  newPassword: string;
+};
 
 interface UserFormModalProps {
   isOpen: boolean;
@@ -45,13 +55,14 @@ export function UserFormModal({
   user,
   mode
 }: UserFormModalProps) {
-  const { createUsuario, updateUsuario, loadingState } = useAdministracion();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordError, setPasswordError] = useState<string>('');
+  const [isCreating, setIsCreating] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
 
-  const [formData, setFormData] = useState<UpdateUsuario>({
+  const [formData, setFormData] = useState<UserFormData>({
     nombre: '',
     apellido: '',
     email: '',
@@ -59,31 +70,18 @@ export function UserFormModal({
     newPassword: ''
   });
 
-  const [updateData, setUpdateData] = useState<UpdateUsuario>({
+  const [updateData, setUpdateData] = useState<UserFormData>({
     nombre: '',
     apellido: '',
     email: '',
     username: '',
     newPassword: ''
   });
+
+  const [userDetail, setUserDetail] = useState<GetUserById | null>(null);
 
   useEffect(() => {
-    if (user && mode === 'edit') {
-      setUpdateData({
-        nombre: user.nombre_Usuario,
-        apellido: user.apellidos_Usuario,
-        email: user.email,
-        username: user.userName,
-        newPassword: ''
-      });
-      setFormData({
-        username: user.userName,
-        newPassword: '',
-        email: user.email || '',
-        nombre: user.nombre_Usuario,
-        apellido: user.apellidos_Usuario
-      });
-    } else {
+    const resetForm = () => {
       setFormData({
         username: '',
         newPassword: '',
@@ -98,11 +96,64 @@ export function UserFormModal({
         apellido: '',
         email: ''
       });
+      setUserDetail(null);
+    };
+
+    if (!isOpen) {
+      resetForm();
+      setConfirmPassword('');
+      setPasswordError('');
+      return;
     }
-    // Resetear estados de contraseña
+
+    if (mode === 'add' || !user?.id) {
+      resetForm();
+      setConfirmPassword('');
+      setPasswordError('');
+      return;
+    }
+
+    let ignore = false;
+
+    const fetchUserDetail = async () => {
+      const result = await administracionService.getUserById(user.id);
+
+      if (ignore) {
+        return;
+      }
+
+      if (result.error || !result.data) {
+        toast.error(result.error || 'No fue posible cargar el usuario');
+        onClose();
+        return;
+      }
+
+      setUserDetail(result.data);
+      setUpdateData({
+        nombre: result.data.nombre_Usuario,
+        apellido: result.data.apellidos_Usuario,
+        email: result.data.email,
+        username: result.data.userName,
+        newPassword: ''
+      });
+      setFormData({
+        username: result.data.userName,
+        newPassword: '',
+        email: result.data.email || '',
+        nombre: result.data.nombre_Usuario,
+        apellido: result.data.apellidos_Usuario
+      });
+    };
+
+    void fetchUserDetail();
+
     setConfirmPassword('');
     setPasswordError('');
-  }, [user, mode, isOpen]);
+
+    return () => {
+      ignore = true;
+    };
+  }, [user, mode, isOpen, onClose]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -136,42 +187,48 @@ export function UserFormModal({
           return;
         }
 
-        await createUsuario(formData);
-        toast.success('Usuario creado exitosamente');
-      } else if (mode === 'edit' && user) {
-        // Modo editar
-        const updatePayload: UpdateUsuario = {
-          username: updateData.username,
-          newPassword: '', // No se requiere contraseña actual para actualizar
-          nombre: updateData.nombre,
-          apellido: updateData.apellido,
-          email: updateData.email
-        };
+        setIsCreating(true);
+        const response = await fetch('/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(formData)
+        });
 
-        // Si se proporciona una nueva contraseña, validarla
-        if (formData.newPassword && formData.newPassword.trim()) {
-          // Validar que la nueva contraseña sea segura
-          const passwordCheck = isPasswordSecure(formData.newPassword);
-          if (!passwordCheck.isSecure) {
-            setPasswordError(
-              passwordCheck.reason ||
-                'La contraseña no cumple con los requisitos de seguridad'
-            );
-            toast.error('La nueva contraseña no es suficientemente segura');
-            return;
-          }
-
-          // Validar que las contraseñas coincidan
-          if (!passwordsMatch(formData.newPassword, confirmPassword)) {
-            setPasswordError('Las contraseñas no coinciden');
-            toast.error('Las contraseñas no coinciden');
-            return;
-          }
-
-          updatePayload.newPassword = formData.newPassword;
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => null);
+          throw new Error(
+            errorData?.message ||
+              errorData?.title ||
+              'Error al crear el usuario'
+          );
         }
 
-        await updateUsuario(Number(user.id), updatePayload);
+        toast.success('Usuario creado exitosamente');
+      } else if (mode === 'edit' && user && userDetail) {
+        // Modo editar
+        const updatePayload: UpdateUsuario = {
+          nombre: updateData.nombre,
+          apellido: updateData.apellido
+        };
+
+        if (formData.newPassword && formData.newPassword.trim()) {
+          toast.info(
+            'La actualización de contraseña no está disponible en este endpoint'
+          );
+        }
+
+        setIsUpdating(true);
+        const result = await administracionService.putUpdateUsuario(
+          user.id,
+          updatePayload
+        );
+
+        if (result.error) {
+          throw new Error(result.error);
+        }
+
         toast.success('Usuario actualizado exitosamente');
       }
 
@@ -183,11 +240,14 @@ export function UserFormModal({
         error.message ||
         'Error al procesar la solicitud';
       toast.error(errorMessage);
+    } finally {
+      setIsCreating(false);
+      setIsUpdating(false);
     }
   };
 
   const handleInputChange = (
-    field: keyof UpdateUsuario,
+    field: keyof UserFormData,
     value: string | number | boolean
   ) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -198,9 +258,7 @@ export function UserFormModal({
     }
   };
 
-  const isLoading =
-    loadingState.createUsuario.isLoading ||
-    loadingState.updateUsuario.isLoading;
+  const isLoading = isCreating || isUpdating;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>

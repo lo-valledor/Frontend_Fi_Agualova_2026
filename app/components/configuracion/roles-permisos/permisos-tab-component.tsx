@@ -1,227 +1,167 @@
-import { useVirtualizer } from '@tanstack/react-virtual';
-import { Eye, Save, Search, Smartphone, Table, X } from 'lucide-react';
-
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import { Save, Search } from 'lucide-react';
+import React, { useMemo, useState } from 'react';
 import { toast } from 'sonner';
-import { MobileView } from '~/components/configuracion/roles-permisos/mobile-view';
-import { PermisoCheckboxGroup } from '~/components/configuracion/roles-permisos/permiso-checkbox-group';
+
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
+import { Checkbox } from '~/components/ui/checkbox';
 import { Input } from '~/components/ui/input';
-import { useDebounce } from '~/hooks/shared/use-debounce';
 import { rolesPermisosService } from '~/services/rolesPermisosService';
-import type { Menus, PermisoRolMenu, Roles } from '~/types/roles-permisos';
+import type {
+  Permisos,
+  Roles,
+  UpdateRolePermissions
+} from '~/types/roles-permisos';
+
+interface RolePermissionsEntry {
+  roleId: string;
+  permisos: Permisos[];
+}
 
 interface PermisosTabComponentProps {
   roles: Roles[];
-  menus: Menus[];
-  permisos: PermisoRolMenu[];
+  allPermissions: Permisos[];
+  rolePermissions: RolePermissionsEntry[];
   onDataChange?: () => void;
 }
 
 const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
   roles,
-  menus,
-  permisos,
+  allPermissions,
+  rolePermissions,
   onDataChange
 }) => {
+  const [selectedRoleId, setSelectedRoleId] = useState<string>(
+    roles[0]?.id ?? ''
+  );
   const [searchTerm, setSearchTerm] = useState('');
-  const debouncedSearch = useDebounce(searchTerm, 300);
-  const [selectedRoles, setSelectedRoles] = useState<number[]>([]);
-  const [viewMode, setViewMode] = useState<'table' | 'mobile'>('table');
-  const [compactView, setCompactView] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [_bannerCollapsed, setBannerCollapsed] = useState(false);
+  const [pendingRolePermissions, setPendingRolePermissions] = useState<
+    Record<string, Permisos[]>
+  >({});
 
-  // Ref para el contenedor scrollable (virtualización)
-  const tableContainerRef = useRef<HTMLDivElement>(null);
+  const currentPermissions = useMemo(() => {
+    const pending = pendingRolePermissions[selectedRoleId];
 
-  // ✅ OPTIMIZACIÓN: Estado local de cambios pendientes
-  const [pendingChanges, setPendingChanges] = useState<
-    Map<string, PermisoRolMenu>
-  >(new Map());
-
-  // ✅ OPTIMIZACIÓN: Map de permisos para búsqueda O(1) en lugar de O(n)
-  const permisosMap = useMemo(() => {
-    const map = new Map<string, PermisoRolMenu>();
-    for (const p of permisos) {
-      const key = `${p.idRol}-${p.idMenu}`;
-      map.set(key, p);
+    if (pending) {
+      return pending;
     }
-    return map;
-  }, [permisos]);
 
-  // Función para obtener permisos de un rol y menú específico - Ahora O(1)
-  // Si hay cambios pendientes, los devuelve; si no, devuelve el permiso original
-  const getPermiso = useCallback(
-    (idRol: number, idMenu: number) => {
-      const key = `${idRol}-${idMenu}`;
-      const pendingChange = pendingChanges.get(key);
-      return pendingChange || permisosMap.get(key);
-    },
-    [permisosMap, pendingChanges]
-  );
+    return (
+      rolePermissions.find(entry => entry.roleId === selectedRoleId)
+        ?.permisos ?? []
+    );
+  }, [pendingRolePermissions, rolePermissions, selectedRoleId]);
 
-  // Filtrar menús por búsqueda
-  const filteredMenus = useMemo(
-    () =>
-      menus.filter(
-        menu =>
-          menu.nombreMenu
-            .toLowerCase()
-            .includes(debouncedSearch.toLowerCase()) ||
-          menu.ruta?.toLowerCase().includes(debouncedSearch.toLowerCase())
-      ),
-    [menus, debouncedSearch]
-  );
+  const filteredPermissions = useMemo(() => {
+    const term = searchTerm.trim().toLowerCase();
 
-  // Filtrar roles seleccionados
-  const visibleRoles = useMemo(
-    () =>
-      selectedRoles.length > 0
-        ? roles.filter(role => selectedRoles.includes(role.idRol))
-        : roles,
-    [roles, selectedRoles]
-  );
+    if (!term) {
+      return allPermissions;
+    }
 
-  // ✅ VIRTUALIZACIÓN: Solo renderizar filas visibles en el viewport
-  const rowVirtualizer = useVirtualizer({
-    count: filteredMenus.length,
-    getScrollElement: () => tableContainerRef.current,
-    estimateSize: () => (compactView ? 50 : 70), // Altura estimada por fila
-    overscan: 5 // Renderizar 5 filas extra arriba/abajo para scroll suave
-  });
+    return allPermissions.filter(permission => {
+      return (
+        permission.nombre.toLowerCase().includes(term) ||
+        permission.descripcion.toLowerCase().includes(term) ||
+        permission.modulo.toLowerCase().includes(term)
+      );
+    });
+  }, [allPermissions, searchTerm]);
 
-  // ✅ NUEVA FUNCIÓN: Actualizar permiso localmente (sin guardar en BD)
-  const handleTogglePermiso = useCallback(
-    (idRol: number, idMenu: number, tipoPermiso: string, valor: boolean) => {
-      const key = `${idRol}-${idMenu}`;
+  const currentPermissionIds = useMemo(() => {
+    return new Set(currentPermissions.map(permission => permission.id));
+  }, [currentPermissions]);
 
-      // Obtener el permiso ORIGINAL de la BD (no los cambios pendientes)
-      const permisoOriginal = permisosMap.get(key);
+  const hasPendingChanges = Boolean(pendingRolePermissions[selectedRoleId]);
 
-      // Obtener el permiso actual (puede incluir cambios pendientes)
-      const permisoActual = getPermiso(idRol, idMenu);
+  const handleTogglePermission = (permission: Permisos, checked: boolean) => {
+    const nextPermissions = checked
+      ? [...currentPermissions, permission]
+      : currentPermissions.filter(item => item.id !== permission.id);
 
-      // Crear el nuevo estado del permiso
-      const nuevoPermiso: PermisoRolMenu = {
-        idRol,
-        idMenu,
-        puedeVer: permisoActual?.puedeVer || false,
-        puedeCrear: permisoActual?.puedeCrear || false,
-        puedeEditar: permisoActual?.puedeEditar || false,
-        puedeEliminar: permisoActual?.puedeEliminar || false,
-        [tipoPermiso]: valor,
-        fechaAsignacion: new Date().toISOString().split('.')[0]
+    const originalPermissions =
+      rolePermissions.find(entry => entry.roleId === selectedRoleId)
+        ?.permisos ?? [];
+
+    const originalIds = new Set(originalPermissions.map(item => item.id));
+    const nextIds = new Set(nextPermissions.map(item => item.id));
+
+    const isSameAsOriginal =
+      originalIds.size === nextIds.size &&
+      Array.from(nextIds).every(id => originalIds.has(id));
+
+    setPendingRolePermissions(prev => {
+      if (isSameAsOriginal) {
+        const updated = { ...prev };
+        delete updated[selectedRoleId];
+        return updated;
+      }
+
+      return {
+        ...prev,
+        [selectedRoleId]: nextPermissions
       };
+    });
+  };
 
-      setPendingChanges(prev => {
-        const newMap = new Map(prev);
+  const handleSave = async () => {
+    if (!selectedRoleId) {
+      toast.error('Debe seleccionar un rol');
+      return;
+    }
 
-        // Verificar si el nuevo permiso es IGUAL al original
-        const esIgualAlOriginal =
-          nuevoPermiso.puedeVer === (permisoOriginal?.puedeVer || false) &&
-          nuevoPermiso.puedeCrear === (permisoOriginal?.puedeCrear || false) &&
-          nuevoPermiso.puedeEditar ===
-            (permisoOriginal?.puedeEditar || false) &&
-          nuevoPermiso.puedeEliminar ===
-            (permisoOriginal?.puedeEliminar || false);
+    const permisos = pendingRolePermissions[selectedRoleId];
 
-        if (esIgualAlOriginal) {
-          // Si volvió al estado original, QUITAR de cambios pendientes
-          newMap.delete(key);
-        } else {
-          // Si es diferente al original, agregarlo a cambios pendientes
-          newMap.set(key, nuevoPermiso);
-        }
-
-        return newMap;
-      });
-    },
-    [getPermiso, permisosMap]
-  );
-
-  // ✅ NUEVA FUNCIÓN: Guardar todos los cambios pendientes
-  const handleSaveChanges = useCallback(async () => {
-    if (pendingChanges.size === 0) {
+    if (!permisos) {
       toast.info('No hay cambios pendientes para guardar');
       return;
     }
 
     setIsSaving(true);
-    let successCount = 0;
-    let errorCount = 0;
 
     try {
-      // Procesar todos los cambios en paralelo
-      const promises = Array.from(pendingChanges.values()).map(
-        async permiso => {
-          const result =
-            await rolesPermisosService.asignarPermisoDirecto(permiso);
-          if (result.error) {
-            errorCount++;
-            return { success: false, error: result.error };
-          } else {
-            successCount++;
-            return { success: true };
-          }
+      const payload: UpdateRolePermissions[] = [
+        {
+          roleId: selectedRoleId,
+          permisos
         }
+      ];
+
+      const result = await rolesPermisosService.updateRolePermissions(
+        selectedRoleId,
+        payload
       );
 
-      await Promise.all(promises);
-
-      if (errorCount === 0) {
-        toast.success(`✅ ${successCount} permisos guardados exitosamente`);
-        setPendingChanges(new Map()); // Limpiar cambios pendientes
-        onDataChange?.(); // Recargar datos
-      } else if (successCount > 0) {
-        toast.warning(
-          `⚠️ ${successCount} permisos guardados, ${errorCount} fallaron`
-        );
-        // No limpiar pendingChanges para que el usuario pueda reintentar
-      } else {
-        toast.error(`❌ Error al guardar los ${errorCount} permisos`);
+      if (result.error) {
+        toast.error(result.error);
+        return;
       }
+
+      toast.success('Permisos actualizados exitosamente');
+      setPendingRolePermissions(prev => {
+        const updated = { ...prev };
+        delete updated[selectedRoleId];
+        return updated;
+      });
+      onDataChange?.();
     } catch (error) {
-      if (import.meta.env.DEV) console.error('guardarPermisos', error);
-      toast.error('Error inesperado al guardar cambios');
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : 'Error inesperado al actualizar permisos'
+      );
     } finally {
       setIsSaving(false);
     }
-  }, [pendingChanges, onDataChange]);
+  };
 
-  const handleDiscardChanges = useCallback(() => {
-    setPendingChanges(new Map());
-    setBannerCollapsed(false);
-    toast.info('Cambios descartados');
-  }, []);
-
-  // REFACTOR: Extraer handlers para reducir anidación
-  const handleToggleRole = useCallback((roleId: number) => {
-    setSelectedRoles(prev =>
-      prev.includes(roleId)
-        ? prev.filter(id => id !== roleId)
-        : [...prev, roleId]
-    );
-  }, []);
-
-  const handleToggleAllRoles = useCallback(() => {
-    setSelectedRoles(
-      selectedRoles.length === roles.length ? [] : roles.map(r => r.idRol)
-    );
-  }, [selectedRoles.length, roles]);
-
-  if (roles.length === 0 || menus.length === 0) {
+  if (roles.length === 0) {
     return (
       <Card className="border-0 shadow-lg bg-background backdrop-blur-sm">
-        <CardContent className="p-6">
-          <div className="text-center">
-            <p>No hay roles o menús disponibles para configurar permisos.</p>
-            <p className="text-sm mt-2">
-              Primero debe crear roles y menús en las pestañas correspondientes.
-            </p>
-          </div>
+        <CardContent className="p-6 text-center">
+          <p>No hay roles disponibles para configurar permisos.</p>
         </CardContent>
       </Card>
     );
@@ -229,358 +169,93 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
 
   return (
     <Card className="border-0 shadow-lg bg-background backdrop-blur-sm">
-      <CardHeader className="pb-4">
-        <div className="flex flex-col space-y-4">
-          {/* Header principal */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
-            <CardTitle className="text-base sm:text-lg">
-              Matriz de Permisos
-            </CardTitle>
-            <div className="flex items-center gap-2">
-              {/* Toggle de vista */}
-              <div className="flex items-center border-border rounded-xl p-1">
-                <Button
-                  variant={viewMode === 'table' ? 'default' : 'ghost'}
-                  size="sm"
-                  onClick={() => setViewMode('table')}
-                  className="hidden sm:flex items-center gap-2 h-8 px-3"
-                >
-                  <Table className="h-4 w-4" />
-                  Tabla
-                </Button>
-                <Button
-                  variant={viewMode === 'mobile' ? 'default' : 'ghost'}
-                  size="sm"
-                  onClick={() => setViewMode('mobile')}
-                  className="flex items-center gap-2 h-8 px-3"
-                >
-                  <Smartphone className="h-4 w-4" />
-                  Cards
-                </Button>
-              </div>
+      <CardHeader className="space-y-4 pb-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <CardTitle className="text-base sm:text-lg">
+            Asignacion de Permisos por Rol
+          </CardTitle>
+          <Button
+            onClick={handleSave}
+            disabled={!hasPendingChanges || isSaving}
+          >
+            <Save className="mr-2 h-4 w-4" />
+            {isSaving ? 'Guardando...' : 'Guardar cambios'}
+          </Button>
+        </div>
 
-              {/* Toggle vista compacta */}
-              {viewMode === 'table' && (
-                <Button
-                  variant={compactView ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => setCompactView(!compactView)}
-                  className="hidden md:flex items-center gap-2 h-8 px-3"
-                >
-                  <Eye className="h-4 w-4" />
-                  Compacta
-                </Button>
-              )}
-            </div>
+        <div className="flex flex-col gap-3 sm:flex-row">
+          <div className="flex flex-wrap gap-2">
+            {roles.map(role => (
+              <Button
+                key={role.id}
+                variant={selectedRoleId === role.id ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setSelectedRoleId(role.id)}
+              >
+                {role.name}
+              </Button>
+            ))}
           </div>
 
-          {/* Controles de filtrado */}
-          <div className="flex flex-col sm:flex-row gap-3">
-            {/* Búsqueda de menús */}
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
-              <Input
-                placeholder="Buscar menús por nombre o ruta..."
-                value={searchTerm}
-                onChange={e => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-
-            {/* Selector de roles */}
-            <div className="flex flex-wrap gap-1 items-center">
-              <span className="text-sm mr-2">Roles:</span>
-              {roles.slice(0, 3).map(role => (
-                <Button
-                  key={role.idRol}
-                  variant={
-                    selectedRoles.includes(role.idRol) ? 'default' : 'outline'
-                  }
-                  size="sm"
-                  onClick={() => handleToggleRole(role.idRol)}
-                  className="h-7 px-2 text-xs"
-                >
-                  {role.nombreRol}
-                </Button>
-              ))}
-              {roles.length > 3 && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleToggleAllRoles}
-                  className="h-7 px-2 text-xs"
-                >
-                  {selectedRoles.length === roles.length
-                    ? 'Ninguno'
-                    : `+${roles.length - 3} más`}
-                </Button>
-              )}
-            </div>
+          <div className="relative sm:ml-auto sm:w-80">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+            <Input
+              value={searchTerm}
+              onChange={event => setSearchTerm(event.target.value)}
+              placeholder="Buscar permisos..."
+              className="pl-10"
+            />
           </div>
-
-          {/* Leyenda */}
-          <div className="flex flex-wrap gap-4 text-xs bg-muted/50 p-3 rounded-xl border border-border">
-            <div className="flex items-center gap-1.5">
-              <div className="w-3 h-3 bg-blue-600 rounded-sm"></div>
-              <span className="text-blue-600 dark:text-blue-400 font-medium">
-                Ver
-              </span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <div className="w-3 h-3 bg-emerald-600 rounded-sm"></div>
-              <span className="text-emerald-600 dark:text-emerald-400 font-medium">
-                Crear
-              </span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <div className="w-3 h-3 bg-amber-600 rounded-sm"></div>
-              <span className="text-amber-600 dark:text-amber-400 font-medium">
-                Editar
-              </span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <div className="w-3 h-3 bg-rose-600 rounded-sm"></div>
-              <span className="text-rose-600 dark:text-rose-400 font-medium">
-                Eliminar
-              </span>
-            </div>
-          </div>
-
-          {/* Información de filtros activos */}
-          {(searchTerm || selectedRoles.length > 0) && (
-            <div className="text-sm bg-blue-50 dark:bg-blue-900/20 p-2 rounded-xl">
-              Mostrando {filteredMenus.length} menús
-              {selectedRoles.length > 0 &&
-                ` para ${visibleRoles.length} roles seleccionados`}
-            </div>
-          )}
         </div>
       </CardHeader>
 
-      <CardContent className="pt-0">
-        {/* ✅ Botón flotante (FAB) para guardar cambios */}
-        {pendingChanges.size > 0 && (
-          <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-2 items-end animate-in slide-in-from-bottom-5 duration-300">
-            {/* Tooltip con contador */}
-            <div className="bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 px-3 py-1.5 rounded-lg text-sm font-medium shadow-lg animate-in fade-in zoom-in duration-200">
-              {pendingChanges.size} cambio{pendingChanges.size !== 1 ? 's' : ''}{' '}
-              pendiente{pendingChanges.size !== 1 ? 's' : ''}
-            </div>
+      <CardContent className="space-y-4">
+        <div className="flex items-center justify-between rounded-xl border border-border bg-muted/40 px-4 py-3 text-sm">
+          <span>
+            Rol seleccionado:{' '}
+            <strong>
+              {roles.find(role => role.id === selectedRoleId)?.name}
+            </strong>
+          </span>
+          <Badge variant="outline">
+            {currentPermissions.length} permiso
+            {currentPermissions.length === 1 ? '' : 's'}
+          </Badge>
+        </div>
 
-            {/* Botones de acción */}
-            <div className="flex gap-2">
-              <Button
-                onClick={handleDiscardChanges}
-                disabled={isSaving}
-                size="lg"
-                variant="outline"
-                className="h-14 w-14 rounded-full shadow-2xl border-2 hover:scale-110 transition-transform"
-                title="Descartar cambios"
+        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+          {filteredPermissions.map(permission => {
+            const checked = currentPermissionIds.has(permission.id);
+
+            return (
+              <label
+                key={permission.id}
+                className="flex cursor-pointer items-start gap-3 rounded-xl border border-border p-4 transition-colors hover:bg-muted/40"
               >
-                <X className="h-6 w-6" />
-              </Button>
-              <Button
-                onClick={handleSaveChanges}
-                disabled={isSaving}
-                size="lg"
-                className="h-16 w-16 rounded-full shadow-2xl bg-gradient-to-br from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 hover:scale-110 transition-transform relative"
-                title="Guardar cambios"
-              >
-                {isSaving ? (
-                  <div className="animate-spin rounded-full h-6 w-6 border-4 border-white border-t-transparent" />
-                ) : (
-                  <>
-                    <Save className="h-6 w-6" />
-                    {/* Badge con contador */}
-                    <div className="absolute -top-1 -right-1 h-7 w-7 bg-red-500 rounded-full flex items-center justify-center text-xs font-bold shadow-lg ring-2 ring-white dark:ring-slate-900">
-                      {pendingChanges.size > 99 ? '99+' : pendingChanges.size}
-                    </div>
-                  </>
-                )}
-              </Button>
-            </div>
-          </div>
-        )}
+                <Checkbox
+                  checked={checked}
+                  onCheckedChange={value =>
+                    handleTogglePermission(permission, value === true)
+                  }
+                  className="mt-0.5"
+                />
+                <div className="min-w-0 space-y-1">
+                  <div className="flex items-center gap-2">
+                    <span className="font-medium">{permission.nombre}</span>
+                    <Badge variant="secondary">{permission.modulo}</Badge>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    {permission.descripcion}
+                  </p>
+                </div>
+              </label>
+            );
+          })}
+        </div>
 
-        {viewMode === 'mobile' ? (
-          <MobileView
-            filteredMenus={filteredMenus}
-            visibleRoles={visibleRoles}
-            getPermiso={getPermiso}
-            onTogglePermiso={handleTogglePermiso}
-          />
-        ) : (
-          <div className="relative">
-            {/* Indicador de scroll */}
-            <div className="absolute top-0 right-0 z-20 bg-linear-to-l from-white dark:from-slate-900 to-transparent w-8 h-full pointer-events-none opacity-50" />
-            <div className="absolute top-0 left-64 z-20 bg-linear-to-r from-white dark:from-slate-900 to-transparent w-8 h-full pointer-events-none opacity-50" />
-
-            <div
-              ref={tableContainerRef}
-              className="overflow-auto border rounded-xl bg-background max-h-[80vh]"
-            >
-              <table className="w-full border-collapse relative" style={{}}>
-                <thead className="sticky top-0 bg-background z-10">
-                  <tr>
-                    <th
-                      className="text-left p-3 border-b font-medium sticky left-0 bg-background z-20 shadow-r"
-                      style={{
-                        width: '280px',
-                        minWidth: '280px',
-                        maxWidth: '280px'
-                      }}
-                    >
-                      <div className="flex items-center gap-2">
-                        <span>Menú</span>
-                        <Badge variant="outline" className="text-xs">
-                          {filteredMenus.length}
-                        </Badge>
-                      </div>
-                    </th>
-                    {visibleRoles.map(rol => (
-                      <th
-                        key={rol.idRol}
-                        style={{
-                          width: compactView ? '160px' : '200px',
-                          minWidth: compactView ? '160px' : '200px',
-                          maxWidth: compactView ? '160px' : '200px'
-                        }}
-                        className={`text-center border-b border-l font-medium ${
-                          compactView ? 'p-2' : 'p-3'
-                        }`}
-                      >
-                        <div className={`space-y-${compactView ? '1' : '2'}`}>
-                          <div className="flex items-center justify-center gap-2">
-                            <Badge
-                              variant="secondary"
-                              className="font-mono text-xs"
-                              title={`ID del Rol: ${rol.idRol}`}
-                            >
-                              #{rol.idRol}
-                            </Badge>
-                            <div
-                              className={`font-semibold text-sm truncate ${
-                                compactView ? 'max-w-[100px]' : 'max-w-[120px]'
-                              }`}
-                              title={rol.nombreRol}
-                            >
-                              {rol.nombreRol}
-                            </div>
-                          </div>
-                          {!compactView && (
-                            <div className="grid grid-cols-4 gap-1 text-xs">
-                              <div className="bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 p-1 rounded text-center">
-                                V
-                              </div>
-                              <div className="bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 p-1 rounded text-center">
-                                C
-                              </div>
-                              <div className="bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 p-1 rounded text-center">
-                                E
-                              </div>
-                              <div className="bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 p-1 rounded text-center">
-                                D
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody
-                  style={{
-                    height: `${rowVirtualizer.getTotalSize()}px`,
-                    position: 'relative'
-                  }}
-                >
-                  {rowVirtualizer.getVirtualItems().map(virtualRow => {
-                    const menu = filteredMenus[virtualRow.index];
-                    const rowHeight = compactView ? 50 : 70;
-                    return (
-                      <tr
-                        key={menu.idMenu}
-                        data-index={virtualRow.index}
-                        style={{
-                          position: 'absolute',
-                          top: 0,
-                          left: 0,
-                          width: '100%',
-                          height: `${rowHeight}px`,
-                          transform: `translateY(${virtualRow.start}px)`,
-                          display: 'table'
-                        }}
-                        className="hover:muted"
-                      >
-                        <td
-                          style={{
-                            width: '280px',
-                            minWidth: '280px',
-                            maxWidth: '280px'
-                          }}
-                          className={`border-b font-medium sticky left-0 bg-background z-10 shadow-r ${
-                            compactView ? 'p-2' : 'p-3'
-                          }`}
-                        >
-                          <div className="space-y-1">
-                            <div className="flex items-center gap-2">
-                              <Badge
-                                variant="outline"
-                                className="font-mono text-xs"
-                              >
-                                #{menu.idMenu}
-                              </Badge>
-                              <div
-                                className={`font-medium truncate ${
-                                  compactView ? 'max-w-40' : 'max-w-45'
-                                }`}
-                                title={menu.nombreMenu}
-                              >
-                                {menu.nombreMenu}
-                              </div>
-                            </div>
-                            {menu.ruta && (
-                              <div
-                                className={`text-xs text-slate-500 font-mono truncate ${
-                                  compactView
-                                    ? 'max-w-[180px]'
-                                    : 'max-w-[200px]'
-                                }`}
-                                title={menu.ruta}
-                              >
-                                {menu.ruta}
-                              </div>
-                            )}
-                          </div>
-                        </td>
-                        {visibleRoles.map(rol => {
-                          const permiso = getPermiso(rol.idRol, menu.idMenu);
-                          return (
-                            <td
-                              key={`${rol.idRol}-${menu.idMenu}`}
-                              style={{
-                                width: compactView ? '160px' : '200px',
-                                minWidth: compactView ? '160px' : '200px',
-                                maxWidth: compactView ? '160px' : '200px'
-                              }}
-                              className={`border-b border-l ${compactView ? 'p-1' : 'p-3'}`}
-                            >
-                              <PermisoCheckboxGroup
-                                permiso={permiso}
-                                rolId={rol.idRol}
-                                menuId={menu.idMenu}
-                                onTogglePermiso={handleTogglePermiso}
-                                layout="table"
-                              />
-                            </td>
-                          );
-                        })}
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
+        {filteredPermissions.length === 0 && (
+          <div className="rounded-xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
+            No se encontraron permisos para la busqueda actual.
           </div>
         )}
       </CardContent>

@@ -32,10 +32,16 @@ import { authService } from '~/services/authService';
 import { isPasswordSecure, passwordsMatch } from '~/utils/password-validation';
 
 interface ResetFormProps extends React.ComponentPropsWithoutRef<'div'> {
+  email?: string;
   token?: string;
 }
 
-export function ResetForm({ className, token, ...props }: ResetFormProps) {
+export function ResetForm({
+  className,
+  email,
+  token,
+  ...props
+}: Readonly<ResetFormProps>) {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -76,7 +82,7 @@ export function ResetForm({ className, token, ...props }: ResetFormProps) {
     }
 
     // Validar token
-    if (!token) {
+    if (!token || !email) {
       toast.error('Token de recuperación inválido o expirado.');
       return;
     }
@@ -85,7 +91,7 @@ export function ResetForm({ className, token, ...props }: ResetFormProps) {
 
     try {
       // Llamar al servicio de API para restablecer contraseña
-      await authService.resetPassword(token, password);
+      await authService.resetPassword(email, token, password);
 
       // Redirigir al login después de un breve delay para que el usuario vea el toast
       setTimeout(() => {
