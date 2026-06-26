@@ -36,6 +36,7 @@ RUN apk add --no-cache curl gettext
 
 COPY --from=build-env /app/build/client /usr/share/nginx/html
 COPY nginx.conf.template /etc/nginx/nginx.conf.template
+RUN envsubst '$BACKEND_URL' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf
 
 # Crear directorios y dar permisos para usuario nginx
 RUN mkdir -p /var/cache/nginx /var/log/nginx /var/run && \
@@ -51,4 +52,4 @@ EXPOSE 80
 # Usuario no-root
 USER nginx
 
-CMD ["sh", "-c", "envsubst '$BACKEND_URL' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"]
+CMD ["nginx", "-g", "daemon off;"]
