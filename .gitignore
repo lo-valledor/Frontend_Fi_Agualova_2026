@@ -9,6 +9,10 @@ GEMINI.md
 /coverage/
 /scripts/
 .env
+.env.local
+.env.*.local
+.env.production
+
 
 # Performance analysis
 /dist/stats.html

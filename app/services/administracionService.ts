@@ -608,11 +608,14 @@ class AdministracionService {
         api.get('/cargos-tipos-contrato/cargos-facturables')
       ]);
       const estructura = responseEditar.data as Record<string, unknown>;
-      const detalle = Array.isArray(estructura.detalle)
-        ? estructura.detalle
-        : Array.isArray(estructura.condiciones)
-          ? estructura.condiciones
-          : [];
+      // API returns condicionesGrilla; fallback to legacy field names
+      const detalle = Array.isArray(estructura.condicionesGrilla)
+        ? estructura.condicionesGrilla
+        : Array.isArray(estructura.detalle)
+          ? estructura.detalle
+          : Array.isArray(estructura.condiciones)
+            ? estructura.condiciones
+            : [];
       const listbox = Array.isArray(estructura.listbox)
         ? estructura.listbox
         : [];
@@ -635,6 +638,14 @@ class AdministracionService {
                 )
               )
               .filter((item): item is number => item !== null)
+          : [];
+      // API returns cargosMonofasicos/cargosTrifasicos/cargosAmbos as
+      // [{idCargo, nombreCargo}]; extract IDs from those arrays
+      const extractCargoIds = (field: unknown): number[] =>
+        Array.isArray(field)
+          ? field
+              .map(item => toNumber((item as { idCargo?: unknown }).idCargo))
+              .filter((id): id is number => id !== null)
           : [];
       const configuracion: GuardarConfiguracionPayload = {
         idTipoContrato:
@@ -665,41 +676,53 @@ class AdministracionService {
               item !== null
           ),
         idsCargosMonofasicos:
-          toNumberArray(estructura.idsCargosMonofasicos).length > 0
-            ? toNumberArray(estructura.idsCargosMonofasicos)
-            : listbox
-                .filter(item => {
-                  const tipoMedidor = toNumber(
-                    (item as { tipoMedidor?: unknown }).tipoMedidor
-                  );
-                  return tipoMedidor === 1;
-                })
-                .map(item => toNumber((item as { cargoId?: unknown }).cargoId))
-                .filter((item): item is number => item !== null),
+          extractCargoIds(estructura.cargosMonofasicos).length > 0
+            ? extractCargoIds(estructura.cargosMonofasicos)
+            : toNumberArray(estructura.idsCargosMonofasicos).length > 0
+              ? toNumberArray(estructura.idsCargosMonofasicos)
+              : listbox
+                  .filter(item => {
+                    const tipoMedidor = toNumber(
+                      (item as { tipoMedidor?: unknown }).tipoMedidor
+                    );
+                    return tipoMedidor === 1;
+                  })
+                  .map(item =>
+                    toNumber((item as { cargoId?: unknown }).cargoId)
+                  )
+                  .filter((item): item is number => item !== null),
         idsCargosTrifasicos:
-          toNumberArray(estructura.idsCargosTrifasicos).length > 0
-            ? toNumberArray(estructura.idsCargosTrifasicos)
-            : listbox
-                .filter(item => {
-                  const tipoMedidor = toNumber(
-                    (item as { tipoMedidor?: unknown }).tipoMedidor
-                  );
-                  return tipoMedidor === 2;
-                })
-                .map(item => toNumber((item as { cargoId?: unknown }).cargoId))
-                .filter((item): item is number => item !== null),
+          extractCargoIds(estructura.cargosTrifasicos).length > 0
+            ? extractCargoIds(estructura.cargosTrifasicos)
+            : toNumberArray(estructura.idsCargosTrifasicos).length > 0
+              ? toNumberArray(estructura.idsCargosTrifasicos)
+              : listbox
+                  .filter(item => {
+                    const tipoMedidor = toNumber(
+                      (item as { tipoMedidor?: unknown }).tipoMedidor
+                    );
+                    return tipoMedidor === 2;
+                  })
+                  .map(item =>
+                    toNumber((item as { cargoId?: unknown }).cargoId)
+                  )
+                  .filter((item): item is number => item !== null),
         idsCargosAmbos:
-          toNumberArray(estructura.idsCargosAmbos).length > 0
-            ? toNumberArray(estructura.idsCargosAmbos)
-            : listbox
-                .filter(item => {
-                  const tipoMedidor = toNumber(
-                    (item as { tipoMedidor?: unknown }).tipoMedidor
-                  );
-                  return tipoMedidor === 0;
-                })
-                .map(item => toNumber((item as { cargoId?: unknown }).cargoId))
-                .filter((item): item is number => item !== null)
+          extractCargoIds(estructura.cargosAmbos).length > 0
+            ? extractCargoIds(estructura.cargosAmbos)
+            : toNumberArray(estructura.idsCargosAmbos).length > 0
+              ? toNumberArray(estructura.idsCargosAmbos)
+              : listbox
+                  .filter(item => {
+                    const tipoMedidor = toNumber(
+                      (item as { tipoMedidor?: unknown }).tipoMedidor
+                    );
+                    return tipoMedidor === 0;
+                  })
+                  .map(item =>
+                    toNumber((item as { cargoId?: unknown }).cargoId)
+                  )
+                  .filter((item): item is number => item !== null)
       };
 
       return {
@@ -774,9 +797,22 @@ class AdministracionService {
     payload: GuardarConfiguracionPayload | Record<string, unknown>
   ): Promise<AdministracionServiceResponse<unknown>> {
     try {
+      const p = payload as GuardarConfiguracionPayload;
+      // Transform to the API's expected format, which mirrors the GET response
+      const apiPayload = {
+        idTipoContrato: p.idTipoContrato,
+        condicionesGrilla: p.condiciones ?? [],
+        cargosMonofasicos: (p.idsCargosMonofasicos ?? []).map(id => ({
+          idCargo: id
+        })),
+        cargosTrifasicos: (p.idsCargosTrifasicos ?? []).map(id => ({
+          idCargo: id
+        })),
+        cargosAmbos: (p.idsCargosAmbos ?? []).map(id => ({ idCargo: id }))
+      };
       const response = await api.post(
         '/cargos-tipos-contrato/guardar-configuracion',
-        payload
+        apiPayload
       );
       return {
         data: response.data,

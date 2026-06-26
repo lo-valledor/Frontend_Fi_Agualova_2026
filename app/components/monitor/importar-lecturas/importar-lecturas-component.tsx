@@ -159,6 +159,12 @@ export default function ImportarLecturasComponent() {
     'Total a Pagar'
   ];
 
+  // Límites de seguridad para procesamiento de Excel
+  const MAX_SHEETS = 5;
+  const MAX_ROWS = 50000;
+  const MAX_COLUMNS = 200;
+  const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+
   // Recalcular restricción de procesamiento por período
   useEffect(() => {
     const periodo = estadoProcesamiento?.periodoActivo;
@@ -194,8 +200,8 @@ export default function ImportarLecturasComponent() {
       return false;
     }
 
-    if (file.size > 10 * 1024 * 1024) {
-      const errorMsg = 'El archivo no debe superar los 10MB';
+    if (file.size > MAX_FILE_SIZE) {
+      const errorMsg = `El archivo no debe superar los ${MAX_FILE_SIZE / (1024 * 1024)}MB`;
       setError(errorMsg);
       toast.error(errorMsg);
       return false;
@@ -225,12 +231,46 @@ export default function ImportarLecturasComponent() {
       const arrayBuffer = await file.arrayBuffer();
       const workbook = XLSX.read(arrayBuffer, { type: 'array' });
 
+      // Validar número de hojas
+      if (workbook.SheetNames.length > MAX_SHEETS) {
+        const errorMsg = `El archivo contiene demasiadas hojas (${workbook.SheetNames.length}). Máximo permitido: ${MAX_SHEETS}`;
+        setError(errorMsg);
+        toast.error(errorMsg);
+        setIsValidFile(false);
+        setFile(null);
+        return;
+      }
+
       // Obtener la primera hoja
       const firstSheetName = workbook.SheetNames[0];
       const worksheet = workbook.Sheets[firstSheetName];
 
       // Convertir a JSON
       const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+      // Validar número total de filas
+      if (jsonData.length > MAX_ROWS) {
+        const errorMsg = `El archivo contiene demasiadas filas (${jsonData.length}). Máximo permitido: ${MAX_ROWS}`;
+        setError(errorMsg);
+        toast.error(errorMsg);
+        setIsValidFile(false);
+        setFile(null);
+        return;
+      }
+
+      // Validar número de columnas (usando la fila más larga encontrada)
+      const maxColumnsFound = (jsonData as unknown[][]).reduce(
+        (max, row) => Math.max(max, Array.isArray(row) ? row.length : 0),
+        0
+      );
+      if (maxColumnsFound > MAX_COLUMNS) {
+        const errorMsg = `El archivo contiene demasiadas columnas (${maxColumnsFound}). Máximo permitido: ${MAX_COLUMNS}`;
+        setError(errorMsg);
+        toast.error(errorMsg);
+        setIsValidFile(false);
+        setFile(null);
+        return;
+      }
 
       // Los encabezados están en la fila 3 (índice 2)
       const headers = jsonData[2] as any[];
@@ -292,7 +332,8 @@ export default function ImportarLecturasComponent() {
         toast.success('Archivo válido - listo para cargar');
       }
     } catch (err) {
-      console.error('Error al validar el archivo Excel:', err);
+      if (import.meta.env.DEV)
+        console.error('Error al validar el archivo Excel:', err);
       const errorMsg =
         'Error al validar el archivo Excel. Verifica que el formato sea correcto.';
       setError(errorMsg);
