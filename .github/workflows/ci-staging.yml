@@ -19,6 +19,7 @@ jobs:
   ci:
     name: CI
     runs-on: ubuntu-latest
+    environment: staging
 
     steps:
       - name: Checkout
@@ -47,7 +48,7 @@ jobs:
 
       - name: Run CI
         env:
-          VITE_API_URL: ${{ secrets.STAGING_API_URL || 'http://localhost:8081/Agualova' }}
+          VITE_API_URL: ${{ vars.STAGING_API_URL || secrets.STAGING_API_URL || 'http://localhost:7071/Agualova' }}
           VITE_ENV_MODE: uat
           VITE_APP_ENV: staging
         run: pnpm run ci
@@ -57,6 +58,7 @@ jobs:
     needs: ci
     runs-on: [self-hosted, Linux, X64, staging]
     if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
+    environment: staging
 
     steps:
       - name: Checkout
@@ -65,7 +67,8 @@ jobs:
       - name: Build Docker image
         run: |
           docker build \
-            --build-arg VITE_API_URL="${{ secrets.STAGING_API_URL || 'http://localhost:8081/Agualova' }}" \
+            --build-arg VITE_API_URL=/Agualova \
+            --build-arg BACKEND_URL="${{ vars.STAGING_API_URL || secrets.STAGING_API_URL || 'http://localhost:7071/Agualova' }}" \
             --build-arg VITE_ENV_MODE=uat \
             --build-arg VITE_APP_ENV=staging \
             -t "${{ env.IMAGE_NAME }}:local" \

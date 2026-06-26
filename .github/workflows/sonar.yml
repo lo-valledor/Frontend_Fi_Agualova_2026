@@ -2,10 +2,10 @@ name: SonarCloud Analysis
 
 on:
   pull_request:
-    branches: [develop, main]
+    branches: [develop]
     types: [opened, synchronize, reopened]
   push:
-    branches: [develop, main]
+    branches: [develop]
   workflow_dispatch:
 
 concurrency:
@@ -16,6 +16,7 @@ jobs:
   sonar:
     name: SonarCloud
     runs-on: ubuntu-latest
+    environment: staging
 
     steps:
       - name: Checkout
@@ -46,7 +47,7 @@ jobs:
 
       - name: Run coverage tests
         env:
-          VITE_API_URL: ${{ secrets.STAGING_API_URL || 'http://localhost:8081/Agualova' }}
+          VITE_API_URL: ${{ vars.STAGING_API_URL || secrets.STAGING_API_URL || 'http://localhost:7071/Agualova' }}
         run: pnpm run test:coverage
 
       - name: SonarCloud Scan
