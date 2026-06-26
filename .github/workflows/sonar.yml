@@ -16,7 +16,6 @@ jobs:
   sonar:
     name: SonarCloud
     runs-on: ubuntu-latest
-    environment: staging
 
     steps:
       - name: Checkout
