@@ -13,7 +13,7 @@ env:
   PNPM_VERSION: '9'
   IMAGE_NAME: agualova-frontend
   CONTAINER_NAME: agualova-production
-  HOST_PORT: '8080'
+  HOST_PORT: '8081'
 
 jobs:
   ci:
@@ -82,6 +82,17 @@ jobs:
             docker rm   "${{ env.CONTAINER_NAME }}" || true
           else
             echo "No existing container named ${{ env.CONTAINER_NAME }}"
+          fi
+
+      - name: Free Docker containers using production port
+        run: |
+          PORT_CONTAINERS=$(docker ps --filter "publish=${{ env.HOST_PORT }}" --format '{{.ID}}')
+          if [ -n "$PORT_CONTAINERS" ]; then
+            echo "Stopping containers using port ${{ env.HOST_PORT }}"
+            echo "$PORT_CONTAINERS" | xargs -r docker stop
+            echo "$PORT_CONTAINERS" | xargs -r docker rm -f
+          else
+            echo "No Docker containers are currently publishing port ${{ env.HOST_PORT }}"
           fi
 
       - name: Run new container
