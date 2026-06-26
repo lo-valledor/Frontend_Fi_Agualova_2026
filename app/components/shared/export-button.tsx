@@ -92,7 +92,7 @@ export function ExportButton<T extends Record<string, any>>({
             isExporting ? 'animate-spin' : ''
           }`}
         />
-        <span className='text-xs sm:text-sm'>
+        <span className="text-xs sm:text-sm">
           {isExporting
             ? 'Exportando...'
             : `Exportar ${getFormatLabel(defaultFormat)}`}
@@ -116,26 +116,26 @@ export function ExportButton<T extends Record<string, any>>({
               isExporting ? 'animate-spin' : ''
             }`}
           />
-          <span className='text-xs sm:text-sm'>
+          <span className="text-xs sm:text-sm">
             {isExporting ? 'Exportando...' : 'Exportar'}
           </span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align='end' className='w-40'>
+      <DropdownMenuContent align="end" className="w-40">
         <DropdownMenuItem
           onClick={() => handleExport('xlsx')}
           disabled={isExporting}
-          className='cursor-pointer'
+          className="cursor-pointer"
         >
-          <FileSpreadsheet className='mr-2 h-4 w-4 text-green-600' />
+          <FileSpreadsheet className="mr-2 h-4 w-4 text-green-600" />
           <span>Excel (.xlsx)</span>
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => handleExport('csv')}
           disabled={isExporting}
-          className='cursor-pointer'
+          className="cursor-pointer"
         >
-          <FileText className='mr-2 h-4 w-4 text-blue-600' />
+          <FileText className="mr-2 h-4 w-4 text-blue-600" />
           <span>CSV (.csv)</span>
         </DropdownMenuItem>
         {enablePDF && (
@@ -144,9 +144,9 @@ export function ExportButton<T extends Record<string, any>>({
             <DropdownMenuItem
               onClick={() => handleExport('pdf')}
               disabled={isExporting}
-              className='cursor-pointer'
+              className="cursor-pointer"
             >
-              <FileText className='mr-2 h-4 w-4 text-red-600' />
+              <FileText className="mr-2 h-4 w-4 text-red-600" />
               <span>PDF (.pdf)</span>
             </DropdownMenuItem>
           </>

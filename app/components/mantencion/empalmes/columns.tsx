@@ -17,13 +17,13 @@ export const columns = ({
   {
     accessorKey: 'id',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Código' />
+      <DataTableColumnHeader column={column} title="Código" />
     ),
     cell: ({ row }) => {
       const codigo = row.getValue('id');
       return (
-        <div className='flex items-center'>
-          <Badge variant='outline' className='font-mono'>
+        <div className="flex items-center">
+          <Badge variant="outline" className="font-mono">
             {codigo as string}
           </Badge>
         </div>
@@ -35,12 +35,12 @@ export const columns = ({
   {
     accessorKey: 'nombre',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Nombre' />
+      <DataTableColumnHeader column={column} title="Nombre" />
     ),
     cell: ({ row }) => {
       const nombre = row.getValue('nombre');
       return (
-        <div className='max-w-[150px] truncate font-medium'>
+        <div className="max-w-37.5 truncate font-medium">
           {nombre as string}
         </div>
       );
@@ -50,23 +50,23 @@ export const columns = ({
   {
     accessorKey: 'codigoCliente',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Código Cliente' />
+      <DataTableColumnHeader column={column} title="Código Cliente" />
     ),
     cell: ({ row }) => {
       const codigoCliente = row.getValue('codigoCliente');
-      return <div className='font-mono text-sm'>{codigoCliente as string}</div>;
+      return <div className="font-mono text-sm">{codigoCliente as string}</div>;
     },
     enableSorting: true
   },
   {
     accessorKey: 'nombreEmpresa',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Nombre Empresa' />
+      <DataTableColumnHeader column={column} title="Nombre Empresa" />
     ),
     cell: ({ row }) => {
       const nombreEmpresa = row.getValue('nombreEmpresa');
       return (
-        <div className='max-w-[150px] truncate font-medium'>
+        <div className="max-w-37.5 truncate font-medium">
           {nombreEmpresa as string}
         </div>
       );
@@ -76,14 +76,14 @@ export const columns = ({
   {
     accessorKey: 'potenciaContratada',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Potencia Contratada' />
+      <DataTableColumnHeader column={column} title="Potencia Contratada" />
     ),
     cell: ({ row }) => {
       const potencia = row.getValue('potenciaContratada');
       return (
-        <div className='text-right'>
-          <span className='font-medium'>{(potencia as number).toFixed(2)}</span>
-          <span className='text-xs text-muted-foreground ml-1'>kW</span>
+        <div className="text-right">
+          <span className="font-medium">{(potencia as number).toFixed(2)}</span>
+          <span className="text-xs text-muted-foreground ml-1">m³</span>
         </div>
       );
     },
@@ -92,13 +92,13 @@ export const columns = ({
   {
     accessorKey: 'tarifa',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Tarifa' />
+      <DataTableColumnHeader column={column} title="Tarifa" />
     ),
     cell: ({ row }) => {
       const tarifa = row.getValue('tarifa');
       return (
-        <div className='text-center'>
-          <Badge variant='secondary'>{tarifa as string}</Badge>
+        <div className="text-center">
+          <Badge variant="secondary">{tarifa as string}</Badge>
         </div>
       );
     },

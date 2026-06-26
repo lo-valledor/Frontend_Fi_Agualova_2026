@@ -1,11 +1,11 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
-  validatePassword,
   calculatePasswordStrength,
-  passwordsMatch,
   generatePasswordSuggestions,
   isPasswordSecure,
-  PASSWORD_RULES
+  PASSWORD_RULES,
+  passwordsMatch,
+  validatePassword
 } from './password-validation';
 
 // Helper function to reduce nesting and improve readability

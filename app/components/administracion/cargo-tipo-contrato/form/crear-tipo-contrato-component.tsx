@@ -1,11 +1,10 @@
-import CargoTipoContratoForm from './cargo-tipo-contrato-form';
-
 import type {
   CargosFacturables,
   Conceptos,
   Condiciones,
   TiposContrato
 } from '~/types/administracion';
+import CargoTipoContratoForm from './cargo-tipo-contrato-form';
 
 export default function CrearTipoContratoComponent({
   tiposContrato = [],
@@ -20,7 +19,7 @@ export default function CrearTipoContratoComponent({
 }>) {
   return (
     <CargoTipoContratoForm
-      mode='create'
+      mode="create"
       tiposContrato={tiposContrato}
       conceptos={conceptos}
       condiciones={condiciones}

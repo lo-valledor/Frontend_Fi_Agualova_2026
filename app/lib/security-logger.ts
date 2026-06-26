@@ -68,11 +68,9 @@ const SENSITIVE_PATTERNS = [
   /rut/i
 ];
 
-
 function isSensitiveKey(key: string): boolean {
   return SENSITIVE_PATTERNS.some(pattern => pattern.test(key));
 }
-
 
 function sanitizeObject(obj: Record<string, unknown>): Record<string, unknown> {
   const sanitized: Record<string, unknown> = {};
@@ -90,7 +88,6 @@ function sanitizeObject(obj: Record<string, unknown>): Record<string, unknown> {
   return sanitized;
 }
 
-
 function getSessionId(): string | undefined {
   try {
     // Don't expose actual session ID, just a hash indicator
@@ -100,7 +97,6 @@ function getSessionId(): string | undefined {
     return undefined;
   }
 }
-
 
 function formatLogEntry(entry: LogEntry): string {
   const parts = [
@@ -112,7 +108,6 @@ function formatLogEntry(entry: LogEntry): string {
 
   return parts.join(' ');
 }
-
 
 function shouldLog(level: LogLevel): boolean {
   const isProduction = import.meta.env.PROD;
@@ -131,28 +126,24 @@ function shouldLog(level: LogLevel): boolean {
   return true;
 }
 
-
 async function sendToExternalService(entry: LogEntry): Promise<void> {
   // Only send security events and errors in production
   if (!import.meta.env.PROD) return;
 
   if (entry.level === LogLevel.SECURITY || entry.level === LogLevel.ERROR) {
-    // TODO: Implement actual external logging service
+    // FIXME: pendiente conectar con servicio externo (Sentry/Loggly)
     // Example: await fetch('/api/logs', { method: 'POST', body: JSON.stringify(entry) });
     // Example: Sentry.captureMessage(entry.message, { extra: entry.context });
   }
 }
 
-
 class SecurityLogger {
   private userId?: string;
 
-  
   setUserId(userId: string | undefined): void {
     this.userId = userId;
   }
 
-  
   private createEntry(
     level: LogLevel,
     message: string,
@@ -173,7 +164,6 @@ class SecurityLogger {
     };
   }
 
-  
   private log(
     level: LogLevel,
     message: string,
@@ -225,7 +215,6 @@ class SecurityLogger {
     this.log(LogLevel.ERROR, message, undefined, context);
   }
 
-  
   security(
     eventType: SecurityEventType,
     message: string,

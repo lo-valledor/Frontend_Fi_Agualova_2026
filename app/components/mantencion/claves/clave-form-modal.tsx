@@ -1,10 +1,9 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2 } from 'lucide-react';
-import { z } from 'zod';
-
-import React from 'react';
-
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { z } from 'zod';
 
 import { Button } from '~/components/ui/button';
 import {
@@ -34,7 +33,8 @@ import {
 } from '~/components/ui/select';
 import { Switch } from '~/components/ui/switch';
 import { Textarea } from '~/components/ui/textarea';
-import type { Clave } from '~/types/mantencion';
+import { mantencionService } from '~/services/mantencionService';
+import type { Clave, ClaveFormValues } from '~/types/mantencion';
 
 const createClaveSchema = (existingCodes: string[], currentCode?: string) =>
   z.object({
@@ -48,16 +48,14 @@ const createClaveSchema = (existingCodes: string[], currentCode?: string) =>
       )
       .refine(
         codigo => {
-          // En modo edición, permitir el código actual
           if (currentCode && codigo === currentCode) return true;
-          // En modo creación, verificar que no exista
           return !existingCodes.includes(codigo);
         },
         {
           message: 'Este código ya está registrado en el sistema'
         }
       ),
-    descripcion: z
+    nombre: z
       .string()
       .min(1, 'La descripción es requerida')
       .max(100, 'La descripción no debe exceder 100 caracteres'),
@@ -89,24 +87,24 @@ export default function ClaveFormModal({
   mode,
   existingCodes
 }: ClaveFormModalProps) {
+  const [isLoading, setIsLoading] = useState(false);
+
   const claveSchema = createClaveSchema(existingCodes, clave?.codigo);
   const form = useForm<ClaveFormData>({
     resolver: zodResolver(claveSchema),
     defaultValues: {
       codigo: clave?.codigo || '',
-      descripcion: clave?.nombre || '',
+      nombre: clave?.nombre || '',
       tipo: clave?.tipo || '',
       estado: clave?.estado ?? true
     }
   });
 
-  const isLoading = form.formState.isSubmitting;
-
-  React.useEffect(() => {
+  useEffect(() => {
     if (isOpen) {
       form.reset({
         codigo: clave?.codigo || '',
-        descripcion: clave?.nombre || '',
+        nombre: clave?.nombre || '',
         tipo: clave?.tipo || '',
         estado: clave?.estado ?? true
       });
@@ -114,25 +112,43 @@ export default function ClaveFormModal({
   }, [isOpen, clave, form]);
 
   const onSubmit = async (data: ClaveFormData) => {
+    setIsLoading(true);
     try {
-      const { default: api } = await import('~/lib/api');
+      const payload: ClaveFormValues = {
+        id: mode === 'edit' && clave ? clave.id : 0,
+        codigo: data.codigo,
+        nombre: data.nombre,
+        tipo: data.tipo,
+        estado: data.estado
+      };
 
+      let result;
       if (mode === 'add') {
-        await api.post('/claves/crear', data);
-      } else {
-        await api.put(`/claves/editar`, { ...data, id: clave?.id });
+        result = await mantencionService.createClaves(payload);
+      } else if (mode === 'edit' && clave) {
+        result = await mantencionService.updateClaves(payload);
+      }
+
+      if (result?.error) {
+        throw new Error(result.error);
       }
 
       onSuccess();
-      onClose();
     } catch (error) {
       console.error('Error al guardar la clave:', error);
+      toast.error(
+        mode === 'add'
+          ? 'Error al crear la clave'
+          : 'Error al actualizar la clave'
+      );
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className='sm:max-w-md'>
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>
             {mode === 'add' ? 'Agregar Nueva Clave' : 'Editar Clave'}
@@ -145,10 +161,10 @@ export default function ClaveFormModal({
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
-              name='codigo'
+              name="codigo"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Código</FormLabel>
@@ -157,11 +173,10 @@ export default function ClaveFormModal({
                       {...field}
                       readOnly={mode === 'edit'}
                       className={mode === 'edit' ? 'bg-muted' : ''}
-                      placeholder='Ingrese el código (4 caracteres)'
+                      placeholder="Ingrese el código (4 caracteres)"
                       maxLength={4}
-                      onChange={e => {
-                        // Solo permitir letras y números, convertir a mayúsculas
-                        const formatted = e.target.value
+                      onChange={event => {
+                        const formatted = event.target.value
                           .replace(/[^A-Za-z0-9]/g, '')
                           .toUpperCase()
                           .slice(0, 4);
@@ -179,14 +194,14 @@ export default function ClaveFormModal({
 
             <FormField
               control={form.control}
-              name='descripcion'
+              name="nombre"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Descripción</FormLabel>
                   <FormControl>
                     <Textarea
                       {...field}
-                      placeholder='Ingrese la descripción'
+                      placeholder="Ingrese la descripción"
                       rows={3}
                     />
                   </FormControl>
@@ -198,21 +213,21 @@ export default function ClaveFormModal({
 
             <FormField
               control={form.control}
-              name='tipo'
+              name="tipo"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Tipo</FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder='Seleccione el tipo' />
+                        <SelectValue placeholder="Seleccione el tipo" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value='0'>0</SelectItem>
-                      <SelectItem value='1'>1</SelectItem>
-                      <SelectItem value='2'>2</SelectItem>
-                      <SelectItem value='3'>3</SelectItem>
+                      <SelectItem value="0">0</SelectItem>
+                      <SelectItem value="1">1</SelectItem>
+                      <SelectItem value="2">2</SelectItem>
+                      <SelectItem value="3">3</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormDescription>
@@ -225,10 +240,10 @@ export default function ClaveFormModal({
 
             <FormField
               control={form.control}
-              name='estado'
+              name="estado"
               render={({ field }) => (
-                <FormItem className='flex flex-row items-center justify-between rounded-xl border p-3 shadow-sm'>
-                  <div className='space-y-0.5'>
+                <FormItem className="flex flex-row items-center justify-between rounded-xl border p-3 shadow-sm">
+                  <div className="space-y-0.5">
                     <FormLabel>Estado</FormLabel>
                     <FormDescription>
                       Indica si la clave está activa o inactiva
@@ -244,17 +259,17 @@ export default function ClaveFormModal({
               )}
             />
 
-            <DialogFooter className='gap-2'>
+            <DialogFooter className="gap-2">
               <Button
-                type='button'
-                variant='outline'
+                type="button"
+                variant="outline"
                 onClick={onClose}
                 disabled={isLoading}
               >
                 Cancelar
               </Button>
-              <Button type='submit' disabled={isLoading} variant='default'>
-                {isLoading && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
+              <Button type="submit" disabled={isLoading} variant="default">
+                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {mode === 'add' ? 'Crear Clave' : 'Actualizar Clave'}
               </Button>
             </DialogFooter>

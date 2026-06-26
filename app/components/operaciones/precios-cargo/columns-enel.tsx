@@ -2,135 +2,132 @@ import type { ColumnDef } from '@tanstack/react-table';
 
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
 import { Badge } from '~/components/ui/badge';
-import type { PreciosCargoEnel } from '~/types/operaciones';
+import type { PreciosConsultarRequest } from '~/types/operaciones';
 
 import DialogAgregarPrecios from './dialog-agregar-precios';
 
-export const columns = (
-  mes: string,
-  anio: string,
-  onSuccess: () => void
-): ColumnDef<PreciosCargoEnel>[] => [
+const normalizarValorActual = (valor: string | number): number | null => {
+  if (typeof valor === 'number') {
+    return valor > 0 ? valor : null;
+  }
+
+  const valorNormalizado = valor.trim();
+  if (!valorNormalizado || valorNormalizado.toLowerCase() === 'sin valor') {
+    return null;
+  }
+
+  const numero = Number.parseFloat(valorNormalizado.replace(',', '.'));
+  return Number.isFinite(numero) && numero > 0 ? numero : null;
+};
+
+const parsearValorMesAnterior = (valor: string): number | null => {
+  if (!valor) return null;
+  const trimmed = valor.trim();
+  if (!trimmed || trimmed.toLowerCase() === 'sin valor') return null;
+
+  const numero = Number.parseFloat(
+    trimmed.replace(/\./g, '').replace(',', '.')
+  );
+  return Number.isFinite(numero) && numero > 0 ? numero : null;
+};
+
+export interface PrecioPendiente {
+  codigo: number;
+  valor: number;
+  descripcion: string;
+  codigoEnerlova: string;
+}
+
+interface ColumnsParams {
+  onAgregarPendiente: (pendiente: PrecioPendiente) => void;
+  onQuitarPendiente: (codigo: number) => void;
+  pendientes: ReadonlyMap<number, PrecioPendiente>;
+}
+
+export const columns = ({
+  onAgregarPendiente,
+  onQuitarPendiente,
+  pendientes
+}: ColumnsParams): ColumnDef<PreciosConsultarRequest>[] => [
   {
-    accessorKey: 'codigo',
+    accessorKey: 'indice',
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title='Código'
-        className='text-slate-700 dark:text-slate-300 font-semibold'
+        title="Índice"
+        className="text-slate-700 dark:text-slate-300 font-semibold"
       />
     ),
     cell: ({ row }) => (
-      <div className='font-mono text-xs sm:text-sm font-medium'>
-        {row.getValue('codigo')}
+      <div className="font-mono text-xs sm:text-sm font-medium">
+        {row.getValue('indice')}
       </div>
-    ),
-    size: 100
+    )
   },
   {
-    accessorKey: 'codigoener',
+    accessorKey: 'codigoInterno',
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title='Cód. Agualova'
-        className='text-slate-700 dark:text-slate-300 font-semibold'
+        title="Código"
+        className="text-slate-700 dark:text-slate-300 font-semibold"
       />
     ),
     cell: ({ row }) => (
-      <div className='font-mono text-xs sm:text-sm text-slate-700 dark:text-slate-400'>
-        {row.getValue('codigoener')}
+      <div className="font-mono text-xs sm:text-sm font-medium">
+        {row.getValue('codigoInterno')}
       </div>
+    )
+  },
+  {
+    accessorKey: 'codigoEnerlova',
+    header: ({ column }) => (
+      <DataTableColumnHeader
+        column={column}
+        title="Cód. Agualova"
+        className="text-slate-700 dark:text-slate-300 font-semibold"
+      />
     ),
-    size: 120
+    cell: ({ row }) => (
+      <div className="font-mono text-xs sm:text-sm text-slate-700 dark:text-slate-400">
+        {row.getValue('codigoEnerlova')}
+      </div>
+    )
   },
   {
     accessorKey: 'descripcion',
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title='Descripción'
-        className='text-slate-700 dark:text-slate-300 font-semibold'
+        title="Descripción"
+        className="text-slate-700 dark:text-slate-300 font-semibold"
       />
     ),
     cell: ({ row }) => (
-      <div className='text-xs sm:text-sm max-w-[150px] sm:max-w-xs truncate'>
+      <div className="text-xs sm:text-sm max-w-37.5 sm:max-w-xs truncate">
         {row.getValue('descripcion')}
       </div>
-    ),
-    size: 200
+    )
   },
   {
-    accessorKey: 'valor',
+    accessorKey: 'valorActual',
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title='Ant. 1'
-        className='text-orange-700 dark:text-orange-300 font-semibold justify-end'
-      />
-    ),
-    cell: ({ row }) => (
-      <div className='text-xs sm:text-sm font-mono text-orange-600 dark:text-orange-400 text-right pr-1'>
-        {row.getValue('valor')}
-      </div>
-    ),
-    size: 80
-  },
-  {
-    accessorKey: 'valor2',
-    header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title='Ant. 2'
-        className='text-orange-700 dark:text-orange-300 font-semibold justify-end'
-      />
-    ),
-    cell: ({ row }) => (
-      <div className='text-xs sm:text-sm font-mono text-orange-600 dark:text-orange-400 text-right pr-1'>
-        {row.getValue('valor2')}
-      </div>
-    ),
-    size: 80
-  },
-  {
-    accessorKey: 'valor3',
-    header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title='Ant. 3'
-        className='text-orange-700 dark:text-orange-300 font-semibold justify-end'
-      />
-    ),
-    cell: ({ row }) => (
-      <div className='text-xs sm:text-sm font-mono text-orange-600 dark:text-orange-400 text-right pr-1'>
-        {row.getValue('valor3')}
-      </div>
-    ),
-    size: 80
-  },
-  {
-    accessorKey: 'valoractual',
-    header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title='Act. 1'
-        className='text-green-700 dark:text-green-300 font-semibold justify-end'
+        title="Valor Actual"
+        className="text-green-700 dark:text-green-300 font-semibold justify-end"
       />
     ),
     cell: ({ row }) => {
-      const value = row.getValue('valoractual') as string;
-      const isNoValue = value === 'Sin Valor';
-
-      // Formatear número con separador de miles
-      const formatValue = (val: string) => {
-        if (isNoValue) return val;
-        const number = parseFloat(val.replace(',', '.'));
-        return Number.isNaN(number)
-          ? val
-          : number.toLocaleString('es-CL', {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2
-            });
-      };
+      const rawValue = row.getValue('valorActual') as string | number;
+      const value = normalizarValorActual(rawValue);
+      const isNoValue = value === null;
+      const formatted = isNoValue
+        ? 'Sin Valor'
+        : value.toLocaleString('es-CL', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+          });
 
       return (
         <div
@@ -140,126 +137,90 @@ export const columns = (
               : 'text-green-600 dark:text-green-400'
           }`}
         >
-          {formatValue(value)}
+          {formatted}
         </div>
       );
-    },
-    size: 90
+    }
   },
   {
-    accessorKey: 'valoractual2',
+    accessorKey: 'confirmacion',
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title='Act. 2'
-        className='text-green-700 dark:text-green-300 font-semibold justify-end'
+        title="Confirmación"
+        className="text-slate-700 dark:text-slate-300 font-semibold"
       />
     ),
-    cell: ({ row }) => {
-      const value = row.getValue('valoractual2') as string;
-      const isNoValue = value === 'Sin Valor';
-
-      // Formatear número con separador de miles
-      const formatValue = (val: string) => {
-        if (isNoValue) return val;
-        const number = parseFloat(val.replace(',', '.'));
-        return Number.isNaN(number)
-          ? val
-          : number.toLocaleString('es-CL', {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2
-            });
-      };
-
-      return (
-        <div
-          className={`text-xs sm:text-sm font-mono text-right pr-1 ${
-            isNoValue
-              ? 'text-red-600 dark:text-red-400'
-              : 'text-green-600 dark:text-green-400'
-          }`}
-        >
-          {formatValue(value)}
-        </div>
-      );
-    },
-    size: 90
+    cell: ({ row }) => (
+      <div className="font-mono text-xs sm:text-sm font-medium">
+        {row.getValue('confirmacion')}
+      </div>
+    )
   },
-  {
-    accessorKey: 'valoractual3',
-    header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title='Act. 3'
-        className='text-green-700 dark:text-green-300 font-semibold justify-end'
-      />
-    ),
-    cell: ({ row }) => {
-      const value = row.getValue('valoractual3') as string;
-      const isNoValue = value === 'Sin Valor';
 
-      // Formatear número con separador de miles
-      const formatValue = (val: string) => {
-        if (isNoValue) return val;
-        const number = parseFloat(val.replace(',', '.'));
-        return Number.isNaN(number)
-          ? val
-          : number.toLocaleString('es-CL', {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2
-            });
-      };
-
-      return (
-        <div
-          className={`text-xs sm:text-sm font-mono text-right pr-1 ${
-            isNoValue
-              ? 'text-red-600 dark:text-red-400'
-              : 'text-green-600 dark:text-green-400'
-          }`}
-        >
-          {formatValue(value)}
-        </div>
-      );
-    },
-    size: 90
-  },
   {
     id: 'actions',
     header: () => (
-      <div className='text-center font-semibold text-xs sm:text-sm'>Estado</div>
+      <div className="text-center font-semibold text-xs sm:text-sm">Estado</div>
     ),
     cell: ({ row }) => {
-      const { valoractual, valoractual2, valoractual3, codigo } = row.original;
-      const hasNoValues =
-        valoractual === 'Sin Valor' ||
-        valoractual2 === 'Sin Valor' ||
-        valoractual3 === 'Sin Valor';
+      const { codigoInterno, valorActual, descripcion, codigoEnerlova } =
+        row.original;
+      const valorMesAnterior = row.original.valorMesAnterior;
+      const hasNoValue = normalizarValorActual(valorActual) === null;
+      const valorMesAnteriorNumero = parsearValorMesAnterior(valorMesAnterior);
+      const pendiente = pendientes.get(codigoInterno);
 
       return (
-        <div className='flex justify-center'>
-          {hasNoValues ? (
+        <div className="flex justify-center">
+          {pendiente ? (
+            <Badge
+              variant="outline"
+              className="bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800 text-xs px-1.5 py-0 gap-1"
+            >
+              <span className="font-mono">
+                $
+                {pendiente.valor.toLocaleString('es-CL', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2
+                })}
+              </span>
+              <button
+                type="button"
+                onClick={() => onQuitarPendiente(codigoInterno)}
+                className="ml-1 text-amber-700 dark:text-amber-300 hover:text-amber-900 dark:hover:text-amber-100"
+                aria-label="Quitar de la cola"
+                title="Quitar de la cola"
+              >
+                ×
+              </button>
+            </Badge>
+          ) : hasNoValue ? (
             <DialogAgregarPrecios
-              valor1={Number(valoractual.replace(',', '.'))}
-              valor2={Number(valoractual2.replace(',', '.'))}
-              valor3={Number(valoractual3.replace(',', '.'))}
-              codigo={codigo}
-              mes={mes}
-              anio={anio}
-              onSuccess={onSuccess}
+              codigo={codigoInterno}
+              descripcion={descripcion}
+              valorAnterior={valorMesAnteriorNumero}
+              onConfirm={valor =>
+                onAgregarPendiente({
+                  codigo: codigoInterno,
+                  valor,
+                  descripcion,
+                  codigoEnerlova
+                })
+              }
             />
           ) : (
             <Badge
-              variant='outline'
-              className='bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-border text-xs px-1 py-0'
+              variant="outline"
+              className="bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-border text-xs px-1 py-0"
             >
-              ✓ <span className='hidden sm:inline'>Actualizado</span>
+              ✓ <span className="hidden sm:inline">Actualizado</span>
             </Badge>
           )}
         </div>
       );
     },
-    size: 100,
+    size: 140,
     enableSorting: false
   }
 ];

@@ -7,12 +7,11 @@ import { administracionService } from '~/services/administracionService';
 
 import type { Route } from './+types/medidores';
 
-// Lazy load del componente pesado (54 KB)
 const MedidoresComponent = lazy(
   () => import('~/components/administracion/medidores/medidores-component')
 );
 
-export function meta({}: Route.MetaArgs) {
+export function meta(_args: Route.MetaArgs) {
   return [
     { title: 'Agualova | Medidores' },
     { name: 'description', content: 'Medidores' }
@@ -24,22 +23,24 @@ export async function clientLoader() {
 
   if (result.error || !result.data) {
     return {
-      medidores: [],
-      marcas: []
+      medidores: []
     };
   }
 
-  return result.data;
+  return {
+    medidores: result.data.medidores
+  };
 }
 
 export default function Medidores({ loaderData }: Route.ComponentProps) {
-  const { medidores, marcas } = loaderData;
+  const { medidores } = loaderData;
   const pageBreadcrumbs = [{ label: 'Administracion' }, { label: 'Medidores' }];
+
   return (
     <div>
       <BreadcrumbSetter items={pageBreadcrumbs} />
       <Suspense fallback={<DataTableSkeleton columns={6} />}>
-        <MedidoresComponent medidores={medidores} marcas={marcas} />
+        <MedidoresComponent medidores={medidores} />
       </Suspense>
     </div>
   );

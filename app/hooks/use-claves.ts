@@ -1,16 +1,19 @@
 import { useEffect, useState } from 'react';
 
 import api from '~/lib/api';
-import type { Clave } from '~/types/monitor';
 import { handleDataLoad } from './utils/data-loader';
 
+type Clave = {
+  IdClave: number;
+  DescripcionClave: string;
+  IdentificadorDeAgrupacion: string;
+};
 
 interface ClaveOption {
   value: string;
   label: string;
   idClave: number;
 }
-
 
 interface UseClaves {
   claves: Clave[];
@@ -21,7 +24,6 @@ interface UseClaves {
   getClavesForGroup: (groupId: string) => ClaveOption[];
   getClaveCorrectaId: () => string;
 }
-
 
 export function useClaves(): UseClaves {
   const [claves, setClaves] = useState<Clave[]>([]);
@@ -37,7 +39,10 @@ export function useClaves(): UseClaves {
         const response = await api.get('/Claves');
         return { data: response.data as Clave[] };
       } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : 'Error al cargar las claves de lectura';
+        const errorMessage =
+          err instanceof Error
+            ? err.message
+            : 'Error al cargar las claves de lectura';
         console.error('Error al cargar las claves de lectura:', err);
         return { error: errorMessage };
       }
@@ -45,13 +50,12 @@ export function useClaves(): UseClaves {
 
     handleDataLoad(
       fetchClaves,
-      (result) => setClaves(result || []),
+      result => setClaves(result || []),
       setError,
       setIsLoading
     );
   }, []);
 
-  
   const getClaveByDescripcion = (descripcion: string): Clave | null => {
     if (!descripcion) {
       return null;
@@ -65,7 +69,6 @@ export function useClaves(): UseClaves {
     );
   };
 
-  
   const getClaveById = (id: number): Clave | null => {
     if (!id) {
       return null;
@@ -74,7 +77,6 @@ export function useClaves(): UseClaves {
     return claves.find(clave => clave.IdClave === id) || null;
   };
 
-  
   const getClavesForGroup = (groupId: string): ClaveOption[] => {
     if (!groupId) {
       return [{ value: '0', label: 'Seleccione', idClave: 0 }];
@@ -94,7 +96,6 @@ export function useClaves(): UseClaves {
     ];
   };
 
-  
   const getClaveCorrectaId = (): string => {
     const claveCorrecta = claves.find(clave =>
       clave.DescripcionClave.includes('LEOK - LECTURA CORRECTA')

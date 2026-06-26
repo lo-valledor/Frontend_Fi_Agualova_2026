@@ -1,11 +1,11 @@
 import {
   type ColumnDef,
-  type RowSelectionState,
-  type SortingState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getSortedRowModel,
+  type RowSelectionState,
+  type SortingState,
   useReactTable
 } from '@tanstack/react-table';
 import { useVirtualizer } from '@tanstack/react-virtual';
@@ -114,10 +114,10 @@ export function DataTableVirtualized<TData, TValue>({
     if (isLoading) {
       return (
         <TableRow>
-          <TableCell colSpan={columns.length} className='h-16 text-center'>
-            <div className='flex justify-center items-center'>
-              <Loader2 className='h-5 w-5 animate-spin' />
-              <span className='ml-2 text-muted-foreground text-sm'>
+          <TableCell colSpan={columns.length} className="h-16 text-center">
+            <div className="flex justify-center items-center">
+              <Loader2 className="h-5 w-5 animate-spin" />
+              <span className="ml-2 text-muted-foreground text-sm">
                 Actualizando datos...
               </span>
             </div>
@@ -129,8 +129,8 @@ export function DataTableVirtualized<TData, TValue>({
     if (rows.length === 0) {
       return (
         <TableRow>
-          <TableCell colSpan={columns.length} className='h-16 text-center'>
-            <span className='text-sm text-muted-foreground'>No results.</span>
+          <TableCell colSpan={columns.length} className="h-16 text-center">
+            <span className="text-sm text-muted-foreground">No results.</span>
           </TableCell>
         </TableRow>
       );
@@ -157,7 +157,7 @@ export function DataTableVirtualized<TData, TValue>({
               data-state={row.getIsSelected() && 'selected'}
             >
               {row.getVisibleCells().map(cell => (
-                <TableCell key={cell.id} className='py-2'>
+                <TableCell key={cell.id} className="py-2">
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </TableCell>
               ))}
@@ -180,9 +180,9 @@ export function DataTableVirtualized<TData, TValue>({
   };
 
   return (
-    <div className='space-y-2'>
+    <div className="space-y-2">
       {/* Información de resultados */}
-      <div className='text-xs text-muted-foreground px-1'>
+      <div className="text-xs text-muted-foreground px-1">
         Mostrando {rows.length} registro{rows.length === 1 ? '' : 's'}
         {enableSelection &&
           Object.keys(rowSelection).length > 0 &&
@@ -192,16 +192,16 @@ export function DataTableVirtualized<TData, TValue>({
       {/* Table con virtualización */}
       <div
         ref={tableContainerRef}
-        className='rounded-md border overflow-auto'
+        className="rounded-md border overflow-auto"
         style={{ height: '600px' }}
       >
-        <Table className='text-sm'>
-          <TableHeader className='sticky top-0 z-10 bg-card'>
+        <Table className="text-sm">
+          <TableHeader className="sticky top-0 z-10 bg-card">
             {table.getHeaderGroups().map(headerGroup => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map(header => {
                   return (
-                    <TableHead key={header.id} className='py-2'>
+                    <TableHead key={header.id} className="py-2">
                       {header.isPlaceholder
                         ? null
                         : flexRender(

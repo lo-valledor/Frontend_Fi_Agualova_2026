@@ -1,17 +1,12 @@
 import api from '~/lib/api';
 import type {
-  BuscarContratos,
-  ComboEmpalmes,
-  DetalleCliente,
-  DetalleContrato,
-  DetalleFacturas,
-  DetalleLecturas,
-  DetalleLocal,
-  DetalleMedidores,
-  DetallePropietario,
-  DetalleUbicacion,
-  FacturacionPorCargo,
-  PeriodosFacturacion
+  BuscarContrato,
+  ConsolidadoConsultaContrato,
+  EmpalmesDisponibles,
+  ExportarExcelProps,
+  PeriodosDisponibles,
+  ResumenNotadeCobro,
+  VerFacturasProps
 } from '~/types/reportes';
 
 export interface ReportesServiceResponse<T> {
@@ -19,9 +14,13 @@ export interface ReportesServiceResponse<T> {
   error: string | null;
 }
 
-class ReportesService {
-  
+export interface ReportesDownloadFile {
+  blob: Blob;
+  filename: string | null;
+  contentType: string | null;
+}
 
+class ReportesService {
   private processApiResponse<T>(response: any): T[] {
     // Si ya es un array, devolverlo directamente
     if (Array.isArray(response.data)) {
@@ -50,66 +49,92 @@ class ReportesService {
     return [];
   }
 
-  async getResumenFacturacion(): Promise<
-    ReportesServiceResponse<{
-      comboEmpalmes: ComboEmpalmes[];
-      periodosFacturacion: PeriodosFacturacion[];
-    }>
-  > {
-    try {
-      const resComboEmpalmes = await api.get('/combo-empalmes');
-      const resPeriodosFacturacion = await api.get('/periodos-facturables');
+  private extractFilenameFromHeaders(headers: unknown): string | null {
+    if (!headers || typeof headers !== 'object') {
+      return null;
+    }
 
-      return {
-        data: {
-          comboEmpalmes:
-            this.processApiResponse<ComboEmpalmes>(resComboEmpalmes),
-          periodosFacturacion: this.processApiResponse<PeriodosFacturacion>(
-            resPeriodosFacturacion
+    const contentDisposition =
+      'content-disposition' in headers
+        ? String(
+            (headers as Record<string, unknown>)['content-disposition'] ?? ''
           )
-        },
-        error: null
-      };
-    } catch (error) {
-      return {
-        data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido'
-      };
+        : '';
+
+    if (!contentDisposition) {
+      return null;
     }
+
+    const utf8Match = contentDisposition.match(/filename\*=UTF-8''([^;]+)/i);
+    if (utf8Match?.[1]) {
+      return decodeURIComponent(utf8Match[1]);
+    }
+
+    const filenameMatch = contentDisposition.match(
+      /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/
+    );
+
+    if (filenameMatch?.[1]) {
+      return filenameMatch[1].replace(/['"]/g, '');
+    }
+
+    return null;
   }
 
-  async getFacturacionPorCargo(
-    periodo: string,
-    emId: number
-  ): Promise<ReportesServiceResponse<FacturacionPorCargo[]>> {
+  private async extractErrorMessageFromBlob(
+    blob: Blob
+  ): Promise<string | null> {
     try {
-      const response = await api.get(
-        `/facturacion-por-cargo?periodo=${periodo}&emId=${emId}`
-      );
+      const text = await blob.text();
 
-      return {
-        data: this.processApiResponse<FacturacionPorCargo>(response),
-        error: null
-      };
-    } catch (error) {
-      return {
-        data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido'
-      };
+      if (!text) {
+        return null;
+      }
+
+      const parsed = JSON.parse(text) as { message?: unknown };
+
+      if (typeof parsed.message === 'string' && parsed.message.trim()) {
+        return parsed.message;
+      }
+
+      return null;
+    } catch {
+      return null;
     }
   }
 
-  async getBuscarContrato(): Promise<
+  async getBuscarContrato(
+    nroLocal?: string,
+    rutCliente?: string,
+    nombreCliente?: string,
+    rutPropietario?: string,
+    nombrePropietario?: string,
+    nroMedidor?: string,
+    codigoContrato?: string,
+    acometida?: string
+  ): Promise<
     ReportesServiceResponse<{
-      buscarContratos: BuscarContratos[];
+      buscarContratos: BuscarContrato[];
     }>
   > {
     try {
-      const resBuscarContrato = await api.get('buscarContrato');
+      const params = new URLSearchParams();
+      if (nroLocal) params.append('nroLocal', nroLocal);
+      if (rutCliente) params.append('rutCliente', rutCliente);
+      if (nombreCliente) params.append('nombreCliente', nombreCliente);
+      if (rutPropietario) params.append('rutPropietario', rutPropietario);
+      if (nombrePropietario)
+        params.append('nombrePropietario', nombrePropietario);
+      if (nroMedidor) params.append('nroMedidor', nroMedidor);
+      if (codigoContrato) params.append('codigoContrato', codigoContrato);
+      if (acometida) params.append('acometida', acometida);
+      const resBuscarContrato = await api.get(
+        `consultar-contrato/buscar?${params}`
+      );
       return {
         data: {
           buscarContratos:
-            this.processApiResponse<BuscarContratos>(resBuscarContrato)
+            this.processApiResponse<BuscarContrato>(resBuscarContrato)
         },
         error: null
       };
@@ -121,73 +146,188 @@ class ReportesService {
     }
   }
 
-  private async safeApiCall<T>(endpoint: string): Promise<T[]> {
+  // Exportar a Excel, se envía un JSON
+  async exportaExcel(
+    request: ExportarExcelProps
+  ): Promise<ReportesServiceResponse<void>> {
     try {
-      const response = await api.get(endpoint);
-      return this.processApiResponse<T>(response);
+      await api.post('consultar-contrato/exportar-excel', request, {
+        responseType: 'blob'
+      });
+      return {
+        data: undefined,
+        error: null
+      };
     } catch (error) {
-      console.error('Error durante la llamada a la API:', error);
-      return [];
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
     }
   }
 
-  async getDetallesPorContrato(contratoId: number): Promise<
-    ReportesServiceResponse<{
-      detallePropietario: DetallePropietario[];
-      detalleCliente: DetalleCliente[];
-      detalleLocal: DetalleLocal[];
-      detalleContrato: DetalleContrato[];
-      detalleMedidores: DetalleMedidores[];
-      detalleUbicacion: DetalleUbicacion[];
-      detalleLecturas: DetalleLecturas[];
-      detalleFacturas: DetalleFacturas[];
-    }>
+  async getConsultaContratoById(
+    id: number
+  ): Promise<ReportesServiceResponse<ConsolidadoConsultaContrato>> {
+    try {
+      const res = await api.get(`consultar-contrato/${id}`);
+      return {
+        data: res.data as ConsolidadoConsultaContrato,
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  //Generar PDF de factura
+  async GeneraPDF(
+    numeroFactura: string,
+    periodo: string
+  ): Promise<ReportesServiceResponse<void>> {
+    try {
+      const params = new URLSearchParams();
+      params.append('numeroFactura', numeroFactura);
+      params.append('periodo', periodo);
+      await api.get(
+        `consultar-contrato/factura/${numeroFactura}/${periodo}/pdf`,
+        {
+          responseType: 'blob'
+        }
+      );
+      return {
+        data: undefined,
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  async generaPDFHistorico(id: number): Promise<ReportesServiceResponse<void>> {
+    try {
+      await api.get(`consultar-contrato/${id}/historico-lecturas/pdf`, {
+        responseType: 'blob'
+      });
+      return {
+        data: undefined,
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  /**
+   * Nota de Cobro
+   */
+  async getListadoPeriodos(): Promise<
+    ReportesServiceResponse<PeriodosDisponibles[]>
   > {
     try {
-      const [
-        detallePropietario,
-        detalleCliente,
-        detalleLocal,
-        detalleContrato,
-        detalleMedidores,
-        detalleUbicacion,
-        detalleLecturas,
-        detalleFacturas
-      ] = await Promise.allSettled([
-        this.safeApiCall<DetallePropietario>(`${contratoId}/propietario`),
-        this.safeApiCall<DetalleCliente>(`${contratoId}/cliente`),
-        this.safeApiCall<DetalleLocal>(`${contratoId}/local`),
-        this.safeApiCall<DetalleContrato>(`${contratoId}/contrato`),
-        this.safeApiCall<DetalleMedidores>(`${contratoId}/medidores`),
-        this.safeApiCall<DetalleUbicacion>(`${contratoId}/ubicacion`),
-        this.safeApiCall<DetalleLecturas>(`${contratoId}/lecturas`),
-        this.safeApiCall<DetalleFacturas>(`${contratoId}/facturas`)
-      ]);
+      const response = await api.get('resumen-nota-cobro/periodos');
+      return {
+        data: response.data as PeriodosDisponibles[],
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  async getListadoEmpalmes(): Promise<
+    ReportesServiceResponse<EmpalmesDisponibles[]>
+  > {
+    try {
+      const response = await api.get('resumen-nota-cobro/empalmes');
+      return {
+        data: response.data as EmpalmesDisponibles[],
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  async getGenerarNotaCobro(
+    periodo: string,
+    idEmpalme: number
+  ): Promise<ReportesServiceResponse<ResumenNotadeCobro[]>> {
+    try {
+      const params = new URLSearchParams({
+        periodo,
+        idEmpalme: idEmpalme.toString()
+      });
+      const response = await api.get(
+        `resumen-nota-cobro/generar?${params.toString()}`
+      );
+      return {
+        data: response.data as ResumenNotadeCobro[],
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  /**
+   * Ver Facturas
+   */
+  // Descarga lote en PDF
+  async getVerFacturas(
+    request: VerFacturasProps
+  ): Promise<ReportesServiceResponse<ReportesDownloadFile>> {
+    try {
+      const response = await api.post(
+        'ver-facturas/descargar-lote-pdf',
+        request,
+        {
+          responseType: 'blob'
+        }
+      );
+
+      const contentType =
+        typeof response.headers?.['content-type'] === 'string'
+          ? response.headers['content-type']
+          : null;
+
+      const blob = response.data as Blob;
+      const errorMessage =
+        contentType?.includes('application/json') ||
+        contentType?.includes('text/plain')
+          ? await this.extractErrorMessageFromBlob(blob)
+          : null;
+
+      if (errorMessage) {
+        return {
+          data: null,
+          error: errorMessage
+        };
+      }
 
       return {
         data: {
-          detallePropietario:
-            detallePropietario.status === 'fulfilled'
-              ? detallePropietario.value
-              : [],
-          detalleCliente:
-            detalleCliente.status === 'fulfilled' ? detalleCliente.value : [],
-          detalleLocal:
-            detalleLocal.status === 'fulfilled' ? detalleLocal.value : [],
-          detalleContrato:
-            detalleContrato.status === 'fulfilled' ? detalleContrato.value : [],
-          detalleMedidores:
-            detalleMedidores.status === 'fulfilled'
-              ? detalleMedidores.value
-              : [],
-          detalleUbicacion:
-            detalleUbicacion.status === 'fulfilled'
-              ? detalleUbicacion.value
-              : [],
-          detalleLecturas:
-            detalleLecturas.status === 'fulfilled' ? detalleLecturas.value : [],
-          detalleFacturas:
-            detalleFacturas.status === 'fulfilled' ? detalleFacturas.value : []
+          blob,
+          filename: this.extractFilenameFromHeaders(response.headers),
+          contentType
         },
         error: null
       };

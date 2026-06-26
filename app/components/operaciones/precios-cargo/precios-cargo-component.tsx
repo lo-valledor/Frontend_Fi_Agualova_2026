@@ -1,19 +1,20 @@
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
 import {
-  BarChart,
   Building2,
   Calendar,
   ChevronDown,
   Eraser,
   HelpCircle,
-  Info,
+  ListChecks,
+  Loader2,
   Search,
-  TrendingUp
+  Trash2,
+  TrendingUp,
+  X
 } from 'lucide-react';
-import { toast } from 'sonner';
-import { driver } from 'driver.js';
-import 'driver.js/dist/driver.css';
-
 import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 import { ModernHeader } from '~/components/shared/modern-header';
 import { Badge } from '~/components/ui/badge';
@@ -28,81 +29,67 @@ import {
   SelectTrigger,
   SelectValue
 } from '~/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
-import api from '~/lib/api';
+import { operacionesService } from '~/services/operacionesService';
 import type {
-  PreciosCargoEnel,
-  PreciosCargoAgualova
+  PreciosConsultarRequest,
+  PrepararLecturasFiltrosPeriodosResponse
 } from '~/types/operaciones';
-
-import { columns as columnsEnel } from './columns-enel';
-import { columns } from './columns-agualova';
-import { DataTablePreciosVirtualized } from './data-table-precios-virtualized';
 import {
-  MONTHS,
   getCurrentMonth,
   getCurrentYear,
-  getYearsRange,
   getMonthLabel,
+  getYearsRange,
+  MONTHS,
   validatePeriod
 } from '~/utils/operaciones';
 
+import { columns as columnsEnel, type PrecioPendiente } from './columns-enel';
+import { DataTablePreciosVirtualized } from './data-table-precios-virtualized';
+
 interface PreciosCargoComponentProps {
-  tablaEnel: PreciosCargoEnel[];
-  tablaAgualova: PreciosCargoAgualova[];
+  precios: PreciosConsultarRequest[];
   initialMes: string;
   initialAnio: string;
   error: string | null;
 }
 
+const formatPendienteCL = (valor: number): string =>
+  valor.toLocaleString('es-CL', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+
 export default function PreciosCargoComponent({
-  tablaEnel: initialTablaEnel,
-  tablaAgualova: initialTablaAgualova,
+  precios: initialPrecios,
   initialMes,
   initialAnio,
   error
 }: Readonly<PreciosCargoComponentProps>) {
-  // Estados para filtros y datos
   const [mes, setMes] = useState(initialMes);
   const [anio, setAnio] = useState(initialAnio);
-  const [tablaEnel, setTablaEnel] = useState(initialTablaEnel);
-  const [tablaAgualova, setTablaAgualova] = useState(initialTablaAgualova);
+  const [precios, setPrecios] =
+    useState<PreciosConsultarRequest[]>(initialPrecios);
   const [isLoading, setIsLoading] = useState(false);
+  const [isSavingMasivo, setIsSavingMasivo] = useState(false);
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
-  const [periodoAbierto, setPeriodoAbierto] = useState<{
-    descripcion: string;
-    mes: number;
-    anio: number;
-  } | null>(null);
+  const [periodoAbierto, setPeriodoAbierto] =
+    useState<PrepararLecturasFiltrosPeriodosResponse | null>(null);
+  const [pendientes, setPendientes] = useState<Map<number, PrecioPendiente>>(
+    new Map()
+  );
 
-  // Consultar periodo abierto al montar el componente
   useEffect(() => {
-    async function fetchPeriodoAbierto() {
-      try {
-        const response = await api.get('/ConsultarPeriodoAbierto');
-
-        // Early return si no hay datos
-        if (!Array.isArray(response.data) || response.data.length === 0) {
-          return;
-        }
-
-        const periodo = response.data[0];
-        setPeriodoAbierto(periodo);
-
-        // Actualizar filtros al periodo abierto
-        setMes(periodo.mes.toString().padStart(2, '0'));
-        setAnio(periodo.anio.toString());
-      } catch (error) {
-        console.error('Error al obtener el periodo abierto:', error);
+    async function fetchPeriodoAbierto(): Promise<void> {
+      const response = await operacionesService.getPeriodoAbierto();
+      if (response.error || !response.data || response.data.length === 0) {
+        return;
       }
+      setPeriodoAbierto(response.data[0] ?? null);
     }
-
     fetchPeriodoAbierto();
   }, []);
 
-  // Manejo de búsqueda con validación
-  const handleSearch = async () => {
-    // Validar período antes de buscar
+  const handleSearch = async (): Promise<void> => {
     const validation = validatePeriod(mes, anio);
     if (!validation.isValid) {
       toast.error(validation.error);
@@ -112,49 +99,91 @@ export default function PreciosCargoComponent({
     try {
       setIsLoading(true);
       setIsFiltersOpen(false);
+      const response = await operacionesService.getPreciosCargoData(mes, anio);
 
-      const params = new URLSearchParams({
-        mes,
-        año: anio
-      });
+      if (response.error || !response.data) {
+        toast.error(response.error || 'Error al buscar precios de cargo');
+        return;
+      }
 
-      const response = await api.get('/consulta-precio-pago', { params });
-      setTablaEnel(response.data as PreciosCargoEnel[]);
+      setPrecios(response.data);
       toast.success('Búsqueda completada exitosamente');
-    } catch (_error) {
-      toast.error('Error al buscar precios de cargo', _error as any);
+    } catch (err) {
+      toast.error('Error al buscar precios de cargo', {
+        description: String(err)
+      });
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Limpiar filtros
-  const handleClearFilters = () => {
+  const handleClearFilters = (): void => {
     setMes(getCurrentMonth());
     setAnio(getCurrentYear());
     toast.success('Filtros reiniciados');
   };
 
-  // Actualizar datos después de modificaciones (ENEL)
-  const handleDataUpdate = async () => {
-    await handleSearch();
+  const handleAgregarPendiente = (pendiente: PrecioPendiente): void => {
+    setPendientes(prev => {
+      const nuevo = new Map(prev);
+      nuevo.set(pendiente.codigo, pendiente);
+      return nuevo;
+    });
+    toast.success(`${pendiente.descripcion} agregado a la cola`);
   };
 
-  // Actualizar datos de Agualova
-  const handleAgualovaDataUpdate = async () => {
+  const handleQuitarPendiente = (codigo: number): void => {
+    setPendientes(prev => {
+      if (!prev.has(codigo)) return prev;
+      const nuevo = new Map(prev);
+      nuevo.delete(codigo);
+      return nuevo;
+    });
+  };
+
+  const handleLimpiarCola = (): void => {
+    if (pendientes.size === 0) return;
+    setPendientes(new Map());
+    toast.success('Cola de pendientes vaciada');
+  };
+
+  const handleGuardarMasivo = async (): Promise<void> => {
+    if (pendientes.size === 0) {
+      toast.error('No hay precios pendientes para guardar');
+      return;
+    }
+
     try {
-      setIsLoading(true);
-      const response = await api.get('/consulta-precio-pago-tabla');
-      setTablaAgualova(response.data as PreciosCargoAgualova[]);
-      toast.success('Datos actualizados correctamente');
-    } catch (error) {
-      toast.error('Error al actualizar los datos', error as any);
+      setIsSavingMasivo(true);
+      const payload = Array.from(pendientes.values()).map(p => ({
+        mes,
+        anio,
+        codigoCargo: p.codigo,
+        nuevoValor: p.valor
+      }));
+
+      const response =
+        await operacionesService.postGuardarPreciosCargoMasivo(payload);
+
+      if (response.error) {
+        toast.error(response.error);
+        return;
+      }
+
+      toast.success(
+        `${pendientes.size} precio${pendientes.size !== 1 ? 's' : ''} guardado${pendientes.size !== 1 ? 's' : ''} correctamente`
+      );
+      setPendientes(new Map());
+      await handleSearch();
+    } catch (err) {
+      toast.error('Error al guardar los precios', {
+        description: String(err)
+      });
     } finally {
-      setIsLoading(false);
+      setIsSavingMasivo(false);
     }
   };
 
-  // Pasos del tour interactivo con driver.js
   const tourSteps = [
     {
       element: '#filtros-periodo',
@@ -171,7 +200,7 @@ export default function PreciosCargoComponent({
       popover: {
         title: '📌 Período Activo',
         description:
-          'Aquí se muestra el <strong>período abierto actualmente</strong> en el sistema. Los filtros se inicializan automáticamente con este período.',
+          'Aquí se muestra el <strong>período abierto actualmente</strong> en el sistema.',
         side: 'bottom' as const,
         align: 'start' as const
       }
@@ -181,7 +210,7 @@ export default function PreciosCargoComponent({
       popover: {
         title: '🔍 Buscar Precios',
         description:
-          'Una vez seleccionado el período deseado, haz clic en <strong>Buscar</strong> para cargar los precios de cargo correspondientes a ese mes y año.',
+          'Una vez seleccionado el período deseado, haz clic en <strong>Buscar</strong> para cargar los precios de cargo.',
         side: 'bottom' as const,
         align: 'center' as const
       }
@@ -197,39 +226,18 @@ export default function PreciosCargoComponent({
       }
     },
     {
-      element: '#tabs-precios',
+      element: '#tabla-precios',
       popover: {
-        title: '🔄 Pestañas de Precios',
+        title: '💰 Tabla de Precios',
         description:
-          'Usa estas pestañas para alternar entre <strong>Precios ENEL</strong> (distribuidora) y <strong>Precios Agualova</strong> (propios de la empresa).',
-        side: 'top' as const,
-        align: 'start' as const
-      }
-    },
-    {
-      element: '#tabla-enel',
-      popover: {
-        title: '💰 Tabla de Precios ENEL',
-        description:
-          'Aquí se muestran los <strong>precios de cargo publicados por ENEL</strong>. Puedes ver valores anteriores y actuales para comparación histórica.',
-        side: 'top' as const,
-        align: 'start' as const
-      }
-    },
-    {
-      element: '#tabla-agualova',
-      popover: {
-        title: '💼 Tabla de Precios Agualova',
-        description:
-          'Esta tabla muestra los <strong>precios propios de Agualova</strong>, fijados internamente para el período actual.',
+          'Aquí se muestran los <strong>precios de cargo publicados por la distribuidora</strong>.',
         side: 'top' as const,
         align: 'start' as const
       }
     }
   ];
 
-  // Función para iniciar el tour
-  const startTour = () => {
+  const startTour = (): void => {
     const driverjs = driver({
       showProgress: true,
       progressText: 'Paso {{current}} de {{total}}',
@@ -247,67 +255,64 @@ export default function PreciosCargoComponent({
         }
       }
     });
-
     driverjs.setSteps(tourSteps);
     driverjs.drive();
   };
 
-  // Mostrar error si existe
   if (error) {
     return (
-      <div className='min-h-screen bg-background'>
-        <div className='container mx-auto p-3 space-y-4'>
-          <div className='text-center py-8'>
-            <div className='inline-flex items-center justify-center w-12 h-12 bg-destructive/10 rounded-xl mb-3'>
-              <TrendingUp className='w-6 h-6 text-destructive' />
+      <div className="min-h-screen bg-background">
+        <div className="container mx-auto p-3 space-y-4">
+          <div className="text-center py-8">
+            <div className="inline-flex items-center justify-center w-12 h-12 bg-destructive/10 rounded-xl mb-3">
+              <TrendingUp className="w-6 h-6 text-destructive" />
             </div>
-            <h1 className='text-xl font-semibold mb-2'>
+            <h1 className="text-xl font-semibold mb-2">
               Error al cargar datos
             </h1>
-            <p className='text-sm text-muted-foreground'>{error}</p>
+            <p className="text-sm text-muted-foreground">{error}</p>
           </div>
         </div>
       </div>
     );
   }
 
-  return (
-    <div className='min-h-screen bg-background'>
-      <div className='container mx-auto p-3 space-y-4'>
-        <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3'>
-          {/* Header */}
-          <ModernHeader
-            title='Precios Cargo'
-            description='Gestión de precios de cargo para facturación'
-          />
+  const pendientesList = Array.from(pendientes.values());
 
-          {/* Botón de Guía Interactiva */}
+  return (
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto p-3 space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <ModernHeader
+            title="Precios Cargo"
+            description="Gestión de precios de cargo para facturación"
+          />
           <Button
-            variant='outline'
-            size='sm'
+            variant="outline"
+            size="sm"
             onClick={startTour}
-            className='mb-2'
+            className="mb-2"
           >
-            <HelpCircle className='h-4 w-4' />
+            <HelpCircle className="h-4 w-4" />
           </Button>
         </div>
-        {/* Filtros */}
-        <Card id='filtros-periodo' className='border border-border shadow-sm'>
+
+        <Card id="filtros-periodo" className="border border-border shadow-sm">
           <Collapsible open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
             <div
-              className='p-4 border-b border-border cursor-pointer hover:bg-muted/50 transition-colors'
+              className="p-4 border-b border-border cursor-pointer hover:bg-muted/50 transition-colors"
               onClick={() => setIsFiltersOpen(!isFiltersOpen)}
             >
-              <div className='flex items-center justify-between'>
-                <div className='flex items-center gap-3'>
-                  <div className='flex h-8 w-8 items-center justify-center rounded-xl bg-muted'>
-                    <Calendar className='h-4 w-4' />
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-muted">
+                    <Calendar className="h-4 w-4" />
                   </div>
                   <div>
-                    <h3 className='text-base font-medium'>
+                    <h3 className="text-base font-medium">
                       Período de Consulta
                     </h3>
-                    <p className='text-xs text-muted-foreground'>
+                    <p className="text-xs text-muted-foreground">
                       Selecciona el período para consultar los precios de cargo
                     </p>
                   </div>
@@ -320,14 +325,13 @@ export default function PreciosCargoComponent({
               </div>
             </div>
 
-            {/* Período seleccionado */}
-            <div id='periodo-actual' className='px-4 pb-4'>
-              <div className='flex items-center gap-3 p-3 bg-muted/30 rounded-xl border border-border'>
-                <div className='flex items-center gap-2'>
-                  <Calendar className='w-4 h-4 text-primary' />
-                  <span className='text-sm font-medium'>Periodo abierto:</span>
+            <div id="periodo-actual" className="px-4 pb-4">
+              <div className="flex items-center gap-3 p-3 bg-muted/30 rounded-xl border border-border">
+                <div className="flex items-center gap-2">
+                  <Calendar className="w-4 h-4 text-primary" />
+                  <span className="text-sm font-medium">Periodo abierto:</span>
                 </div>
-                <Badge variant='outline' className='text-sm'>
+                <Badge variant="outline" className="text-sm">
                   {periodoAbierto
                     ? periodoAbierto.descripcion
                     : `${getMonthLabel(mes)} ${anio}`}
@@ -336,16 +340,15 @@ export default function PreciosCargoComponent({
             </div>
 
             <CollapsibleContent>
-              <CardContent className='px-4 pb-4 space-y-3'>
-                <div className='grid grid-cols-1 sm:grid-cols-2 gap-3'>
-                  {/* Mes */}
-                  <div className='space-y-2'>
-                    <Label className='text-sm font-medium'>Mes</Label>
+              <CardContent className="px-4 pb-4 space-y-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium">Mes</Label>
                     <Select value={mes} onValueChange={setMes}>
-                      <SelectTrigger className='h-9 w-full'>
-                        <SelectValue placeholder='Selecciona un mes' />
+                      <SelectTrigger className="h-9 w-full">
+                        <SelectValue placeholder="Selecciona un mes" />
                       </SelectTrigger>
-                      <SelectContent className='w-full'>
+                      <SelectContent className="w-full">
                         {MONTHS.map(month => (
                           <SelectItem key={month.value} value={month.value}>
                             {month.label}
@@ -355,14 +358,13 @@ export default function PreciosCargoComponent({
                     </Select>
                   </div>
 
-                  {/* Año */}
-                  <div className='space-y-2'>
-                    <Label className='text-sm font-medium'>Año</Label>
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium">Año</Label>
                     <Select value={anio} onValueChange={setAnio}>
-                      <SelectTrigger className='h-9 w-full'>
-                        <SelectValue placeholder='Selecciona un año' />
+                      <SelectTrigger className="h-9 w-full">
+                        <SelectValue placeholder="Selecciona un año" />
                       </SelectTrigger>
-                      <SelectContent className='w-full'>
+                      <SelectContent className="w-full">
                         {getYearsRange().map(year => (
                           <SelectItem key={year.value} value={year.value}>
                             {year.label}
@@ -373,34 +375,33 @@ export default function PreciosCargoComponent({
                   </div>
                 </div>
 
-                {/* Acciones */}
-                <div className='flex gap-2 justify-end pt-3 border-t border-border'>
+                <div className="flex gap-2 justify-end pt-3 border-t border-border">
                   <Button
-                    id='limpiar-btn'
-                    variant='outline'
-                    size='sm'
+                    id="limpiar-btn"
+                    variant="outline"
+                    size="sm"
                     onClick={handleClearFilters}
-                    className='gap-2'
+                    className="gap-2"
                   >
-                    <Eraser className='w-4 h-4' />
+                    <Eraser className="w-4 h-4" />
                     Limpiar
                   </Button>
 
                   <Button
-                    id='buscar-btn'
-                    size='sm'
+                    id="buscar-btn"
+                    size="sm"
                     onClick={handleSearch}
                     disabled={isLoading}
-                    className='gap-2'
+                    className="gap-2"
                   >
                     {isLoading ? (
                       <>
-                        <div className='w-4 h-4 animate-spin rounded-full border-2 border-primary-foreground border-t-transparent' />
+                        <div className="w-4 h-4 animate-spin rounded-full border-2 border-primary-foreground border-t-transparent" />
                         Buscando...
                       </>
                     ) : (
                       <>
-                        <Search className='w-4 h-4' />
+                        <Search className="w-4 h-4" />
                         Buscar
                       </>
                     )}
@@ -409,156 +410,130 @@ export default function PreciosCargoComponent({
               </CardContent>
             </CollapsibleContent>
           </Collapsible>
-        </Card>{' '}
-        {/* Tablas de Precios */}
-        <Card className='border border-border shadow-sm'>
-          <CardContent className='p-4'>
-            <Tabs id='tabs-precios' defaultValue='enel' className='w-full'>
-              <TabsList className='grid w-full grid-cols-2 bg-muted h-10'>
-                <TabsTrigger
-                  value='enel'
-                  className='data-[state=active]:bg-background'
-                >
-                  <Building2 className='mr-2 h-4 w-4' />
-                  Precios Enel
-                </TabsTrigger>
-                <TabsTrigger
-                  value='agualova'
-                  className='data-[state=active]:bg-background'
-                >
-                  <BarChart className='mr-2 h-4 w-4' />
-                  Precios Agualova
-                </TabsTrigger>
-              </TabsList>
+        </Card>
 
-              <TabsContent value='enel' className='space-y-3 pt-4'>
-                <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3'>
-                  <div className='flex-1'>
-                    <h3 className='text-base font-medium'>
-                      Precios de Cargo - Enel
-                    </h3>
-                    <div className='text-xs text-muted-foreground flex items-center gap-2 mt-1'>
-                      <Info className='w-4 h-4 text-primary' />
-                      <span>Valores vigentes publicados por Enel</span>
-                      <span>-</span>
-                      <a
-                        href='https://www.enel.cl/es/clientes/tarifas-y-regulacion/tarifas.html'
-                        target='_blank'
-                        rel='noopener noreferrer'
-                        className='underline text-primary hover:text-primary/80'
-                      >
-                        enel.cl - Tarifas
-                      </a>
-                    </div>
+        {pendientesList.length > 0 && (
+          <Card
+            id="cola-pendientes"
+            className="border border-amber-200 dark:border-amber-800 shadow-sm bg-amber-50/30 dark:bg-amber-900/10"
+          >
+            <CardContent className="p-4 space-y-3">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-100 dark:bg-amber-900/40">
+                    <ListChecks className="h-4 w-4 text-amber-700 dark:text-amber-300" />
                   </div>
-                  <Badge variant='outline' className='text-sm'>
-                    {getMonthLabel(mes)} {anio}
-                  </Badge>
-                </div>
-                <div
-                  id='tabla-enel'
-                  className='rounded-xl border border-border overflow-hidden'
-                >
-                  <DataTablePreciosVirtualized
-                    columns={columnsEnel(
-                      mes,
-                      anio,
-                      handleDataUpdate
-                    )}
-                    data={tablaEnel}
-                    searchPlaceholder='Buscar por descripción o código...'
-                    showSearch={true}
-                    columnGroups={[
-                      {
-                        id: 'identificacion',
-                        title: 'Identificación',
-                        columns: ['codigo', 'codigoener', 'descripcion'],
-                        className: 'bg-primary text-primary-foreground'
-                      },
-                      {
-                        id: 'valores',
-                        title: 'Valores Anteriores',
-                        columns: ['valor', 'valor2', 'valor3'],
-                        className: 'bg-warning text-warning-foreground'
-                      },
-                      {
-                        id: 'valoresActuales',
-                        title: 'Valores Actuales',
-                        columns: [
-                          'valoractual',
-                          'valoractual2',
-                          'valoractual3'
-                        ],
-                        className: 'bg-success text-success-foreground'
-                      },
-                      {
-                        id: 'acciones',
-                        title: 'Estado',
-                        columns: ['actions'],
-                        className: 'bg-accent text-accent-foreground'
-                      }
-                    ]}
-                  />
-                </div>
-              </TabsContent>
-
-              <TabsContent value='agualova' className='space-y-3 pt-4'>
-                <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3'>
-                  <div className='flex-1'>
-                    <h3 className='text-base font-medium'>
-                      Precios de Cargo - Agualova
+                  <div>
+                    <h3 className="text-base font-semibold text-amber-900 dark:text-amber-200">
+                      Cola de pendientes
                     </h3>
-                    <p className='text-xs text-muted-foreground flex items-center gap-2 mt-1'>
-                      <Info className='w-4 h-4 text-success' />
-                      <span>
-                        Precios fijados directamente por Agualova para el mes
-                        actual
-                      </span>
+                    <p className="text-xs text-amber-700 dark:text-amber-300">
+                      {pendientesList.length} precio
+                      {pendientesList.length !== 1 ? 's' : ''} listo
+                      {pendientesList.length !== 1 ? 's' : ''} para enviar
                     </p>
                   </div>
-                  <Badge variant='outline' className='text-sm'>
-                    Precios actuales
-                  </Badge>
                 </div>
-                <div
-                  id='tabla-agualova'
-                  className='rounded-xl border border-border overflow-hidden'
-                >
-                  <DataTablePreciosVirtualized
-                    columns={columns(
-                      handleAgualovaDataUpdate
+                <div className="flex gap-2 justify-end">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleLimpiarCola}
+                    disabled={isSavingMasivo}
+                    className="gap-1.5 border-amber-300 dark:border-amber-700 text-amber-800 dark:text-amber-200 hover:bg-amber-100 dark:hover:bg-amber-900/40"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    Vaciar
+                  </Button>
+                  <Button
+                    id="guardar-masivo-btn"
+                    size="sm"
+                    onClick={handleGuardarMasivo}
+                    disabled={isSavingMasivo}
+                    className="gap-2 bg-amber-600 hover:bg-amber-700 text-white"
+                  >
+                    {isSavingMasivo ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        Guardando...
+                      </>
+                    ) : (
+                      <>
+                        <ListChecks className="w-4 h-4" />
+                        Guardar {pendientesList.length} precio
+                        {pendientesList.length !== 1 ? 's' : ''}
+                      </>
                     )}
-                    data={tablaAgualova}
-                    searchPlaceholder='Buscar por descripción o código...'
-                    showSearch={true}
-                    columnGroups={[
-                      {
-                        id: 'informacion',
-                        title: 'Información',
-                        columns: [
-                          'CD_ID',
-                          'cd_codigoagualova',
-                          'CD_Descripcion'
-                        ],
-                        className: 'bg-primary text-primary-foreground'
-                      },
-                      {
-                        id: 'valores',
-                        title: 'Valores',
-                        columns: ['valor', 'dias'],
-                        className: 'bg-success text-success-foreground'
-                      },
-                      {
-                        id: 'acciones',
-                        title: 'Detalles',
-                        columns: ['actions'],
-                        className: 'bg-accent text-accent-foreground'
-                      }
-                    ]}
-                  />
+                  </Button>
                 </div>
-              </TabsContent>
-            </Tabs>
+              </div>
+
+              <div className="rounded-lg border border-amber-200 dark:border-amber-800 bg-background/60 overflow-hidden">
+                <ul className="divide-y divide-amber-100 dark:divide-amber-900/40">
+                  {pendientesList.map(p => (
+                    <li
+                      key={p.codigo}
+                      className="flex items-center justify-between gap-3 px-3 py-2 text-xs sm:text-sm"
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
+                        <span className="font-mono text-muted-foreground shrink-0">
+                          {p.codigo}
+                        </span>
+                        <span className="truncate text-foreground">
+                          {p.descripcion}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span className="font-mono font-semibold text-amber-700 dark:text-amber-300">
+                          ${formatPendienteCL(p.valor)}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => handleQuitarPendiente(p.codigo)}
+                          disabled={isSavingMasivo}
+                          aria-label={`Quitar ${p.descripcion} de la cola`}
+                          title="Quitar de la cola"
+                          className="text-muted-foreground hover:text-destructive transition-colors"
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        <Card className="border border-border shadow-sm">
+          <CardContent className="p-4 space-y-3">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <div className="flex-1">
+                <h3 className="text-base font-medium flex items-center gap-2">
+                  <Building2 className="w-4 h-4 text-muted-foreground" />
+                  Precios de Cargo
+                </h3>
+              </div>
+              <Badge variant="outline" className="text-sm">
+                {getMonthLabel(mes)} {anio}
+              </Badge>
+            </div>
+            <div
+              id="tabla-precios"
+              className="rounded-xl border border-border overflow-hidden"
+            >
+              <DataTablePreciosVirtualized
+                columns={columnsEnel({
+                  onAgregarPendiente: handleAgregarPendiente,
+                  onQuitarPendiente: handleQuitarPendiente,
+                  pendientes
+                })}
+                data={precios}
+                searchPlaceholder="Buscar por descripción o código..."
+                showSearch
+              />
+            </div>
           </CardContent>
         </Card>
       </div>

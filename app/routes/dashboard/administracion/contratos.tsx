@@ -25,12 +25,10 @@ export async function clientLoader({}: Route.ClientActionArgs) {
   const result = await administracionService.getContratosData();
 
   if (result.error || !result.data) {
-    return {
-      contratos: []
-    };
+    return { contratos: [] };
   }
 
-  return result.data;
+  return { contratos: result.data.contratos };
 }
 
 export default function Contratos({

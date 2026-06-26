@@ -1,7 +1,6 @@
 import { CalendarDaysIcon, Eraser, PlusCircleIcon, X } from 'lucide-react';
+import { useState } from 'react';
 import { toast } from 'sonner';
-
-import React, { useState } from 'react';
 
 import { Button } from '~/components/ui/button';
 import {
@@ -83,29 +82,29 @@ export default function DialogNuevoPeriodo({
   return (
     <>
       <Dialog open={open} onOpenChange={handleClose}>
-        <DialogContent className='w-[95vw] max-w-md mx-auto'>
+        <DialogContent className="w-[95vw] max-w-md mx-auto">
           <DialogHeader>
-            <DialogTitle className='text-base sm:text-lg font-semibold text-sky-800 dark:text-sky-200 flex items-center gap-2'>
-              <CalendarDaysIcon className='h-4 w-4 sm:h-5 sm:w-5' />
+            <DialogTitle className="text-base sm:text-lg font-semibold text-sky-800 dark:text-sky-200 flex items-center gap-2">
+              <CalendarDaysIcon className="h-4 w-4 sm:h-5 sm:w-5" />
               Añadir Nuevo Periodo
             </DialogTitle>
-            <DialogDescription className='text-xs sm:text-sm text-muted-foreground'>
+            <DialogDescription className="text-xs sm:text-sm text-muted-foreground">
               Selecciona el mes y año para crear un nuevo período
             </DialogDescription>
           </DialogHeader>
 
-          <div className='space-y-3 py-3'>
+          <div className="space-y-3 py-3">
             {/* Mes de Inicio */}
-            <div className='space-y-1'>
+            <div className="space-y-1">
               <Label
-                htmlFor='mes-inicio'
-                className='text-xs sm:text-sm font-medium text-muted-foreground'
+                htmlFor="mes-inicio"
+                className="text-xs sm:text-sm font-medium text-muted-foreground"
               >
                 Mes de Inicio
               </Label>
               <Select value={selectedMonth} onValueChange={setSelectedMonth}>
-                <SelectTrigger id='mes-inicio' className='w-full h-9'>
-                  <SelectValue placeholder='Selecciona un Mes' />
+                <SelectTrigger id="mes-inicio" className="w-full h-9">
+                  <SelectValue placeholder="Selecciona un Mes" />
                 </SelectTrigger>
                 <SelectContent>
                   {months.map(month => (
@@ -118,21 +117,21 @@ export default function DialogNuevoPeriodo({
             </div>
 
             {/* Año */}
-            <div className='space-y-1'>
+            <div className="space-y-1">
               <Label
-                htmlFor='year'
-                className='text-xs sm:text-sm font-medium text-muted-foreground'
+                htmlFor="year"
+                className="text-xs sm:text-sm font-medium text-muted-foreground"
               >
                 Año
               </Label>
               <Select value={selectedYear} onValueChange={setSelectedYear}>
-                <SelectTrigger id='year' className='w-full h-9'>
-                  <SelectValue placeholder='Selecciona el Año' />
+                <SelectTrigger id="year" className="w-full h-9">
+                  <SelectValue placeholder="Selecciona el Año" />
                 </SelectTrigger>
                 <SelectContent>
                   {years.map(year => (
-                    <SelectItem key={year.idaño} value={year.año.toString()}>
-                      {year.año}
+                    <SelectItem key={year.idAnio} value={year.anio.toString()}>
+                      {year.anio}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -140,34 +139,34 @@ export default function DialogNuevoPeriodo({
             </div>
           </div>
 
-          <DialogFooter className='flex-col sm:flex-row gap-2'>
+          <DialogFooter className="flex-col sm:flex-row gap-2">
             <Button
               onClick={handleClearFilters}
-              variant='outline'
-              size='sm'
-              className='gap-1 w-full sm:w-auto h-9 text-xs sm:text-sm rounded-md border-border/60 hover:bg-muted/60 order-3 sm:order-1'
+              variant="outline"
+              size="sm"
+              className="gap-1 w-full sm:w-auto h-9 text-xs sm:text-sm rounded-md border-border/60 hover:bg-muted/60 order-3 sm:order-1"
             >
-              <Eraser className='h-3 w-3' />
-              <span className='text-xs sm:text-sm'>Limpiar</span>
+              <Eraser className="h-3 w-3" />
+              <span className="text-xs sm:text-sm">Limpiar</span>
             </Button>
             <Button
-              variant='outline'
-              size='sm'
+              variant="outline"
+              size="sm"
               onClick={handleClose}
-              className='gap-1 w-full sm:w-auto h-9 text-xs sm:text-sm rounded-md text-muted-foreground border-border/60 hover:bg-muted/60 order-2 sm:order-2'
+              className="gap-1 w-full sm:w-auto h-9 text-xs sm:text-sm rounded-md text-muted-foreground border-border/60 hover:bg-muted/60 order-2 sm:order-2"
             >
-              <X className='h-3 w-3' />
-              <span className='text-xs sm:text-sm'>Cancelar</span>
+              <X className="h-3 w-3" />
+              <span className="text-xs sm:text-sm">Cancelar</span>
             </Button>
             <Button
-              variant='default'
-              size='sm'
+              variant="default"
+              size="sm"
               onClick={handleOpenPeriodo}
               disabled={!selectedMonth || !selectedYear}
-              className='gap-1 w-full sm:w-auto h-9 text-xs sm:text-sm rounded-md order-1 sm:order-3 shadow-sm hover:shadow transition-all'
+              className="gap-1 w-full sm:w-auto h-9 text-xs sm:text-sm rounded-md order-1 sm:order-3 shadow-sm hover:shadow transition-all"
             >
-              <PlusCircleIcon className='h-3 w-3' />
-              <span className='text-xs sm:text-sm'>Continuar</span>
+              <PlusCircleIcon className="h-3 w-3" />
+              <span className="text-xs sm:text-sm">Continuar</span>
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -27,11 +27,11 @@ export function PasswordStrengthIndicator({
   }
 
   return (
-    <div className='space-y-3'>
+    <div className="space-y-3">
       {/* Barra de progreso de fortaleza */}
-      <div className='space-y-1.5'>
-        <div className='flex items-center justify-between text-xs'>
-          <span className='text-muted-foreground'>
+      <div className="space-y-1.5">
+        <div className="flex items-center justify-between text-xs">
+          <span className="text-muted-foreground">
             Fortaleza de la contraseña:
           </span>
           <span
@@ -40,7 +40,7 @@ export function PasswordStrengthIndicator({
             {strength.label}
           </span>
         </div>
-        <div className='relative h-2 bg-background rounded-full overflow-hidden'>
+        <div className="relative h-2 bg-background rounded-full overflow-hidden">
           <motion.div
             className={`h-full ${strength.color} rounded-full`}
             initial={{ width: 0 }}
@@ -52,11 +52,11 @@ export function PasswordStrengthIndicator({
 
       {/* Reglas de validación */}
       {showRules && (
-        <div className='space-y-1.5'>
-          <p className='text-xs font-medium text-muted-foreground'>
+        <div className="space-y-1.5">
+          <p className="text-xs font-medium text-muted-foreground">
             Requisitos:
           </p>
-          <div className='grid gap-1'>
+          <div className="grid gap-1">
             {PASSWORD_RULES.map(rule => {
               const isPassed = rule.validator(password);
               return (
@@ -64,12 +64,12 @@ export function PasswordStrengthIndicator({
                   key={rule.id}
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
-                  className='flex items-center gap-2 text-xs'
+                  className="flex items-center gap-2 text-xs"
                 >
                   {isPassed ? (
-                    <CheckCircle2 className='h-3.5 w-3.5 text-green-600 dark:text-green-400 shrink-0' />
+                    <CheckCircle2 className="h-3.5 w-3.5 text-green-600 dark:text-green-400 shrink-0" />
                   ) : (
-                    <AlertCircle className='h-3.5 w-3.5 text-slate-400 dark:text-slate-600 shrink-0' />
+                    <AlertCircle className="h-3.5 w-3.5 text-slate-400 dark:text-slate-600 shrink-0" />
                   )}
                   <span
                     className={
@@ -90,12 +90,12 @@ export function PasswordStrengthIndicator({
       {/* Advertencias */}
       {showWarnings && validation.warnings.length > 0 && (
         <Alert
-          variant='default'
-          className='border-amber-200 bg-amber-50 dark:bg-amber-950/30'
+          variant="default"
+          className="border-amber-200 bg-amber-50 dark:bg-amber-950/30"
         >
-          <Info className='h-4 w-4 text-amber-600 dark:text-amber-500' />
-          <AlertDescription className='text-xs text-amber-800 dark:text-amber-300'>
-            <ul className='space-y-1 mt-1'>
+          <Info className="h-4 w-4 text-amber-600 dark:text-amber-500" />
+          <AlertDescription className="text-xs text-amber-800 dark:text-amber-300">
+            <ul className="space-y-1 mt-1">
               {validation.warnings.map((warning, idx) => (
                 <li key={idx}>• {warning}</li>
               ))}

@@ -90,35 +90,35 @@ const CostAnalysisChart = memo(function CostAnalysisChart({
 
   const chartConfig = {
     costoPorKwh: {
-      label: 'Costo por kWh',
+      label: 'Costo por m³',
       color: '#f59e0b'
     }
   };
 
   return (
-    <Card className='border bg-background'>
+    <Card className="border bg-background">
       <CardHeader>
-        <CardTitle className='text-base'>Análisis de Costo por kWh</CardTitle>
+        <CardTitle className="text-base">Análisis de Costo por m³</CardTitle>
         <CardDescription>
           Últimos 12 periodos con indicador de promedio
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig} className='h-[350px] w-full'>
-          <ResponsiveContainer width='100%' height='100%'>
-            <BarChart data={chartData} layout='vertical'>
+        <ChartContainer config={chartConfig} className="h-[350px] w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={chartData} layout="vertical">
               <CartesianGrid
-                strokeDasharray='3 3'
-                className='stroke-slate-200 dark:stroke-slate-800'
+                strokeDasharray="3 3"
+                className="stroke-slate-200 dark:stroke-slate-800"
               />
               <XAxis
-                type='number'
+                type="number"
                 fontSize={11}
                 tickFormatter={value => `$${value}`}
               />
               <YAxis
-                dataKey='periodoDisplay'
-                type='category'
+                dataKey="periodoDisplay"
+                type="category"
                 fontSize={11}
                 width={60}
               />
@@ -127,31 +127,31 @@ const CostAnalysisChart = memo(function CostAnalysisChart({
                   if (active && payload && payload.length) {
                     const data = payload[0].payload;
                     return (
-                      <div className='rounded-lg border bg-background p-3 shadow-md'>
-                        <div className='space-y-2'>
-                          <div className='font-medium text-sm border-b pb-2'>
+                      <div className="rounded-lg border bg-background p-3 shadow-md">
+                        <div className="space-y-2">
+                          <div className="font-medium text-sm border-b pb-2">
                             {data.periodoDisplay}
                           </div>
-                          <div className='text-xs space-y-1'>
-                            <div className='flex items-center justify-between gap-4'>
-                              <span className='text-slate-600 dark:text-slate-400'>
-                                Costo/kWh:
+                          <div className="text-xs space-y-1">
+                            <div className="flex items-center justify-between gap-4">
+                              <span className="text-slate-600 dark:text-slate-400">
+                                Costo/m³:
                               </span>
-                              <span className='font-bold'>
+                              <span className="font-bold">
                                 ${data.costoPorKwh.toFixed(0)}
                               </span>
                             </div>
-                            <div className='flex items-center justify-between gap-4'>
-                              <span className='text-slate-600 dark:text-slate-400'>
+                            <div className="flex items-center justify-between gap-4">
+                              <span className="text-slate-600 dark:text-slate-400">
                                 Consumo:
                               </span>
-                              <span className='font-medium'>
-                                {data.consumo.toLocaleString('es-CL')} kWh
+                              <span className="font-medium">
+                                {data.consumo.toLocaleString('es-CL')} m³
                               </span>
                             </div>
                             {data.esAnormal && (
-                              <div className='pt-1 border-t'>
-                                <span className='text-rose-600 text-xs font-medium'>
+                              <div className="pt-1 border-t">
+                                <span className="text-rose-600 text-xs font-medium">
                                   ⚠️ Costo anormalmente alto
                                 </span>
                               </div>
@@ -165,9 +165,9 @@ const CostAnalysisChart = memo(function CostAnalysisChart({
                 }}
               />
               <Bar
-                dataKey='costoPorKwh'
+                dataKey="costoPorKwh"
                 radius={[0, 4, 4, 0]}
-                name='Costo por kWh'
+                name="Costo por m³"
               >
                 {chartData.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={entry.color} />
@@ -177,20 +177,20 @@ const CostAnalysisChart = memo(function CostAnalysisChart({
               {/* Línea de promedio */}
               <line
                 x1={costoPromedio * 100}
-                y1='0'
+                y1="0"
                 x2={costoPromedio * 100}
-                y2='100%'
-                stroke='#64748b'
+                y2="100%"
+                stroke="#64748b"
                 strokeWidth={2}
-                strokeDasharray='5 5'
+                strokeDasharray="5 5"
               />
             </BarChart>
           </ResponsiveContainer>
         </ChartContainer>
 
-        <div className='mt-4 text-xs text-center text-slate-600 dark:text-slate-400'>
+        <div className="mt-4 text-xs text-center text-slate-600 dark:text-slate-400">
           Costo promedio:{' '}
-          <span className='font-bold'>${costoPromedio.toFixed(0)}</span> /kWh
+          <span className="font-bold">${costoPromedio.toFixed(0)}</span> /m³
         </div>
       </CardContent>
     </Card>

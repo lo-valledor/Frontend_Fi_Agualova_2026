@@ -29,32 +29,32 @@ export function ModeToggle() {
 
   return (
     <Button
-      variant='ghost'
-      size='icon'
+      variant="ghost"
+      size="icon"
       onClick={toggleTheme}
-      aria-label='Alternar modo claro/oscuro'
-      className='relative overflow-hidden rounded-md h-7 w-7 hover:bg-accent/60 transition-colors duration-150'
+      aria-label="Alternar modo claro/oscuro"
+      className="relative overflow-hidden rounded-md h-7 w-7 hover:bg-accent/60 transition-colors duration-150"
     >
-      <AnimatePresence mode='wait' initial={false}>
+      <AnimatePresence mode="wait" initial={false}>
         {theme === 'light' ? (
           <motion.div
-            key='sun'
+            key="sun"
             variants={iconVariants}
-            initial='initial'
-            animate='animate'
-            exit='exit'
+            initial="initial"
+            animate="animate"
+            exit="exit"
           >
-            <Sun className='h-3.5 w-3.5 text-energy' />
+            <Sun className="h-3.5 w-3.5 text-energy" />
           </motion.div>
         ) : (
           <motion.div
-            key='moon'
+            key="moon"
             variants={iconVariants}
-            initial='initial'
-            animate='animate'
-            exit='exit'
+            initial="initial"
+            animate="animate"
+            exit="exit"
           >
-            <Moon className='h-3.5 w-3.5 text-chart-1' />
+            <Moon className="h-3.5 w-3.5 text-chart-1" />
           </motion.div>
         )}
       </AnimatePresence>

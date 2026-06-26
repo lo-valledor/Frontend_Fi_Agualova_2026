@@ -1,13 +1,12 @@
-import * as React from 'react';
 import {
   ChevronDownIcon,
   ChevronLeftIcon,
   ChevronRightIcon
 } from 'lucide-react';
+import * as React from 'react';
 import { DayButton, DayPicker, getDefaultClassNames } from 'react-day-picker';
-
-import { cn } from '~/lib/utils';
 import { Button, buttonVariants } from '~/components/ui/button';
+import { cn } from '~/lib/utils';
 
 function Calendar({
   className,
@@ -82,7 +81,6 @@ function Calendar({
             : 'rounded-md pl-2 pr-1 flex items-center gap-1 text-sm h-8 [&>svg]:text-muted-foreground [&>svg]:size-3.5',
           defaultClassNames.caption_label
         ),
-        table: 'w-full border-collapse',
         weekdays: cn('flex', defaultClassNames.weekdays),
         weekday: cn(
           'text-muted-foreground rounded-md flex-1 font-normal text-[0.8rem] select-none',
@@ -126,7 +124,7 @@ function Calendar({
         Root: ({ className, rootRef, ...props }) => {
           return (
             <div
-              data-slot='calendar'
+              data-slot="calendar"
               ref={rootRef}
               className={cn(className)}
               {...props}
@@ -157,7 +155,7 @@ function Calendar({
         WeekNumber: ({ children, ...props }) => {
           return (
             <td {...props}>
-              <div className='flex size-(--cell-size) items-center justify-center text-center'>
+              <div className="flex size-(--cell-size) items-center justify-center text-center">
                 {children}
               </div>
             </td>
@@ -186,8 +184,8 @@ function CalendarDayButton({
   return (
     <Button
       ref={ref}
-      variant='ghost'
-      size='icon'
+      variant="ghost"
+      size="icon"
       data-day={day.date.toLocaleDateString()}
       data-selected-single={
         modifiers.selected &&

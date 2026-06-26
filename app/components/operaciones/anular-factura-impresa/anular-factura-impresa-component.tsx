@@ -55,7 +55,7 @@ export default function AnularFacturaImpresaComponent() {
       setShowAlert(false);
       setShowConfirmDialog(false);
 
-      const response = await api.post('/anular-factura-impresa', {
+      const response = await api.post('/anular-factura/ejecutar', {
         numeroFolio: numeroFactura,
         alcance: conTomaLectura ? 1 : 2
       });
@@ -84,12 +84,12 @@ export default function AnularFacturaImpresaComponent() {
   };
 
   return (
-    <div className='min-h-screen bg-background'>
-      <div className='container mx-auto p-3 space-y-4'>
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto p-3 space-y-4">
         {/* Header */}
         <ModernHeader
-          title='Anular Factura'
-          description='Gestión de anulación de facturas impresas'
+          title="Anular Factura"
+          description="Gestión de anulación de facturas impresas"
         />
 
         {/* Alert */}
@@ -105,9 +105,9 @@ export default function AnularFacturaImpresaComponent() {
             }`}
           >
             {alertMessage.includes('correctamente') ? (
-              <CheckCircle2 className='h-4 w-4 text-success' />
+              <CheckCircle2 className="h-4 w-4 text-success" />
             ) : (
-              <AlertCircle className='h-4 w-4 text-destructive' />
+              <AlertCircle className="h-4 w-4 text-destructive" />
             )}
             <AlertTitle
               className={`text-base ${
@@ -131,47 +131,47 @@ export default function AnularFacturaImpresaComponent() {
         )}
 
         {/* Main Form */}
-        <Card className='border border-border shadow-sm'>
-          <CardHeader className='border-b border-border bg-background p-4'>
-            <div className='flex items-center gap-3'>
-              <div className='w-8 h-8 bg-background rounded-xl flex items-center justify-center'>
-                <FileX className='w-4 h-4' />
+        <Card className="border border-border shadow-sm">
+          <CardHeader className="border-b border-border bg-background p-4">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-background rounded-xl flex items-center justify-center">
+                <FileX className="w-4 h-4" />
               </div>
               <div>
-                <CardTitle className='text-base'>
+                <CardTitle className="text-base">
                   Información de la Factura
                 </CardTitle>
-                <CardDescription className='text-xs'>
+                <CardDescription className="text-xs">
                   Complete los datos necesarios para procesar la anulación
                 </CardDescription>
               </div>
             </div>
           </CardHeader>
 
-          <CardContent className='p-4 space-y-4'>
+          <CardContent className="p-4 space-y-4">
             {/* Número de Factura */}
-            <div className='space-y-2'>
-              <Label htmlFor='numeroFactura' className='text-sm font-medium'>
+            <div className="space-y-2">
+              <Label htmlFor="numeroFactura" className="text-sm font-medium">
                 Número de Factura
               </Label>
-              <div className='relative'>
+              <div className="relative">
                 <Input
-                  id='numeroFactura'
-                  type='text'
-                  placeholder='Ej: FAC001234'
+                  id="numeroFactura"
+                  type="text"
+                  placeholder="Ej: FAC001234"
                   value={numeroFactura}
                   onChange={e => setNumeroFactura(e.target.value)}
-                  className='pr-10'
+                  className="pr-10"
                 />
                 {numeroFactura && (
                   <Button
-                    type='button'
-                    variant='ghost'
-                    size='sm'
+                    type="button"
+                    variant="ghost"
+                    size="sm"
                     onClick={() => setNumeroFactura('')}
-                    className='absolute right-0 top-0 h-full px-3 text-muted-foreground hover:text-foreground'
+                    className="absolute right-0 top-0 h-full px-3 text-muted-foreground hover:text-foreground"
                   >
-                    <X className='h-4 w-4' />
+                    <X className="h-4 w-4" />
                   </Button>
                 )}
               </div>
@@ -180,28 +180,28 @@ export default function AnularFacturaImpresaComponent() {
             <Separator />
 
             {/* Configuración de Anulación */}
-            <div className='space-y-4'>
-              <Label className='text-sm font-medium'>
+            <div className="space-y-4">
+              <Label className="text-sm font-medium">
                 Configuración de Anulación
               </Label>
 
-              <div className='flex items-start space-x-3 p-3 border-border rounded-xl bg-background'>
+              <div className="flex items-start space-x-3 p-3 border-border rounded-xl bg-background">
                 <Switch
-                  id='conTomaLectura'
+                  id="conTomaLectura"
                   checked={conTomaLectura}
                   onCheckedChange={setConTomaLectura}
-                  className='mt-0.5'
+                  className="mt-0.5"
                 />
-                <div className='space-y-1'>
+                <div className="space-y-1">
                   <Label
-                    htmlFor='conTomaLectura'
-                    className='text-sm font-medium cursor-pointer'
+                    htmlFor="conTomaLectura"
+                    className="text-sm font-medium cursor-pointer"
                   >
                     {conTomaLectura
                       ? 'Con nueva toma de lectura'
                       : 'Sin nueva toma de lectura'}
                   </Label>
-                  <p className='text-xs leading-relaxed'>
+                  <p className="text-xs leading-relaxed">
                     {conTomaLectura
                       ? 'Se realizará una nueva lectura del medidor antes de la refacturación'
                       : 'Se mantendrá la última lectura registrada para la refacturación'}
@@ -211,13 +211,13 @@ export default function AnularFacturaImpresaComponent() {
             </div>
 
             {/* Actions */}
-            <div className='flex flex-col sm:flex-row gap-3 pt-4'>
+            <div className="flex flex-col sm:flex-row gap-3 pt-4">
               <Button
-                variant='outline'
+                variant="outline"
                 onClick={handleClearForm}
-                className='flex-1'
+                className="flex-1"
               >
-                <RotateCcw className='mr-2 h-4 w-4' />
+                <RotateCcw className="mr-2 h-4 w-4" />
                 Limpiar
               </Button>
 
@@ -227,48 +227,46 @@ export default function AnularFacturaImpresaComponent() {
               >
                 <DialogTrigger asChild>
                   <Button
-                    disabled={
-                      !numeroFactura || isLoading
-                    }
-                    className='flex-1 bg-primary hover:bg-primary/90 text-primary-foreground'
+                    disabled={!numeroFactura || isLoading}
+                    className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground"
                   >
-                    <Trash2 className='mr-2 h-4 w-4' />
+                    <Trash2 className="mr-2 h-4 w-4" />
                     Anular Factura
                   </Button>
                 </DialogTrigger>
 
-                <DialogContent className='sm:max-w-md'>
-                  <DialogHeader className='text-center'>
-                    <div className='flex items-center justify-center w-12 h-12 mx-auto bg-background rounded-xl mb-4'>
-                      <AlertCircle className='h-6 w-6' />
+                <DialogContent className="sm:max-w-md">
+                  <DialogHeader className="text-center">
+                    <div className="flex items-center justify-center w-12 h-12 mx-auto bg-background rounded-xl mb-4">
+                      <AlertCircle className="h-6 w-6" />
                     </div>
-                    <DialogTitle className='text-lg font-semibold'>
+                    <DialogTitle className="text-lg font-semibold">
                       Confirmar Anulación
                     </DialogTitle>
-                    <DialogDescription className='text-sm'>
+                    <DialogDescription className="text-sm">
                       ¿Está seguro que desea anular la factura{' '}
-                      <strong className='break-all'>{numeroFactura}</strong>?
+                      <strong className="break-all">{numeroFactura}</strong>?
                       Esta acción no se puede deshacer.
                     </DialogDescription>
                   </DialogHeader>
 
-                  <div className='flex flex-col-reverse sm:flex-row gap-3 mt-6'>
+                  <div className="flex flex-col-reverse sm:flex-row gap-3 mt-6">
                     <Button
-                      variant='outline'
+                      variant="outline"
                       onClick={() => setShowConfirmDialog(false)}
-                      className='flex-1'
+                      className="flex-1"
                     >
                       Cancelar
                     </Button>
                     <Button
                       onClick={handleAnular}
                       disabled={isLoading}
-                      className='flex-1 bg-primary hover:bg-primary/90 text-primary-foreground'
+                      className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground"
                     >
                       {isLoading ? (
-                        <RotateCcw className='mr-2 h-4 w-4 animate-spin' />
+                        <RotateCcw className="mr-2 h-4 w-4 animate-spin" />
                       ) : (
-                        <Trash2 className='mr-2 h-4 w-4' />
+                        <Trash2 className="mr-2 h-4 w-4" />
                       )}
                       {isLoading ? 'Procesando...' : 'Confirmar Anulación'}
                     </Button>

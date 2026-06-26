@@ -1,7 +1,6 @@
 import { Plus, Save, X } from 'lucide-react';
-import { toast } from 'sonner';
-
 import React, { useCallback, useMemo, useState } from 'react';
+import { toast } from 'sonner';
 
 import { DataTable } from '~/components/data-table/data-table';
 import {
@@ -108,8 +107,8 @@ const RolesTabComponent: React.FC<RolesTabComponentProps> = ({
         resetForm();
         onDataChange?.();
       }
-    } catch (_error) {
-      console.error(_error);
+    } catch (error) {
+      if (import.meta.env.DEV) console.error('crearRol', error);
       toast.error('Error inesperado al crear el rol');
     } finally {
       setIsLoading(false);
@@ -139,8 +138,8 @@ const RolesTabComponent: React.FC<RolesTabComponentProps> = ({
         resetForm();
         onDataChange?.();
       }
-    } catch (_error) {
-      console.error(_error);
+    } catch (error) {
+      if (import.meta.env.DEV) console.error('actualizarRol', error);
       toast.error('Error inesperado al actualizar el rol');
     } finally {
       setIsLoading(false);
@@ -161,8 +160,9 @@ const RolesTabComponent: React.FC<RolesTabComponentProps> = ({
         setDeletingRol(null);
         onDataChange?.();
       }
-    } catch (_error) {
-      toast.error('Error inesperado al eliminar el rol', _error as any);
+    } catch (error) {
+      if (import.meta.env.DEV) console.error('eliminarRol', error);
+      toast.error('Error inesperado al eliminar el rol');
     } finally {
       setIsLoading(false);
     }
@@ -175,20 +175,20 @@ const RolesTabComponent: React.FC<RolesTabComponentProps> = ({
 
   return (
     <>
-      <Card className='border-0 shadow-lg bg-background backdrop-blur-sm'>
-        <CardHeader className='pb-3'>
-          <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0'>
-            <CardTitle className='text-base sm:text-lg'>
+      <Card className="border-0 shadow-lg bg-background backdrop-blur-sm">
+        <CardHeader className="pb-3">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
+            <CardTitle className="text-base sm:text-lg">
               Gestión de Roles
             </CardTitle>
             <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
               <DialogTrigger asChild>
-                <Button className='w-full sm:w-auto' variant='default'>
-                  <Plus className='h-4 w-4 mr-2' />
+                <Button className="w-full sm:w-auto" variant="default">
+                  <Plus className="h-4 w-4 mr-2" />
                   Crear Nuevo Rol
                 </Button>
               </DialogTrigger>
-              <DialogContent className='sm:max-w-md'>
+              <DialogContent className="sm:max-w-md">
                 <DialogHeader>
                   <DialogTitle>Crear Nuevo Rol</DialogTitle>
                   <DialogDescription>
@@ -196,22 +196,22 @@ const RolesTabComponent: React.FC<RolesTabComponentProps> = ({
                     sistema.
                   </DialogDescription>
                 </DialogHeader>
-                <div className='space-y-4'>
-                  <div className='space-y-2'>
-                    <Label htmlFor='nombre'>Nombre del rol *</Label>
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="nombre">Nombre del rol *</Label>
                     <Input
-                      id='nombre'
+                      id="nombre"
                       value={formData.nombre}
                       onChange={e =>
                         setFormData({ ...formData, nombre: e.target.value })
                       }
-                      placeholder='Ej: Administrador, Usuario, etc.'
+                      placeholder="Ej: Administrador, Usuario, etc."
                     />
                   </div>
-                  <div className='space-y-2'>
-                    <Label htmlFor='descripcion'>Descripción</Label>
+                  <div className="space-y-2">
+                    <Label htmlFor="descripcion">Descripción</Label>
                     <Textarea
-                      id='descripcion'
+                      id="descripcion"
                       value={formData.descripcion}
                       onChange={e =>
                         setFormData({
@@ -219,38 +219,38 @@ const RolesTabComponent: React.FC<RolesTabComponentProps> = ({
                           descripcion: e.target.value
                         })
                       }
-                      placeholder='Descripción del rol...'
+                      placeholder="Descripción del rol..."
                       rows={3}
                     />
                   </div>
-                  <div className='flex items-center space-x-2'>
+                  <div className="flex items-center space-x-2">
                     <Switch
-                      id='estado'
+                      id="estado"
                       checked={formData.estado}
                       onCheckedChange={checked =>
                         setFormData({ ...formData, estado: checked })
                       }
                     />
-                    <Label htmlFor='estado'>Rol activo</Label>
+                    <Label htmlFor="estado">Rol activo</Label>
                   </div>
-                  <div className='flex gap-2 pt-4'>
+                  <div className="flex gap-2 pt-4">
                     <Button
                       onClick={handleCreateRol}
                       disabled={isLoading}
-                      className='flex-1'
+                      className="flex-1"
                     >
-                      <Save className='h-4 w-4 mr-2' />
+                      <Save className="h-4 w-4 mr-2" />
                       {isLoading ? 'Guardando...' : 'Crear Rol'}
                     </Button>
                     <Button
-                      variant='outline'
+                      variant="outline"
                       onClick={() => {
                         setShowCreateDialog(false);
                         resetForm();
                       }}
                       disabled={isLoading}
                     >
-                      <X className='h-4 w-4' />
+                      <X className="h-4 w-4" />
                     </Button>
                   </div>
                 </div>
@@ -258,9 +258,9 @@ const RolesTabComponent: React.FC<RolesTabComponentProps> = ({
             </Dialog>
           </div>
         </CardHeader>
-        <CardContent className='relative p-0 sm:p-4'>
-          <div className='overflow-x-auto'>
-            <div className='min-w-full p-3 sm:p-0'>
+        <CardContent className="relative p-0 sm:p-4">
+          <div className="overflow-x-auto">
+            <div className="min-w-full p-3 sm:p-0">
               <DataTable columns={rolesColumns} data={roles} />
             </div>
           </div>
@@ -272,65 +272,65 @@ const RolesTabComponent: React.FC<RolesTabComponentProps> = ({
         open={!!editingRol}
         onOpenChange={open => !open && setEditingRol(null)}
       >
-        <DialogContent className='sm:max-w-md'>
+        <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Editar Rol</DialogTitle>
             <DialogDescription>
               Modifique la información del rol seleccionado.
             </DialogDescription>
           </DialogHeader>
-          <div className='space-y-4'>
-            <div className='space-y-2'>
-              <Label htmlFor='edit-nombre'>Nombre del rol *</Label>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="edit-nombre">Nombre del rol *</Label>
               <Input
-                id='edit-nombre'
+                id="edit-nombre"
                 value={formData.nombre}
                 onChange={e =>
                   setFormData({ ...formData, nombre: e.target.value })
                 }
-                placeholder='Ej: Administrador, Usuario, etc.'
+                placeholder="Ej: Administrador, Usuario, etc."
               />
             </div>
-            <div className='space-y-2'>
-              <Label htmlFor='edit-descripcion'>Descripción</Label>
+            <div className="space-y-2">
+              <Label htmlFor="edit-descripcion">Descripción</Label>
               <Textarea
-                id='edit-descripcion'
+                id="edit-descripcion"
                 value={formData.descripcion}
                 onChange={e =>
                   setFormData({ ...formData, descripcion: e.target.value })
                 }
-                placeholder='Descripción del rol...'
+                placeholder="Descripción del rol..."
                 rows={3}
               />
             </div>
-            <div className='flex items-center space-x-2'>
+            <div className="flex items-center space-x-2">
               <Switch
-                id='edit-estado'
+                id="edit-estado"
                 checked={formData.estado}
                 onCheckedChange={checked =>
                   setFormData({ ...formData, estado: checked })
                 }
               />
-              <Label htmlFor='edit-estado'>Rol activo</Label>
+              <Label htmlFor="edit-estado">Rol activo</Label>
             </div>
-            <div className='flex gap-2 pt-4'>
+            <div className="flex gap-2 pt-4">
               <Button
                 onClick={handleUpdateRol}
                 disabled={isLoading}
-                className='flex-1'
+                className="flex-1"
               >
-                <Save className='h-4 w-4 mr-2' />
+                <Save className="h-4 w-4 mr-2" />
                 {isLoading ? 'Guardando...' : 'Actualizar'}
               </Button>
               <Button
-                variant='outline'
+                variant="outline"
                 onClick={() => {
                   setEditingRol(null);
                   resetForm();
                 }}
                 disabled={isLoading}
               >
-                <X className='h-4 w-4' />
+                <X className="h-4 w-4" />
               </Button>
             </div>
           </div>
@@ -356,7 +356,7 @@ const RolesTabComponent: React.FC<RolesTabComponentProps> = ({
             <AlertDialogAction
               onClick={confirmDelete}
               disabled={isLoading}
-              className='bg-red-600 hover:bg-red-700'
+              className="bg-red-600 hover:bg-red-700"
             >
               {isLoading ? 'Eliminando...' : 'Eliminar'}
             </AlertDialogAction>

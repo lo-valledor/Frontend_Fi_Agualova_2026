@@ -1,7 +1,6 @@
 import { Plus, Save, X } from 'lucide-react';
-import { toast } from 'sonner';
-
 import React, { useCallback, useMemo, useState } from 'react';
+import { toast } from 'sonner';
 
 import { DataTable } from '~/components/data-table/data-table';
 import {
@@ -152,8 +151,8 @@ const MenusTabComponent: React.FC<MenusTabComponentProps> = ({
         resetForm();
         onDataChange?.();
       }
-    } catch (_error) {
-      console.error(_error);
+    } catch (error) {
+      if (import.meta.env.DEV) console.error('actualizarMenu', error);
       toast.error('Error inesperado al actualizar el menú');
     } finally {
       setIsLoading(false);
@@ -176,8 +175,8 @@ const MenusTabComponent: React.FC<MenusTabComponentProps> = ({
         setDeletingMenu(null);
         onDataChange?.();
       }
-    } catch (_error) {
-      console.error(_error);
+    } catch (error) {
+      if (import.meta.env.DEV) console.error('eliminarMenu', error);
       toast.error('Error inesperado al eliminar el menú');
     } finally {
       setIsLoading(false);
@@ -191,20 +190,20 @@ const MenusTabComponent: React.FC<MenusTabComponentProps> = ({
 
   return (
     <>
-      <Card className='border-0 shadow-lg bg-background backdrop-blur-sm'>
-        <CardHeader className='pb-3'>
-          <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0'>
-            <CardTitle className='text-base sm:text-lg'>
+      <Card className="border-0 shadow-lg bg-background backdrop-blur-sm">
+        <CardHeader className="pb-3">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
+            <CardTitle className="text-base sm:text-lg">
               Gestión de Menús
             </CardTitle>
             <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
               <DialogTrigger asChild>
-                <Button className='w-full sm:w-auto' variant='default'>
-                  <Plus className='h-4 w-4 mr-2' />
+                <Button className="w-full sm:w-auto" variant="default">
+                  <Plus className="h-4 w-4 mr-2" />
                   Crear Nuevo Menú
                 </Button>
               </DialogTrigger>
-              <DialogContent className='sm:max-w-md'>
+              <DialogContent className="sm:max-w-md">
                 <DialogHeader>
                   <DialogTitle>Crear Nuevo Menú</DialogTitle>
                   <DialogDescription>
@@ -212,35 +211,35 @@ const MenusTabComponent: React.FC<MenusTabComponentProps> = ({
                     sistema.
                   </DialogDescription>
                 </DialogHeader>
-                <div className='space-y-4'>
-                  <div className='space-y-2'>
-                    <Label htmlFor='nombre'>Nombre del menú *</Label>
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="nombre">Nombre del menú *</Label>
                     <Input
-                      id='nombre'
+                      id="nombre"
                       value={formData.nombre}
                       onChange={e =>
                         setFormData({ ...formData, nombre: e.target.value })
                       }
-                      placeholder='Ej: Dashboard, Reportes, etc.'
+                      placeholder="Ej: Dashboard, Reportes, etc."
                     />
                   </div>
-                  <div className='space-y-2'>
-                    <Label htmlFor='ruta'>Ruta</Label>
+                  <div className="space-y-2">
+                    <Label htmlFor="ruta">Ruta</Label>
                     <Input
-                      id='ruta'
+                      id="ruta"
                       value={formData.ruta}
                       onChange={e =>
                         setFormData({ ...formData, ruta: e.target.value })
                       }
-                      placeholder='/dashboard/ejemplo'
+                      placeholder="/dashboard/ejemplo"
                     />
                   </div>
-                  <div className='grid grid-cols-2 gap-4'>
-                    <div className='space-y-2'>
-                      <Label htmlFor='orden'>Orden</Label>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="orden">Orden</Label>
                       <Input
-                        id='orden'
-                        type='number'
+                        id="orden"
+                        type="number"
                         value={formData.orden}
                         onChange={e =>
                           setFormData({
@@ -251,46 +250,46 @@ const MenusTabComponent: React.FC<MenusTabComponentProps> = ({
                         min={1}
                       />
                     </div>
-                    <div className='space-y-2'>
-                      <Label htmlFor='icono'>Icono</Label>
+                    <div className="space-y-2">
+                      <Label htmlFor="icono">Icono</Label>
                       <Input
-                        id='icono'
+                        id="icono"
                         value={formData.icono}
                         onChange={e =>
                           setFormData({ ...formData, icono: e.target.value })
                         }
-                        placeholder='menu-icon'
+                        placeholder="menu-icon"
                       />
                     </div>
                   </div>
-                  <div className='flex items-center space-x-2'>
+                  <div className="flex items-center space-x-2">
                     <Switch
-                      id='visible'
+                      id="visible"
                       checked={formData.visible}
                       onCheckedChange={checked =>
                         setFormData({ ...formData, visible: checked })
                       }
                     />
-                    <Label htmlFor='visible'>Menú visible</Label>
+                    <Label htmlFor="visible">Menú visible</Label>
                   </div>
-                  <div className='flex gap-2 pt-4'>
+                  <div className="flex gap-2 pt-4">
                     <Button
                       onClick={handleCreateMenu}
                       disabled={isLoading}
-                      className='flex-1'
+                      className="flex-1"
                     >
-                      <Save className='h-4 w-4 mr-2' />
+                      <Save className="h-4 w-4 mr-2" />
                       {isLoading ? 'Guardando...' : 'Crear Menú'}
                     </Button>
                     <Button
-                      variant='outline'
+                      variant="outline"
                       onClick={() => {
                         setShowCreateDialog(false);
                         resetForm();
                       }}
                       disabled={isLoading}
                     >
-                      <X className='h-4 w-4' />
+                      <X className="h-4 w-4" />
                     </Button>
                   </div>
                 </div>
@@ -298,9 +297,9 @@ const MenusTabComponent: React.FC<MenusTabComponentProps> = ({
             </Dialog>
           </div>
         </CardHeader>
-        <CardContent className='relative p-0 sm:p-4'>
-          <div className='overflow-x-auto'>
-            <div className='min-w-full p-3 sm:p-0'>
+        <CardContent className="relative p-0 sm:p-4">
+          <div className="overflow-x-auto">
+            <div className="min-w-full p-3 sm:p-0">
               <DataTable columns={menusColumns} data={menus} />
             </div>
           </div>
@@ -312,42 +311,42 @@ const MenusTabComponent: React.FC<MenusTabComponentProps> = ({
         open={!!editingMenu}
         onOpenChange={open => !open && setEditingMenu(null)}
       >
-        <DialogContent className='sm:max-w-md'>
+        <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Editar Menú</DialogTitle>
             <DialogDescription>
               Modifique la información del menú seleccionado.
             </DialogDescription>
           </DialogHeader>
-          <div className='space-y-4'>
-            <div className='space-y-2'>
-              <Label htmlFor='edit-nombre'>Nombre del menú *</Label>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="edit-nombre">Nombre del menú *</Label>
               <Input
-                id='edit-nombre'
+                id="edit-nombre"
                 value={formData.nombre}
                 onChange={e =>
                   setFormData({ ...formData, nombre: e.target.value })
                 }
-                placeholder='Ej: Dashboard, Reportes, etc.'
+                placeholder="Ej: Dashboard, Reportes, etc."
               />
             </div>
-            <div className='space-y-2'>
-              <Label htmlFor='edit-ruta'>Ruta</Label>
+            <div className="space-y-2">
+              <Label htmlFor="edit-ruta">Ruta</Label>
               <Input
-                id='edit-ruta'
+                id="edit-ruta"
                 value={formData.ruta}
                 onChange={e =>
                   setFormData({ ...formData, ruta: e.target.value })
                 }
-                placeholder='/dashboard/ejemplo'
+                placeholder="/dashboard/ejemplo"
               />
             </div>
-            <div className='grid grid-cols-2 gap-4'>
-              <div className='space-y-2'>
-                <Label htmlFor='edit-orden'>Orden</Label>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="edit-orden">Orden</Label>
                 <Input
-                  id='edit-orden'
-                  type='number'
+                  id="edit-orden"
+                  type="number"
                   value={formData.orden}
                   onChange={e =>
                     setFormData({
@@ -358,46 +357,46 @@ const MenusTabComponent: React.FC<MenusTabComponentProps> = ({
                   min={1}
                 />
               </div>
-              <div className='space-y-2'>
-                <Label htmlFor='edit-icono'>Icono</Label>
+              <div className="space-y-2">
+                <Label htmlFor="edit-icono">Icono</Label>
                 <Input
-                  id='edit-icono'
+                  id="edit-icono"
                   value={formData.icono}
                   onChange={e =>
                     setFormData({ ...formData, icono: e.target.value })
                   }
-                  placeholder='menu-icon'
+                  placeholder="menu-icon"
                 />
               </div>
             </div>
-            <div className='flex items-center space-x-2'>
+            <div className="flex items-center space-x-2">
               <Switch
-                id='edit-visible'
+                id="edit-visible"
                 checked={formData.visible}
                 onCheckedChange={checked =>
                   setFormData({ ...formData, visible: checked })
                 }
               />
-              <Label htmlFor='edit-visible'>Menú visible</Label>
+              <Label htmlFor="edit-visible">Menú visible</Label>
             </div>
-            <div className='flex gap-2 pt-4'>
+            <div className="flex gap-2 pt-4">
               <Button
                 onClick={handleUpdateMenu}
                 disabled={isLoading}
-                className='flex-1'
+                className="flex-1"
               >
-                <Save className='h-4 w-4 mr-2' />
+                <Save className="h-4 w-4 mr-2" />
                 {isLoading ? 'Guardando...' : 'Actualizar'}
               </Button>
               <Button
-                variant='outline'
+                variant="outline"
                 onClick={() => {
                   setEditingMenu(null);
                   resetForm();
                 }}
                 disabled={isLoading}
               >
-                <X className='h-4 w-4' />
+                <X className="h-4 w-4" />
               </Button>
             </div>
           </div>
@@ -423,7 +422,7 @@ const MenusTabComponent: React.FC<MenusTabComponentProps> = ({
             <AlertDialogAction
               onClick={confirmDelete}
               disabled={isLoading}
-              className='bg-red-600 hover:bg-red-700'
+              className="bg-red-600 hover:bg-red-700"
             >
               {isLoading ? 'Eliminando...' : 'Eliminar'}
             </AlertDialogAction>

@@ -46,7 +46,7 @@ export function DataTableColumnHeader<TData, TValue>({
       )}
     >
       {title}
-      <span className='ml-1 text-xs'>{getSortIndicator()}</span>
+      <span className="ml-1 text-xs">{getSortIndicator()}</span>
     </button>
   );
 }

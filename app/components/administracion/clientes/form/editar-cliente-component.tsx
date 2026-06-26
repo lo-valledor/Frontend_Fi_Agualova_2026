@@ -10,16 +10,14 @@ import {
   Save,
   User
 } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { useNavigate, useParams } from 'react-router';
+import Select, { type SingleValue } from 'react-select';
 import { toast } from 'sonner';
 import { z } from 'zod';
-
-import React, { useEffect, useState } from 'react';
-
-import { Controller, useForm } from 'react-hook-form';
-import Select from 'react-select';
-import { useNavigate, useParams } from 'react-router';
-
 import { ModernHeader } from '~/components/shared/modern-header';
+import type { OptionType } from '~/components/shared/react-select-styles';
 import { getReactSelectStyles } from '~/components/shared/react-select-styles';
 import { useTheme } from '~/components/theme-provider';
 import { Button } from '~/components/ui/button';
@@ -33,14 +31,9 @@ import {
   FormMessage
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
-import api from '~/lib/api';
-import type {
-  GetClientesByRut,
-  GetComunas,
-  GetGiros
-} from '~/types/administracion';
-import { formatRut, isValidRutFormat } from '~/utils/rut-utils';
 import { administracionService } from '~/services/administracionService';
+import type { Cliente, NombreComuna, NombreGiro } from '~/types/administracion';
+import { formatRut, isValidRutFormat } from '~/utils/rut-utils';
 
 const createClienteSchema = (existingClients: string[], currentRut?: string) =>
   z.object({
@@ -77,9 +70,9 @@ export default function EditarClienteComponent() {
   const { id: rut } = useParams<{ id: string }>();
   const { theme } = useTheme();
 
-  const [cliente, setCliente] = useState<GetClientesByRut | null>(null);
-  const [giros, setGiros] = useState<GetGiros[]>([]);
-  const [comunas, setComunas] = useState<GetComunas[]>([]);
+  const [cliente, setCliente] = useState<Cliente | null>(null);
+  const [giros, setGiros] = useState<NombreGiro[]>([]);
+  const [comunas, setComunas] = useState<NombreComuna[]>([]);
   const [existingClients, setExistingClients] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -147,10 +140,10 @@ export default function EditarClienteComponent() {
             apellido: clienteResult.data.apellido || '',
             esEmpresa: clienteResult.data.esEmpresa || false,
             direccion: clienteResult.data.direccion || '',
-            codComuna: clienteResult.data.codComuna || '',
+            codComuna: clienteResult.data.codigoComuna || '',
             contacto: clienteResult.data.contacto || '',
             telefono: clienteResult.data.telefono || '',
-            correo: clienteResult.data.correo || '',
+            correo: clienteResult.data.email || '',
             codigoGiro: clienteResult.data.codigoGiro || ''
           });
         }
@@ -205,7 +198,7 @@ export default function EditarClienteComponent() {
         rut: formatRut(data.rut)
       };
 
-      await api.put('/cliente/modificar', {
+      await administracionService.updateCliente({
         ...formattedData,
         id: cliente?.rut
       });
@@ -220,10 +213,10 @@ export default function EditarClienteComponent() {
 
   if (isLoading) {
     return (
-      <div className='min-h-screen bg-background flex items-center justify-center'>
-        <div className='text-center'>
-          <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4'></div>
-          <p className='text-muted-foreground'>Cargando datos del cliente...</p>
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Cargando datos del cliente...</p>
         </div>
       </div>
     );
@@ -231,12 +224,12 @@ export default function EditarClienteComponent() {
 
   if (!cliente) {
     return (
-      <div className='min-h-screen bg-background flex items-center justify-center'>
-        <div className='text-center'>
-          <p className='text-muted-foreground'>Cliente no encontrado</p>
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-muted-foreground">Cliente no encontrado</p>
           <Button
             onClick={() => navigate('/dashboard/administracion/clientes')}
-            className='mt-4'
+            className="mt-4"
           >
             Volver
           </Button>
@@ -246,25 +239,25 @@ export default function EditarClienteComponent() {
   }
 
   return (
-    <div className='min-h-screen bg-background'>
-      <div className='sticky top-0 z-10 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60'>
-        <div className='container mx-auto px-4 py-4'>
+    <div className="min-h-screen bg-background">
+      <div className="sticky top-0 z-10 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
+        <div className="container mx-auto px-4 py-4">
           <ModernHeader
-            title='Editar Cliente'
+            title="Editar Cliente"
             description={`Modificación de datos del cliente ${cliente.rut}`}
             actions={
               <>
                 <Button
-                  variant='ghost'
+                  variant="ghost"
                   onClick={() => navigate('/dashboard/administracion/clientes')}
                   disabled={isSubmitting}
-                  className='gap-2'
+                  className="gap-2"
                 >
-                  <ArrowLeft className='h-4 w-4' />
+                  <ArrowLeft className="h-4 w-4" />
                   Volver
                 </Button>
                 <Button
-                  variant='outline'
+                  variant="outline"
                   onClick={() => navigate('/dashboard/administracion/clientes')}
                   disabled={isSubmitting}
                 >
@@ -272,11 +265,11 @@ export default function EditarClienteComponent() {
                 </Button>
                 <Button
                   onClick={form.handleSubmit(onSubmit)}
-                  className='gap-2'
-                  variant='default'
+                  className="gap-2"
+                  variant="default"
                   disabled={isSubmitting}
                 >
-                  <Save className='h-4 w-4' />
+                  <Save className="h-4 w-4" />
                   {isSubmitting ? 'Actualizando...' : 'Actualizar Cliente'}
                 </Button>
               </>
@@ -285,23 +278,23 @@ export default function EditarClienteComponent() {
         </div>
       </div>
 
-      <div className='container mx-auto px-4 py-6 space-y-6'>
-        <div className='bg-background rounded-xl shadow-sm border border-border'>
+      <div className="container mx-auto px-4 py-6 space-y-6">
+        <div className="bg-background rounded-xl shadow-sm border border-border">
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
-              className='p-6 space-y-8'
+              className="p-6 space-y-8"
             >
-              <div className='space-y-6'>
-                <div className='flex items-center gap-2 pb-2 border-b'>
-                  <User className='h-5 w-5 text-blue-600' />
-                  <h3 className='text-lg font-medium'>Información Básica</h3>
+              <div className="space-y-6">
+                <div className="flex items-center gap-2 pb-2 border-b">
+                  <User className="h-5 w-5 text-blue-600" />
+                  <h3 className="text-lg font-medium">Información Básica</h3>
                 </div>
 
-                <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6'>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                   <FormField
                     control={form.control}
-                    name='rut'
+                    name="rut"
                     render={({ field }) => {
                       const getRutInputClassName = () => {
                         if (rutValidationStatus === 'valid') {
@@ -315,14 +308,14 @@ export default function EditarClienteComponent() {
 
                       return (
                         <FormItem>
-                          <FormLabel className='flex items-center gap-2'>
-                            <FileText className='h-4 w-4' />
+                          <FormLabel className="flex items-center gap-2">
+                            <FileText className="h-4 w-4" />
                             RUT
                           </FormLabel>
                           <FormControl>
-                            <div className='relative'>
+                            <div className="relative">
                               <Input
-                                placeholder='12345678-9'
+                                placeholder="12345678-9"
                                 {...field}
                                 onBlur={e => {
                                   const formatted = formatRut(e.target.value);
@@ -331,15 +324,15 @@ export default function EditarClienteComponent() {
                                 className={`h-11 pr-10 ${getRutInputClassName()}`}
                               />
                               {rutValidationStatus === 'valid' && (
-                                <div className='absolute inset-y-0 right-0 flex items-center pr-3'>
-                                  <CheckCircle2 className='h-5 w-5 text-green-500' />
+                                <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+                                  <CheckCircle2 className="h-5 w-5 text-green-500" />
                                 </div>
                               )}
                             </div>
                           </FormControl>
                           <FormMessage />
                           {rutValidationStatus === 'invalid' && (
-                            <p className='text-sm text-red-600 dark:text-red-400 mt-1'>
+                            <p className="text-sm text-red-600 dark:text-red-400 mt-1">
                               {isValidRutFormat(form.watch('rut'))
                                 ? 'Este RUT ya está registrado en el sistema'
                                 : 'El RUT debe tener el formato 12345678-9'}
@@ -352,18 +345,18 @@ export default function EditarClienteComponent() {
 
                   <FormField
                     control={form.control}
-                    name='esEmpresa'
+                    name="esEmpresa"
                     render={({ field }) => (
-                      <FormItem className='flex flex-row items-start space-x-3 space-y-0 rounded-xl border p-4 bg-muted/30'>
+                      <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-xl border p-4 bg-muted/30">
                         <FormControl>
                           <Checkbox
                             checked={field.value}
                             onCheckedChange={field.onChange}
                           />
                         </FormControl>
-                        <div className='space-y-1 leading-none'>
-                          <FormLabel className='flex items-center gap-2'>
-                            <Building2 className='h-4 w-4' />
+                        <div className="space-y-1 leading-none">
+                          <FormLabel className="flex items-center gap-2">
+                            <Building2 className="h-4 w-4" />
                             ¿Es Empresa?
                           </FormLabel>
                         </div>
@@ -373,17 +366,17 @@ export default function EditarClienteComponent() {
 
                   <FormField
                     control={form.control}
-                    name='nombre'
+                    name="nombre"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className='flex items-center gap-2'>
-                          <User className='h-4 w-4' />
+                        <FormLabel className="flex items-center gap-2">
+                          <User className="h-4 w-4" />
                           {form.watch('esEmpresa') ? 'Razón Social' : 'Nombre'}
                         </FormLabel>
                         <FormControl>
                           <Input
                             {...field}
-                            className='h-11'
+                            className="h-11"
                             placeholder={
                               form.watch('esEmpresa')
                                 ? 'Nombre de la empresa'
@@ -399,18 +392,18 @@ export default function EditarClienteComponent() {
                   {!form.watch('esEmpresa') && (
                     <FormField
                       control={form.control}
-                      name='apellido'
+                      name="apellido"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className='flex items-center gap-2'>
-                            <User className='h-4 w-4' />
+                          <FormLabel className="flex items-center gap-2">
+                            <User className="h-4 w-4" />
                             Apellido
                           </FormLabel>
                           <FormControl>
                             <Input
                               {...field}
-                              className='h-11'
-                              placeholder='Apellido'
+                              className="h-11"
+                              placeholder="Apellido"
                             />
                           </FormControl>
                           <FormMessage />
@@ -421,29 +414,29 @@ export default function EditarClienteComponent() {
                 </div>
               </div>
 
-              <div className='space-y-6'>
-                <div className='flex items-center gap-2 pb-2 border-b'>
-                  <MapPin className='h-5 w-5 text-green-600' />
-                  <h3 className='text-lg font-medium'>
+              <div className="space-y-6">
+                <div className="flex items-center gap-2 pb-2 border-b">
+                  <MapPin className="h-5 w-5 text-green-600" />
+                  <h3 className="text-lg font-medium">
                     Información de Ubicación
                   </h3>
                 </div>
 
-                <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6'>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                   <FormField
                     control={form.control}
-                    name='direccion'
+                    name="direccion"
                     render={({ field }) => (
-                      <FormItem className='md:col-span-2'>
-                        <FormLabel className='flex items-center gap-2'>
-                          <MapPin className='h-4 w-4' />
+                      <FormItem className="md:col-span-2">
+                        <FormLabel className="flex items-center gap-2">
+                          <MapPin className="h-4 w-4" />
                           Dirección
                         </FormLabel>
                         <FormControl>
                           <Input
                             {...field}
-                            className='h-11'
-                            placeholder='Dirección completa'
+                            className="h-11"
+                            placeholder="Dirección completa"
                           />
                         </FormControl>
                         <FormMessage />
@@ -453,40 +446,41 @@ export default function EditarClienteComponent() {
 
                   <Controller
                     control={form.control}
-                    name='codComuna'
+                    name="codComuna"
                     render={({ field }) => {
-                      const comunaActual = comunas.find(
-                        c => c.codigo === field.value
+                      const comunaOptions = comunas.map(c => {
+                        if (typeof c === 'string') {
+                          return { value: c, label: c };
+                        }
+                        return {
+                          value: c.codigo,
+                          label: `${c.nombre} (${c.codigo})`
+                        };
+                      });
+                      const comunaActual = comunaOptions.find(
+                        option => option.value === field.value
                       );
 
                       return (
-                        <FormItem className='md:col-span-2'>
-                          <FormLabel className='flex items-center gap-2'>
-                            <MapPin className='h-4 w-4' />
+                        <FormItem className="md:col-span-2">
+                          <FormLabel className="flex items-center gap-2">
+                            <MapPin className="h-4 w-4" />
                             Comuna
                           </FormLabel>
                           <FormControl>
                             <Select
-                              instanceId='comuna-select'
-                              options={comunas.map(comuna => ({
-                                value: comuna.codigo,
-                                label: `${comuna.nombre} (${comuna.codigo})`
-                              }))}
-                              value={
-                                comunaActual
-                                  ? {
-                                      value: comunaActual.codigo,
-                                      label: `${comunaActual.nombre} (${comunaActual.codigo})`
-                                    }
-                                  : null
+                              instanceId="comuna-select"
+                              options={comunaOptions}
+                              value={comunaActual ?? null}
+                              onChange={(option: SingleValue<OptionType>) =>
+                                field.onChange(
+                                  option ? String(option.value) : ''
+                                )
                               }
-                              onChange={(option: any) =>
-                                field.onChange(option ? option.value : '')
-                              }
-                              placeholder='Seleccione la comuna'
+                              placeholder="Seleccione la comuna"
                               isClearable
                               styles={selectStyles}
-                              classNamePrefix='react-select'
+                              classNamePrefix="react-select"
                             />
                           </FormControl>
                           <FormMessage />
@@ -497,29 +491,29 @@ export default function EditarClienteComponent() {
                 </div>
               </div>
 
-              <div className='space-y-6'>
-                <div className='flex items-center gap-2 pb-2 border-b'>
-                  <Phone className='h-5 w-5 text-purple-600' />
-                  <h3 className='text-lg font-medium'>
+              <div className="space-y-6">
+                <div className="flex items-center gap-2 pb-2 border-b">
+                  <Phone className="h-5 w-5 text-purple-600" />
+                  <h3 className="text-lg font-medium">
                     Información de Contacto
                   </h3>
                 </div>
 
-                <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6'>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                   <FormField
                     control={form.control}
-                    name='contacto'
+                    name="contacto"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className='flex items-center gap-2'>
-                          <User className='h-4 w-4' />
+                        <FormLabel className="flex items-center gap-2">
+                          <User className="h-4 w-4" />
                           Contacto
                         </FormLabel>
                         <FormControl>
                           <Input
                             {...field}
-                            className='h-11'
-                            placeholder='Nombre del contacto'
+                            className="h-11"
+                            placeholder="Nombre del contacto"
                           />
                         </FormControl>
                         <FormMessage />
@@ -529,18 +523,18 @@ export default function EditarClienteComponent() {
 
                   <FormField
                     control={form.control}
-                    name='telefono'
+                    name="telefono"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className='flex items-center gap-2'>
-                          <Phone className='h-4 w-4' />
+                        <FormLabel className="flex items-center gap-2">
+                          <Phone className="h-4 w-4" />
                           Teléfono
                         </FormLabel>
                         <FormControl>
                           <Input
                             {...field}
-                            className='h-11'
-                            placeholder='+56 9 1234 5678'
+                            className="h-11"
+                            placeholder="+56 9 1234 5678"
                           />
                         </FormControl>
                         <FormMessage />
@@ -550,19 +544,19 @@ export default function EditarClienteComponent() {
 
                   <FormField
                     control={form.control}
-                    name='correo'
+                    name="correo"
                     render={({ field }) => (
-                      <FormItem className='md:col-span-2'>
-                        <FormLabel className='flex items-center gap-2'>
-                          <Mail className='h-4 w-4' />
+                      <FormItem className="md:col-span-2">
+                        <FormLabel className="flex items-center gap-2">
+                          <Mail className="h-4 w-4" />
                           Correo Electrónico
                         </FormLabel>
                         <FormControl>
                           <Input
-                            type='email'
+                            type="email"
                             {...field}
-                            className='h-11'
-                            placeholder='correo@ejemplo.com'
+                            className="h-11"
+                            placeholder="correo@ejemplo.com"
                           />
                         </FormControl>
                         <FormMessage />
@@ -572,49 +566,50 @@ export default function EditarClienteComponent() {
                 </div>
               </div>
 
-              <div className='space-y-6'>
-                <div className='flex items-center gap-2 pb-2 border-b'>
-                  <Building2 className='h-5 w-5 text-orange-600' />
-                  <h3 className='text-lg font-medium'>Información de Giro</h3>
+              <div className="space-y-6">
+                <div className="flex items-center gap-2 pb-2 border-b">
+                  <Building2 className="h-5 w-5 text-orange-600" />
+                  <h3 className="text-lg font-medium">Información de Giro</h3>
                 </div>
 
-                <div className='grid grid-cols-1 gap-4 sm:gap-6'>
+                <div className="grid grid-cols-1 gap-4 sm:gap-6">
                   <Controller
                     control={form.control}
-                    name='codigoGiro'
+                    name="codigoGiro"
                     render={({ field }) => {
-                      const giroActual = giros.find(
-                        g => g.codigo === field.value
+                      const giroOptions = giros.map(g => {
+                        if (typeof g === 'string') {
+                          return { value: g, label: g };
+                        }
+                        return {
+                          value: g.codigo,
+                          label: `${g.codigo} - ${g.actividad}`
+                        };
+                      });
+                      const giroActual = giroOptions.find(
+                        option => option.value === field.value
                       );
 
                       return (
                         <FormItem>
-                          <FormLabel className='flex items-center gap-2'>
-                            <Building2 className='h-4 w-4' />
+                          <FormLabel className="flex items-center gap-2">
+                            <Building2 className="h-4 w-4" />
                             Código de Giro
                           </FormLabel>
                           <FormControl>
                             <Select
-                              instanceId='giro-select'
-                              options={giros.map(giro => ({
-                                value: giro.codigo,
-                                label: `${giro.codigo} - ${giro.actividadEconomica}`
-                              }))}
-                              value={
-                                giroActual
-                                  ? {
-                                      value: giroActual.codigo,
-                                      label: `${giroActual.codigo} - ${giroActual.actividadEconomica}`
-                                    }
-                                  : null
+                              instanceId="giro-select"
+                              options={giroOptions}
+                              value={giroActual ?? null}
+                              onChange={(option: SingleValue<OptionType>) =>
+                                field.onChange(
+                                  option ? String(option.value) : ''
+                                )
                               }
-                              onChange={(option: any) =>
-                                field.onChange(option ? option.value : '')
-                              }
-                              placeholder='Seleccione el giro'
+                              placeholder="Seleccione el giro"
                               isClearable
                               styles={selectStyles}
-                              classNamePrefix='react-select'
+                              classNamePrefix="react-select"
                             />
                           </FormControl>
                           <FormMessage />

@@ -89,20 +89,20 @@ export function ForgotForm({
       {/* Theme toggle */}
       <Button
         onClick={toggleTheme}
-        variant='ghost'
-        size='icon'
-        className='absolute top-4 right-4 z-10'
-        aria-label='Toggle theme'
+        variant="ghost"
+        size="icon"
+        className="absolute top-4 right-4 z-10"
+        aria-label="Toggle theme"
       >
         {theme === 'light' ? (
-          <Moon className='h-4 w-4' />
+          <Moon className="h-4 w-4" />
         ) : (
-          <Sun className='h-4 w-4' />
+          <Sun className="h-4 w-4" />
         )}
       </Button>
 
-      <CardHeader className='text-center space-y-2'>
-        <CardTitle className='text-2xl'>Recuperar Contraseña</CardTitle>
+      <CardHeader className="text-center space-y-2">
+        <CardTitle className="text-2xl">Recuperar Contraseña</CardTitle>
         <CardDescription>
           Ingrese su correo electrónico para recibir instrucciones de
           recuperación
@@ -110,71 +110,71 @@ export function ForgotForm({
       </CardHeader>
 
       <CardContent>
-        <form onSubmit={handleSubmitEvent} className='space-y-4'>
+        <form onSubmit={handleSubmitEvent} className="space-y-4">
           {/* Alert informativo */}
           {!successMessage && !errorMessage && (
-            <Alert className='border-blue-200 bg-blue-50 text-blue-800 dark:border-blue-800 dark:bg-blue-900/20 dark:text-blue-400'>
-              <Info className='h-4 w-4' />
-              <AlertDescription className='text-xs sm:text-sm'>
+            <Alert className="border-blue-200 bg-blue-50 text-blue-800 dark:border-blue-800 dark:bg-blue-900/20 dark:text-blue-400">
+              <Info className="h-4 w-4" />
+              <AlertDescription className="text-xs sm:text-sm">
                 Recibirás instrucciones si tu correo está en nuestro sistema.
               </AlertDescription>
             </Alert>
           )}
 
           {errorMessage && (
-            <Alert variant='destructive'>
-              <AlertCircleIcon className='h-4 w-4' />
+            <Alert variant="destructive">
+              <AlertCircleIcon className="h-4 w-4" />
               <AlertDescription>{errorMessage}</AlertDescription>
             </Alert>
           )}
 
           {successMessage && (
-            <Alert className='border-green-200 bg-green-50 text-green-800 dark:border-green-800 dark:bg-green-900/20 dark:text-green-400'>
-              <CheckCircle2 className='h-4 w-4' />
-              <AlertDescription className='text-xs sm:text-sm'>
+            <Alert className="border-green-200 bg-green-50 text-green-800 dark:border-green-800 dark:bg-green-900/20 dark:text-green-400">
+              <CheckCircle2 className="h-4 w-4" />
+              <AlertDescription className="text-xs sm:text-sm">
                 {successMessage}
               </AlertDescription>
             </Alert>
           )}
 
-          <div className='space-y-2'>
-            <Label htmlFor='email'>Correo Electrónico</Label>
-            <div className='relative'>
-              <Mail className='absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground' />
+          <div className="space-y-2">
+            <Label htmlFor="email">Correo Electrónico</Label>
+            <div className="relative">
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                id='email'
-                name='email'
-                type='email'
-                placeholder='correo@ejemplo.com'
+                id="email"
+                name="email"
+                type="email"
+                placeholder="correo@ejemplo.com"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 required
                 disabled={loading}
-                className='pl-10'
+                className="pl-10"
               />
             </div>
           </div>
 
-          <Button type='submit' disabled={loading} className='w-full'>
+          <Button type="submit" disabled={loading} className="w-full">
             {loading ? (
               <>
-                <Loader2 className='mr-2 h-4 w-4 animate-spin' />
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 Enviando...
               </>
             ) : (
               <>
-                <Send className='mr-2 h-4 w-4' />
+                <Send className="mr-2 h-4 w-4" />
                 Enviar enlace de recuperación
               </>
             )}
           </Button>
 
-          <div className='text-center'>
+          <div className="text-center">
             <Link
-              to='/auth/login'
-              className='inline-flex items-center gap-2 text-sm text-primary hover:underline'
+              to="/auth/login"
+              className="inline-flex items-center gap-2 text-sm text-primary hover:underline"
             >
-              <ArrowLeft className='h-4 w-4' />
+              <ArrowLeft className="h-4 w-4" />
               Volver al inicio de sesión
             </Link>
           </div>

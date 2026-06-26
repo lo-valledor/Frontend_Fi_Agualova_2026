@@ -31,11 +31,11 @@ export function DeleteDialog({
           <AlertDialogDescription>
             Esta acción no se puede deshacer. Se eliminará la relación entre el
             tipo de contrato{' '}
-            <span className='font-semibold text-foreground'>
+            <span className="font-semibold text-foreground">
               {data?.tipoContrato}
             </span>{' '}
             y el cargo facturable{' '}
-            <span className='font-semibold text-foreground'>
+            <span className="font-semibold text-foreground">
               {data?.cargoFacturable}
             </span>
             .
@@ -45,7 +45,7 @@ export function DeleteDialog({
           <AlertDialogCancel>Cancelar</AlertDialogCancel>
           <AlertDialogAction
             onClick={onConfirm}
-            className='bg-red-600 hover:bg-red-700 focus:ring-red-600'
+            className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
           >
             Sí, eliminar
           </AlertDialogAction>

@@ -122,20 +122,20 @@ const OverconsumptionAnalysis = memo(function OverconsumptionAnalysis({
 
   if (detalleLecturas.length === 0) {
     return (
-      <Card className='border bg-background'>
+      <Card className="border bg-background">
         <CardHeader>
-          <CardTitle className='text-base'>Análisis de Sobreconsumo</CardTitle>
+          <CardTitle className="text-base">Análisis de Sobreconsumo</CardTitle>
           <CardDescription>
             No hay periodos con sobreconsumo registrado
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className='flex flex-col items-center justify-center h-[300px] text-center'>
-            <AlertTriangle className='h-12 w-12 text-slate-400 mb-3' />
-            <p className='text-slate-600 dark:text-slate-400'>
+          <div className="flex flex-col items-center justify-center h-[300px] text-center">
+            <AlertTriangle className="h-12 w-12 text-slate-400 mb-3" />
+            <p className="text-slate-600 dark:text-slate-400">
               No se detectaron sobreconsumoss en los periodos analizados
             </p>
-            <p className='text-sm text-slate-500 dark:text-slate-500 mt-1'>
+            <p className="text-sm text-slate-500 dark:text-slate-500 mt-1">
               Todos los consumos están dentro de la energía base contratada
             </p>
           </div>
@@ -145,19 +145,19 @@ const OverconsumptionAnalysis = memo(function OverconsumptionAnalysis({
   }
 
   return (
-    <div className='space-y-4'>
+    <div className="space-y-4">
       {/* KPIs de Sobreconsumo */}
-      <div className='grid gap-4 grid-cols-1 md:grid-cols-3'>
-        <Card className='border bg-background'>
-          <CardContent className='pt-4'>
-            <div className='space-y-2'>
-              <p className='text-xs font-medium text-slate-600 dark:text-slate-400'>
+      <div className="grid gap-4 grid-cols-1 md:grid-cols-3">
+        <Card className="border bg-background">
+          <CardContent className="pt-4">
+            <div className="space-y-2">
+              <p className="text-xs font-medium text-slate-600 dark:text-slate-400">
                 Total Sobreconsumo
               </p>
-              <p className='text-2xl font-bold text-rose-600'>
-                {analysisData.totalSobreconsumo.toLocaleString('es-CL')} kWh
+              <p className="text-2xl font-bold text-rose-600">
+                {analysisData.totalSobreconsumo.toLocaleString('es-CL')} m³
               </p>
-              <Badge variant='destructive'>
+              <Badge variant="destructive">
                 {analysisData.porcentajeSobreconsumo.toFixed(1)}% del consumo
                 total
               </Badge>
@@ -165,34 +165,34 @@ const OverconsumptionAnalysis = memo(function OverconsumptionAnalysis({
           </CardContent>
         </Card>
 
-        <Card className='border bg-background'>
-          <CardContent className='pt-4'>
-            <div className='space-y-2'>
-              <p className='text-xs font-medium text-slate-600 dark:text-slate-400'>
+        <Card className="border bg-background">
+          <CardContent className="pt-4">
+            <div className="space-y-2">
+              <p className="text-xs font-medium text-slate-600 dark:text-slate-400">
                 Periodo Más Problemático
               </p>
-              <p className='text-2xl font-bold'>
+              <p className="text-2xl font-bold">
                 {analysisData.periodoMasProblematico?.periodo || 'N/A'}
               </p>
-              <p className='text-sm text-rose-600'>
+              <p className="text-sm text-rose-600">
                 {(
                   analysisData.periodoMasProblematico?.sobreconsumo || 0
                 ).toLocaleString('es-CL')}{' '}
-                kWh excedido
+                m³ excedido
               </p>
             </div>
           </CardContent>
         </Card>
 
-        <Card className='border bg-background'>
-          <CardContent className='pt-4'>
-            <div className='space-y-2'>
-              <p className='text-xs font-medium text-slate-600 dark:text-slate-400'>
+        <Card className="border bg-background">
+          <CardContent className="pt-4">
+            <div className="space-y-2">
+              <p className="text-xs font-medium text-slate-600 dark:text-slate-400">
                 Periodos Afectados
               </p>
-              <p className='text-2xl font-bold'>{detalleLecturas.length}</p>
-              <div className='flex items-center gap-1 text-xs text-rose-600'>
-                <TrendingUp className='h-3 w-3' />
+              <p className="text-2xl font-bold">{detalleLecturas.length}</p>
+              <div className="flex items-center gap-1 text-xs text-rose-600">
+                <TrendingUp className="h-3 w-3" />
                 <span>Requiere atención</span>
               </div>
             </div>
@@ -201,9 +201,9 @@ const OverconsumptionAnalysis = memo(function OverconsumptionAnalysis({
       </div>
 
       {/* Gráfico de Barras Apiladas */}
-      <Card className='border bg-background'>
+      <Card className="border bg-background">
         <CardHeader>
-          <CardTitle className='text-base'>
+          <CardTitle className="text-base">
             Distribución Energía Base vs Sobreconsumo
           </CardTitle>
           <CardDescription>
@@ -211,28 +211,28 @@ const OverconsumptionAnalysis = memo(function OverconsumptionAnalysis({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <ChartContainer config={chartConfig} className='h-[400px] w-full'>
-            <ResponsiveContainer width='100%' height='100%'>
+          <ChartContainer config={chartConfig} className="h-[400px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
               <BarChart data={analysisData.chartData}>
                 <CartesianGrid
-                  strokeDasharray='3 3'
-                  className='stroke-slate-200 dark:stroke-slate-800'
+                  strokeDasharray="3 3"
+                  className="stroke-slate-200 dark:stroke-slate-800"
                 />
                 <XAxis
-                  dataKey='periodoDisplay'
+                  dataKey="periodoDisplay"
                   tickLine={false}
                   axisLine={false}
                   tickMargin={8}
                   fontSize={11}
                   angle={-45}
-                  textAnchor='end'
+                  textAnchor="end"
                   height={80}
                 />
                 <YAxis
                   fontSize={11}
                   tickLine={false}
                   axisLine={false}
-                  tickFormatter={value => `${value} kWh`}
+                  tickFormatter={value => `${value} m³`}
                 />
                 <Tooltip
                   content={({ active, payload }) => {
@@ -244,45 +244,43 @@ const OverconsumptionAnalysis = memo(function OverconsumptionAnalysis({
                           : 0;
 
                       return (
-                        <div className='rounded-lg border bg-background p-3 shadow-md'>
-                          <div className='space-y-2'>
-                            <div className='font-medium text-sm border-b pb-2'>
+                        <div className="rounded-lg border bg-background p-3 shadow-md">
+                          <div className="space-y-2">
+                            <div className="font-medium text-sm border-b pb-2">
                               {data.periodoDisplay}
                             </div>
-                            <div className='text-xs space-y-1'>
-                              <div className='flex items-center justify-between gap-4'>
-                                <span className='text-emerald-600 font-medium'>
+                            <div className="text-xs space-y-1">
+                              <div className="flex items-center justify-between gap-4">
+                                <span className="text-emerald-600 font-medium">
                                   Energía Base:
                                 </span>
-                                <span className='font-medium'>
-                                  {data.energiaBase.toLocaleString('es-CL')} kWh
+                                <span className="font-medium">
+                                  {data.energiaBase.toLocaleString('es-CL')} m³
                                 </span>
                               </div>
-                              <div className='flex items-center justify-between gap-4'>
-                                <span className='text-rose-600 font-medium'>
+                              <div className="flex items-center justify-between gap-4">
+                                <span className="text-rose-600 font-medium">
                                   Sobreconsumo:
                                 </span>
-                                <span className='font-medium'>
-                                  {data.sobreconsumo.toLocaleString('es-CL')}{' '}
-                                  kWh
+                                <span className="font-medium">
+                                  {data.sobreconsumo.toLocaleString('es-CL')} m³
                                 </span>
                               </div>
-                              <div className='flex items-center justify-between gap-4 pt-1 border-t'>
-                                <span className='text-slate-600 dark:text-slate-400'>
+                              <div className="flex items-center justify-between gap-4 pt-1 border-t">
+                                <span className="text-slate-600 dark:text-slate-400">
                                   Total:
                                 </span>
-                                <span className='font-bold'>
-                                  {data.consumoTotal.toLocaleString('es-CL')}{' '}
-                                  kWh
+                                <span className="font-bold">
+                                  {data.consumoTotal.toLocaleString('es-CL')} m³
                                 </span>
                               </div>
-                              <div className='flex items-center justify-between gap-4'>
-                                <span className='text-slate-600 dark:text-slate-400'>
+                              <div className="flex items-center justify-between gap-4">
+                                <span className="text-slate-600 dark:text-slate-400">
                                   % Sobreconsumo:
                                 </span>
                                 <Badge
-                                  variant='destructive'
-                                  className='text-xs'
+                                  variant="destructive"
+                                  className="text-xs"
                                 >
                                   {porcentajeSobre.toFixed(1)}%
                                 </Badge>
@@ -306,32 +304,32 @@ const OverconsumptionAnalysis = memo(function OverconsumptionAnalysis({
 
                 {/* Barras apiladas */}
                 <Bar
-                  dataKey='energiaBase'
-                  stackId='a'
-                  fill='#10b981'
+                  dataKey="energiaBase"
+                  stackId="a"
+                  fill="#10b981"
                   radius={[0, 0, 4, 4]}
-                  name='Energía Base'
+                  name="Energía Base"
                 />
                 <Bar
-                  dataKey='sobreconsumo'
-                  stackId='a'
-                  fill='#ef4444'
+                  dataKey="sobreconsumo"
+                  stackId="a"
+                  fill="#ef4444"
                   radius={[4, 4, 0, 0]}
-                  name='Sobreconsumo'
+                  name="Sobreconsumo"
                 />
               </BarChart>
             </ResponsiveContainer>
           </ChartContainer>
 
           {/* Recomendaciones */}
-          <div className='mt-6 p-4 bg-rose-50 dark:bg-rose-950/20 border border-rose-200 dark:border-rose-900 rounded-lg'>
-            <div className='flex items-start gap-3'>
-              <AlertTriangle className='h-5 w-5 text-rose-600 dark:text-rose-400 shrink-0 mt-0.5' />
-              <div className='space-y-1'>
-                <p className='text-sm font-medium text-rose-900 dark:text-rose-100'>
+          <div className="mt-6 p-4 bg-rose-50 dark:bg-rose-950/20 border border-rose-200 dark:border-rose-900 rounded-lg">
+            <div className="flex items-start gap-3">
+              <AlertTriangle className="h-5 w-5 text-rose-600 dark:text-rose-400 shrink-0 mt-0.5" />
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-rose-900 dark:text-rose-100">
                   Recomendaciones para reducir el sobreconsumo:
                 </p>
-                <ul className='text-xs text-rose-700 dark:text-rose-300 space-y-1 list-disc list-inside'>
+                <ul className="text-xs text-rose-700 dark:text-rose-300 space-y-1 list-disc list-inside">
                   <li>
                     Revisar equipos de alto consumo en los meses identificados
                   </li>

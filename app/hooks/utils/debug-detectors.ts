@@ -1,3 +1,5 @@
+import { getAuthToken } from '~/services/axiosConfig';
+
 export interface ProxyDetectionResult {
   detected: boolean;
   evidence: string[];
@@ -16,16 +18,16 @@ export interface DebugDetectionResult {
   networkInterception?: string[];
 }
 
-
 export function detectBrowserName(userAgent: string): string {
-  if (userAgent.includes('Chrome') && !userAgent.includes('Edg')) return 'Chrome';
+  if (userAgent.includes('Chrome') && !userAgent.includes('Edg'))
+    return 'Chrome';
   if (userAgent.includes('Firefox')) return 'Firefox';
-  if (userAgent.includes('Safari') && !userAgent.includes('Chrome')) return 'Safari';
+  if (userAgent.includes('Safari') && !userAgent.includes('Chrome'))
+    return 'Safari';
   if (userAgent.includes('Edg')) return 'Edge';
   if (userAgent.includes('Opera') || userAgent.includes('OPR')) return 'Opera';
   return 'Unknown';
 }
-
 
 export async function detectPrivateMode(): Promise<boolean> {
   try {
@@ -53,7 +55,6 @@ export async function detectPrivateMode(): Promise<boolean> {
     return false;
   }
 }
-
 
 export function detectProxyOrInterception(): ProxyDetectionResult {
   const evidence: string[] = [];
@@ -92,15 +93,13 @@ export function detectProxyOrInterception(): ProxyDetectionResult {
   };
 }
 
-
 export function getTokenPreview(token: string | null): string | undefined {
   return token ? `${token.substring(0, 20)}...` : undefined;
 }
 
-
 export async function gatherDebugInfo(): Promise<DebugDetectionResult> {
   const userAgent = navigator.userAgent;
-  const token = localStorage.getItem('token');
+  const token = getAuthToken();
   const isPrivate = await detectPrivateMode();
   const proxyInfo = detectProxyOrInterception();
 

@@ -41,29 +41,29 @@ export function SiteHeader() {
   }, []);
 
   return (
-    <header className='sticky top-0 z-10 bg-background/95 backdrop-blur-sm group-has-data-[collapsible=icon]/sidebar-wrapper:h-10 sm:group-has-data-[collapsible=icon]/sidebar-wrapper:h-11 flex h-10 sm:h-11 shrink-0 items-center border-b transition-[width,height] ease-linear'>
-      <div className='flex w-full items-center gap-1 px-2 sm:px-4 lg:gap-2 lg:px-5'>
-        <SidebarTrigger className='-ml-0.5 sm:-ml-1 h-6 w-6 sm:h-7 sm:w-7' />
+    <header className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm group-has-data-[collapsible=icon]/sidebar-wrapper:h-10 sm:group-has-data-[collapsible=icon]/sidebar-wrapper:h-11 flex h-10 sm:h-11 shrink-0 items-center border-b transition-[width,height] ease-linear">
+      <div className="flex w-full items-center gap-1 px-2 sm:px-4 lg:gap-2 lg:px-5">
+        <SidebarTrigger className="-ml-0.5 sm:-ml-1 h-6 w-6 sm:h-7 sm:w-7" />
         <Separator
-          orientation='vertical'
-          className='mx-1 sm:mx-2 data-[orientation=vertical]:h-3 sm:data-[orientation=vertical]:h-4'
+          orientation="vertical"
+          className="mx-1 sm:mx-2 data-[orientation=vertical]:h-3 sm:data-[orientation=vertical]:h-4"
         />
 
         {/* Breadcrumb */}
-        <div className='flex-1 min-w-0'>
+        <div className="flex-1 min-w-0">
           <Breadcrumb>
-            <BreadcrumbList className='text-xs sm:text-sm flex-nowrap'>
+            <BreadcrumbList className="text-xs sm:text-sm flex-nowrap">
               <BreadcrumbItem>
                 <BreadcrumbLink
-                  href='/dashboard'
-                  className='truncate max-w-[60px] sm:max-w-none text-muted-foreground hover:text-foreground transition-colors'
+                  href="/dashboard"
+                  className="truncate max-w-[60px] sm:max-w-none text-muted-foreground hover:text-foreground transition-colors"
                 >
                   Dashboard
                 </BreadcrumbLink>
               </BreadcrumbItem>
               {breadcrumbItems?.map((item, index) => (
                 <React.Fragment key={index}>
-                  <BreadcrumbSeparator className='hidden sm:block' />
+                  <BreadcrumbSeparator className="hidden sm:block" />
                   <BreadcrumbItem
                     className={
                       index === breadcrumbItems.length - 1
@@ -74,12 +74,12 @@ export function SiteHeader() {
                     {item.href ? (
                       <BreadcrumbLink
                         href={item.href}
-                        className='truncate max-w-[100px] sm:max-w-none text-muted-foreground hover:text-foreground transition-colors'
+                        className="truncate max-w-[100px] sm:max-w-none text-muted-foreground hover:text-foreground transition-colors"
                       >
                         {item.label}
                       </BreadcrumbLink>
                     ) : (
-                      <BreadcrumbPage className='truncate max-w-[120px] sm:max-w-none font-medium'>
+                      <BreadcrumbPage className="truncate max-w-[120px] sm:max-w-none font-medium">
                         {item.label}
                       </BreadcrumbPage>
                     )}
@@ -91,9 +91,9 @@ export function SiteHeader() {
         </div>
 
         {/* Status bar right */}
-        <div className='flex items-center gap-2 sm:gap-3 ml-auto shrink-0'>
+        <div className="flex items-center gap-2 sm:gap-3 ml-auto shrink-0">
           {/* Clock */}
-          <span className='hidden md:block text-[0.65rem] font-mono text-muted-foreground tabular-nums tracking-wider'>
+          <span className="hidden md:block text-[0.65rem] font-mono text-muted-foreground tabular-nums tracking-wider">
             {clock}
           </span>
 
@@ -114,7 +114,7 @@ export function SiteHeader() {
           </div>
 
           {/* Theme toggle */}
-          <div className='hidden sm:block'>
+          <div className="hidden sm:block">
             <ModeToggle />
           </div>
 

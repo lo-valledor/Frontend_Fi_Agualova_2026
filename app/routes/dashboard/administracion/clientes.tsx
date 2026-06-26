@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { AdministracionHydrateFallback } from '~/components/administracion/administracion-hydrate-fallback';
 import ClientesComponent from '~/components/administracion/clientes/clientes-component';
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';

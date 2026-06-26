@@ -1,3 +1,4 @@
+import { driver } from 'driver.js';
 import {
   AlertCircle,
   Calendar,
@@ -14,10 +15,9 @@ import {
   Settings2
 } from 'lucide-react';
 import { motion } from 'motion/react';
+
+import { Suspense, useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
-
-import { Suspense, useEffect, useState } from 'react';
-
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import { LoadingSpinner } from '~/components/loading-spinner';
 import ResultadosBusqueda from '~/components/monitor/monitor-lecturas/resultados-busqueda';
@@ -35,26 +35,30 @@ import {
   SelectTrigger,
   SelectValue
 } from '~/components/ui/select';
+import { useMonitorKeyboardShortcuts } from '~/hooks/use-keyboard-shortcuts';
 import {
   findActivePeriod,
+  formatDateDDMMYYYY,
   getDefaultDates,
+  getLastNPeriods,
   validateSearchParams
 } from '~/hooks/use-monitor';
-import { useMonitorKeyboardShortcuts } from '~/hooks/use-keyboard-shortcuts';
 import { cn } from '~/lib/utils';
-import { type Clave, type Periodo, type Sector } from '~/types/monitor';
-import { driver } from 'driver.js';
+import {
+  type MonitorClaves,
+  type MonitorGrillaProps,
+  type MonitorPeriodos,
+  type MonitorSectores
+} from '~/types/monitor';
 import 'driver.js/dist/driver.css';
 
-
 interface MonitorLecturasComponentProps {
-  periodos: Periodo[];
-  sectores: Sector[];
-  claves: Clave[];
-  activePeriodoId: number | null;
+  periodos: MonitorPeriodos[];
+  sectores: MonitorSectores[];
+  claves: MonitorClaves[];
+  activePeriodoId: string | null;
   error: Error | null;
 }
-
 
 const MonitorLecturasComponent = ({
   periodos,
@@ -68,17 +72,24 @@ const MonitorLecturasComponent = ({
   ];
 
   // Form filter states with descriptive names
-  const [selectedSector, setSelectedSector] = useState<Sector | null>(null);
-  const [selectedPeriodo, setSelectedPeriodo] = useState<Periodo | null>(null);
-  const [selectedClave, setSelectedClave] = useState<Clave | null>(null);
+  const [selectedSector, setSelectedSector] = useState<MonitorSectores | null>(
+    null
+  );
+  const [selectedPeriodo, setSelectedPeriodo] =
+    useState<MonitorPeriodos | null>(null);
+  const [selectedClave, setSelectedClave] = useState<MonitorClaves | null>(
+    null
+  );
   const [meterSerial, setMeterSerial] = useState<string>('');
-  const [selectedStatusFilter, setSelectedStatusFilter] = useState<number>(0);
+  const [selectedStatusFilter, setSelectedStatusFilter] = useState<string>('');
   const [fechaInicio, setFechaInicio] = useState<string>('');
   const [fechaFin, setFechaFin] = useState<string>('');
 
-  // UI states
+  // Modal state
   const [isSearchActive, setIsSearchActive] = useState(false);
   const [searchTrigger, setSearchTrigger] = useState(0);
+
+  // UI states
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
   // Initialize default period and dates with early returns
@@ -104,23 +115,23 @@ const MonitorLecturasComponent = ({
   }, [periodos, selectedPeriodo, fechaFin]);
 
   // Actualizar fechaInicio cuando cambia el período seleccionado
+  // Usa getDefaultDates para que, si periodo.fechaInicio es null,
+  // derive el primer día del mes a partir de periodo.value (MMYYYY).
   useEffect(() => {
     if (selectedPeriodo) {
-      setFechaInicio(selectedPeriodo.FechaInicio);
+      const defaultDates = getDefaultDates(selectedPeriodo);
+      setFechaInicio(defaultDates.fechaInicio);
     }
   }, [selectedPeriodo]);
 
-  
   const handleLimpiezaFiltros = () => {
-    setIsSearchActive(false);
-    setSearchTrigger(0);
     setSelectedSector(null);
 
     const periodoActivo = findActivePeriod(periodos);
     setSelectedPeriodo(periodoActivo);
     setSelectedClave(null);
     setMeterSerial('');
-    setSelectedStatusFilter(0);
+    setSelectedStatusFilter('');
 
     const defaultDates = getDefaultDates(periodoActivo);
     setFechaInicio(defaultDates.fechaInicio);
@@ -128,19 +139,15 @@ const MonitorLecturasComponent = ({
     setIsFiltersOpen(true);
   };
 
-  
-  const handleSearch = () => {
+  const handleOpenMedidor = () => {
     const validation = validateSearchParams(selectedSector, selectedPeriodo);
-
-    // Early return if validation fails
     if (!validation.isValid) {
       toast.error(validation.error);
       return;
     }
-
     setIsSearchActive(true);
     setSearchTrigger(prev => prev + 1);
-    setIsFiltersOpen(false); // Collapse filters after search
+    setIsFiltersOpen(false);
   };
 
   // Keyboard shortcuts for accessibility (after function declarations)
@@ -157,16 +164,16 @@ const MonitorLecturasComponent = ({
         input?.focus();
       }, 100);
     },
-    onRefresh: handleSearch,
+    onRefresh: handleOpenMedidor,
     onEscape: () => setIsFiltersOpen(false)
   });
 
   // Early return for error state
   if (error) {
     return (
-      <div className='container mx-auto p-6'>
-        <Alert variant='destructive'>
-          <AlertCircle className='h-4 w-4' />
+      <div className="container mx-auto p-6">
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
           <AlertTitle>Error de Carga</AlertTitle>
           <AlertDescription>
             {error.message ||
@@ -177,7 +184,6 @@ const MonitorLecturasComponent = ({
     );
   }
 
-  
   const startTour = () => {
     const driverjs = driver({
       showProgress: true,
@@ -201,7 +207,27 @@ const MonitorLecturasComponent = ({
     driverjs.drive();
   };
 
-  
+  const grillaParams = useMemo<MonitorGrillaProps>(
+    () => ({
+      periodo: selectedPeriodo?.value ?? '',
+      sector: selectedSector?.secId.toString() ?? '',
+      medidor: meterSerial,
+      fechaIni: fechaInicio,
+      fechaFin: formatDateDDMMYYYY(fechaFin),
+      clave: selectedClave?.value ?? '',
+      criterio: selectedStatusFilter
+    }),
+    [
+      selectedPeriodo,
+      selectedSector,
+      meterSerial,
+      fechaInicio,
+      fechaFin,
+      selectedClave,
+      selectedStatusFilter
+    ]
+  );
+
   const tourSteps = [
     {
       element: '#sector-selector',
@@ -256,24 +282,24 @@ const MonitorLecturasComponent = ({
   ];
 
   return (
-    <div className='min-h-screen bg-background'>
-      <div className='container mx-auto p-3 space-y-4'>
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto p-3 space-y-4">
         <BreadcrumbSetter items={pageBreadcrumbs} />
 
-        <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3'>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <ModernHeader
-            title='Monitor de Lecturas'
-            description='Gestion, ingreso y visualización de lecturas hechas a medidores'
+            title="Monitor de Lecturas"
+            description="Gestion, ingreso y visualización de lecturas hechas a medidores"
           />
 
           {/* Botón para iniciar el tour interactivo */}
           <Button
-            variant='outline'
-            size='sm'
+            variant="outline"
+            size="sm"
             onClick={startTour}
-            className='mb-2'
+            className="mb-2"
           >
-            <HelpCircle className='h-4 w-4' />
+            <HelpCircle className="h-4 w-4" />
           </Button>
         </div>
 
@@ -283,49 +309,49 @@ const MonitorLecturasComponent = ({
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
         >
-          <Card className='border-0 shadow-md bg-card backdrop-blur-sm'>
-            <CardContent className='p-3 sm:p-4 space-y-3'>
+          <Card className="border-0 shadow-md bg-card backdrop-blur-sm">
+            <CardContent className="p-3 sm:p-4 space-y-3">
               {/* Sector Selection - Clean Grid */}
-              <div className='space-y-3 sm:space-y-4' id='sector-selector'>
-                <div className='flex items-center gap-2 sm:gap-3'>
-                  <div className='w-8 h-8 sm:w-10 sm:h-10 bg-primary rounded-xl flex items-center justify-center shrink-0'>
-                    <MapPin className='w-4 h-4 sm:w-5 sm:h-5' />
+              <div className="space-y-3 sm:space-y-4" id="sector-selector">
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-primary rounded-xl flex items-center justify-center shrink-0">
+                    <MapPin className="w-4 h-4 sm:w-5 sm:h-5" />
                   </div>
-                  <div className='min-w-0 flex-1'>
-                    <h3 className='font-semibold text-sm sm:text-base lg:text-lg'>
+                  <div className="min-w-0 flex-1">
+                    <h3 className="font-semibold text-sm sm:text-base lg:text-lg">
                       Sector de Monitoreo
                     </h3>
-                    <p className='text-xs sm:text-sm text-muted-foreground'>
+                    <p className="text-xs sm:text-sm text-muted-foreground">
                       Selecciona el área a monitorear
                     </p>
                   </div>
                 </div>
 
                 {sectores && sectores.length > 0 ? (
-                  <div className='grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2'>
+                  <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2">
                     {sectores.map((sector, index) => (
                       <motion.div
-                        key={sector.sectorId}
+                        key={sector.secId}
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ duration: 0.2, delay: index * 0.03 }}
                       >
                         <Button
                           variant={
-                            selectedSector?.sectorId === sector.sectorId
+                            selectedSector?.secId === sector.secId
                               ? 'default'
                               : 'outline'
                           }
                           onClick={() => setSelectedSector(sector)}
                           className={cn(
                             'h-auto p-3 transition-all duration-200 text-center w-full',
-                            selectedSector?.sectorId === sector.sectorId
+                            selectedSector?.secId === sector.secId
                               ? 'bg-primary hover:bg-primary-700 shadow-md border-0'
                               : 'hover:border'
                           )}
                         >
-                          <div className='text-center w-full'>
-                            <div className='font-semibold text-xs sm:text-sm leading-tight'>
+                          <div className="text-center w-full">
+                            <div className="font-semibold text-xs sm:text-sm leading-tight">
                               {sector.descripcion}
                             </div>
                           </div>
@@ -334,132 +360,135 @@ const MonitorLecturasComponent = ({
                     ))}
                   </div>
                 ) : (
-                  <div className='text-center py-8 sm:py-12 text-muted-foreground'>
-                    <Settings2 className='w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-3 opacity-50' />
-                    <p className='text-sm sm:text-base'>
+                  <div className="text-center py-8 sm:py-12 text-muted-foreground">
+                    <Settings2 className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-3 opacity-50" />
+                    <p className="text-sm sm:text-base">
                       No hay sectores disponibles
                     </p>
                   </div>
                 )}
               </div>
 
-              <div className='flex flex-col sm:flex-row gap-3 sm:gap-2'>
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-2">
                 {/* Periodo */}
                 <div
-                  className='space-y-1 w-full sm:w-1/3'
-                  id='periodo-selector'
+                  className="space-y-1 w-full sm:w-1/3"
+                  id="periodo-selector"
                 >
-                  <Label className='text-xs sm:text-sm font-medium text-foreground flex items-center gap-1'>
-                    <Calendar className='w-3 h-3 text-primary shrink-0' />
+                  <Label className="text-xs sm:text-sm font-medium text-foreground flex items-center gap-1">
+                    <Calendar className="w-3 h-3 text-primary shrink-0" />
                     Periodo
                   </Label>
-                  {periodos && periodos.length > 0 ? (
-                    <Select
-                      value={selectedPeriodo?.IdPeriodo || ''}
-                      onValueChange={value => {
-                        const periodo = periodos.find(
-                          p => p.IdPeriodo === value
-                        );
-                        setSelectedPeriodo(periodo || null);
-                      }}
-                    >
-                      <SelectTrigger className='w-full bg-background border-border'>
-                        <SelectValue placeholder='Seleccionar periodo...' />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {periodos?.map(periodo => (
-                          <SelectItem
-                            key={periodo.IdPeriodo}
-                            value={String(periodo.IdPeriodo)}
-                            className='truncate'
-                          >
-                            {periodo.DescripcionPeriodo}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  ) : (
-                    <div className='h-10 w-full bg-muted rounded-md animate-pulse'></div>
-                  )}
+                  {(() => {
+                    const periodosParaSelect = getLastNPeriods(periodos, 12);
+                    return periodosParaSelect.length > 0 ? (
+                      <Select
+                        value={selectedPeriodo?.value || ''}
+                        onValueChange={value => {
+                          const periodo = periodosParaSelect.find(
+                            p => p.value === value
+                          );
+                          setSelectedPeriodo(periodo || null);
+                        }}
+                      >
+                        <SelectTrigger className="w-full bg-background border-border">
+                          <SelectValue placeholder="Seleccionar periodo..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {periodosParaSelect.map(periodo => (
+                            <SelectItem
+                              key={periodo.value}
+                              value={periodo.value}
+                              className="truncate"
+                            >
+                              {periodo.text}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    ) : (
+                      <div className="h-10 w-full bg-muted rounded-md animate-pulse"></div>
+                    );
+                  })()}
                 </div>
 
                 {/* Fecha Inicio */}
-                <div className='space-y-1 w-full sm:w-1/3'>
-                  <Label className='text-xs sm:text-sm font-medium text-foreground flex items-center gap-1'>
-                    <Calendar className='w-3 h-3 text-primary shrink-0' />
+                <div className="space-y-1 w-full sm:w-1/3">
+                  <Label className="text-xs sm:text-sm font-medium text-foreground flex items-center gap-1">
+                    <Calendar className="w-3 h-3 text-primary shrink-0" />
                     Fecha Inicio
                   </Label>
                   <Input
-                    type='text'
+                    type="text"
                     value={fechaInicio || 'Definida por período'}
                     readOnly
-                    className='w-full bg-muted text-muted-foreground cursor-not-allowed truncate'
+                    className="w-full bg-muted text-muted-foreground cursor-not-allowed truncate"
                   />
                 </div>
 
                 {/* Fecha Fin */}
                 <div
-                  className='space-y-1 w-full sm:w-1/3'
-                  id='fecha-fin-selector'
+                  className="space-y-1 w-full sm:w-1/3"
+                  id="fecha-fin-selector"
                 >
-                  <Label className='text-xs sm:text-sm font-medium text-foreground flex items-center gap-1'>
-                    <Calendar className='w-3 h-3 text-primary shrink-0' />
+                  <Label className="text-xs sm:text-sm font-medium text-foreground flex items-center gap-1">
+                    <Calendar className="w-3 h-3 text-primary shrink-0" />
                     Fecha Fin
                   </Label>
                   <Input
-                    type='date'
+                    type="date"
                     value={fechaFin}
                     onChange={e => setFechaFin(e.target.value)}
-                    className='w-full bg-background border-border'
+                    className="w-full bg-background border-border"
                   />
                 </div>
               </div>
 
               {/* Search Action */}
-              <div className='flex flex-col sm:flex-row gap-3 sm:gap-2 items-stretch sm:items-center justify-between pt-4 border-t'>
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-2 items-stretch sm:items-center justify-between pt-4 border-t">
                 <div
-                  className='flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-2 order-2 sm:order-1'
-                  id='filtros-avanzados'
+                  className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-2 order-2 sm:order-1"
+                  id="filtros-avanzados"
                 >
                   <Button
-                    variant='ghost'
-                    size='sm'
+                    variant="ghost"
+                    size="sm"
                     onClick={() => setIsFiltersOpen(!isFiltersOpen)}
-                    className='text-muted-foreground hover:text-foreground justify-center sm:justify-start'
+                    className="text-muted-foreground hover:text-foreground justify-center sm:justify-start"
                   >
-                    <Filter className='w-4 h-4 mr-1' />
-                    <span className='text-sm'>Filtros Avanzados</span>
+                    <Filter className="w-4 h-4 mr-1" />
+                    <span className="text-sm">Filtros Avanzados</span>
                     {isFiltersOpen ? (
-                      <ChevronUp className='w-4 h-4 ml-1' />
+                      <ChevronUp className="w-4 h-4 ml-1" />
                     ) : (
-                      <ChevronDown className='w-4 h-4 ml-1' />
+                      <ChevronDown className="w-4 h-4 ml-1" />
                     )}
                   </Button>
 
                   {(selectedClave ||
                     meterSerial ||
-                    selectedStatusFilter > 0) && (
+                    selectedStatusFilter !== '') && (
                     <Button
-                      variant='ghost'
-                      size='sm'
+                      variant="ghost"
+                      size="sm"
                       onClick={handleLimpiezaFiltros}
-                      className='text-destructive hover:text-destructive/80 hover:bg-destructive/10 justify-center sm:justify-start'
+                      className="text-destructive hover:text-destructive/80 hover:bg-destructive/10 justify-center sm:justify-start"
                     >
-                      <Eraser className='w-4 h-4 mr-1' />
-                      <span className='text-sm'>Limpiar</span>
+                      <Eraser className="w-4 h-4 mr-1" />
+                      <span className="text-sm">Limpiar</span>
                     </Button>
                   )}
                 </div>
 
                 <Button
-                  id='search-button'
-                  onClick={handleSearch}
+                  id="open-medidor-button"
+                  onClick={handleOpenMedidor}
                   disabled={!selectedSector || !selectedPeriodo}
-                  className='bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-3 sm:py-2 shadow-md hover:shadow-lg transition-all duration-200 order-1 sm:order-2'
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-3 sm:py-2 shadow-md hover:shadow-lg transition-all duration-200 order-1 sm:order-2"
                 >
-                  <Search className='w-4 h-4 mr-2' />
-                  <span className='text-sm sm:text-base'>
-                    {isSearchActive ? 'Buscar Nuevamente' : 'Iniciar Monitoreo'}
+                  <Search className="w-4 h-4 mr-2" />
+                  <span className="text-sm sm:text-base">
+                    Iniciar Monitoreo
                   </span>
                 </Button>
               </div>
@@ -467,83 +496,83 @@ const MonitorLecturasComponent = ({
               {/* Advanced Filters - Collapsible */}
               <Collapsible open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
                 <CollapsibleContent>
-                  <div className='border-t pt-4 space-y-4'>
-                    <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
+                  <div className="border-t pt-4 space-y-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                       {/* Clave */}
-                      <div className='space-y-2 w-full'>
-                        <Label className='text-xs sm:text-sm font-medium text-foreground flex items-center gap-1'>
-                          <KeyRound className='w-3 h-3 text-primary shrink-0' />
+                      <div className="space-y-2 w-full">
+                        <Label className="text-xs sm:text-sm font-medium text-foreground flex items-center gap-1">
+                          <KeyRound className="w-3 h-3 text-primary shrink-0" />
                           Clave
                         </Label>
                         {claves && claves.length > 0 ? (
                           <Select
-                            value={selectedClave?.IdClave.toString() || 'ALL'}
+                            value={selectedClave?.value || 'ALL'}
                             onValueChange={value => {
                               if (value === 'ALL') {
                                 setSelectedClave(null);
                               } else {
                                 const clave = claves?.find(
-                                  c => c.IdClave === Number.parseInt(value)
+                                  c => c.value === value
                                 );
                                 setSelectedClave(clave || null);
                               }
                             }}
                           >
-                            <SelectTrigger className='w-full bg-background border-border'>
-                              <SelectValue placeholder='Todas las claves...' />
+                            <SelectTrigger className="w-full bg-background border-border">
+                              <SelectValue placeholder="Todas las claves..." />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value='ALL' className='truncate'>
+                              <SelectItem value="ALL" className="truncate">
                                 Todas las claves
                               </SelectItem>
                               {claves?.map(clave => (
                                 <SelectItem
-                                  key={clave.IdClave}
-                                  value={String(clave.IdClave)}
-                                  className='truncate'
+                                  key={clave.value}
+                                  value={clave.value}
+                                  className="truncate"
                                 >
-                                  {clave.DescripcionClave}
+                                  {clave.text}
                                 </SelectItem>
                               ))}
                             </SelectContent>
                           </Select>
                         ) : (
-                          <div className='h-10 w-full bg-muted rounded-md animate-pulse'></div>
+                          <div className="h-10 w-full bg-muted rounded-md animate-pulse"></div>
                         )}
                       </div>
 
                       {/* Estado */}
-                      <div className='space-y-2 w-full'>
-                        <Label className='text-xs sm:text-sm font-medium text-foreground flex items-center gap-1'>
-                          <ListFilter className='w-3 h-3 text-primary shrink-0' />
+                      <div className="space-y-2 w-full">
+                        <Label className="text-xs sm:text-sm font-medium text-foreground flex items-center gap-1">
+                          <ListFilter className="w-3 h-3 text-primary shrink-0" />
                           Estado
                         </Label>
                         <Select
-                          value={selectedStatusFilter?.toString()}
+                          value={selectedStatusFilter}
                           onValueChange={value =>
-                            setSelectedStatusFilter(Number(value))
+                            setSelectedStatusFilter(value === '0' ? '' : value)
                           }
                         >
-                          <SelectTrigger className='w-full bg-background border-border'>
-                            <SelectValue placeholder='Filtrar por estado...' />
+                          <SelectTrigger className="w-full bg-background border-border">
+                            <SelectValue placeholder="Filtrar por estado..." />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value='0' className='truncate'>
+                            <SelectItem value="0" className="truncate">
                               Todos los estados
                             </SelectItem>
-                            <SelectItem value='1' className='truncate'>
+                            <SelectItem value="1" className="truncate">
                               Sin Lectura
                             </SelectItem>
-                            <SelectItem value='2' className='truncate'>
+                            <SelectItem value="2" className="truncate">
                               Lectura Normal
                             </SelectItem>
-                            <SelectItem value='3' className='truncate'>
+                            <SelectItem value="3" className="truncate">
                               Clave Informativa
                             </SelectItem>
-                            <SelectItem value='4' className='truncate'>
+                            <SelectItem value="4" className="truncate">
                               Clave Relevante
                             </SelectItem>
-                            <SelectItem value='5' className='truncate'>
+                            <SelectItem value="5" className="truncate">
                               Clave Crítica
                             </SelectItem>
                           </SelectContent>
@@ -551,19 +580,19 @@ const MonitorLecturasComponent = ({
                       </div>
 
                       {/* Medidor */}
-                      <div className='space-y-2 w-full'>
-                        <Label className='text-xs sm:text-sm font-medium text-foreground flex items-center gap-1'>
-                          <Hash className='w-3 h-3 text-primary shrink-0' />
+                      <div className="space-y-2 w-full">
+                        <Label className="text-xs sm:text-sm font-medium text-foreground flex items-center gap-1">
+                          <Hash className="w-3 h-3 text-primary shrink-0" />
                           Número de Serie
                         </Label>
                         <Input
-                          id='meter-serial-input'
-                          type='text'
-                          placeholder='Buscar medidor específico...'
+                          id="meter-serial-input"
+                          type="text"
+                          placeholder="Buscar medidor específico..."
                           value={meterSerial}
                           onChange={e => setMeterSerial(e.target.value)}
-                          className='w-full bg-background border-border'
-                          aria-label='Número de serie del medidor'
+                          className="w-full bg-background border-border"
+                          aria-label="Número de serie del medidor"
                         />
                       </div>
                     </div>
@@ -574,25 +603,19 @@ const MonitorLecturasComponent = ({
           </Card>
         </motion.div>
 
-        {/* Results Section */}
+        {/* Grilla de resultados */}
         {isSearchActive && (
           <Suspense
             fallback={
-              <Card className='border-0 shadow-lg bg-card/80 backdrop-blur-sm'>
-                <CardContent className='p-6'>
-                  <LoadingSpinner message='Cargando resultados del monitoreo...' />
+              <Card className="border-0 shadow-lg bg-card/80 backdrop-blur-sm">
+                <CardContent className="p-6">
+                  <LoadingSpinner message="Cargando grilla de medidores..." />
                 </CardContent>
               </Card>
             }
           >
             <ResultadosBusqueda
-              sector={selectedSector?.sectorId || ''}
-              periodo={selectedPeriodo?.IdPeriodo || ''}
-              stfechaini={fechaInicio}
-              stfechafin={fechaFin}
-              tipoclave={selectedStatusFilter.toString()}
-              medidor={meterSerial}
-              clave={selectedClave?.IdClave.toString() || ''}
+              {...grillaParams}
               triggerSearch={searchTrigger}
             />
           </Suspense>

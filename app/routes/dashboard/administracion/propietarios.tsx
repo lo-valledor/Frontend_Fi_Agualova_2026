@@ -1,11 +1,11 @@
-import React from 'react';
-import type { Route } from './+types/propietarios';
-import ContractHydrateFallback from '~/components/administracion/contratos/contract-hydrate-fallback';
-import { ErrorBoundary as ErrorBoundaryComponent } from '~/components/error-boundary';
 import { useRouteError } from 'react-router';
-import { administracionService } from '~/services/administracionService';
-import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
+import ContractHydrateFallback from '~/components/administracion/contratos/contract-hydrate-fallback';
 import PropietariosComponent from '~/components/administracion/propietarios/propietarios-component';
+import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
+import { ErrorBoundary as ErrorBoundaryComponent } from '~/components/error-boundary';
+import { administracionService } from '~/services/administracionService';
+import type { PropietariosRow } from '~/types/administracion';
+import type { Route } from './+types/propietarios';
 
 export function meta(_args: Route.MetaArgs) {
   return [
@@ -15,19 +15,25 @@ export function meta(_args: Route.MetaArgs) {
 }
 
 export async function clientLoader(_args: Route.ClientActionArgs) {
-  const result = await administracionService.getPropietariosData();
+  const result = await administracionService.getPropietarioByRut();
 
   if (result.error || !result.data) {
-    throw new Response('Error al cargar los clientes', { status: 500 });
+    throw new Response('Error al cargar los propietarios', { status: 500 });
   }
 
-  return result.data;
+  const propietarios = Array.isArray(result.data)
+    ? result.data
+    : Array.isArray((result.data as { data?: unknown[] }).data)
+      ? (result.data as { data: PropietariosRow[] }).data
+      : [];
+
+  return { propietarios };
 }
 
 export default function Propietarios({
   loaderData
 }: Readonly<Route.ComponentProps>) {
-  const { propietarios, contratante } = loaderData;
+  const { propietarios } = loaderData;
   const pageBreadcrumbs = [
     { label: 'Administracion' },
     { label: 'Propietarios' }
@@ -36,10 +42,7 @@ export default function Propietarios({
   return (
     <div>
       <BreadcrumbSetter items={pageBreadcrumbs} />
-      <PropietariosComponent
-        propietarios={propietarios}
-        contratantes={contratante}
-      />
+      <PropietariosComponent propietarios={propietarios} />
     </div>
   );
 }

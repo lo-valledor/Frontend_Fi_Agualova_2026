@@ -12,16 +12,14 @@ import {
   User,
   XCircle
 } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router';
+import Select, { type SingleValue } from 'react-select';
 import { toast } from 'sonner';
 import { z } from 'zod';
-
-import React, { useEffect, useState } from 'react';
-
-import { Controller, useForm } from 'react-hook-form';
-import Select from 'react-select';
-import { useNavigate } from 'react-router';
-
 import { ModernHeader } from '~/components/shared/modern-header';
+import type { OptionType } from '~/components/shared/react-select-styles';
 import { getReactSelectStyles } from '~/components/shared/react-select-styles';
 import { useTheme } from '~/components/theme-provider';
 import { Alert, AlertDescription } from '~/components/ui/alert';
@@ -36,9 +34,9 @@ import {
   FormMessage
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
-import type { GetComunas, GetGiros } from '~/types/administracion';
-import { formatRut, isValidRutFormat } from '~/utils/rut-utils';
 import { administracionService } from '~/services/administracionService';
+import type { NombreComuna, NombreGiro } from '~/types/administracion';
+import { formatRut, isValidRutFormat } from '~/utils/rut-utils';
 
 const createContratanteSchema = (existingContratantes: string[]) =>
   z.object({
@@ -76,9 +74,9 @@ export default function CrearContratanteComponent() {
   const navigate = useNavigate();
   const { theme } = useTheme();
 
-  const [, setGiros] = useState<GetGiros[]>([]);
-  const [comunas, setComunas] = useState<GetComunas[]>([]);
-  const [existingContratantes, setExistingContratantes] = useState<string[]>(
+  const [, setGiros] = useState<NombreGiro[]>([]);
+  const [comunas, setComunas] = useState<NombreComuna[]>([]);
+  const [existingContratantes, _setExistingContratantes] = useState<string[]>(
     []
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -108,23 +106,16 @@ export default function CrearContratanteComponent() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const contratantesDataResult =
-          await administracionService.getContratantesData();
+        const [girosResult, comunasResult] = await Promise.all([
+          administracionService.getGiros(),
+          administracionService.getComunas()
+        ]);
 
-        if (contratantesDataResult.error) {
-          toast.error(contratantesDataResult.error);
-          return;
-        }
-
-        if (contratantesDataResult.data) {
-          setGiros(contratantesDataResult.data.giros);
-          setComunas(contratantesDataResult.data.comunas);
-          setExistingContratantes(
-            contratantesDataResult.data.contratantes.map(c => c.rut)
-          );
-        }
+        if (girosResult.data) setGiros(girosResult.data);
+        if (comunasResult.data) setComunas(comunasResult.data);
       } catch (error) {
-        toast.error('Error al cargar datos del formulario', error as any);
+        if (import.meta.env.DEV) console.error('loadData', error);
+        toast.error('Error al cargar datos del formulario');
       }
     };
 
@@ -176,34 +167,35 @@ export default function CrearContratanteComponent() {
       toast.success('Contratante creado exitosamente');
       navigate('/dashboard/administracion/contratantes');
     } catch (error) {
-      toast.error('Error al crear el contratante', error as any);
+      if (import.meta.env.DEV) console.error('crearContratante', error);
+      toast.error('Error al crear el contratante');
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className='min-h-screen bg-background'>
-      <div className='sticky top-0 z-10 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60'>
-        <div className='container mx-auto px-4 py-4'>
+    <div className="min-h-screen bg-background">
+      <div className="sticky top-0 z-10 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
+        <div className="container mx-auto px-4 py-4">
           <ModernHeader
-            title='Crear Nuevo Contratante'
-            description='Creación de nuevo contratante para el sistema'
+            title="Crear Nuevo Contratante"
+            description="Creación de nuevo contratante para el sistema"
             actions={
               <>
                 <Button
-                  variant='ghost'
+                  variant="ghost"
                   onClick={() =>
                     navigate('/dashboard/administracion/contratantes')
                   }
                   disabled={isSubmitting}
-                  className='gap-2'
+                  className="gap-2"
                 >
-                  <ArrowLeft className='h-4 w-4' />
+                  <ArrowLeft className="h-4 w-4" />
                   Volver
                 </Button>
                 <Button
-                  variant='outline'
+                  variant="outline"
                   onClick={() =>
                     navigate('/dashboard/administracion/contratantes')
                   }
@@ -213,10 +205,10 @@ export default function CrearContratanteComponent() {
                 </Button>
                 <Button
                   onClick={form.handleSubmit(onSubmit)}
-                  className='gap-2'
+                  className="gap-2"
                   disabled={isSubmitting}
                 >
-                  <Save className='h-4 w-4' />
+                  <Save className="h-4 w-4" />
                   {isSubmitting ? 'Creando...' : 'Crear Contratante'}
                 </Button>
               </>
@@ -225,43 +217,43 @@ export default function CrearContratanteComponent() {
         </div>
       </div>
 
-      <div className='container mx-auto px-4 py-6 space-y-6'>
+      <div className="container mx-auto px-4 py-6 space-y-6">
         {/* Disclaimer */}
-        <Alert className='border-blue-200 bg-blue-50 dark:bg-blue-950/20 dark:border-blue-800'>
-          <Info className='h-4 w-4 ' />
-          <AlertDescription className='text-blue-800 dark:text-blue-200'>
+        <Alert className="border-blue-200 bg-blue-50 dark:bg-blue-950/20 dark:border-blue-800">
+          <Info className="h-4 w-4 " />
+          <AlertDescription className="text-blue-800 dark:text-blue-200">
             <strong>Información:</strong> Al crear un contratante, este
             aparecerá automáticamente en el submódulo de{' '}
             <strong>Propietarios</strong> para su consulta y gestión.
           </AlertDescription>
         </Alert>
 
-        <div className='bg-background rounded-xl shadow-sm border border-border'>
+        <div className="bg-background rounded-xl shadow-sm border border-border">
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
-              className='p-6 space-y-8'
+              className="p-6 space-y-8"
             >
-              <div className='space-y-6'>
-                <div className='flex items-center gap-2 pb-2 border-b'>
-                  <User className='h-5 w-5 text-orange-600' />
-                  <h3 className='text-lg font-medium'>Información Básica</h3>
+              <div className="space-y-6">
+                <div className="flex items-center gap-2 pb-2 border-b">
+                  <User className="h-5 w-5 text-orange-600" />
+                  <h3 className="text-lg font-medium">Información Básica</h3>
                 </div>
 
-                <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6'>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                   <FormField
                     control={form.control}
-                    name='rut'
+                    name="rut"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className='flex items-center gap-2'>
-                          <FileText className='h-4 w-4' />
-                          RUT <span className='text-red-500'>*</span>
+                        <FormLabel className="flex items-center gap-2">
+                          <FileText className="h-4 w-4" />
+                          RUT <span className="text-red-500">*</span>
                         </FormLabel>
                         <FormControl>
-                          <div className='relative'>
+                          <div className="relative">
                             <Input
-                              placeholder='12345678-9'
+                              placeholder="12345678-9"
                               {...field}
                               onBlur={e => {
                                 const formatted = formatRut(e.target.value);
@@ -276,20 +268,20 @@ export default function CrearContratanteComponent() {
                               }`}
                             />
                             {rutValidationStatus === 'valid' && (
-                              <div className='absolute inset-y-0 right-0 flex items-center pr-3'>
-                                <CheckCircle2 className='h-5 w-5 text-green-500' />
+                              <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+                                <CheckCircle2 className="h-5 w-5 text-green-500" />
                               </div>
                             )}
                             {rutValidationStatus === 'invalid' && (
-                              <div className='absolute inset-y-0 right-0 flex items-center pr-3'>
-                                <XCircle className='h-5 w-5 text-red-500' />
+                              <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+                                <XCircle className="h-5 w-5 text-red-500" />
                               </div>
                             )}
                           </div>
                         </FormControl>
                         <FormMessage />
                         {rutValidationStatus === 'invalid' && (
-                          <p className='text-sm text-red-600 dark:text-red-400 mt-1'>
+                          <p className="text-sm text-red-600 dark:text-red-400 mt-1">
                             {!isValidRutFormat(form.watch('rut'))
                               ? 'El RUT debe tener el formato 12345678-9'
                               : 'Este RUT ya está registrado en el sistema'}
@@ -301,18 +293,18 @@ export default function CrearContratanteComponent() {
 
                   <FormField
                     control={form.control}
-                    name='esEmpresa'
+                    name="esEmpresa"
                     render={({ field }) => (
-                      <FormItem className='flex flex-row items-start space-x-3 space-y-0 rounded-xl border p-4 bg-muted/30'>
+                      <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-xl border p-4 bg-muted/30">
                         <FormControl>
                           <Checkbox
                             checked={field.value}
                             onCheckedChange={field.onChange}
                           />
                         </FormControl>
-                        <div className='space-y-1 leading-none'>
-                          <FormLabel className='flex items-center gap-2'>
-                            <Building2 className='h-4 w-4' />
+                        <div className="space-y-1 leading-none">
+                          <FormLabel className="flex items-center gap-2">
+                            <Building2 className="h-4 w-4" />
                             ¿Es Empresa?
                           </FormLabel>
                         </div>
@@ -322,20 +314,18 @@ export default function CrearContratanteComponent() {
 
                   <FormField
                     control={form.control}
-                    name='nombre'
+                    name="nombre"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className='flex items-center gap-2'>
-                          <User className='h-4 w-4' />
-                          {form.watch('esEmpresa')
-                            ? 'Razón Social'
-                            : 'Nombre'}{' '}
-                          <span className='text-red-500'>*</span>
+                        <FormLabel className="flex items-center gap-2">
+                          <User className="h-4 w-4" />
+                          {form.watch('esEmpresa') ? 'Razón Social' : 'Nombre'}{' '}
+                          <span className="text-red-500">*</span>
                         </FormLabel>
                         <FormControl>
                           <Input
                             {...field}
-                            className='h-11'
+                            className="h-11"
                             placeholder={
                               form.watch('esEmpresa')
                                 ? 'Nombre de la empresa'
@@ -351,18 +341,18 @@ export default function CrearContratanteComponent() {
                   {!form.watch('esEmpresa') && (
                     <FormField
                       control={form.control}
-                      name='apellido'
+                      name="apellido"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className='flex items-center gap-2'>
-                            <User className='h-4 w-4' />
+                          <FormLabel className="flex items-center gap-2">
+                            <User className="h-4 w-4" />
                             Apellido
                           </FormLabel>
                           <FormControl>
                             <Input
                               {...field}
-                              className='h-11'
-                              placeholder='Apellido'
+                              className="h-11"
+                              placeholder="Apellido"
                             />
                           </FormControl>
                           <FormMessage />
@@ -373,29 +363,29 @@ export default function CrearContratanteComponent() {
                 </div>
               </div>
 
-              <div className='space-y-6'>
-                <div className='flex items-center gap-2 pb-2 border-b'>
-                  <MapPin className='h-5 w-5 text-green-600' />
-                  <h3 className='text-lg font-medium'>
+              <div className="space-y-6">
+                <div className="flex items-center gap-2 pb-2 border-b">
+                  <MapPin className="h-5 w-5 text-green-600" />
+                  <h3 className="text-lg font-medium">
                     Información de Ubicación
                   </h3>
                 </div>
 
-                <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6'>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                   <FormField
                     control={form.control}
-                    name='direccion'
+                    name="direccion"
                     render={({ field }) => (
-                      <FormItem className='md:col-span-2'>
-                        <FormLabel className='flex items-center gap-2'>
-                          <MapPin className='h-4 w-4' />
-                          Dirección <span className='text-red-500'>*</span>
+                      <FormItem className="md:col-span-2">
+                        <FormLabel className="flex items-center gap-2">
+                          <MapPin className="h-4 w-4" />
+                          Dirección <span className="text-red-500">*</span>
                         </FormLabel>
                         <FormControl>
                           <Input
                             {...field}
-                            className='h-11'
-                            placeholder='Dirección completa'
+                            className="h-11"
+                            placeholder="Dirección completa"
                           />
                         </FormControl>
                         <FormMessage />
@@ -405,40 +395,41 @@ export default function CrearContratanteComponent() {
 
                   <Controller
                     control={form.control}
-                    name='codComuna'
+                    name="codComuna"
                     render={({ field }) => {
-                      const comunaActual = comunas.find(
-                        c => c.codigo === field.value
+                      const comunaOptions = comunas.map(c => {
+                        if (typeof c === 'string') {
+                          return { value: c, label: c };
+                        }
+                        return {
+                          value: c.codigo,
+                          label: `${c.nombre} (${c.codigo})`
+                        };
+                      });
+                      const comunaActual = comunaOptions.find(
+                        option => option.value === field.value
                       );
 
                       return (
-                        <FormItem className='md:col-span-2'>
-                          <FormLabel className='flex items-center gap-2'>
-                            <MapPin className='h-4 w-4' />
-                            Comuna <span className='text-red-500'>*</span>
+                        <FormItem className="md:col-span-2">
+                          <FormLabel className="flex items-center gap-2">
+                            <MapPin className="h-4 w-4" />
+                            Comuna <span className="text-red-500">*</span>
                           </FormLabel>
                           <FormControl>
                             <Select
-                              instanceId='comuna-select'
-                              options={comunas.map(comuna => ({
-                                value: comuna.codigo,
-                                label: `${comuna.nombre} (${comuna.codigo})`
-                              }))}
-                              value={
-                                comunaActual
-                                  ? {
-                                      value: comunaActual.codigo,
-                                      label: `${comunaActual.nombre} (${comunaActual.codigo})`
-                                    }
-                                  : null
+                              instanceId="comuna-select"
+                              options={comunaOptions}
+                              value={comunaActual ?? null}
+                              onChange={(option: SingleValue<OptionType>) =>
+                                field.onChange(
+                                  option ? String(option.value) : ''
+                                )
                               }
-                              onChange={(option: any) =>
-                                field.onChange(option ? option.value : '')
-                              }
-                              placeholder='Seleccione la comuna'
+                              placeholder="Seleccione la comuna"
                               isClearable
                               styles={selectStyles}
-                              classNamePrefix='react-select'
+                              classNamePrefix="react-select"
                             />
                           </FormControl>
                           <FormMessage />
@@ -449,29 +440,29 @@ export default function CrearContratanteComponent() {
                 </div>
               </div>
 
-              <div className='space-y-6'>
-                <div className='flex items-center gap-2 pb-2 border-b'>
-                  <Phone className='h-5 w-5 text-purple-600' />
-                  <h3 className='text-lg font-medium'>
+              <div className="space-y-6">
+                <div className="flex items-center gap-2 pb-2 border-b">
+                  <Phone className="h-5 w-5 text-purple-600" />
+                  <h3 className="text-lg font-medium">
                     Información de Contacto
                   </h3>
                 </div>
 
-                <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6'>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                   <FormField
                     control={form.control}
-                    name='contacto'
+                    name="contacto"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className='flex items-center gap-2'>
-                          <User className='h-4 w-4' />
-                          Contacto <span className='text-red-500'>*</span>
+                        <FormLabel className="flex items-center gap-2">
+                          <User className="h-4 w-4" />
+                          Contacto <span className="text-red-500">*</span>
                         </FormLabel>
                         <FormControl>
                           <Input
                             {...field}
-                            className='h-11'
-                            placeholder='Nombre del contacto'
+                            className="h-11"
+                            placeholder="Nombre del contacto"
                           />
                         </FormControl>
                         <FormMessage />
@@ -481,18 +472,18 @@ export default function CrearContratanteComponent() {
 
                   <FormField
                     control={form.control}
-                    name='telefono'
+                    name="telefono"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className='flex items-center gap-2'>
-                          <Phone className='h-4 w-4' />
+                        <FormLabel className="flex items-center gap-2">
+                          <Phone className="h-4 w-4" />
                           Teléfono
                         </FormLabel>
                         <FormControl>
                           <Input
                             {...field}
-                            className='h-11'
-                            placeholder='+56 9 1234 5678'
+                            className="h-11"
+                            placeholder="+56 9 1234 5678"
                           />
                         </FormControl>
                         <FormMessage />
@@ -502,19 +493,19 @@ export default function CrearContratanteComponent() {
 
                   <FormField
                     control={form.control}
-                    name='correo'
+                    name="correo"
                     render={({ field }) => (
-                      <FormItem className='md:col-span-2'>
-                        <FormLabel className='flex items-center gap-2'>
-                          <Mail className='h-4 w-4' />
+                      <FormItem className="md:col-span-2">
+                        <FormLabel className="flex items-center gap-2">
+                          <Mail className="h-4 w-4" />
                           Correo Electrónico
                         </FormLabel>
                         <FormControl>
                           <Input
-                            type='email'
+                            type="email"
                             {...field}
-                            className='h-11'
-                            placeholder='correo@ejemplo.com'
+                            className="h-11"
+                            placeholder="correo@ejemplo.com"
                           />
                         </FormControl>
                         <FormMessage />

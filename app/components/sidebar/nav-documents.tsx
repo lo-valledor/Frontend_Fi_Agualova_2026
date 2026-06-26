@@ -35,8 +35,8 @@ export function NavDocuments({
   const { isMobile } = useSidebar();
 
   return (
-    <SidebarGroup className='group-data-[collapsible=icon]:hidden'>
-      <SidebarGroupLabel className='text-xs sm:text-sm px-2 sm:px-4'>
+    <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+      <SidebarGroupLabel className="text-xs sm:text-sm px-2 sm:px-4">
         Documents
       </SidebarGroupLabel>
       <SidebarMenu>
@@ -44,42 +44,42 @@ export function NavDocuments({
           <SidebarMenuItem key={item.name}>
             <SidebarMenuButton
               asChild
-              className='px-2 sm:px-3 py-2 text-xs sm:text-sm'
+              className="px-2 sm:px-3 py-2 text-xs sm:text-sm"
             >
-              <a href={item.url} className='flex items-center gap-2'>
-                <item.icon className='h-3 w-3 sm:h-4 sm:w-4' />
-                <span className='truncate'>{item.name}</span>
+              <a href={item.url} className="flex items-center gap-2">
+                <item.icon className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="truncate">{item.name}</span>
               </a>
             </SidebarMenuButton>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuAction
                   showOnHover
-                  className='data-[state=open]:bg-accent rounded-sm h-6 w-6 sm:h-8 sm:w-8'
+                  className="data-[state=open]:bg-accent rounded-sm h-6 w-6 sm:h-8 sm:w-8"
                 >
-                  <IconDots className='h-3 w-3 sm:h-4 sm:w-4' />
-                  <span className='sr-only'>More</span>
+                  <IconDots className="h-3 w-3 sm:h-4 sm:w-4" />
+                  <span className="sr-only">More</span>
                 </SidebarMenuAction>
               </DropdownMenuTrigger>
               <DropdownMenuContent
-                className='w-20 sm:w-24 rounded-xl text-xs sm:text-sm'
+                className="w-20 sm:w-24 rounded-xl text-xs sm:text-sm"
                 side={isMobile ? 'bottom' : 'right'}
                 align={isMobile ? 'end' : 'start'}
               >
-                <DropdownMenuItem className='gap-1.5 sm:gap-2 py-1.5 sm:py-2'>
-                  <IconFolder className='h-3 w-3 sm:h-4 sm:w-4' />
+                <DropdownMenuItem className="gap-1.5 sm:gap-2 py-1.5 sm:py-2">
+                  <IconFolder className="h-3 w-3 sm:h-4 sm:w-4" />
                   <span>Open</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem className='gap-1.5 sm:gap-2 py-1.5 sm:py-2'>
-                  <IconShare3 className='h-3 w-3 sm:h-4 sm:w-4' />
+                <DropdownMenuItem className="gap-1.5 sm:gap-2 py-1.5 sm:py-2">
+                  <IconShare3 className="h-3 w-3 sm:h-4 sm:w-4" />
                   <span>Share</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
-                  variant='destructive'
-                  className='gap-1.5 sm:gap-2 py-1.5 sm:py-2'
+                  variant="destructive"
+                  className="gap-1.5 sm:gap-2 py-1.5 sm:py-2"
                 >
-                  <IconTrash className='h-3 w-3 sm:h-4 sm:w-4' />
+                  <IconTrash className="h-3 w-3 sm:h-4 sm:w-4" />
                   <span>Delete</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -87,8 +87,8 @@ export function NavDocuments({
           </SidebarMenuItem>
         ))}
         <SidebarMenuItem>
-          <SidebarMenuButton className='text-sidebar-foreground/70 px-2 sm:px-3 py-2 text-xs sm:text-sm'>
-            <IconDots className='text-sidebar-foreground/70 h-3 w-3 sm:h-4 sm:w-4' />
+          <SidebarMenuButton className="text-sidebar-foreground/70 px-2 sm:px-3 py-2 text-xs sm:text-sm">
+            <IconDots className="text-sidebar-foreground/70 h-3 w-3 sm:h-4 sm:w-4" />
             <span>More</span>
           </SidebarMenuButton>
         </SidebarMenuItem>

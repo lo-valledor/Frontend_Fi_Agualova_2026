@@ -1,7 +1,6 @@
-import { describe, it, expect, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { AcometidaForm } from './acometida-form';
+import { describe, expect, it, vi } from 'vitest';
 import type {
   Acometida,
   ComboEmpalmes,
@@ -9,6 +8,7 @@ import type {
   ComboSectores,
   ContratosDisponibles
 } from '~/types/administracion';
+import { AcometidaForm } from './acometida-form';
 
 // Mocks
 vi.mock('~/components/theme-provider', () => ({
@@ -153,7 +153,9 @@ describe('AcometidaForm', () => {
     expect(screen.getByText('Editar Acometida')).toBeInTheDocument();
 
     // Obtener el botón de actualizar
-    const submitButton = screen.getByRole('button', { name: /actualizar acometida/i });
+    const submitButton = screen.getByRole('button', {
+      name: /actualizar acometida/i
+    });
     expect(submitButton).toBeInTheDocument();
   });
 
@@ -201,7 +203,9 @@ describe('AcometidaForm', () => {
 
     // Verificar que el modal se cierra después de seleccionar
     await waitFor(() => {
-      expect(screen.queryByText('Seleccionar Contrato')).not.toBeInTheDocument();
+      expect(
+        screen.queryByText('Seleccionar Contrato')
+      ).not.toBeInTheDocument();
     });
   });
 });

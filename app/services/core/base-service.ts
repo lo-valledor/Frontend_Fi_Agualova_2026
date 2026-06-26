@@ -1,11 +1,10 @@
+import { processArrayResponse, processSingleResponse } from './api-processing';
 import type { ServiceResponse } from './api-response';
 import { errorResponse, successResponse, toErrorMessage } from './api-response';
-import { processArrayResponse, processSingleResponse } from './api-processing';
 
 // ============================================================================
 // TIPOS
 // ============================================================================
-
 
 export interface HttpClient {
   get<_T = any>(url: string, config?: any): Promise<any>;
@@ -19,22 +18,17 @@ export interface HttpClient {
 // BASE SERVICE
 // ============================================================================
 
-
 export abstract class BaseApiService<TClient extends HttpClient = HttpClient> {
-  
   constructor(protected readonly httpClient: TClient) {}
 
-  
   protected processResponseArray<T>(response: any): T[] {
     return processArrayResponse<T>(response);
   }
 
-  
   protected processResponseSingle<T>(response: any): T | null {
     return processSingleResponse<T>(response);
   }
 
-  
   protected handleError<T>(
     error: unknown,
     defaultMessage: string = 'Error desconocido'
@@ -43,7 +37,6 @@ export abstract class BaseApiService<TClient extends HttpClient = HttpClient> {
     return errorResponse<T>(message);
   }
 
-  
   protected async executeOperation<T = void>(
     operation: () => Promise<any>,
     successMessage?: string
@@ -58,7 +51,6 @@ export abstract class BaseApiService<TClient extends HttpClient = HttpClient> {
     }
   }
 
-  
   protected async executeDataOperation<T>(
     operation: () => Promise<T>,
     defaultError: string = 'Error al procesar operación'
@@ -71,7 +63,6 @@ export abstract class BaseApiService<TClient extends HttpClient = HttpClient> {
     }
   }
 
-  
   protected async executeParallelOperations<_T extends readonly any[]>(
     operations: readonly (() => Promise<any>)[],
     defaultError: string = 'Error en operaciones paralelas'

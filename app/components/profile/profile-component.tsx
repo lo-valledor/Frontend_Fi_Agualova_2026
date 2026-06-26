@@ -7,12 +7,9 @@ import {
   Save,
   User
 } from 'lucide-react';
-import { toast } from 'sonner';
-
 import type React from 'react';
 import { useEffect, useState } from 'react';
-
-import { PasswordStrengthIndicator } from '~/components/ui/password-strength-indicator';
+import { toast } from 'sonner';
 import { Alert, AlertDescription } from '~/components/ui/alert';
 import { Button } from '~/components/ui/button';
 import {
@@ -24,6 +21,7 @@ import {
 } from '~/components/ui/card';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
+import { PasswordStrengthIndicator } from '~/components/ui/password-strength-indicator';
 import {
   Select,
   SelectContent,
@@ -33,8 +31,21 @@ import {
 } from '~/components/ui/select';
 import { useAuth } from '~/context/AuthContext';
 import { useAdministracion } from '~/hooks/use-administracion';
-import type { ActualizarUsuarioProps, Usuarios } from '~/types/administracion';
+import type { Usuarios } from '~/types/administracion';
 import { isPasswordSecure, passwordsMatch } from '~/utils/password-validation';
+
+type ActualizarUsuarioProps = {
+  username: string;
+  contrasena: string;
+  nombres: string;
+  apellidos: string;
+  departamento: number;
+  activo: boolean;
+  nombre?: string;
+  apellido?: string;
+  email?: string;
+  nuevaContrasena?: string;
+};
 
 export default function ProfileComponent() {
   const { user } = useAuth();
@@ -51,7 +62,7 @@ export default function ProfileComponent() {
   const [isSaving, setIsSaving] = useState(false);
 
   const [formData, setFormData] = useState<ActualizarUsuarioProps>({
-    nombreDeUsuario: '',
+    username: '',
     contrasena: '',
     nombres: '',
     apellidos: '',
@@ -76,15 +87,16 @@ export default function ProfileComponent() {
 
         // Inicializar formData con los datos del usuario
         setFormData({
-          nombreDeUsuario: userData.nombreDeUsuario,
+          username: userData.userName,
           contrasena: '',
-          nombres: userData.nombres,
-          apellidos: userData.apellidos,
-          departamento: userData.departamento,
-          activo: userData.activo
+          nombres: userData.nombre_Usuario,
+          apellidos: userData.apellidos_Usuario,
+          departamento: 1,
+          activo: true
         });
       } catch (error) {
-        toast.error('Error al cargar los datos del perfil', error as any);
+        if (import.meta.env.DEV) console.error('loadUserData', error);
+        toast.error('Error al cargar los datos del perfil');
       } finally {
         setLoadingUserData(false);
       }
@@ -152,7 +164,7 @@ export default function ProfileComponent() {
       }
 
       setIsSaving(true);
-      await updateUsuario(currentUserData.idUsuario, updatePayload);
+      await updateUsuario(currentUserData.id, updatePayload);
       toast.success('Perfil actualizado exitosamente');
 
       // Limpiar campos de contraseña después de actualizar
@@ -181,9 +193,9 @@ export default function ProfileComponent() {
 
   if (loadingUserData) {
     return (
-      <div className='flex items-center justify-center h-64'>
-        <Loader2 className='h-8 w-8 animate-spin text-muted-foreground' />
-        <p className='ml-3 text-muted-foreground'>
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        <p className="ml-3 text-muted-foreground">
           Cargando datos del perfil...
         </p>
       </div>
@@ -192,9 +204,9 @@ export default function ProfileComponent() {
 
   if (!currentUserData) {
     return (
-      <div className='flex items-center justify-center h-64'>
-        <Alert variant='destructive'>
-          <AlertCircle className='h-4 w-4' />
+      <div className="flex items-center justify-center h-64">
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
           <AlertDescription>
             No se pudo cargar la información del usuario
           </AlertDescription>
@@ -204,20 +216,20 @@ export default function ProfileComponent() {
   }
 
   return (
-    <div className='max-w-4xl mx-auto p-6 space-y-6'>
-      <div className='flex items-center gap-4 mb-6'>
-        <div className='p-3 bg-primary/10 rounded-xl'>
-          <User className='h-8 w-8 text-primary' />
+    <div className="max-w-4xl mx-auto p-6 space-y-6">
+      <div className="flex items-center gap-4 mb-6">
+        <div className="p-3 bg-primary/10 rounded-xl">
+          <User className="h-8 w-8 text-primary" />
         </div>
         <div>
-          <h1 className='text-3xl font-bold text-foreground'>Mi Perfil</h1>
-          <p className='text-muted-foreground'>
+          <h1 className="text-3xl font-bold text-foreground">Mi Perfil</h1>
+          <p className="text-muted-foreground">
             Actualiza tu información personal y contraseña
           </p>
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className='space-y-6'>
+      <form onSubmit={handleSubmit} className="space-y-6">
         {/* Información Personal */}
         <Card>
           <CardHeader>
@@ -226,48 +238,46 @@ export default function ProfileComponent() {
               Actualiza tus datos personales y de contacto
             </CardDescription>
           </CardHeader>
-          <CardContent className='space-y-4'>
-            <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-              <div className='space-y-2'>
-                <Label htmlFor='nombres'>Nombres</Label>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="nombres">Nombres</Label>
                 <Input
-                  id='nombres'
+                  id="nombres"
                   value={formData.nombres}
                   onChange={e => handleInputChange('nombres', e.target.value)}
-                  placeholder='Ingresa tus nombres'
+                  placeholder="Ingresa tus nombres"
                   required
                   disabled={isLoading}
                 />
               </div>
-              <div className='space-y-2'>
-                <Label htmlFor='apellidos'>Apellidos</Label>
+              <div className="space-y-2">
+                <Label htmlFor="apellidos">Apellidos</Label>
                 <Input
-                  id='apellidos'
+                  id="apellidos"
                   value={formData.apellidos}
                   onChange={e => handleInputChange('apellidos', e.target.value)}
-                  placeholder='Ingresa tus apellidos'
+                  placeholder="Ingresa tus apellidos"
                   required
                   disabled={isLoading}
                 />
               </div>
             </div>
 
-            <div className='space-y-2'>
-              <Label htmlFor='nombreDeUsuario'>Nombre de Usuario</Label>
+            <div className="space-y-2">
+              <Label htmlFor="username">Nombre de Usuario</Label>
               <Input
-                id='nombreDeUsuario'
-                value={formData.nombreDeUsuario}
-                onChange={e =>
-                  handleInputChange('nombreDeUsuario', e.target.value)
-                }
-                placeholder='Ingresa tu nombre de usuario'
+                id="username"
+                value={formData.username}
+                onChange={e => handleInputChange('username', e.target.value)}
+                placeholder="Ingresa tu nombre de usuario"
                 required
                 disabled={isLoading}
               />
             </div>
 
-            <div className='space-y-2'>
-              <Label htmlFor='departamento'>Departamento</Label>
+            <div className="space-y-2">
+              <Label htmlFor="departamento">Departamento</Label>
               <Select
                 value={formData.departamento.toString()}
                 onValueChange={value =>
@@ -275,16 +285,16 @@ export default function ProfileComponent() {
                 }
                 disabled={isLoading}
               >
-                <SelectTrigger className='w-full'>
-                  <SelectValue placeholder='Selecciona un departamento' />
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Selecciona un departamento" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value='1'>Gerencia</SelectItem>
-                  <SelectItem value='2'>Tecnología</SelectItem>
-                  <SelectItem value='3'>Recaudación</SelectItem>
-                  <SelectItem value='4'>Seguridad</SelectItem>
-                  <SelectItem value='5'>RR.HH</SelectItem>
-                  <SelectItem value='6'>Agualova</SelectItem>
+                  <SelectItem value="1">Gerencia</SelectItem>
+                  <SelectItem value="2">Tecnología</SelectItem>
+                  <SelectItem value="3">Recaudación</SelectItem>
+                  <SelectItem value="4">Seguridad</SelectItem>
+                  <SelectItem value="5">RR.HH</SelectItem>
+                  <SelectItem value="6">Agualova</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -299,75 +309,75 @@ export default function ProfileComponent() {
               Cambia tu contraseña para mantener tu cuenta segura
             </CardDescription>
           </CardHeader>
-          <CardContent className='space-y-4'>
+          <CardContent className="space-y-4">
             {/* Contraseña Actual */}
-            <div className='space-y-2'>
+            <div className="space-y-2">
               <Label
-                htmlFor='currentPassword'
-                className='flex items-center gap-2'
+                htmlFor="currentPassword"
+                className="flex items-center gap-2"
               >
                 Contraseña Actual
-                <span className='text-red-500'>*</span>
+                <span className="text-red-500">*</span>
               </Label>
-              <div className='relative'>
+              <div className="relative">
                 <Input
-                  id='currentPassword'
+                  id="currentPassword"
                   type={showCurrentPassword ? 'text' : 'password'}
                   value={currentPassword}
                   onChange={e => {
                     setCurrentPassword(e.target.value);
                     setPasswordError('');
                   }}
-                  placeholder='Ingrese su contraseña actual'
+                  placeholder="Ingrese su contraseña actual"
                   required
                   disabled={isLoading}
-                  className='pr-10'
+                  className="pr-10"
                 />
                 <button
-                  type='button'
+                  type="button"
                   onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                  className='absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
+                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
                   tabIndex={-1}
                 >
                   {showCurrentPassword ? (
-                    <EyeOff className='h-5 w-5' />
+                    <EyeOff className="h-5 w-5" />
                   ) : (
-                    <Eye className='h-5 w-5' />
+                    <Eye className="h-5 w-5" />
                   )}
                 </button>
               </div>
-              <p className='text-xs text-muted-foreground'>
+              <p className="text-xs text-muted-foreground">
                 Por seguridad, debe ingresar su contraseña actual para realizar
                 cualquier cambio
               </p>
             </div>
 
             {/* Nueva Contraseña */}
-            <div className='space-y-2'>
-              <Label htmlFor='newPassword'>Nueva Contraseña (opcional)</Label>
-              <div className='relative'>
+            <div className="space-y-2">
+              <Label htmlFor="newPassword">Nueva Contraseña (opcional)</Label>
+              <div className="relative">
                 <Input
-                  id='newPassword'
+                  id="newPassword"
                   type={showPassword ? 'text' : 'password'}
                   value={newPassword}
                   onChange={e => {
                     setNewPassword(e.target.value);
                     setPasswordError('');
                   }}
-                  placeholder='Dejar vacío para mantener la actual'
+                  placeholder="Dejar vacío para mantener la actual"
                   disabled={isLoading}
-                  className='pr-10'
+                  className="pr-10"
                 />
                 <button
-                  type='button'
+                  type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className='absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
+                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
                   tabIndex={-1}
                 >
                   {showPassword ? (
-                    <EyeOff className='h-5 w-5' />
+                    <EyeOff className="h-5 w-5" />
                   ) : (
-                    <Eye className='h-5 w-5' />
+                    <Eye className="h-5 w-5" />
                   )}
                 </button>
               </div>
@@ -384,52 +394,52 @@ export default function ProfileComponent() {
 
             {/* Confirmar Contraseña */}
             {newPassword.trim() && (
-              <div className='space-y-2'>
-                <Label htmlFor='confirmPassword'>
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword">
                   Confirmar Nueva Contraseña
                 </Label>
-                <div className='relative'>
+                <div className="relative">
                   <Input
-                    id='confirmPassword'
+                    id="confirmPassword"
                     type={showConfirmPassword ? 'text' : 'password'}
                     value={confirmPassword}
                     onChange={e => {
                       setConfirmPassword(e.target.value);
                       setPasswordError('');
                     }}
-                    placeholder='Confirma tu nueva contraseña'
+                    placeholder="Confirma tu nueva contraseña"
                     required={newPassword.trim().length > 0}
                     disabled={isLoading}
-                    className='pr-10'
+                    className="pr-10"
                   />
                   <button
-                    type='button'
+                    type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className='absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
+                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
                     tabIndex={-1}
                   >
                     {showConfirmPassword ? (
-                      <EyeOff className='h-5 w-5' />
+                      <EyeOff className="h-5 w-5" />
                     ) : (
-                      <Eye className='h-5 w-5' />
+                      <Eye className="h-5 w-5" />
                     )}
                   </button>
                 </div>
 
                 {/* Validación de coincidencia */}
                 {confirmPassword && newPassword && (
-                  <div className='flex items-center gap-2 text-xs'>
+                  <div className="flex items-center gap-2 text-xs">
                     {passwordsMatch(newPassword, confirmPassword) ? (
                       <>
-                        <CheckCircle2 className='h-3.5 w-3.5 text-green-600 dark:text-green-400' />
-                        <span className='text-green-700 dark:text-green-400 font-medium'>
+                        <CheckCircle2 className="h-3.5 w-3.5 text-green-600 dark:text-green-400" />
+                        <span className="text-green-700 dark:text-green-400 font-medium">
                           Las contraseñas coinciden
                         </span>
                       </>
                     ) : (
                       <>
-                        <AlertCircle className='h-3.5 w-3.5 text-red-600 dark:text-red-400' />
-                        <span className='text-red-700 dark:text-red-400'>
+                        <AlertCircle className="h-3.5 w-3.5 text-red-600 dark:text-red-400" />
+                        <span className="text-red-700 dark:text-red-400">
                           Las contraseñas no coinciden
                         </span>
                       </>
@@ -441,8 +451,8 @@ export default function ProfileComponent() {
 
             {/* Error de contraseña */}
             {passwordError && (
-              <Alert variant='destructive'>
-                <AlertCircle className='h-4 w-4' />
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
                 <AlertDescription>{passwordError}</AlertDescription>
               </Alert>
             )}
@@ -450,21 +460,21 @@ export default function ProfileComponent() {
         </Card>
 
         {/* Botón Guardar */}
-        <div className='flex justify-end gap-4'>
+        <div className="flex justify-end gap-4">
           <Button
-            type='submit'
-            size='lg'
+            type="submit"
+            size="lg"
             disabled={isLoading}
-            className='gap-2'
+            className="gap-2"
           >
             {isLoading ? (
               <>
-                <Loader2 className='h-4 w-4 animate-spin' />
+                <Loader2 className="h-4 w-4 animate-spin" />
                 Guardando...
               </>
             ) : (
               <>
-                <Save className='h-4 w-4' />
+                <Save className="h-4 w-4" />
                 Guardar Cambios
               </>
             )}

@@ -1,0 +1,575 @@
+$ react-router typegen && tsc
+app/components/administracion/acometida/acometida-component.test.tsx(6,3): error TS2724: '"~/types/administracion"' has no exported member named 'Acometida'. Did you mean 'AcometidaRow'?
+app/components/administracion/acometida/acometida-component.test.tsx(7,3): error TS2305: Module '"~/types/administracion"' has no exported member 'ComboEmpalmes'.
+app/components/administracion/acometida/acometida-component.test.tsx(8,3): error TS2305: Module '"~/types/administracion"' has no exported member 'ComboNichos'.
+app/components/administracion/acometida/acometida-component.test.tsx(9,3): error TS2305: Module '"~/types/administracion"' has no exported member 'ComboSectores'.
+app/components/administracion/acometida/acometida-component.test.tsx(10,3): error TS2305: Module '"~/types/administracion"' has no exported member 'ContratosDisponibles'.
+app/components/administracion/acometida/acometida-component.tsx(23,3): error TS2305: Module '"~/types/administracion"' has no exported member 'AcometidaProps'.
+app/components/administracion/acometida/acometida-component.tsx(25,3): error TS2724: '"~/types/administracion"' has no exported member named 'AcometidaProps'. Did you mean 'AcometidaProps'?
+app/components/administracion/acometida/acometida-form.test.tsx(5,3): error TS2724: '"~/types/administracion"' has no exported member named 'Acometida'. Did you mean 'AcometidaRow'?
+app/components/administracion/acometida/acometida-form.test.tsx(6,3): error TS2305: Module '"~/types/administracion"' has no exported member 'ComboEmpalmes'.
+app/components/administracion/acometida/acometida-form.test.tsx(7,3): error TS2305: Module '"~/types/administracion"' has no exported member 'ComboNichos'.
+app/components/administracion/acometida/acometida-form.test.tsx(8,3): error TS2305: Module '"~/types/administracion"' has no exported member 'ComboSectores'.
+app/components/administracion/acometida/acometida-form.test.tsx(9,3): error TS2305: Module '"~/types/administracion"' has no exported member 'ContratosDisponibles'.
+app/components/administracion/acometida/acometida-form.tsx(37,3): error TS2305: Module '"~/types/administracion"' has no exported member 'AcometidaProps'.
+app/components/administracion/acometida/acometida-form.tsx(39,3): error TS2724: '"~/types/administracion"' has no exported member named 'AcometidaProps'. Did you mean 'AcometidaProps'?
+app/components/administracion/acometida/columns.test.tsx(5,15): error TS2724: '"~/types/administracion"' has no exported member named 'Acometida'. Did you mean 'AcometidaRow'?
+app/components/administracion/cargo-facturable/cargo-facturable-modal-form.tsx(155,11): error TS2322: Type 'string | number' is not assignable to type 'number | undefined'.
+  Type 'string' is not assignable to type 'number'.
+app/components/administracion/cargo-facturable/cargo-facturable-modal-form.tsx(156,11): error TS2322: Type 'string | number' is not assignable to type 'number | undefined'.
+  Type 'string' is not assignable to type 'number'.
+app/components/administracion/cargo-facturable/cargo-facturable-modal-form.tsx(157,11): error TS2322: Type 'string | number' is not assignable to type 'number | undefined'.
+  Type 'string' is not assignable to type 'number'.
+app/components/administracion/clientes/clientes-component.tsx(25,3): error TS2305: Module '"~/types/administracion"' has no exported member 'ClienteLoadingState'.
+app/components/administracion/clientes/clientes-component.tsx(26,3): error TS2305: Module '"~/types/administracion"' has no exported member 'ClienteModalState'.
+app/components/administracion/clientes/clientes-component.tsx(27,3): error TS2305: Module '"~/types/administracion"' has no exported member 'GetClientes'.
+app/components/administracion/clientes/clientes-component.tsx(28,3): error TS2305: Module '"~/types/administracion"' has no exported member 'GetClientesByRut'.
+app/components/administracion/clientes/clientes-component.tsx(29,3): error TS2305: Module '"~/types/administracion"' has no exported member 'NombreComuna'.
+app/components/administracion/clientes/clientes-component.tsx(30,3): error TS2305: Module '"~/types/administracion"' has no exported member 'NombreGiro'.
+app/components/administracion/clientes/clientes-component.tsx(127,25): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/components/administracion/clientes/clientes-component.tsx(250,29): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/components/administracion/clientes/columns.tsx(7,15): error TS2305: Module '"~/types/administracion"' has no exported member 'GetClientes'.
+app/components/administracion/clientes/detalles-cliente.tsx(29,15): error TS2305: Module '"~/types/administracion"' has no exported member 'GetClientesByRut'.
+app/components/administracion/clientes/form/crear-cliente-component.tsx(37,15): error TS2305: Module '"~/types/administracion"' has no exported member 'NombreComuna'.
+app/components/administracion/clientes/form/crear-cliente-component.tsx(37,27): error TS2305: Module '"~/types/administracion"' has no exported member 'NombreGiro'.
+app/components/administracion/clientes/form/editar-cliente-component.tsx(37,3): error TS2305: Module '"~/types/administracion"' has no exported member 'GetClientesByRut'.
+app/components/administracion/clientes/form/editar-cliente-component.tsx(38,3): error TS2305: Module '"~/types/administracion"' has no exported member 'NombreComuna'.
+app/components/administracion/clientes/form/editar-cliente-component.tsx(39,3): error TS2305: Module '"~/types/administracion"' has no exported member 'NombreGiro'.
+app/components/administracion/clientes/form/editar-cliente-component.tsx(148,43): error TS2551: Property 'codComuna' does not exist on type 'Cliente'. Did you mean 'codigoComuna'?
+app/components/administracion/clientes/form/editar-cliente-component.tsx(151,40): error TS2339: Property 'correo' does not exist on type 'Cliente'.
+app/components/administracion/condiciones-contrato/detalles-condiciones-contrato.tsx(20,15): error TS2724: '"~/types/administracion"' has no exported member named 'CondicionContrato'. Did you mean 'CondicionesContratoRow'?
+app/components/administracion/contratantes/columns.tsx(6,15): error TS2305: Module '"~/types/administracion"' has no exported member 'NombreComuna'.
+app/components/administracion/contratantes/columns.tsx(6,27): error TS2305: Module '"~/types/administracion"' has no exported member 'GetContratante'.
+app/components/administracion/contratantes/contratantes-component.tsx(20,3): error TS2305: Module '"~/types/administracion"' has no exported member 'NombreComuna'.
+app/components/administracion/contratantes/contratantes-component.tsx(21,3): error TS2305: Module '"~/types/administracion"' has no exported member 'GetContratante'.
+app/components/administracion/contratantes/contratantes-component.tsx(22,3): error TS2305: Module '"~/types/administracion"' has no exported member 'NombreGiro'.
+app/components/administracion/contratantes/detalles-contratante.tsx(28,15): error TS2305: Module '"~/types/administracion"' has no exported member 'NombreComuna'.
+app/components/administracion/contratantes/detalles-contratante.tsx(28,27): error TS2305: Module '"~/types/administracion"' has no exported member 'GetContratante'.
+app/components/administracion/contratantes/form/crear-contratante-component.tsx(38,15): error TS2305: Module '"~/types/administracion"' has no exported member 'NombreComuna'.
+app/components/administracion/contratantes/form/crear-contratante-component.tsx(38,27): error TS2305: Module '"~/types/administracion"' has no exported member 'NombreGiro'.
+app/components/administracion/contratantes/form/crear-contratante-component.tsx(110,39): error TS2551: Property 'getContratantesData' does not exist on type 'AdministracionService'. Did you mean 'getContratosData'?
+app/components/administracion/contratantes/form/crear-contratante-component.tsx(121,58): error TS7006: Parameter 'c' implicitly has an 'any' type.
+app/components/administracion/contratantes/form/editar-contratante-component.tsx(15,3): error TS2305: Module '"~/types/administracion"' has no exported member 'NombreComuna'.
+app/components/administracion/contratantes/form/editar-contratante-component.tsx(16,3): error TS2305: Module '"~/types/administracion"' has no exported member 'GetContratante'.
+app/components/administracion/contratantes/form/editar-contratante-component.tsx(17,3): error TS2305: Module '"~/types/administracion"' has no exported member 'NombreGiro'.
+app/components/administracion/contratantes/form/editar-contratante-component.tsx(99,33): error TS2551: Property 'getContratantesData' does not exist on type 'AdministracionService'. Did you mean 'getContratosData'?
+app/components/administracion/contratantes/form/editar-contratante-component.tsx(112,58): error TS7006: Parameter 'c' implicitly has an 'any' type.
+app/components/administracion/contratos/columns.tsx(9,15): error TS2305: Module '"~/types/administracion"' has no exported member 'ContratosRow'.
+app/components/administracion/contratos/contract-details-modal.tsx(31,3): error TS2305: Module '"~/types/administracion"' has no exported member 'ContratosDisponiblesPorId'.
+app/components/administracion/contratos/contract-details-modal.tsx(32,3): error TS2305: Module '"~/types/administracion"' has no exported member 'ContratosRow'.
+app/components/administracion/contratos/contratos-component.tsx(19,15): error TS2305: Module '"~/types/administracion"' has no exported member 'ContratoModalState'.
+app/components/administracion/contratos/contratos-component.tsx(19,35): error TS2305: Module '"~/types/administracion"' has no exported member 'ContratosRow'.
+app/components/administracion/contratos/contratos-component.tsx(103,20): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/components/administracion/contratos/contratos-component.tsx(111,20): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/components/administracion/contratos/contratos-component.tsx(120,22): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/components/administracion/contratos/contratos-component.tsx(136,20): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/components/administracion/contratos/contratos-component.tsx(254,28): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/components/administracion/contratos/contratos-component.tsx(267,28): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/components/administracion/contratos/delete-confirmation-dialog.tsx(11,15): error TS2305: Module '"~/types/administracion"' has no exported member 'ContratosRow'.
+app/components/administracion/contratos/export-buttons.tsx(6,15): error TS2305: Module '"~/types/administracion"' has no exported member 'ContratosRow'.
+app/components/administracion/contratos/route/crear-contrato-component.tsx(52,3): error TS2305: Module '"~/types/administracion"' has no exported member 'ContratoFormData'.
+app/components/administracion/contratos/route/crear-contrato-component.tsx(53,3): error TS2305: Module '"~/types/administracion"' has no exported member 'GetClienteContrato'.
+app/components/administracion/contratos/route/crear-contrato-component.tsx(54,3): error TS2305: Module '"~/types/administracion"' has no exported member 'NombreComuna'.
+app/components/administracion/contratos/route/crear-contrato-component.tsx(55,3): error TS2305: Module '"~/types/administracion"' has no exported member 'GetLocal'.
+app/components/administracion/contratos/route/crear-contrato-component.tsx(56,3): error TS2305: Module '"~/types/administracion"' has no exported member 'GetMadres'.
+app/components/administracion/contratos/route/crear-contrato-component.tsx(57,3): error TS2305: Module '"~/types/administracion"' has no exported member 'PropietariosRow'.
+app/components/administracion/contratos/route/crear-contrato-component.tsx(59,15): error TS2724: '"~/types/mantencion"' has no exported member named 'Tarifas'. Did you mean 'Tarifa'?
+app/components/administracion/contratos/route/crear-contrato-component.tsx(59,24): error TS2724: '"~/types/mantencion"' has no exported member named 'TiposContrato'. Did you mean 'TipoContrato'?
+app/components/administracion/contratos/route/crear-contrato-component.tsx(320,20): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/components/administracion/contratos/route/crear-contrato-component.tsx(330,20): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/components/administracion/contratos/route/crear-contrato-component.tsx(339,20): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/components/administracion/contratos/route/crear-contrato-component.tsx(348,20): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/components/administracion/contratos/route/crear-contrato-component.tsx(357,20): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/components/administracion/contratos/route/crear-contrato-component.tsx(367,18): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/components/administracion/contratos/route/crear-contrato-component.tsx(372,18): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/components/administracion/contratos/route/crear-contrato-component.tsx(376,18): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/components/administracion/contratos/route/crear-contrato-component.tsx(380,18): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/components/administracion/contratos/route/crear-contrato-component.tsx(384,18): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/components/administracion/contratos/route/crear-contrato-component.tsx(388,18): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/components/administracion/contratos/route/editar-contrato-component.tsx(49,3): error TS2305: Module '"~/types/administracion"' has no exported member 'ContratoFormData'.
+app/components/administracion/contratos/route/editar-contrato-component.tsx(50,3): error TS2305: Module '"~/types/administracion"' has no exported member 'GetClienteContrato'.
+app/components/administracion/contratos/route/editar-contrato-component.tsx(51,3): error TS2305: Module '"~/types/administracion"' has no exported member 'NombreComuna'.
+app/components/administracion/contratos/route/editar-contrato-component.tsx(52,3): error TS2305: Module '"~/types/administracion"' has no exported member 'GetContratoPorId'.
+app/components/administracion/contratos/route/editar-contrato-component.tsx(53,3): error TS2305: Module '"~/types/administracion"' has no exported member 'GetLocal'.
+app/components/administracion/contratos/route/editar-contrato-component.tsx(54,3): error TS2305: Module '"~/types/administracion"' has no exported member 'GetMadres'.
+app/components/administracion/contratos/route/editar-contrato-component.tsx(55,3): error TS2305: Module '"~/types/administracion"' has no exported member 'PropietariosRow'.
+app/components/administracion/contratos/route/editar-contrato-component.tsx(57,15): error TS2724: '"~/types/mantencion"' has no exported member named 'Tarifas'. Did you mean 'Tarifa'?
+app/components/administracion/contratos/route/editar-contrato-component.tsx(57,24): error TS2724: '"~/types/mantencion"' has no exported member named 'TiposContrato'. Did you mean 'TipoContrato'?
+app/components/administracion/contratos/route/editar-contrato-component.tsx(389,19): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/components/administracion/contratos/route/editar-contrato-component.tsx(402,19): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/components/administracion/contratos/route/editar-contrato-component.tsx(412,19): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/components/administracion/contratos/route/editar-contrato-component.tsx(461,19): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/components/administracion/contratos/route/editar-contrato-component.tsx(470,19): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/components/administracion/contratos/route/editar-contrato-component.tsx(480,17): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/components/administracion/contratos/route/editar-contrato-component.tsx(485,17): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/components/administracion/contratos/route/editar-contrato-component.tsx(490,17): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/components/administracion/contratos/route/editar-contrato-component.tsx(495,17): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/components/administracion/contratos/route/editar-contrato-component.tsx(499,17): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/components/administracion/contratos/route/editar-contrato-component.tsx(503,17): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/components/administracion/usuarios/delete-confirmation-dialog.tsx(35,22): error TS2339: Property 'nombres' does not exist on type 'Usuarios'.
+app/components/administracion/usuarios/delete-confirmation-dialog.tsx(35,38): error TS2339: Property 'apellidos' does not exist on type 'Usuarios'.
+app/components/administracion/usuarios/user-permissions-modal.tsx(22,15): error TS2305: Module '"~/types/administracion"' has no exported member 'PermisoUsuario'.
+app/components/administracion/usuarios/user-permissions-modal.tsx(50,40): error TS2339: Property 'id' does not exist on type 'Usuarios'.
+app/components/administracion/usuarios/user-permissions-modal.tsx(91,25): error TS2339: Property 'nombres' does not exist on type 'Usuarios'.
+app/components/administracion/usuarios/user-permissions-modal.tsx(91,40): error TS2339: Property 'apellidos' does not exist on type 'Usuarios'.
+app/components/administracion/usuarios/user-permissions-modal.tsx(93,25): error TS2551: Property 'username' does not exist on type 'Usuarios'. Did you mean 'nombre_Usuario'?
+app/components/administracion/usuarios/user-roles-modal.tsx(68,21): error TS2339: Property 'id' does not exist on type 'Usuarios'.
+app/components/administracion/usuarios/user-roles-modal.tsx(124,23): error TS2339: Property 'id' does not exist on type 'Usuarios'.
+app/components/administracion/usuarios/user-roles-modal.tsx(136,23): error TS2339: Property 'id' does not exist on type 'Usuarios'.
+app/components/administracion/usuarios/user-roles-modal.tsx(202,25): error TS2339: Property 'nombres' does not exist on type 'Usuarios'.
+app/components/administracion/usuarios/user-roles-modal.tsx(202,40): error TS2339: Property 'apellidos' does not exist on type 'Usuarios'.
+app/components/administracion/usuarios/user-roles-modal.tsx(204,25): error TS2551: Property 'username' does not exist on type 'Usuarios'. Did you mean 'nombre_Usuario'?
+app/components/administracion/usuarios/usuarios-component.tsx(18,15): error TS2305: Module '"~/types/administracion"' has no exported member 'UsuarioModalState'.
+app/components/administracion/usuarios/usuarios-component.tsx(58,20): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/components/administracion/usuarios/usuarios-component.tsx(66,20): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/components/administracion/usuarios/usuarios-component.tsx(74,20): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/components/administracion/usuarios/usuarios-component.tsx(82,20): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/components/administracion/usuarios/usuarios-component.tsx(90,20): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/components/administracion/usuarios/usuarios-component.tsx(100,20): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/components/administracion/usuarios/usuarios-component.tsx(110,22): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/components/administracion/usuarios/usuarios-component.tsx(118,27): error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
+app/components/administracion/usuarios/usuarios-component.tsx(130,22): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/components/administracion/usuarios/usuarios-component.tsx(198,28): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/components/administracion/usuarios/usuarios-component.tsx(210,28): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/components/administracion/usuarios/usuarios-component.tsx(220,28): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/components/administracion/usuarios/usuarios-component.tsx(231,28): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/components/mantencion/ciclos-facturacion/ciclos-facturacion-component.tsx(17,15): error TS2724: '"~/types/mantencion"' has no exported member named 'CiclosFacturacion'. Did you mean 'CicloFacturacion'?
+app/components/mantencion/sector/sector-component.tsx(17,15): error TS2724: '"~/types/mantencion"' has no exported member named 'Sectores'. Did you mean 'Sector'?
+app/components/mantencion/tarifas/tarifas-component.tsx(17,15): error TS2724: '"~/types/mantencion"' has no exported member named 'Tarifas'. Did you mean 'Tarifa'?
+app/components/mantencion/tipos-contratos/columns.tsx(6,15): error TS2724: '"~/types/mantencion"' has no exported member named 'TiposContrato'. Did you mean 'TipoContrato'?
+app/components/mantencion/tipos-contratos/tipo-contrato-form-modal.tsx(27,15): error TS2724: '"~/types/mantencion"' has no exported member named 'TiposContrato'. Did you mean 'TipoContrato'?
+app/components/mantencion/tipos-contratos/tipos-contratos-component.tsx(17,15): error TS2724: '"~/types/mantencion"' has no exported member named 'TiposContrato'. Did you mean 'TipoContrato'?
+app/components/operaciones/periodo-facturacion/periodo-facturacion-component.tsx(39,10): error TS2304: Cannot find name 'Anio'.
+app/components/operaciones/periodo-facturacion/periodo-facturacion-component.tsx(40,13): error TS2304: Cannot find name 'Periodos'.
+app/components/operaciones/periodo-facturacion/periodo-facturacion-component.tsx(44,52): error TS2304: Cannot find name 'Periodos'.
+app/components/operaciones/periodo-facturacion/periodo-facturacion-component.tsx(64,35): error TS2304: Cannot find name 'Periodos'.
+app/components/operaciones/revisar-precio/revisar-precio-component.tsx(85,47): error TS2551: Property 'getRevisarPreciosData' does not exist on type 'OperacionesService'. Did you mean 'getRevisarPreciosData'?
+app/components/operaciones/revisar-precio/revisar-precio-component.tsx(116,45): error TS2551: Property 'getRevisarPreciosData' does not exist on type 'OperacionesService'. Did you mean 'getRevisarPreciosData'?
+app/components/profile/profile-component.tsx(34,15): error TS2305: Module '"~/types/administracion"' has no exported member 'ActualizarUsuarioProps'.
+app/components/profile/profile-component.tsx(77,37): error TS2551: Property 'username' does not exist on type 'Usuarios'. Did you mean 'nombre_Usuario'?
+app/components/profile/profile-component.tsx(79,29): error TS2339: Property 'nombres' does not exist on type 'Usuarios'.
+app/components/profile/profile-component.tsx(80,31): error TS2339: Property 'apellidos' does not exist on type 'Usuarios'.
+app/components/profile/profile-component.tsx(81,34): error TS2339: Property 'departamento' does not exist on type 'Usuarios'.
+app/components/profile/profile-component.tsx(82,28): error TS2339: Property 'activo' does not exist on type 'Usuarios'.
+app/components/profile/profile-component.tsx(153,43): error TS2339: Property 'id' does not exist on type 'Usuarios'.
+app/components/profile/profile-component.tsx(175,17): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/components/reportes/consultar-contrato/columns.tsx(6,15): error TS2724: '"~/types/reportes"' has no exported member named 'BuscarContratos'. Did you mean 'BuscarContrato'?
+app/components/reportes/consultar-contrato/consultar-contrato-component.tsx(13,15): error TS2724: '"~/types/reportes"' has no exported member named 'BuscarContratos'. Did you mean 'BuscarContrato'?
+app/components/reportes/consultar-contrato/contrato/columns-facturas.tsx(6,15): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleFacturas'.
+app/components/reportes/consultar-contrato/contrato/columns-lecturas.tsx(6,15): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleLecturas'.
+app/components/reportes/consultar-contrato/contrato/contrato-component.tsx(13,3): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleCliente'.
+app/components/reportes/consultar-contrato/contrato/contrato-component.tsx(14,3): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleContrato'.
+app/components/reportes/consultar-contrato/contrato/contrato-component.tsx(15,3): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleFacturas'.
+app/components/reportes/consultar-contrato/contrato/contrato-component.tsx(16,3): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleLecturas'.
+app/components/reportes/consultar-contrato/contrato/contrato-component.tsx(17,3): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleLocal'.
+app/components/reportes/consultar-contrato/contrato/contrato-component.tsx(18,3): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleMedidores'.
+app/components/reportes/consultar-contrato/contrato/contrato-component.tsx(19,3): error TS2305: Module '"~/types/reportes"' has no exported member 'DetallePropietario'.
+app/components/reportes/consultar-contrato/contrato/contrato-component.tsx(20,3): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleUbicacion'.
+app/components/reportes/consultar-contrato/contrato/facturas-analytics-simple.tsx(59,15): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleFacturas'.
+app/components/reportes/consultar-contrato/contrato/facturas/billing-dashboard.tsx(19,15): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleFacturas'.
+app/components/reportes/consultar-contrato/contrato/facturas/billing-dashboard.tsx(19,32): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleLecturas'.
+app/components/reportes/consultar-contrato/contrato/facturas/billing-evolution-chart.tsx(24,15): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleFacturas'.
+app/components/reportes/consultar-contrato/contrato/facturas/billing-kpis.tsx(14,15): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleFacturas'.
+app/components/reportes/consultar-contrato/contrato/facturas/consumption-details-table.tsx(22,15): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleLecturas'.
+app/components/reportes/consultar-contrato/contrato/facturas/consumption-trend-chart.tsx(24,15): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleLecturas'.
+app/components/reportes/consultar-contrato/contrato/facturas/cost-analysis-chart.tsx(22,15): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleFacturas'.
+app/components/reportes/consultar-contrato/contrato/facturas/cost-distribution.tsx(13,15): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleFacturas'.
+app/components/reportes/consultar-contrato/contrato/facturas/energy-consumption-dashboard.tsx(20,15): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleLecturas'.
+app/components/reportes/consultar-contrato/contrato/facturas/invoices-table.tsx(29,15): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleFacturas'.
+app/components/reportes/consultar-contrato/contrato/facturas/overconsumption-analysis.tsx(25,15): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleLecturas'.
+app/components/reportes/consultar-contrato/contrato/facturas/payment-timeline.tsx(7,15): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleFacturas'.
+app/components/reportes/consultar-contrato/contrato/facturas/period-comparison.tsx(20,15): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleFacturas'.
+app/components/reportes/consultar-contrato/contrato/informacion-contrato.tsx(8,3): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleCliente'.
+app/components/reportes/consultar-contrato/contrato/informacion-contrato.tsx(9,3): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleContrato'.
+app/components/reportes/consultar-contrato/contrato/informacion-contrato.tsx(10,3): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleLocal'.
+app/components/reportes/consultar-contrato/contrato/informacion-contrato.tsx(11,3): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleMedidores'.
+app/components/reportes/consultar-contrato/contrato/informacion-contrato.tsx(12,3): error TS2305: Module '"~/types/reportes"' has no exported member 'DetallePropietario'.
+app/components/reportes/consultar-contrato/contrato/informacion-contrato.tsx(13,3): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleUbicacion'.
+app/components/reportes/consultar-contrato/contrato/lecturas-analytics-simple.tsx(60,15): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleLecturas'.
+app/components/reportes/resumen-facturacion/columns.tsx(4,15): error TS2305: Module '"~/types/reportes"' has no exported member 'FacturacionPorCargo'.
+app/components/reportes/resumen-facturacion/resumen-facturacion-component.tsx(41,3): error TS2305: Module '"~/types/reportes"' has no exported member 'ComboEmpalmes'.
+app/components/reportes/resumen-facturacion/resumen-facturacion-component.tsx(42,3): error TS2305: Module '"~/types/reportes"' has no exported member 'FacturacionPorCargo'.
+app/components/reportes/resumen-facturacion/resumen-facturacion-component.tsx(43,3): error TS2305: Module '"~/types/reportes"' has no exported member 'PeriodosFacturacion'.
+app/components/reportes/resumen-facturacion/resumen-facturacion-component.tsx(96,46): error TS2339: Property 'getFacturacionPorCargo' does not exist on type 'ReportesService'.
+app/components/ui/calendar.tsx(84,9): error TS2353: Object literal may only specify known properties, and 'table' does not exist in type 'Partial<ClassNames>'.
+app/components/ui/chart.tsx(107,3): error TS2339: Property 'payload' does not exist on type 'Omit<Props<ValueType, NameType>, PropertiesReadFromContext> & { active?: boolean | undefined; allowEscapeViewBox?: AllowInDimension | undefined; ... 24 more ...; wrapperStyle?: CSSProperties | undefined; } & ClassAttributes<...> & HTMLAttributes<...> & { ...; }'.
+app/components/ui/chart.tsx(112,3): error TS2339: Property 'label' does not exist on type 'Omit<Props<ValueType, NameType>, PropertiesReadFromContext> & { active?: boolean | undefined; allowEscapeViewBox?: AllowInDimension | undefined; ... 24 more ...; wrapperStyle?: CSSProperties | undefined; } & ClassAttributes<...> & HTMLAttributes<...> & { ...; }'.
+app/components/ui/chart.tsx(181,19): error TS7006: Parameter 'item' implicitly has an 'any' type.
+app/components/ui/chart.tsx(182,17): error TS7006: Parameter 'item' implicitly has an 'any' type.
+app/components/ui/chart.tsx(182,23): error TS7006: Parameter 'index' implicitly has an 'any' type.
+app/components/ui/chart.tsx(260,39): error TS2344: Type '"payload" | "verticalAlign"' does not satisfy the constraint '"string" | "transform" | "filter" | "fill" | "values" | "method" | "type" | "key" | "id" | "name" | "operator" | "local" | "children" | "mode" | "color" | "crossOrigin" | "lang" | ... 433 more ... | "portal"'.
+  Type '"payload"' is not assignable to type '"string" | "transform" | "filter" | "fill" | "values" | "method" | "type" | "key" | "id" | "name" | "operator" | "local" | "children" | "mode" | "color" | "crossOrigin" | "lang" | ... 433 more ... | "portal"'.
+app/components/ui/chart.tsx(266,17): error TS2339: Property 'length' does not exist on type '{}'.
+app/components/ui/chart.tsx(279,10): error TS2339: Property 'filter' does not exist on type '{}'.
+app/components/ui/chart.tsx(279,17): error TS7006: Parameter 'item' implicitly has an 'any' type.
+app/components/ui/chart.tsx(280,14): error TS7006: Parameter 'item' implicitly has an 'any' type.
+app/hooks/administracion/use-cargo-filters.ts(4,15): error TS2724: '"~/types/administracion"' has no exported member named 'BuscarCargoFacturable'. Did you mean 'CargosFacturables'?
+app/hooks/administracion/use-client-filters.ts(3,15): error TS2305: Module '"~/types/administracion"' has no exported member 'GetClientes'.
+app/hooks/administracion/use-contract-filters.ts(4,15): error TS2305: Module '"~/types/administracion"' has no exported member 'ContratosRow'.
+app/hooks/administracion/use-export-clientes.ts(2,15): error TS2305: Module '"~/types/administracion"' has no exported member 'GetClientes'.
+app/hooks/administracion/use-export-contratos.ts(2,15): error TS2305: Module '"~/types/administracion"' has no exported member 'ContratosRow'.
+app/hooks/operaciones/use-validacion-precios.test.ts(16,34): error TS2551: Property 'getRevisarPreciosData' does not exist on type 'OperacionesService'. Did you mean 'getRevisarPreciosData'?
+app/hooks/operaciones/use-validacion-precios.test.ts(57,33): error TS2551: Property 'getRevisarPreciosData' does not exist on type 'OperacionesService'. Did you mean 'getRevisarPreciosData'?
+app/hooks/operaciones/use-validacion-precios.test.ts(129,34): error TS2551: Property 'getRevisarPreciosData' does not exist on type 'OperacionesService'. Did you mean 'getRevisarPreciosData'?
+app/hooks/operaciones/use-validacion-precios.test.ts(169,34): error TS2551: Property 'getRevisarPreciosData' does not exist on type 'OperacionesService'. Did you mean 'getRevisarPreciosData'?
+app/hooks/operaciones/use-validacion-precios.test.ts(208,34): error TS2551: Property 'getRevisarPreciosData' does not exist on type 'OperacionesService'. Did you mean 'getRevisarPreciosData'?
+app/hooks/operaciones/use-validacion-precios.test.ts(246,34): error TS2551: Property 'getRevisarPreciosData' does not exist on type 'OperacionesService'. Did you mean 'getRevisarPreciosData'?
+app/hooks/operaciones/use-validacion-precios.ts(51,47): error TS2551: Property 'getRevisarPreciosData' does not exist on type 'OperacionesService'. Did you mean 'getRevisarPreciosData'?
+app/hooks/use-claves.ts(4,15): error TS2305: Module '"~/types/monitor"' has no exported member 'Clave'.
+app/hooks/use-mantencion.ts(5,3): error TS2724: '"~/types/mantencion"' has no exported member named 'CiclosFacturacion'. Did you mean 'CicloFacturacion'?
+app/hooks/use-mantencion.ts(6,3): error TS2724: '"~/types/mantencion"' has no exported member named 'Claves'. Did you mean 'Clave'?
+app/hooks/use-mantencion.ts(7,3): error TS2305: Module '"~/types/mantencion"' has no exported member 'ComboAsociadoConceptos'.
+app/hooks/use-mantencion.ts(8,3): error TS2724: '"~/types/mantencion"' has no exported member named 'Conceptos'. Did you mean 'Concepto'?
+app/hooks/use-mantencion.ts(13,3): error TS2724: '"~/types/mantencion"' has no exported member named 'Sectores'. Did you mean 'Sector'?
+app/hooks/use-mantencion.ts(14,3): error TS2724: '"~/types/mantencion"' has no exported member named 'Tarifas'. Did you mean 'Tarifa'?
+app/hooks/use-mantencion.ts(15,3): error TS2724: '"~/types/mantencion"' has no exported member named 'TiposContrato'. Did you mean 'TipoContrato'?
+app/hooks/use-mantencion.ts(16,3): error TS2724: '"~/types/mantencion"' has no exported member named 'Zonas'. Did you mean 'Zona'?
+app/hooks/use-operaciones.ts(6,3): error TS2305: Module '"~/types/operaciones"' has no exported member 'Ciclo'.
+app/hooks/use-operaciones.ts(7,3): error TS2305: Module '"~/types/operaciones"' has no exported member 'ConsultarAsignacionSectores'.
+app/hooks/use-operaciones.ts(8,3): error TS2305: Module '"~/types/operaciones"' has no exported member 'ConsultarMantenedorRevisionCorte'.
+app/hooks/use-operaciones.ts(9,3): error TS2305: Module '"~/types/operaciones"' has no exported member 'ConsultarSectores'.
+app/hooks/use-operaciones.ts(10,3): error TS2305: Module '"~/types/operaciones"' has no exported member 'OpcionesPrepararLecturas'.
+app/hooks/use-operaciones.ts(11,3): error TS2305: Module '"~/types/operaciones"' has no exported member 'PeriodoAbierto'.
+app/hooks/use-operaciones.ts(13,3): error TS2305: Module '"~/types/operaciones"' has no exported member 'PreciosCargoAgualova'.
+app/hooks/use-operaciones.ts(14,3): error TS2305: Module '"~/types/operaciones"' has no exported member 'PreciosCargoEnel'.
+app/hooks/use-operaciones.ts(15,3): error TS2305: Module '"~/types/operaciones"' has no exported member 'RevisarPrecioDos'.
+app/hooks/use-operaciones.ts(16,3): error TS2305: Module '"~/types/operaciones"' has no exported member 'RevisarPrecioUno'.
+app/hooks/use-operaciones.ts(17,3): error TS2305: Module '"~/types/operaciones"' has no exported member 'TotalesCorteReposicion'.
+app/hooks/use-operaciones.ts(18,3): error TS2305: Module '"~/types/operaciones"' has no exported member 'ValidarSectoresPendientes'.
+app/hooks/use-operaciones.ts(72,30): error TS2339: Property 'getAsignacionSectores' does not exist on type 'OperacionesService'.
+app/hooks/use-operaciones.ts(73,27): error TS2345: Argument of type '{}' is not assignable to parameter of type 'SetStateAction<ConsultarAsignacionSectores[]>'.
+app/hooks/use-operaciones.ts(128,32): error TS2551: Property 'getRevisarPrecioData' does not exist on type 'OperacionesService'. Did you mean 'getRevisarPreciosData'?
+app/hooks/use-operaciones.ts(148,49): error TS2339: Property 'getPreciosPorCiclo' does not exist on type 'OperacionesService'.
+app/hooks/use-operaciones.ts(218,32): error TS2551: Property 'getCerrarLecturasData' does not exist on type 'OperacionesService'. Did you mean 'getPrepararLecturasData'?
+app/hooks/use-user-profile.ts(5,15): error TS2305: Module '"~/types/administracion"' has no exported member 'ActualizarUsuarioProps'.
+app/hooks/use-user-profile.ts(34,5): error TS2322: Type 'null' is not assignable to type 'string'.
+app/hooks/use-user-profile.ts(60,16): error TS2339: Property 'id' does not exist on type 'Usuarios'.
+app/hooks/use-user-profile.ts(99,35): error TS2339: Property 'id' does not exist on type 'Usuarios'.
+app/routes/dashboard/administracion/condiciones-contrato.tsx(42,9): error TS2322: Type 'import("C:/Users/gbourguett/Documents/DESARROLLOS-LV/enerlova/Frontend_Fi_Agualova_2026/app/types/administracion").Concepto[]' is not assignable to type 'import("C:/Users/gbourguett/Documents/DESARROLLOS-LV/enerlova/Frontend_Fi_Agualova_2026/app/types/mantencion").Concepto[]'.
+  Type 'Concepto' is missing the following properties from type 'Concepto': denominacion, unidad, fijoVariable, conceptoAsociado
+app/routes/dashboard/administracion/contratantes.tsx(17,46): error TS2551: Property 'getContratantesData' does not exist on type 'AdministracionService'. Did you mean 'getContratosData'?
+app/routes/dashboard/administracion/contratantes.tsx(29,11): error TS2339: Property 'contratantes' does not exist on type 'undefined'.
+app/routes/dashboard/administracion/contratantes.tsx(29,25): error TS2339: Property 'comunas' does not exist on type 'undefined'.
+app/routes/dashboard/administracion/contratantes.tsx(29,34): error TS2339: Property 'giros' does not exist on type 'undefined'.
+app/routes/dashboard/administracion/contratos/editar-contrato.tsx(27,27): error TS2339: Property 'contrato' does not exist on type '{}'.
+app/routes/dashboard/administracion/contratos/editar-contrato.tsx(28,31): error TS2339: Property 'propietarios' does not exist on type '{}'.
+app/routes/dashboard/administracion/contratos/editar-contrato.tsx(29,26): error TS2339: Property 'locales' does not exist on type '{}'.
+app/routes/dashboard/administracion/contratos/editar-contrato.tsx(30,26): error TS2339: Property 'comunas' does not exist on type '{}'.
+app/routes/dashboard/administracion/contratos/editar-contrato.tsx(31,25): error TS2339: Property 'madres' does not exist on type '{}'.
+app/routes/dashboard/administracion/contratos/editar-contrato.tsx(32,27): error TS2339: Property 'clientes' does not exist on type '{}'.
+app/routes/dashboard/mantencion/conceptos.tsx(36,22): error TS2339: Property 'comboAsociadoConceptos' does not exist on type '{ conceptos: Concepto[]; conceptoAsociables: ConceptoAsociables[]; } | { conceptos: never[]; comboAsociadoConceptos: never[]; }'.
+app/routes/dashboard/monitor/exportar-lecturas.tsx(20,39): error TS2339: Property 'getPeriodosAndSectores' does not exist on type 'MonitorService'.
+app/routes/dashboard/reportes/components/administracion/acometida/acometida-component.test.tsx(6,3): error TS2724: '"~/types/administracion"' has no exported member named 'Acometida'. Did you mean 'AcometidaRow'?
+app/routes/dashboard/reportes/components/administracion/acometida/acometida-component.test.tsx(7,3): error TS2305: Module '"~/types/administracion"' has no exported member 'ComboEmpalmes'.
+app/routes/dashboard/reportes/components/administracion/acometida/acometida-component.test.tsx(8,3): error TS2305: Module '"~/types/administracion"' has no exported member 'ComboNichos'.
+app/routes/dashboard/reportes/components/administracion/acometida/acometida-component.test.tsx(9,3): error TS2305: Module '"~/types/administracion"' has no exported member 'ComboSectores'.
+app/routes/dashboard/reportes/components/administracion/acometida/acometida-component.test.tsx(10,3): error TS2305: Module '"~/types/administracion"' has no exported member 'ContratosDisponibles'.
+app/routes/dashboard/reportes/components/administracion/acometida/acometida-component.tsx(23,3): error TS2305: Module '"~/types/administracion"' has no exported member 'AcometidaProps'.
+app/routes/dashboard/reportes/components/administracion/acometida/acometida-component.tsx(25,3): error TS2724: '"~/types/administracion"' has no exported member named 'AcometidaProps'. Did you mean 'AcometidaProps'?
+app/routes/dashboard/reportes/components/administracion/acometida/acometida-form.test.tsx(5,3): error TS2724: '"~/types/administracion"' has no exported member named 'Acometida'. Did you mean 'AcometidaRow'?
+app/routes/dashboard/reportes/components/administracion/acometida/acometida-form.test.tsx(6,3): error TS2305: Module '"~/types/administracion"' has no exported member 'ComboEmpalmes'.
+app/routes/dashboard/reportes/components/administracion/acometida/acometida-form.test.tsx(7,3): error TS2305: Module '"~/types/administracion"' has no exported member 'ComboNichos'.
+app/routes/dashboard/reportes/components/administracion/acometida/acometida-form.test.tsx(8,3): error TS2305: Module '"~/types/administracion"' has no exported member 'ComboSectores'.
+app/routes/dashboard/reportes/components/administracion/acometida/acometida-form.test.tsx(9,3): error TS2305: Module '"~/types/administracion"' has no exported member 'ContratosDisponibles'.
+app/routes/dashboard/reportes/components/administracion/acometida/acometida-form.tsx(37,3): error TS2305: Module '"~/types/administracion"' has no exported member 'AcometidaProps'.
+app/routes/dashboard/reportes/components/administracion/acometida/acometida-form.tsx(39,3): error TS2724: '"~/types/administracion"' has no exported member named 'AcometidaProps'. Did you mean 'AcometidaProps'?
+app/routes/dashboard/reportes/components/administracion/acometida/columns.test.tsx(5,15): error TS2724: '"~/types/administracion"' has no exported member named 'Acometida'. Did you mean 'AcometidaRow'?
+app/routes/dashboard/reportes/components/administracion/cargo-facturable/cargo-facturable-modal-form.tsx(155,11): error TS2322: Type 'string | number' is not assignable to type 'number | undefined'.
+  Type 'string' is not assignable to type 'number'.
+app/routes/dashboard/reportes/components/administracion/cargo-facturable/cargo-facturable-modal-form.tsx(156,11): error TS2322: Type 'string | number' is not assignable to type 'number | undefined'.
+  Type 'string' is not assignable to type 'number'.
+app/routes/dashboard/reportes/components/administracion/cargo-facturable/cargo-facturable-modal-form.tsx(157,11): error TS2322: Type 'string | number' is not assignable to type 'number | undefined'.
+  Type 'string' is not assignable to type 'number'.
+app/routes/dashboard/reportes/components/administracion/clientes/clientes-component.tsx(25,3): error TS2305: Module '"~/types/administracion"' has no exported member 'ClienteLoadingState'.
+app/routes/dashboard/reportes/components/administracion/clientes/clientes-component.tsx(26,3): error TS2305: Module '"~/types/administracion"' has no exported member 'ClienteModalState'.
+app/routes/dashboard/reportes/components/administracion/clientes/clientes-component.tsx(27,3): error TS2305: Module '"~/types/administracion"' has no exported member 'GetClientes'.
+app/routes/dashboard/reportes/components/administracion/clientes/clientes-component.tsx(28,3): error TS2305: Module '"~/types/administracion"' has no exported member 'GetClientesByRut'.
+app/routes/dashboard/reportes/components/administracion/clientes/clientes-component.tsx(29,3): error TS2305: Module '"~/types/administracion"' has no exported member 'NombreComuna'.
+app/routes/dashboard/reportes/components/administracion/clientes/clientes-component.tsx(30,3): error TS2305: Module '"~/types/administracion"' has no exported member 'NombreGiro'.
+app/routes/dashboard/reportes/components/administracion/clientes/clientes-component.tsx(127,25): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/routes/dashboard/reportes/components/administracion/clientes/clientes-component.tsx(250,29): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/routes/dashboard/reportes/components/administracion/clientes/columns.tsx(7,15): error TS2305: Module '"~/types/administracion"' has no exported member 'GetClientes'.
+app/routes/dashboard/reportes/components/administracion/clientes/detalles-cliente.tsx(29,15): error TS2305: Module '"~/types/administracion"' has no exported member 'GetClientesByRut'.
+app/routes/dashboard/reportes/components/administracion/clientes/form/crear-cliente-component.tsx(37,15): error TS2305: Module '"~/types/administracion"' has no exported member 'NombreComuna'.
+app/routes/dashboard/reportes/components/administracion/clientes/form/crear-cliente-component.tsx(37,27): error TS2305: Module '"~/types/administracion"' has no exported member 'NombreGiro'.
+app/routes/dashboard/reportes/components/administracion/clientes/form/editar-cliente-component.tsx(37,3): error TS2305: Module '"~/types/administracion"' has no exported member 'GetClientesByRut'.
+app/routes/dashboard/reportes/components/administracion/clientes/form/editar-cliente-component.tsx(38,3): error TS2305: Module '"~/types/administracion"' has no exported member 'NombreComuna'.
+app/routes/dashboard/reportes/components/administracion/clientes/form/editar-cliente-component.tsx(39,3): error TS2305: Module '"~/types/administracion"' has no exported member 'NombreGiro'.
+app/routes/dashboard/reportes/components/administracion/clientes/form/editar-cliente-component.tsx(148,43): error TS2551: Property 'codComuna' does not exist on type 'Cliente'. Did you mean 'codigoComuna'?
+app/routes/dashboard/reportes/components/administracion/clientes/form/editar-cliente-component.tsx(151,40): error TS2339: Property 'correo' does not exist on type 'Cliente'.
+app/routes/dashboard/reportes/components/administracion/condiciones-contrato/detalles-condiciones-contrato.tsx(20,15): error TS2724: '"~/types/administracion"' has no exported member named 'CondicionContrato'. Did you mean 'CondicionesContratoRow'?
+app/routes/dashboard/reportes/components/administracion/contratantes/columns.tsx(6,15): error TS2305: Module '"~/types/administracion"' has no exported member 'NombreComuna'.
+app/routes/dashboard/reportes/components/administracion/contratantes/columns.tsx(6,27): error TS2305: Module '"~/types/administracion"' has no exported member 'GetContratante'.
+app/routes/dashboard/reportes/components/administracion/contratantes/contratantes-component.tsx(20,3): error TS2305: Module '"~/types/administracion"' has no exported member 'NombreComuna'.
+app/routes/dashboard/reportes/components/administracion/contratantes/contratantes-component.tsx(21,3): error TS2305: Module '"~/types/administracion"' has no exported member 'GetContratante'.
+app/routes/dashboard/reportes/components/administracion/contratantes/contratantes-component.tsx(22,3): error TS2305: Module '"~/types/administracion"' has no exported member 'NombreGiro'.
+app/routes/dashboard/reportes/components/administracion/contratantes/detalles-contratante.tsx(28,15): error TS2305: Module '"~/types/administracion"' has no exported member 'NombreComuna'.
+app/routes/dashboard/reportes/components/administracion/contratantes/detalles-contratante.tsx(28,27): error TS2305: Module '"~/types/administracion"' has no exported member 'GetContratante'.
+app/routes/dashboard/reportes/components/administracion/contratantes/form/crear-contratante-component.tsx(38,15): error TS2305: Module '"~/types/administracion"' has no exported member 'NombreComuna'.
+app/routes/dashboard/reportes/components/administracion/contratantes/form/crear-contratante-component.tsx(38,27): error TS2305: Module '"~/types/administracion"' has no exported member 'NombreGiro'.
+app/routes/dashboard/reportes/components/administracion/contratantes/form/crear-contratante-component.tsx(110,39): error TS2551: Property 'getContratantesData' does not exist on type 'AdministracionService'. Did you mean 'getContratosData'?
+app/routes/dashboard/reportes/components/administracion/contratantes/form/crear-contratante-component.tsx(121,58): error TS7006: Parameter 'c' implicitly has an 'any' type.
+app/routes/dashboard/reportes/components/administracion/contratantes/form/editar-contratante-component.tsx(15,3): error TS2305: Module '"~/types/administracion"' has no exported member 'NombreComuna'.
+app/routes/dashboard/reportes/components/administracion/contratantes/form/editar-contratante-component.tsx(16,3): error TS2305: Module '"~/types/administracion"' has no exported member 'GetContratante'.
+app/routes/dashboard/reportes/components/administracion/contratantes/form/editar-contratante-component.tsx(17,3): error TS2305: Module '"~/types/administracion"' has no exported member 'NombreGiro'.
+app/routes/dashboard/reportes/components/administracion/contratantes/form/editar-contratante-component.tsx(99,33): error TS2551: Property 'getContratantesData' does not exist on type 'AdministracionService'. Did you mean 'getContratosData'?
+app/routes/dashboard/reportes/components/administracion/contratantes/form/editar-contratante-component.tsx(112,58): error TS7006: Parameter 'c' implicitly has an 'any' type.
+app/routes/dashboard/reportes/components/administracion/contratos/columns.tsx(9,15): error TS2305: Module '"~/types/administracion"' has no exported member 'ContratosRow'.
+app/routes/dashboard/reportes/components/administracion/contratos/contract-details-modal.tsx(31,3): error TS2305: Module '"~/types/administracion"' has no exported member 'ContratosDisponiblesPorId'.
+app/routes/dashboard/reportes/components/administracion/contratos/contract-details-modal.tsx(32,3): error TS2305: Module '"~/types/administracion"' has no exported member 'ContratosRow'.
+app/routes/dashboard/reportes/components/administracion/contratos/contratos-component.tsx(19,15): error TS2305: Module '"~/types/administracion"' has no exported member 'ContratoModalState'.
+app/routes/dashboard/reportes/components/administracion/contratos/contratos-component.tsx(19,35): error TS2305: Module '"~/types/administracion"' has no exported member 'ContratosRow'.
+app/routes/dashboard/reportes/components/administracion/contratos/contratos-component.tsx(103,20): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/routes/dashboard/reportes/components/administracion/contratos/contratos-component.tsx(111,20): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/routes/dashboard/reportes/components/administracion/contratos/contratos-component.tsx(120,22): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/routes/dashboard/reportes/components/administracion/contratos/contratos-component.tsx(136,20): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/routes/dashboard/reportes/components/administracion/contratos/contratos-component.tsx(254,28): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/routes/dashboard/reportes/components/administracion/contratos/contratos-component.tsx(267,28): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/routes/dashboard/reportes/components/administracion/contratos/delete-confirmation-dialog.tsx(11,15): error TS2305: Module '"~/types/administracion"' has no exported member 'ContratosRow'.
+app/routes/dashboard/reportes/components/administracion/contratos/export-buttons.tsx(6,15): error TS2305: Module '"~/types/administracion"' has no exported member 'ContratosRow'.
+app/routes/dashboard/reportes/components/administracion/contratos/route/crear-contrato-component.tsx(52,3): error TS2305: Module '"~/types/administracion"' has no exported member 'ContratoFormData'.
+app/routes/dashboard/reportes/components/administracion/contratos/route/crear-contrato-component.tsx(53,3): error TS2305: Module '"~/types/administracion"' has no exported member 'GetClienteContrato'.
+app/routes/dashboard/reportes/components/administracion/contratos/route/crear-contrato-component.tsx(54,3): error TS2305: Module '"~/types/administracion"' has no exported member 'NombreComuna'.
+app/routes/dashboard/reportes/components/administracion/contratos/route/crear-contrato-component.tsx(55,3): error TS2305: Module '"~/types/administracion"' has no exported member 'GetLocal'.
+app/routes/dashboard/reportes/components/administracion/contratos/route/crear-contrato-component.tsx(56,3): error TS2305: Module '"~/types/administracion"' has no exported member 'GetMadres'.
+app/routes/dashboard/reportes/components/administracion/contratos/route/crear-contrato-component.tsx(57,3): error TS2305: Module '"~/types/administracion"' has no exported member 'PropietariosRow'.
+app/routes/dashboard/reportes/components/administracion/contratos/route/crear-contrato-component.tsx(59,15): error TS2724: '"~/types/mantencion"' has no exported member named 'Tarifas'. Did you mean 'Tarifa'?
+app/routes/dashboard/reportes/components/administracion/contratos/route/crear-contrato-component.tsx(59,24): error TS2724: '"~/types/mantencion"' has no exported member named 'TiposContrato'. Did you mean 'TipoContrato'?
+app/routes/dashboard/reportes/components/administracion/contratos/route/crear-contrato-component.tsx(320,20): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/routes/dashboard/reportes/components/administracion/contratos/route/crear-contrato-component.tsx(330,20): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/routes/dashboard/reportes/components/administracion/contratos/route/crear-contrato-component.tsx(339,20): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/routes/dashboard/reportes/components/administracion/contratos/route/crear-contrato-component.tsx(348,20): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/routes/dashboard/reportes/components/administracion/contratos/route/crear-contrato-component.tsx(357,20): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/routes/dashboard/reportes/components/administracion/contratos/route/crear-contrato-component.tsx(367,18): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/routes/dashboard/reportes/components/administracion/contratos/route/crear-contrato-component.tsx(372,18): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/routes/dashboard/reportes/components/administracion/contratos/route/crear-contrato-component.tsx(376,18): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/routes/dashboard/reportes/components/administracion/contratos/route/crear-contrato-component.tsx(380,18): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/routes/dashboard/reportes/components/administracion/contratos/route/crear-contrato-component.tsx(384,18): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/routes/dashboard/reportes/components/administracion/contratos/route/crear-contrato-component.tsx(388,18): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/routes/dashboard/reportes/components/administracion/contratos/route/editar-contrato-component.tsx(49,3): error TS2305: Module '"~/types/administracion"' has no exported member 'ContratoFormData'.
+app/routes/dashboard/reportes/components/administracion/contratos/route/editar-contrato-component.tsx(50,3): error TS2305: Module '"~/types/administracion"' has no exported member 'GetClienteContrato'.
+app/routes/dashboard/reportes/components/administracion/contratos/route/editar-contrato-component.tsx(51,3): error TS2305: Module '"~/types/administracion"' has no exported member 'NombreComuna'.
+app/routes/dashboard/reportes/components/administracion/contratos/route/editar-contrato-component.tsx(52,3): error TS2305: Module '"~/types/administracion"' has no exported member 'GetContratoPorId'.
+app/routes/dashboard/reportes/components/administracion/contratos/route/editar-contrato-component.tsx(53,3): error TS2305: Module '"~/types/administracion"' has no exported member 'GetLocal'.
+app/routes/dashboard/reportes/components/administracion/contratos/route/editar-contrato-component.tsx(54,3): error TS2305: Module '"~/types/administracion"' has no exported member 'GetMadres'.
+app/routes/dashboard/reportes/components/administracion/contratos/route/editar-contrato-component.tsx(55,3): error TS2305: Module '"~/types/administracion"' has no exported member 'PropietariosRow'.
+app/routes/dashboard/reportes/components/administracion/contratos/route/editar-contrato-component.tsx(57,15): error TS2724: '"~/types/mantencion"' has no exported member named 'Tarifas'. Did you mean 'Tarifa'?
+app/routes/dashboard/reportes/components/administracion/contratos/route/editar-contrato-component.tsx(57,24): error TS2724: '"~/types/mantencion"' has no exported member named 'TiposContrato'. Did you mean 'TipoContrato'?
+app/routes/dashboard/reportes/components/administracion/contratos/route/editar-contrato-component.tsx(389,19): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/routes/dashboard/reportes/components/administracion/contratos/route/editar-contrato-component.tsx(402,19): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/routes/dashboard/reportes/components/administracion/contratos/route/editar-contrato-component.tsx(412,19): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/routes/dashboard/reportes/components/administracion/contratos/route/editar-contrato-component.tsx(461,19): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/routes/dashboard/reportes/components/administracion/contratos/route/editar-contrato-component.tsx(470,19): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/routes/dashboard/reportes/components/administracion/contratos/route/editar-contrato-component.tsx(480,17): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/routes/dashboard/reportes/components/administracion/contratos/route/editar-contrato-component.tsx(485,17): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/routes/dashboard/reportes/components/administracion/contratos/route/editar-contrato-component.tsx(490,17): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/routes/dashboard/reportes/components/administracion/contratos/route/editar-contrato-component.tsx(495,17): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/routes/dashboard/reportes/components/administracion/contratos/route/editar-contrato-component.tsx(499,17): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/routes/dashboard/reportes/components/administracion/contratos/route/editar-contrato-component.tsx(503,17): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/routes/dashboard/reportes/components/administracion/medidores/asociar-subempalme-modal.tsx(25,15): error TS2305: Module '"~/types/administracion"' has no exported member 'GetMedidores'.
+app/routes/dashboard/reportes/components/administracion/medidores/asociar-subempalme-modal.tsx(25,29): error TS2305: Module '"~/types/administracion"' has no exported member 'SubempalmeOption'.
+app/routes/dashboard/reportes/components/administracion/medidores/columns.tsx(10,15): error TS2305: Module '"~/types/administracion"' has no exported member 'GetMedidores'.
+app/routes/dashboard/reportes/components/administracion/medidores/delete-confirm-dialog.tsx(13,15): error TS2305: Module '"~/types/administracion"' has no exported member 'GetMedidores'.
+app/routes/dashboard/reportes/components/administracion/medidores/form/crear-medidor-component.tsx(26,15): error TS2305: Module '"~/types/administracion"' has no exported member 'MedidorFormData'.
+app/routes/dashboard/reportes/components/administracion/medidores/form/crear-medidor-component.tsx(81,17): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/routes/dashboard/reportes/components/administracion/medidores/form/crear-medidor-component.tsx(148,14): error TS2339: Property 'codigo' does not exist on type 'Marca'.
+app/routes/dashboard/reportes/components/administracion/medidores/form/crear-medidor-component.tsx(233,63): error TS2345: Argument of type '{ marcaId: any; tipoId: number; modelo: any; serie: any; estadoId: number; fechaInicio: string; digitos: any; multiplicar: any; primeraLectura: any; fechaPrimeraLectura: string; }' is not assignable to parameter of type 'MedidorProps'.
+  Type '{ marcaId: any; tipoId: number; modelo: any; serie: any; estadoId: number; fechaInicio: string; digitos: any; multiplicar: any; primeraLectura: any; fechaPrimeraLectura: string; }' is missing the following properties from type 'MedidorProps': idMarca, idTipo, idEstado, multiplicador, and 4 more.
+app/routes/dashboard/reportes/components/administracion/medidores/form/crear-medidor-component.tsx(342,48): error TS2339: Property 'codigo' does not exist on type 'Marca'.
+app/routes/dashboard/reportes/components/administracion/medidores/form/crear-medidor-component.tsx(345,40): error TS2339: Property 'codigo' does not exist on type 'Marca'.
+app/routes/dashboard/reportes/components/administracion/medidores/form/crear-medidor-component.tsx(346,42): error TS2339: Property 'codigo' does not exist on type 'Marca'.
+app/routes/dashboard/reportes/components/administracion/medidores/form/editar-medidor-component.tsx(33,3): error TS2305: Module '"~/types/administracion"' has no exported member 'ActualizarMedidorProps'.
+app/routes/dashboard/reportes/components/administracion/medidores/form/editar-medidor-component.tsx(34,3): error TS2305: Module '"~/types/administracion"' has no exported member 'GetCombosTiposMedidor'.
+app/routes/dashboard/reportes/components/administracion/medidores/form/editar-medidor-component.tsx(35,3): error TS2305: Module '"~/types/administracion"' has no exported member 'GetMedidorByCodigo'.
+app/routes/dashboard/reportes/components/administracion/medidores/form/editar-medidor-component.tsx(36,3): error TS2305: Module '"~/types/administracion"' has no exported member 'GetMedidores'.
+app/routes/dashboard/reportes/components/administracion/medidores/form/editar-medidor-component.tsx(141,44): error TS2339: Property 'codigo' does not exist on type 'Marca'.
+app/routes/dashboard/reportes/components/administracion/medidores/form/editar-medidor-component.tsx(201,18): error TS2339: Property 'codigo' does not exist on type 'Marca'.
+app/routes/dashboard/reportes/components/administracion/medidores/form/editar-medidor-component.tsx(206,40): error TS2339: Property 'codigo' does not exist on type 'Marca'.
+app/routes/dashboard/reportes/components/administracion/medidores/form/editar-medidor-component.tsx(394,38): error TS2339: Property 'codigo' does not exist on type 'Marca'.
+app/routes/dashboard/reportes/components/administracion/medidores/form/editar-medidor-component.tsx(398,53): error TS2339: Property 'codigo' does not exist on type 'Marca'.
+app/routes/dashboard/reportes/components/administracion/medidores/form/editar-medidor-component.tsx(714,35): error TS7053: Element implicitly has an 'any' type because expression of type '0' can't be used to index type 'MedidoresRow'.
+  Property '0' does not exist on type 'MedidoresRow'.
+app/routes/dashboard/reportes/components/administracion/medidores/medidores-component.tsx(22,15): error TS2305: Module '"~/types/administracion"' has no exported member 'GetMedidores'.
+app/routes/dashboard/reportes/components/administracion/medidores/medidores-component.tsx(22,29): error TS2305: Module '"~/types/administracion"' has no exported member 'MedidorModalState'.
+app/routes/dashboard/reportes/components/administracion/medidores/medidores-component.tsx(140,20): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/routes/dashboard/reportes/components/administracion/medidores/medidores-component.tsx(148,20): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/routes/dashboard/reportes/components/administracion/medidores/medidores-component.tsx(157,22): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/routes/dashboard/reportes/components/administracion/medidores/medidores-component.tsx(165,60): error TS2339: Property 'codigo' does not exist on type 'MedidoresRow'.
+app/routes/dashboard/reportes/components/administracion/medidores/medidores-component.tsx(177,22): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/routes/dashboard/reportes/components/administracion/medidores/medidores-component.tsx(287,28): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/routes/dashboard/reportes/components/administracion/medidores/medidores-component.tsx(300,28): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/routes/dashboard/reportes/components/administracion/propietarios/columns.tsx(6,15): error TS2305: Module '"~/types/administracion"' has no exported member 'PropietariosRow'.
+app/routes/dashboard/reportes/components/administracion/propietarios/detalles-propietario.tsx(25,15): error TS2305: Module '"~/types/administracion"' has no exported member 'PropietariosRow'.
+app/routes/dashboard/reportes/components/administracion/propietarios/propietarios-component.tsx(19,3): error TS2305: Module '"~/types/administracion"' has no exported member 'GetContratante'.
+app/routes/dashboard/reportes/components/administracion/propietarios/propietarios-component.tsx(20,3): error TS2305: Module '"~/types/administracion"' has no exported member 'PropietariosRow'.
+app/routes/dashboard/reportes/components/administracion/propietarios/propietarios-component.tsx(21,3): error TS2305: Module '"~/types/administracion"' has no exported member 'PropietarioModalState'.
+app/routes/dashboard/reportes/components/administracion/propietarios/propietarios-component.tsx(158,22): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/routes/dashboard/reportes/components/administracion/propietarios/propietarios-component.tsx(309,28): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/routes/dashboard/reportes/components/administracion/usuarios/columns.tsx(30,21): error TS2339: Property 'nombres' does not exist on type 'Usuarios'.
+app/routes/dashboard/reportes/components/administracion/usuarios/columns.tsx(30,36): error TS2339: Property 'apellidos' does not exist on type 'Usuarios'.
+app/routes/dashboard/reportes/components/administracion/usuarios/columns.tsx(33,22): error TS2551: Property 'username' does not exist on type 'Usuarios'. Did you mean 'nombre_Usuario'?
+app/routes/dashboard/reportes/components/administracion/usuarios/delete-confirmation-dialog.tsx(35,22): error TS2339: Property 'nombres' does not exist on type 'Usuarios'.
+app/routes/dashboard/reportes/components/administracion/usuarios/delete-confirmation-dialog.tsx(35,38): error TS2339: Property 'apellidos' does not exist on type 'Usuarios'.
+app/routes/dashboard/reportes/components/administracion/usuarios/user-form-modal.tsx(39,3): error TS2305: Module '"~/types/administracion"' has no exported member 'ActualizarUsuarioProps'.
+app/routes/dashboard/reportes/components/administracion/usuarios/user-form-modal.tsx(40,3): error TS2724: '"~/types/administracion"' has no exported member named 'CrearUsuarioProps'. Did you mean 'CrearUsuario'?
+app/routes/dashboard/reportes/components/administracion/usuarios/user-form-modal.tsx(89,31): error TS2551: Property 'username' does not exist on type 'Usuarios'. Did you mean 'nombre_Usuario'?
+app/routes/dashboard/reportes/components/administracion/usuarios/user-form-modal.tsx(91,23): error TS2339: Property 'nombres' does not exist on type 'Usuarios'.
+app/routes/dashboard/reportes/components/administracion/usuarios/user-form-modal.tsx(92,25): error TS2339: Property 'apellidos' does not exist on type 'Usuarios'.
+app/routes/dashboard/reportes/components/administracion/usuarios/user-form-modal.tsx(93,28): error TS2339: Property 'departamento' does not exist on type 'Usuarios'.
+app/routes/dashboard/reportes/components/administracion/usuarios/user-form-modal.tsx(94,22): error TS2339: Property 'activo' does not exist on type 'Usuarios'.
+app/routes/dashboard/reportes/components/administracion/usuarios/user-form-modal.tsx(97,31): error TS2551: Property 'username' does not exist on type 'Usuarios'. Did you mean 'nombre_Usuario'?
+app/routes/dashboard/reportes/components/administracion/usuarios/user-form-modal.tsx(100,24): error TS2339: Property 'perfilId' does not exist on type 'Usuarios'.
+app/routes/dashboard/reportes/components/administracion/usuarios/user-form-modal.tsx(101,23): error TS2339: Property 'nombres' does not exist on type 'Usuarios'.
+app/routes/dashboard/reportes/components/administracion/usuarios/user-form-modal.tsx(102,25): error TS2339: Property 'apellidos' does not exist on type 'Usuarios'.
+app/routes/dashboard/reportes/components/administracion/usuarios/user-form-modal.tsx(103,28): error TS2339: Property 'departamento' does not exist on type 'Usuarios'.
+app/routes/dashboard/reportes/components/administracion/usuarios/user-form-modal.tsx(104,22): error TS2339: Property 'activo' does not exist on type 'Usuarios'.
+app/routes/dashboard/reportes/components/administracion/usuarios/user-form-modal.tsx(199,34): error TS2339: Property 'id' does not exist on type 'Usuarios'.
+app/routes/dashboard/reportes/components/administracion/usuarios/user-form-modal.tsx(218,17): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/routes/dashboard/reportes/components/administracion/usuarios/user-form-modal.tsx(222,21): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/routes/dashboard/reportes/components/administracion/usuarios/user-permissions-modal.tsx(22,15): error TS2305: Module '"~/types/administracion"' has no exported member 'PermisoUsuario'.
+app/routes/dashboard/reportes/components/administracion/usuarios/user-permissions-modal.tsx(50,40): error TS2339: Property 'id' does not exist on type 'Usuarios'.
+app/routes/dashboard/reportes/components/administracion/usuarios/user-permissions-modal.tsx(91,25): error TS2339: Property 'nombres' does not exist on type 'Usuarios'.
+app/routes/dashboard/reportes/components/administracion/usuarios/user-permissions-modal.tsx(91,40): error TS2339: Property 'apellidos' does not exist on type 'Usuarios'.
+app/routes/dashboard/reportes/components/administracion/usuarios/user-permissions-modal.tsx(93,25): error TS2551: Property 'username' does not exist on type 'Usuarios'. Did you mean 'nombre_Usuario'?
+app/routes/dashboard/reportes/components/administracion/usuarios/user-roles-modal.tsx(68,21): error TS2339: Property 'id' does not exist on type 'Usuarios'.
+app/routes/dashboard/reportes/components/administracion/usuarios/user-roles-modal.tsx(120,47): error TS2339: Property 'id' does not exist on type 'Usuarios'.
+app/routes/dashboard/reportes/components/administracion/usuarios/user-roles-modal.tsx(126,60): error TS2339: Property 'id' does not exist on type 'Usuarios'.
+app/routes/dashboard/reportes/components/administracion/usuarios/user-roles-modal.tsx(130,23): error TS2339: Property 'id' does not exist on type 'Usuarios'.
+app/routes/dashboard/reportes/components/administracion/usuarios/user-roles-modal.tsx(145,19): error TS2339: Property 'id' does not exist on type 'Usuarios'.
+app/routes/dashboard/reportes/components/administracion/usuarios/user-roles-modal.tsx(149,23): error TS2339: Property 'id' does not exist on type 'Usuarios'.
+app/routes/dashboard/reportes/components/administracion/usuarios/user-roles-modal.tsx(217,25): error TS2339: Property 'nombres' does not exist on type 'Usuarios'.
+app/routes/dashboard/reportes/components/administracion/usuarios/user-roles-modal.tsx(217,40): error TS2339: Property 'apellidos' does not exist on type 'Usuarios'.
+app/routes/dashboard/reportes/components/administracion/usuarios/user-roles-modal.tsx(219,25): error TS2551: Property 'username' does not exist on type 'Usuarios'. Did you mean 'nombre_Usuario'?
+app/routes/dashboard/reportes/components/administracion/usuarios/usuarios-component.tsx(18,15): error TS2305: Module '"~/types/administracion"' has no exported member 'UsuarioModalState'.
+app/routes/dashboard/reportes/components/administracion/usuarios/usuarios-component.tsx(58,20): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/routes/dashboard/reportes/components/administracion/usuarios/usuarios-component.tsx(66,20): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/routes/dashboard/reportes/components/administracion/usuarios/usuarios-component.tsx(74,20): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/routes/dashboard/reportes/components/administracion/usuarios/usuarios-component.tsx(82,20): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/routes/dashboard/reportes/components/administracion/usuarios/usuarios-component.tsx(90,20): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/routes/dashboard/reportes/components/administracion/usuarios/usuarios-component.tsx(100,20): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/routes/dashboard/reportes/components/administracion/usuarios/usuarios-component.tsx(110,22): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/routes/dashboard/reportes/components/administracion/usuarios/usuarios-component.tsx(118,40): error TS2339: Property 'id' does not exist on type 'Usuarios'.
+app/routes/dashboard/reportes/components/administracion/usuarios/usuarios-component.tsx(130,22): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/routes/dashboard/reportes/components/administracion/usuarios/usuarios-component.tsx(198,28): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/routes/dashboard/reportes/components/administracion/usuarios/usuarios-component.tsx(210,28): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/routes/dashboard/reportes/components/administracion/usuarios/usuarios-component.tsx(220,28): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/routes/dashboard/reportes/components/administracion/usuarios/usuarios-component.tsx(231,28): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/routes/dashboard/reportes/components/mantencion/ciclos-facturacion/ciclos-facturacion-component.tsx(17,15): error TS2724: '"~/types/mantencion"' has no exported member named 'CiclosFacturacion'. Did you mean 'CicloFacturacion'?
+app/routes/dashboard/reportes/components/mantencion/sector/sector-component.tsx(17,15): error TS2724: '"~/types/mantencion"' has no exported member named 'Sectores'. Did you mean 'Sector'?
+app/routes/dashboard/reportes/components/mantencion/tarifas/tarifas-component.tsx(17,15): error TS2724: '"~/types/mantencion"' has no exported member named 'Tarifas'. Did you mean 'Tarifa'?
+app/routes/dashboard/reportes/components/mantencion/tipos-contratos/columns.tsx(6,15): error TS2724: '"~/types/mantencion"' has no exported member named 'TiposContrato'. Did you mean 'TipoContrato'?
+app/routes/dashboard/reportes/components/mantencion/tipos-contratos/tipo-contrato-form-modal.tsx(27,15): error TS2724: '"~/types/mantencion"' has no exported member named 'TiposContrato'. Did you mean 'TipoContrato'?
+app/routes/dashboard/reportes/components/mantencion/tipos-contratos/tipos-contratos-component.tsx(17,15): error TS2724: '"~/types/mantencion"' has no exported member named 'TiposContrato'. Did you mean 'TipoContrato'?
+app/routes/dashboard/reportes/components/profile/profile-component.tsx(34,15): error TS2305: Module '"~/types/administracion"' has no exported member 'ActualizarUsuarioProps'.
+app/routes/dashboard/reportes/components/profile/profile-component.tsx(77,37): error TS2551: Property 'username' does not exist on type 'Usuarios'. Did you mean 'nombre_Usuario'?
+app/routes/dashboard/reportes/components/profile/profile-component.tsx(79,29): error TS2339: Property 'nombres' does not exist on type 'Usuarios'.
+app/routes/dashboard/reportes/components/profile/profile-component.tsx(80,31): error TS2339: Property 'apellidos' does not exist on type 'Usuarios'.
+app/routes/dashboard/reportes/components/profile/profile-component.tsx(81,34): error TS2339: Property 'departamento' does not exist on type 'Usuarios'.
+app/routes/dashboard/reportes/components/profile/profile-component.tsx(82,28): error TS2339: Property 'activo' does not exist on type 'Usuarios'.
+app/routes/dashboard/reportes/components/profile/profile-component.tsx(153,43): error TS2339: Property 'id' does not exist on type 'Usuarios'.
+app/routes/dashboard/reportes/components/profile/profile-component.tsx(175,17): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+app/routes/dashboard/reportes/components/reportes/consultar-contrato/columns.tsx(6,15): error TS2724: '"~/types/reportes"' has no exported member named 'BuscarContratos'. Did you mean 'BuscarContrato'?
+app/routes/dashboard/reportes/components/reportes/consultar-contrato/consultar-contrato-component.tsx(13,15): error TS2724: '"~/types/reportes"' has no exported member named 'BuscarContratos'. Did you mean 'BuscarContrato'?
+app/routes/dashboard/reportes/components/reportes/consultar-contrato/contrato/columns-facturas.tsx(6,15): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleFacturas'.
+app/routes/dashboard/reportes/components/reportes/consultar-contrato/contrato/columns-lecturas.tsx(6,15): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleLecturas'.
+app/routes/dashboard/reportes/components/reportes/consultar-contrato/contrato/contrato-component.tsx(13,3): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleCliente'.
+app/routes/dashboard/reportes/components/reportes/consultar-contrato/contrato/contrato-component.tsx(14,3): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleContrato'.
+app/routes/dashboard/reportes/components/reportes/consultar-contrato/contrato/contrato-component.tsx(15,3): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleFacturas'.
+app/routes/dashboard/reportes/components/reportes/consultar-contrato/contrato/contrato-component.tsx(16,3): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleLecturas'.
+app/routes/dashboard/reportes/components/reportes/consultar-contrato/contrato/contrato-component.tsx(17,3): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleLocal'.
+app/routes/dashboard/reportes/components/reportes/consultar-contrato/contrato/contrato-component.tsx(18,3): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleMedidores'.
+app/routes/dashboard/reportes/components/reportes/consultar-contrato/contrato/contrato-component.tsx(19,3): error TS2305: Module '"~/types/reportes"' has no exported member 'DetallePropietario'.
+app/routes/dashboard/reportes/components/reportes/consultar-contrato/contrato/contrato-component.tsx(20,3): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleUbicacion'.
+app/routes/dashboard/reportes/components/reportes/consultar-contrato/contrato/facturas-analytics-simple.tsx(59,15): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleFacturas'.
+app/routes/dashboard/reportes/components/reportes/consultar-contrato/contrato/facturas/billing-dashboard.tsx(19,15): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleFacturas'.
+app/routes/dashboard/reportes/components/reportes/consultar-contrato/contrato/facturas/billing-dashboard.tsx(19,32): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleLecturas'.
+app/routes/dashboard/reportes/components/reportes/consultar-contrato/contrato/facturas/billing-evolution-chart.tsx(24,15): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleFacturas'.
+app/routes/dashboard/reportes/components/reportes/consultar-contrato/contrato/facturas/billing-kpis.tsx(14,15): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleFacturas'.
+app/routes/dashboard/reportes/components/reportes/consultar-contrato/contrato/facturas/consumption-details-table.tsx(22,15): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleLecturas'.
+app/routes/dashboard/reportes/components/reportes/consultar-contrato/contrato/facturas/consumption-trend-chart.tsx(24,15): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleLecturas'.
+app/routes/dashboard/reportes/components/reportes/consultar-contrato/contrato/facturas/cost-analysis-chart.tsx(22,15): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleFacturas'.
+app/routes/dashboard/reportes/components/reportes/consultar-contrato/contrato/facturas/cost-distribution.tsx(13,15): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleFacturas'.
+app/routes/dashboard/reportes/components/reportes/consultar-contrato/contrato/facturas/energy-consumption-dashboard.tsx(20,15): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleLecturas'.
+app/routes/dashboard/reportes/components/reportes/consultar-contrato/contrato/facturas/invoices-table.tsx(29,15): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleFacturas'.
+app/routes/dashboard/reportes/components/reportes/consultar-contrato/contrato/facturas/overconsumption-analysis.tsx(25,15): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleLecturas'.
+app/routes/dashboard/reportes/components/reportes/consultar-contrato/contrato/facturas/payment-timeline.tsx(7,15): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleFacturas'.
+app/routes/dashboard/reportes/components/reportes/consultar-contrato/contrato/facturas/period-comparison.tsx(20,15): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleFacturas'.
+app/routes/dashboard/reportes/components/reportes/consultar-contrato/contrato/informacion-contrato.tsx(8,3): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleCliente'.
+app/routes/dashboard/reportes/components/reportes/consultar-contrato/contrato/informacion-contrato.tsx(9,3): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleContrato'.
+app/routes/dashboard/reportes/components/reportes/consultar-contrato/contrato/informacion-contrato.tsx(10,3): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleLocal'.
+app/routes/dashboard/reportes/components/reportes/consultar-contrato/contrato/informacion-contrato.tsx(11,3): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleMedidores'.
+app/routes/dashboard/reportes/components/reportes/consultar-contrato/contrato/informacion-contrato.tsx(12,3): error TS2305: Module '"~/types/reportes"' has no exported member 'DetallePropietario'.
+app/routes/dashboard/reportes/components/reportes/consultar-contrato/contrato/informacion-contrato.tsx(13,3): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleUbicacion'.
+app/routes/dashboard/reportes/components/reportes/consultar-contrato/contrato/lecturas-analytics-simple.tsx(60,15): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleLecturas'.
+app/routes/dashboard/reportes/components/reportes/resumen-facturacion/columns.tsx(4,15): error TS2305: Module '"~/types/reportes"' has no exported member 'FacturacionPorCargo'.
+app/routes/dashboard/reportes/components/reportes/resumen-facturacion/resumen-facturacion-component.tsx(41,3): error TS2305: Module '"~/types/reportes"' has no exported member 'ComboEmpalmes'.
+app/routes/dashboard/reportes/components/reportes/resumen-facturacion/resumen-facturacion-component.tsx(42,3): error TS2305: Module '"~/types/reportes"' has no exported member 'FacturacionPorCargo'.
+app/routes/dashboard/reportes/components/reportes/resumen-facturacion/resumen-facturacion-component.tsx(43,3): error TS2305: Module '"~/types/reportes"' has no exported member 'PeriodosFacturacion'.
+app/routes/dashboard/reportes/components/reportes/resumen-facturacion/resumen-facturacion-component.tsx(96,46): error TS2339: Property 'getFacturacionPorCargo' does not exist on type 'ReportesService'.
+app/routes/dashboard/reportes/components/ui/calendar.tsx(84,9): error TS2353: Object literal may only specify known properties, and 'table' does not exist in type 'Partial<ClassNames>'.
+app/routes/dashboard/reportes/components/ui/chart.tsx(107,3): error TS2339: Property 'payload' does not exist on type 'Omit<Props<ValueType, NameType>, PropertiesReadFromContext> & { active?: boolean | undefined; allowEscapeViewBox?: AllowInDimension | undefined; ... 24 more ...; wrapperStyle?: CSSProperties | undefined; } & ClassAttributes<...> & HTMLAttributes<...> & { ...; }'.
+app/routes/dashboard/reportes/components/ui/chart.tsx(112,3): error TS2339: Property 'label' does not exist on type 'Omit<Props<ValueType, NameType>, PropertiesReadFromContext> & { active?: boolean | undefined; allowEscapeViewBox?: AllowInDimension | undefined; ... 24 more ...; wrapperStyle?: CSSProperties | undefined; } & ClassAttributes<...> & HTMLAttributes<...> & { ...; }'.
+app/routes/dashboard/reportes/components/ui/chart.tsx(181,19): error TS7006: Parameter 'item' implicitly has an 'any' type.
+app/routes/dashboard/reportes/components/ui/chart.tsx(182,17): error TS7006: Parameter 'item' implicitly has an 'any' type.
+app/routes/dashboard/reportes/components/ui/chart.tsx(182,23): error TS7006: Parameter 'index' implicitly has an 'any' type.
+app/routes/dashboard/reportes/components/ui/chart.tsx(260,39): error TS2344: Type '"payload" | "verticalAlign"' does not satisfy the constraint '"string" | "transform" | "filter" | "fill" | "values" | "method" | "type" | "key" | "id" | "name" | "operator" | "local" | "children" | "mode" | "color" | "crossOrigin" | "lang" | ... 433 more ... | "portal"'.
+  Type '"payload"' is not assignable to type '"string" | "transform" | "filter" | "fill" | "values" | "method" | "type" | "key" | "id" | "name" | "operator" | "local" | "children" | "mode" | "color" | "crossOrigin" | "lang" | ... 433 more ... | "portal"'.
+app/routes/dashboard/reportes/components/ui/chart.tsx(266,17): error TS2339: Property 'length' does not exist on type '{}'.
+app/routes/dashboard/reportes/components/ui/chart.tsx(279,10): error TS2339: Property 'filter' does not exist on type '{}'.
+app/routes/dashboard/reportes/components/ui/chart.tsx(279,17): error TS7006: Parameter 'item' implicitly has an 'any' type.
+app/routes/dashboard/reportes/components/ui/chart.tsx(280,14): error TS7006: Parameter 'item' implicitly has an 'any' type.
+app/routes/dashboard/reportes/consultar-contrato/contrato.tsx(15,40): error TS2339: Property 'getDetallesPorContrato' does not exist on type 'ReportesService'.
+app/services/administration/clientes.service.ts(2,15): error TS2305: Module '"~/types/administracion"' has no exported member 'GetClienteContrato'.
+app/services/administration/clientes.service.ts(2,35): error TS2305: Module '"~/types/administracion"' has no exported member 'NombreComuna'.
+app/services/administration/contratos.service.ts(3,3): error TS2305: Module '"~/types/administracion"' has no exported member 'ContratoProps'.
+app/services/administration/contratos.service.ts(4,3): error TS2305: Module '"~/types/administracion"' has no exported member 'ContratosRow'.
+app/services/administration/contratos.service.ts(5,3): error TS2305: Module '"~/types/administracion"' has no exported member 'ContratoFormValues'.
+app/services/administration/owners-contractors.service.ts(2,15): error TS2305: Module '"~/types/administracion"' has no exported member 'GetContratante'.
+app/services/administration/owners-contractors.service.ts(2,31): error TS2305: Module '"~/types/administracion"' has no exported member 'PropietariosRow'.
+app/services/administration/reference-data.service.ts(2,15): error TS2305: Module '"~/types/administracion"' has no exported member 'NombreComuna'.
+app/services/administration/reference-data.service.ts(2,27): error TS2305: Module '"~/types/administracion"' has no exported member 'NombreGiro'.
+app/services/auto-insertion/auto-insertion.service.ts(3,15): error TS2305: Module '"~/types/monitor"' has no exported member 'MedidorNichoItem'.
+app/services/auto-insertion/validation.service.ts(2,15): error TS2305: Module '"~/types/monitor"' has no exported member 'MedidorNichoItem'.
+app/services/insercionAutomaticaService.ts(2,15): error TS2305: Module '"~/types/monitor"' has no exported member 'MedidorNichoItem'.
+app/services/mantencion/classifications.service.ts(4,26): error TS2724: '"~/types/mantencion"' has no exported member named 'Sectores'. Did you mean 'Sector'?
+app/services/mantencion/classifications.service.ts(4,36): error TS2724: '"~/types/mantencion"' has no exported member named 'TiposContrato'. Did you mean 'TipoContrato'?
+app/services/mantencion/concepts.service.ts(5,3): error TS2724: '"~/types/mantencion"' has no exported member named 'Claves'. Did you mean 'Clave'?
+app/services/mantencion/concepts.service.ts(6,3): error TS2305: Module '"~/types/mantencion"' has no exported member 'ComboAsociadoConceptos'.
+app/services/mantencion/concepts.service.ts(7,3): error TS2724: '"~/types/mantencion"' has no exported member named 'Conceptos'. Did you mean 'Concepto'?
+app/services/mantencion/nichos.service.ts(5,3): error TS2305: Module '"~/types/mantencion"' has no exported member 'NichoFormValues'.
+app/services/mantencion/nichos.service.ts(7,3): error TS2305: Module '"~/types/mantencion"' has no exported member 'NichoFormValues'.
+app/services/reportes/billing-report.service.ts(4,15): error TS2305: Module '"~/types/reportes"' has no exported member 'FacturacionPorCargo'.
+app/services/reportes/contract-details-report.service.ts(5,3): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleCliente'.
+app/services/reportes/contract-details-report.service.ts(6,3): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleContrato'.
+app/services/reportes/contract-details-report.service.ts(7,3): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleFacturas'.
+app/services/reportes/contract-details-report.service.ts(8,3): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleLecturas'.
+app/services/reportes/contract-details-report.service.ts(9,3): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleLocal'.
+app/services/reportes/contract-details-report.service.ts(10,3): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleMedidores'.
+app/services/reportes/contract-details-report.service.ts(11,3): error TS2305: Module '"~/types/reportes"' has no exported member 'DetallePropietario'.
+app/services/reportes/contract-details-report.service.ts(12,3): error TS2305: Module '"~/types/reportes"' has no exported member 'DetalleUbicacion'.
+app/services/reportes/summary-report.service.ts(4,15): error TS2305: Module '"~/types/reportes"' has no exported member 'ComboEmpalmes'.
+app/services/reportes/summary-report.service.ts(4,30): error TS2305: Module '"~/types/reportes"' has no exported member 'PeriodosFacturacion'.
+app/type_compat/administracion.ts(6,3): error TS2305: Module '"../types/administracion"' has no exported member 'GetClientes'.
+app/type_compat/administracion.ts(8,3): error TS2305: Module '"../types/administracion"' has no exported member 'ContratosRow'.
+app/types/monitor.ts(22,13): error TS2300: Duplicate identifier 'MonitorMedidores'.
+app/types/monitor.ts(32,13): error TS2300: Duplicate identifier 'MonitorFilas'.
+app/types/monitor.ts(43,13): error TS2300: Duplicate identifier 'MonitorCabecera'.
+app/types/monitor.ts(51,13): error TS2300: Duplicate identifier 'MonitorHistorialLectura'.
+app/types/monitor.ts(88,13): error TS2300: Duplicate identifier 'MonitorMedidores'.
+app/types/monitor.ts(98,13): error TS2300: Duplicate identifier 'MonitorFilas'.
+app/types/monitor.ts(109,13): error TS2300: Duplicate identifier 'MonitorCabecera'.
+app/types/monitor.ts(117,13): error TS2300: Duplicate identifier 'MonitorHistorialLectura'.
+app/utils/administracion/clientes-helpers.ts(3,3): error TS2305: Module '"~/types/administracion"' has no exported member 'ClienteErrorInfo'.
+app/utils/administracion/clientes-helpers.ts(4,3): error TS2305: Module '"~/types/administracion"' has no exported member 'ClienteLoadingState'.
+app/utils/administracion/clientes-helpers.ts(5,3): error TS2305: Module '"~/types/administracion"' has no exported member 'ClienteModalState'.
+app/utils/administracion/clientes-helpers.ts(6,3): error TS2305: Module '"~/types/administracion"' has no exported member 'GetClienteById'.
+app/utils/administracion/clientes-helpers.ts(7,3): error TS2305: Module '"~/types/administracion"' has no exported member 'GetClientes'.
+app/utils/administracion/clientes-helpers.ts(8,3): error TS2305: Module '"~/types/administracion"' has no exported member 'GetClientesByRut'.
+app/utils/administracion/contratos-helpers.ts(4,3): error TS2305: Module '"~/types/administracion"' has no exported member 'ContratoErrorInfo'.
+app/utils/administracion/contratos-helpers.ts(5,3): error TS2305: Module '"~/types/administracion"' has no exported member 'ContratoModalState'.
+app/utils/administracion/contratos-helpers.ts(6,3): error TS2305: Module '"~/types/administracion"' has no exported member 'ContratosRow'.
+app/utils/administracion/usuarios-helpers.ts(3,3): error TS2305: Module '"~/types/administracion"' has no exported member 'UsuarioErrorInfo'.
+app/utils/administracion/usuarios-helpers.ts(4,3): error TS2305: Module '"~/types/administracion"' has no exported member 'UsuarioModalMode'.
+app/utils/administracion/usuarios-helpers.ts(5,3): error TS2305: Module '"~/types/administracion"' has no exported member 'UsuarioModalState'.
+app/utils/administracion/usuarios-helpers.ts(68,54): error TS2339: Property 'id' does not exist on type 'Usuarios'.
+[ELIFECYCLE] Command failed with exit code 2.

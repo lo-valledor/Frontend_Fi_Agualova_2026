@@ -3,25 +3,25 @@ import type { ColumnDef } from '@tanstack/react-table';
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
 import { TableActions } from '~/components/data-table/table-helpers';
 import { Badge } from '~/components/ui/badge';
-import type { TiposContrato } from '~/types/mantencion';
+import type { TipoContrato } from '~/types/mantencion';
 
 interface TiposContratoColumnsProps {
-  onEdit: (tipoContrato: TiposContrato) => void;
-  onDelete: (tipoContrato: TiposContrato) => void;
+  onEdit: (tipoContrato: TipoContrato) => void;
+  onDelete: (tipoContrato: TipoContrato) => void;
 }
 
 export const createColumns = ({
   onEdit,
   onDelete
-}: TiposContratoColumnsProps): ColumnDef<TiposContrato>[] => [
+}: TiposContratoColumnsProps): ColumnDef<TipoContrato>[] => [
   {
     accessorKey: 'nombre',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Nombre' />
+      <DataTableColumnHeader column={column} title="Nombre" />
     ),
     cell: ({ row }) => (
       <div
-        className='max-w-[200px] truncate font-medium'
+        className="max-w-[200px] truncate font-medium"
         title={row.getValue('nombre')}
       >
         {row.getValue('nombre')}
@@ -31,7 +31,7 @@ export const createColumns = ({
   {
     accessorKey: 'estado',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Estado' />
+      <DataTableColumnHeader column={column} title="Estado" />
     ),
     cell: ({ row }) => {
       const estado = row.getValue('estado') as boolean;

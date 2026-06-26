@@ -1,18 +1,12 @@
 // Type definitions
-export type { ExportColumn, ExportConfig, PDFSection, PDFTableColumn, CompanyInfo } from './types';
 
-// Formatters
+// Column builder and configuration
 export {
-  formatDateForExport,
-  formatCurrency,
-  formatNumber,
-  formatPercentage,
-  formatBoolean,
-  formatValue,
-  truncateString,
-  generateFilename
-} from './formatters';
-
+  DEFAULT_EXPORT_CONFIG,
+  ExportColumnBuilder,
+  getExportConfig,
+  validateExportColumns
+} from './column-builder';
 // CSV/Excel utilities
 export {
   convertToCSV,
@@ -20,23 +14,33 @@ export {
   downloadExcelFile,
   validateExportData
 } from './csv-excel';
+// Formatters
+export {
+  formatBoolean,
+  formatCurrency,
+  formatDateForExport,
+  formatNumber,
+  formatPercentage,
+  formatValue,
+  generateFilename,
+  truncateString
+} from './formatters';
 
 // PDF rendering
 export {
+  addPageFooters,
+  renderChartSection,
   renderCompanyInfo,
   renderHeader,
   renderKPISection,
-  renderTableSection,
-  renderTextSection,
-  renderChartSection,
   renderSection,
-  addPageFooters
+  renderTableSection,
+  renderTextSection
 } from './pdf-rendering';
-
-// Column builder and configuration
-export {
-  ExportColumnBuilder,
-  DEFAULT_EXPORT_CONFIG,
-  getExportConfig,
-  validateExportColumns
-} from './column-builder';
+export type {
+  CompanyInfo,
+  ExportColumn,
+  ExportConfig,
+  PDFSection,
+  PDFTableColumn
+} from './types';

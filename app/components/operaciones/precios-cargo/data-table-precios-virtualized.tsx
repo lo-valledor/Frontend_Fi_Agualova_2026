@@ -1,16 +1,16 @@
 import {
   type ColumnDef,
   type ColumnFiltersState,
-  type RowSelectionState,
-  type SortingState,
-  type VisibilityState,
   flexRender,
   getCoreRowModel,
   getFacetedRowModel,
   getFacetedUniqueValues,
   getFilteredRowModel,
   getSortedRowModel,
-  useReactTable
+  type RowSelectionState,
+  type SortingState,
+  useReactTable,
+  type VisibilityState
 } from '@tanstack/react-table';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { Search } from 'lucide-react';
@@ -109,24 +109,24 @@ export function DataTablePreciosVirtualized<TData, TValue>({
   const virtualItems = rowVirtualizer.getVirtualItems();
 
   return (
-    <div className='space-y-1'>
+    <div className="space-y-1">
       {/* Search */}
       {showSearch && (
-        <div className='flex justify-end'>
-          <div className='relative w-full max-w-xs sm:max-w-sm'>
-            <Search className='absolute left-2 sm:left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-3 w-3 sm:h-4 sm:w-4' />
+        <div className="flex justify-end">
+          <div className="relative w-full max-w-xs sm:max-w-sm">
+            <Search className="absolute left-2 sm:left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-3 w-3 sm:h-4 sm:w-4" />
             <Input
               placeholder={searchPlaceholder}
               value={globalFilter ?? ''}
               onChange={e => table.setGlobalFilter(e.target.value)}
-              className='pl-8 sm:pl-10 w-full bg-background h-8 sm:h-10 text-xs sm:text-sm'
+              className="pl-8 sm:pl-10 w-full bg-background h-8 sm:h-10 text-xs sm:text-sm"
             />
           </div>
         </div>
       )}
 
       {/* Información de resultados */}
-      <div className='text-xs text-muted-foreground px-1'>
+      <div className="text-xs text-muted-foreground px-1">
         Mostrando {rows.length} registro{rows.length !== 1 ? 's' : ''}
         {globalFilter && ` (filtrado${rows.length !== 1 ? 's' : ''})`}
       </div>
@@ -134,14 +134,14 @@ export function DataTablePreciosVirtualized<TData, TValue>({
       {/* Table con virtualización */}
       <div
         ref={tableContainerRef}
-        className='rounded border border-border bg-card overflow-auto shadow'
+        className="rounded border border-border bg-card overflow-auto shadow"
         style={{ height: '600px' }}
       >
-        <Table className='min-w-full text-xs align-middle'>
-          <TableHeader className='text-xs sticky top-0 z-10 bg-card'>
+        <Table className="min-w-full text-xs align-middle">
+          <TableHeader className="text-xs sticky top-0 z-10 bg-card">
             {/* Headers agrupados */}
             {columnGroups.length > 0 && (
-              <TableRow className='border-b-0 h-8'>
+              <TableRow className="border-b-0 h-8">
                 {columnGroups.map(group => (
                   <TableHead
                     key={group.id}
@@ -160,7 +160,7 @@ export function DataTablePreciosVirtualized<TData, TValue>({
             {table.getHeaderGroups().map(headerGroup => (
               <TableRow
                 key={headerGroup.id}
-                className='border-b bg-muted/50 h-8'
+                className="border-b bg-muted/50 h-8"
               >
                 {headerGroup.headers.map(header => {
                   const group = getColumnGroup(header.column.id);
@@ -190,12 +190,12 @@ export function DataTablePreciosVirtualized<TData, TValue>({
               </TableRow>
             ))}
           </TableHeader>
-          <TableBody className='text-xs'>
+          <TableBody className="text-xs">
             {rows.length === 0 ? (
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className='h-12 text-center text-muted-foreground text-xs'
+                  className="h-12 text-center text-muted-foreground text-xs"
                 >
                   No se encontraron resultados.
                 </TableCell>

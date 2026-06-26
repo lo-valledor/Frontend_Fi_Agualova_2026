@@ -1,6 +1,5 @@
-import { TrendingDown, TrendingUp, Minus } from 'lucide-react';
-
 import type { ColumnDef } from '@tanstack/react-table';
+import { Minus, TrendingDown, TrendingUp } from 'lucide-react';
 
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
 import { Badge } from '~/components/ui/badge';
@@ -10,12 +9,12 @@ export const facturasTableColumns: ColumnDef<DetalleFacturas>[] = [
   {
     accessorKey: 'periodo',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Período' />
+      <DataTableColumnHeader column={column} title="Período" />
     ),
     cell: ({ row }) => {
       const periodo = row.getValue('periodo');
       return (
-        <div className='font-medium text-slate-900 dark:text-slate-100'>
+        <div className="font-medium text-slate-900 dark:text-slate-100">
           {periodo as string}
         </div>
       );
@@ -27,12 +26,12 @@ export const facturasTableColumns: ColumnDef<DetalleFacturas>[] = [
   {
     accessorKey: 'nroFactura',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Nro. Factura' />
+      <DataTableColumnHeader column={column} title="Nro. Factura" />
     ),
     cell: ({ row }) => {
       const nroFactura = row.getValue('nroFactura');
       return (
-        <Badge variant='outline' className='font-mono text-xs'>
+        <Badge variant="outline" className="font-mono text-xs">
           {nroFactura as string}
         </Badge>
       );
@@ -43,12 +42,12 @@ export const facturasTableColumns: ColumnDef<DetalleFacturas>[] = [
   {
     accessorKey: 'tarifa',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Tarifa' />
+      <DataTableColumnHeader column={column} title="Tarifa" />
     ),
     cell: ({ row }) => {
       const tarifa = row.getValue('tarifa');
       return (
-        <Badge variant='secondary' className='text-xs'>
+        <Badge variant="secondary" className="text-xs">
           {tarifa as string}
         </Badge>
       );
@@ -59,12 +58,12 @@ export const facturasTableColumns: ColumnDef<DetalleFacturas>[] = [
   {
     accessorKey: 'fechaEmision',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='F. Emisión' />
+      <DataTableColumnHeader column={column} title="F. Emisión" />
     ),
     cell: ({ row }) => {
       const fecha = row.getValue('fechaEmision');
       return (
-        <div className='text-sm text-slate-600 dark:text-slate-400'>
+        <div className="text-sm text-slate-600 dark:text-slate-400">
           {fecha as string}
         </div>
       );
@@ -75,7 +74,7 @@ export const facturasTableColumns: ColumnDef<DetalleFacturas>[] = [
   {
     accessorKey: 'fechaVencimiento',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='F. Vencimiento' />
+      <DataTableColumnHeader column={column} title="F. Vencimiento" />
     ),
     cell: ({ row }) => {
       const fecha = row.getValue('fechaVencimiento') as string;
@@ -100,12 +99,12 @@ export const facturasTableColumns: ColumnDef<DetalleFacturas>[] = [
   {
     accessorKey: 'valorNeto',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Valor Neto' />
+      <DataTableColumnHeader column={column} title="Valor Neto" />
     ),
     cell: ({ row }) => {
       const valor = row.getValue('valorNeto') as number;
       return (
-        <div className='text-start font-medium text-cyan-700 dark:text-cyan-400'>
+        <div className="text-start font-medium text-cyan-700 dark:text-cyan-400">
           ${valor?.toLocaleString('es-CL')}
         </div>
       );
@@ -116,12 +115,12 @@ export const facturasTableColumns: ColumnDef<DetalleFacturas>[] = [
   {
     accessorKey: 'iva',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='IVA' />
+      <DataTableColumnHeader column={column} title="IVA" />
     ),
     cell: ({ row }) => {
       const iva = row.getValue('iva') as number;
       return (
-        <div className='text-start text-slate-600 dark:text-slate-400'>
+        <div className="text-start text-slate-600 dark:text-slate-400">
           ${iva?.toLocaleString('es-CL')}
         </div>
       );
@@ -132,12 +131,12 @@ export const facturasTableColumns: ColumnDef<DetalleFacturas>[] = [
   {
     accessorKey: 'valorTotal',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Total' />
+      <DataTableColumnHeader column={column} title="Total" />
     ),
     cell: ({ row }) => {
       const total = row.getValue('valorTotal') as number;
       return (
-        <div className='text-start font-bold text-emerald-700 dark:text-emerald-400 text-base'>
+        <div className="text-start font-bold text-emerald-700 dark:text-emerald-400 text-base">
           ${total?.toLocaleString('es-CL')}
         </div>
       );
@@ -148,7 +147,7 @@ export const facturasTableColumns: ColumnDef<DetalleFacturas>[] = [
   {
     accessorKey: 'consumoPeriodo',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Consumo' />
+      <DataTableColumnHeader column={column} title="Consumo" />
     ),
     cell: ({ row, table }) => {
       const consumo = row.getValue('consumoPeriodo') as number;
@@ -164,22 +163,22 @@ export const facturasTableColumns: ColumnDef<DetalleFacturas>[] = [
         if (prevRow) {
           const prevConsumo = prevRow.getValue('consumoPeriodo') as number;
           if (consumo > prevConsumo * 1.05) {
-            icon = <TrendingUp className='h-3 w-3 inline ml-1 text-rose-500' />;
+            icon = <TrendingUp className="h-3 w-3 inline ml-1 text-rose-500" />;
             colorClass = 'text-rose-600 dark:text-rose-400 font-medium';
           } else if (consumo < prevConsumo * 0.95) {
             icon = (
-              <TrendingDown className='h-3 w-3 inline ml-1 text-emerald-500' />
+              <TrendingDown className="h-3 w-3 inline ml-1 text-emerald-500" />
             );
             colorClass = 'text-emerald-600 dark:text-emerald-400 font-medium';
           } else {
-            icon = <Minus className='h-3 w-3 inline ml-1 text-slate-400' />;
+            icon = <Minus className="h-3 w-3 inline ml-1 text-slate-400" />;
           }
         }
       }
 
       return (
         <div className={`text-start ${colorClass}`}>
-          {consumo.toLocaleString('es-CL')} kWh
+          {consumo.toLocaleString('es-CL')} m³
           {icon}
         </div>
       );

@@ -57,21 +57,21 @@ const PaymentTimeline = memo(function PaymentTimeline({
 
   if (proximasFacturas.length === 0) {
     return (
-      <div className='text-center py-8 text-slate-500'>
-        <Calendar className='h-12 w-12 mx-auto mb-2 opacity-50' />
+      <div className="text-center py-8 text-slate-500">
+        <Calendar className="h-12 w-12 mx-auto mb-2 opacity-50" />
         <p>No hay facturas pendientes</p>
       </div>
     );
   }
 
   return (
-    <div className='space-y-4'>
-      <div className='flex items-center gap-2 mb-4'>
-        <Calendar className='h-5 w-5 text-primary' />
-        <h3 className='font-semibold'>Facturas Pendientes de Pago</h3>
+    <div className="space-y-4">
+      <div className="flex items-center gap-2 mb-4">
+        <Calendar className="h-5 w-5 text-primary" />
+        <h3 className="font-semibold">Facturas Pendientes de Pago</h3>
       </div>
 
-      <div className='space-y-3'>
+      <div className="space-y-3">
         {proximasFacturas.map((factura, index) => {
           const { mes, ano } = extraerAnoMes(factura.periodo);
           const bgColor =
@@ -88,10 +88,10 @@ const PaymentTimeline = memo(function PaymentTimeline({
               key={index}
               className={`p-4 rounded-lg border ${bgColor} transition-all hover:shadow-md`}
             >
-              <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3'>
-                <div className='flex-1'>
-                  <div className='flex items-center gap-2 mb-1'>
-                    <span className='font-semibold'>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="font-semibold">
                       {getNombreMes(mes)} {ano}
                     </span>
                     <Badge
@@ -100,17 +100,17 @@ const PaymentTimeline = memo(function PaymentTimeline({
                           ? 'destructive'
                           : 'default'
                       }
-                      className='text-xs'
+                      className="text-xs"
                     >
                       {factura.estado.estado === 'vencida'
                         ? `Vencida ${factura.estado.diasVencido} días`
                         : `${factura.estado.diasRestantes} días`}
                     </Badge>
                   </div>
-                  <div className='text-sm text-slate-600 dark:text-slate-400'>
+                  <div className="text-sm text-slate-600 dark:text-slate-400">
                     Factura: {factura.nroFactura}
                   </div>
-                  <div className='text-xs text-slate-500 dark:text-slate-500 mt-1'>
+                  <div className="text-xs text-slate-500 dark:text-slate-500 mt-1">
                     Vence:{' '}
                     {new Date(factura.fechaVencimiento).toLocaleDateString(
                       'es-CL'
@@ -118,18 +118,18 @@ const PaymentTimeline = memo(function PaymentTimeline({
                   </div>
                 </div>
 
-                <div className='flex items-center gap-3'>
-                  <div className='text-right'>
-                    <div className='text-xl font-bold'>
+                <div className="flex items-center gap-3">
+                  <div className="text-right">
+                    <div className="text-xl font-bold">
                       {formatCurrency(factura.valorTotal!)}
                     </div>
-                    <div className='text-xs text-slate-500'>
-                      {factura.consumoPeriodo.toLocaleString('es-CL')} kWh
+                    <div className="text-xs text-slate-500">
+                      {factura.consumoPeriodo.toLocaleString('es-CL')} m³
                     </div>
                   </div>
 
-                  <Button variant='outline' size='sm' title='Descargar factura'>
-                    <Download className='h-4 w-4' />
+                  <Button variant="outline" size="sm" title="Descargar factura">
+                    <Download className="h-4 w-4" />
                   </Button>
                 </div>
               </div>

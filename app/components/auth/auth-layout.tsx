@@ -10,7 +10,6 @@ interface AuthLayoutProps {
   title?: string;
 }
 
-
 export function AuthLayout({ children, title }: AuthLayoutProps) {
   const { isAuthenticated, loading } = useAuth();
   const [mounted, setMounted] = useState(false);
@@ -21,16 +20,16 @@ export function AuthLayout({ children, title }: AuthLayoutProps) {
   }, []);
 
   if (isAuthenticated && !loading) {
-    return <Navigate to='/dashboard' replace />;
+    return <Navigate to="/dashboard" replace />;
   }
 
   return (
     <ThemeProvider>
-      <div className='relative flex min-h-svh w-full overflow-hidden'>
+      <div className="relative flex min-h-svh w-full overflow-hidden">
         {/* Left Panel - Company Information */}
         <div className="hidden lg:flex lg:w-1/2 xl:w-3/5 relative bg-[url('/fondo-dark.jpg')] bg-cover bg-center">
           {/* Overlay with gradient */}
-          <div className='absolute inset-0'></div>
+          <div className="absolute inset-0"></div>
 
           {/* Content */}
           <div
@@ -39,23 +38,23 @@ export function AuthLayout({ children, title }: AuthLayoutProps) {
             }`}
           >
             {/* Logo and Company Name */}
-            <div className='flex items-center gap-3'>
-              <div className='bg-white/10 backdrop-blur-sm p-3 rounded-2xl'>
+            <div className="flex items-center gap-3">
+              <div className="bg-white/10 backdrop-blur-sm p-3 rounded-2xl">
                 <img
-                  src='/logo-agualova.png'
-                  alt='Agualova'
-                  className='h-12 w-12'
+                  src="/logo-agualova.png"
+                  alt="Agualova"
+                  className="h-12 w-12"
                 />
               </div>
               <div>
-                <h1 className='text-2xl font-bold text-white shadow-lg'>
+                <h1 className="text-2xl font-bold text-white shadow-lg">
                   Agualova
                 </h1>
               </div>
             </div>
 
             {/* Footer */}
-            <div className='w-full text-sm text-white/70 text-center'>
+            <div className="w-full text-sm text-white/70 text-center">
               © {new Date().getFullYear()} Agualova. Todos los derechos
               reservados.
             </div>
@@ -63,22 +62,22 @@ export function AuthLayout({ children, title }: AuthLayoutProps) {
         </div>
 
         {/* Right Panel - Form */}
-        <div className='flex-1 flex items-center justify-center p-6 md:p-10 bg-background'>
+        <div className="flex-1 flex items-center justify-center p-6 md:p-10 bg-background">
           {/* Mobile Logo */}
           <div
             className={`lg:hidden absolute top-6 left-6 transform transition-all duration-1000 ease-out ${
               mounted ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'
             }`}
           >
-            <div className='flex items-center gap-2'>
-              <div className='bg-card p-2 rounded-full shadow-lg'>
-                <img src='/logo-agualova.png' alt='Agualova' className='h-8' />
+            <div className="flex items-center gap-2">
+              <div className="bg-card p-2 rounded-full shadow-lg">
+                <img src="/logo-agualova.png" alt="Agualova" className="h-8" />
               </div>
               <div>
-                <span className='text-foreground text-lg font-bold'>
+                <span className="text-foreground text-lg font-bold">
                   Agualova
                 </span>
-                <p className='text-xs text-muted-foreground'>
+                <p className="text-xs text-muted-foreground">
                   {title || 'Agualova'}
                 </p>
               </div>
@@ -94,7 +93,7 @@ export function AuthLayout({ children, title }: AuthLayoutProps) {
             {children}
 
             {/* Mobile Footer */}
-            <div className='lg:hidden mt-6 text-center text-muted-foreground text-xs'>
+            <div className="lg:hidden mt-6 text-center text-muted-foreground text-xs">
               © {new Date().getFullYear()} Agualova. Todos los derechos
               reservados.
             </div>

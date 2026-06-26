@@ -1,18 +1,17 @@
-import { Toaster } from 'sonner';
-
 import React, { useEffect } from 'react';
-
 import {
+  isRouteErrorResponse,
   Links,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
-  isRouteErrorResponse,
   useNavigation
 } from 'react-router';
+import { Toaster } from 'sonner';
 
 import './app.css';
+
 const isUAT =
   typeof window !== 'undefined' &&
   window.location.hostname !== 'agualova.mmlovalledor.cl';
@@ -24,6 +23,7 @@ import { ThemeProvider } from './components/theme-provider';
 import { AuthProvider } from './context/AuthContext';
 import { BreadcrumbProvider } from './context/BreadcrumbContext';
 import { LoadingBarProvider, useLoadingBar } from './context/LoadingBarContext';
+import { getAuthToken } from './services/axiosConfig';
 import { initPerformanceMonitoring } from './utils/performance-monitor';
 
 export const links = () => [
@@ -42,18 +42,13 @@ export const links = () => [
 export function Layout({ children }: Readonly<{ children: React.ReactNode }>) {
   const isDev =
     import.meta.env.VITE_APP_ENV === 'development' || import.meta.env.DEV;
+  const _useHttps = import.meta.env.VITE_HTTPS_ENABLED === 'true';
 
   return (
-    <html lang='en'>
+    <html lang="en">
       <head>
-        <meta charSet='utf-8' />
-        <meta name='viewport' content='width=device-width, initial-scale=1' />
-        {!isDev && (
-          <meta
-            http-equiv='Content-Security-Policy'
-            content='upgrade-insecure-requests'
-          ></meta>
-        )}
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
       </head>
@@ -83,12 +78,12 @@ function AppLayout({ children }: Readonly<{ children: React.ReactNode }>) {
 
   return (
     <>
-      <ThemeProvider defaultTheme='dark' storageKey='vite-ui-theme'>
+      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
         <BreadcrumbProvider>
           <AuthProvider>{children}</AuthProvider>
         </BreadcrumbProvider>
       </ThemeProvider>
-      <Toaster richColors position='top-right' closeButton />
+      <Toaster richColors position="top-right" closeButton />
       <ScrollRestoration />
       <Scripts />
     </>
@@ -113,7 +108,7 @@ export function ErrorBoundary({ error }: Readonly<{ error: unknown }>) {
   const currentUrl = isBrowser
     ? globalThis.location.href
     : 'No disponible en SSR';
-  const hasToken = isBrowser ? localStorage.getItem('token') : null;
+  const hasToken = isBrowser ? getAuthToken() : null;
 
   if (isRouteErrorResponse(error)) {
     message = error.status === 404 ? '404' : 'Error';
@@ -127,14 +122,14 @@ export function ErrorBoundary({ error }: Readonly<{ error: unknown }>) {
   }
 
   return (
-    <main className='pt-16 p-4 container mx-auto'>
-      <div className='max-w-2xl mx-auto'>
-        <h1 className='text-3xl font-bold text-red-600 mb-4'>{message}</h1>
-        <p className='text-lg mb-4'>{details}</p>
+    <main className="pt-16 p-4 container mx-auto">
+      <div className="max-w-2xl mx-auto">
+        <h1 className="text-3xl font-bold text-red-600 mb-4">{message}</h1>
+        <p className="text-lg mb-4">{details}</p>
 
-        <div className='bg-card p-4 rounded-xl mb-4'>
-          <h2 className='font-semibold mb-2'>Información de depuración:</h2>
-          <ul className='text-sm space-y-1'>
+        <div className="bg-card p-4 rounded-xl mb-4">
+          <h2 className="font-semibold mb-2">Información de depuración:</h2>
+          <ul className="text-sm space-y-1">
             <li>
               <strong>Navegador:</strong> {userAgent}
             </li>
@@ -148,24 +143,24 @@ export function ErrorBoundary({ error }: Readonly<{ error: unknown }>) {
         </div>
 
         {stack && (
-          <details className='mb-4'>
-            <summary className='cursor-pointer font-semibold'>
+          <details className="mb-4">
+            <summary className="cursor-pointer font-semibold">
               Ver stack trace completo
             </summary>
-            <pre className='w-full p-4 overflow-x-auto bg-card rounded mt-2 text-xs'>
+            <pre className="w-full p-4 overflow-x-auto bg-card rounded mt-2 text-xs">
               <code>{stack}</code>
             </pre>
           </details>
         )}
 
-        <div className='flex gap-4'>
+        <div className="flex gap-4">
           <button
             onClick={() => {
               if (isBrowser) {
                 globalThis.location.reload();
               }
             }}
-            className='px-4 py-2 bg-blue-600 rounded hover:bg-blue-700'
+            className="px-4 py-2 bg-blue-600 rounded hover:bg-blue-700"
           >
             Recargar página
           </button>
@@ -176,7 +171,7 @@ export function ErrorBoundary({ error }: Readonly<{ error: unknown }>) {
                 globalThis.location.href = '/auth/login';
               }
             }}
-            className='px-4 py-2 bg-red-600 rounded hover:bg-red-700'
+            className="px-4 py-2 bg-red-600 rounded hover:bg-red-700"
           >
             Limpiar sesión y volver al login
           </button>

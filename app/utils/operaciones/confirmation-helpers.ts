@@ -1,66 +1,54 @@
-import api from '~/lib/api';
-import {
-  getErrorMessage,
-  isAuthorizationError
-} from './revisar-precio-helpers';
+import { operacionesService } from '~/services/operacionesService';
+import type { RevisionPreciosBuscarRequest } from '~/types/operaciones';
 
-interface ProcessResult {
+export interface ProcessConfirmacionesResult {
   exitosas: number;
   fallidas: number;
   shouldStop: boolean;
 }
 
-
-export async function processConfirmations(
-  items: Array<{ indice: string; codigo: string }>,
-  userName: string,
-  toast: any
-): Promise<ProcessResult> {
-  let exitosas = 0;
-  let fallidas = 0;
-
-  for (const item of items) {
-    try {
-      const response = await api.post(
-        `/ConfirmarPrecio?indice=${item.indice}&usuario=${userName}`
-      );
-
-      if (response.status === 200) {
-        exitosas++;
-      } else {
-        fallidas++;
-      }
-    } catch (error: any) {
-      // Manejo de errores 401 (autorización)
-      if (error.response?.status === 401) {
-        const errorMessage = getErrorMessage(error);
-
-        // Si es error de autorización pero NO de sesión, continuar
-        if (isAuthorizationError(errorMessage)) {
-          fallidas++;
-          continue;
-        }
-
-        // Error de sesión expirada - detener todo
-        toast.error('Sesión expirada durante el proceso. Reinicia la página.');
-        return { exitosas, fallidas, shouldStop: true };
-      }
-
-      fallidas++;
-    }
-  }
-
-  return { exitosas, fallidas, shouldStop: false };
-}
-
-
-export function filterPendingConfirmations<
-  T extends { indice: string; confirmacion: string }
->(data: T[], selectedCodes: string[], codeField: keyof T): T[] {
+/**
+ * Filtra precios pendientes (no confirmados y con índice válido) a partir de
+ * los códigos seleccionados.
+ */
+export function filterPendingConfirmations(
+  data: RevisionPreciosBuscarRequest[],
+  selectedCodigosCargo: number[]
+): RevisionPreciosBuscarRequest[] {
   return data.filter(
     item =>
-      selectedCodes.includes(item[codeField] as string) &&
-      item.indice !== '' &&
-      item.confirmacion !== 'Confirmado'
+      selectedCodigosCargo.includes(item.codigoCargo) &&
+      item.indice > 0 &&
+      !item.estaConfirmado
   );
+}
+
+/**
+ * Confirma los precios seleccionados con un único llamado al servicio.
+ * Si todos están confirmados, retorna exitosas=N; si ninguno, fallidas=N.
+ */
+export async function processConfirmations(
+  preciosPendientes: RevisionPreciosBuscarRequest[],
+  passwordConfirmacion: string
+): Promise<ProcessConfirmacionesResult> {
+  if (preciosPendientes.length === 0) {
+    return { exitosas: 0, fallidas: 0, shouldStop: false };
+  }
+
+  const codigosCargos = preciosPendientes.map(p => p.codigoCargo);
+
+  const result = await operacionesService.postConfirmarRevisionPrecios({
+    codigosCargos,
+    passwordConfirmacion
+  });
+
+  if (result.error) {
+    return { exitosas: 0, fallidas: codigosCargos.length, shouldStop: false };
+  }
+
+  return {
+    exitosas: codigosCargos.length,
+    fallidas: 0,
+    shouldStop: false
+  };
 }

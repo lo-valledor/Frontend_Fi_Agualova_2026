@@ -1,11 +1,11 @@
-import { renderHook, waitFor, act } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import {
-  useExportPDF,
-  type PDFSection,
-  type PDFExportOptions
-} from './use-export-pdf';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import { toast } from 'sonner';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import {
+  type PDFExportOptions,
+  type PDFSection,
+  useExportPDF
+} from './use-export-pdf';
 
 // Mock de sonner
 vi.mock('sonner', () => ({

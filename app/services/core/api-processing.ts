@@ -2,7 +2,6 @@
 // TIPOS
 // ============================================================================
 
-
 interface NestedArrayResponse<T> {
   data: T[];
 }
@@ -10,7 +9,6 @@ interface NestedArrayResponse<T> {
 // ============================================================================
 // FUNCIONES
 // ============================================================================
-
 
 export function processArrayResponse<T>(response: any): T[] {
   if (!response) {
@@ -44,7 +42,6 @@ export function processArrayResponse<T>(response: any): T[] {
   return [];
 }
 
-
 export function processSingleResponse<T>(response: any): T | null {
   if (!response?.data) {
     return null;
@@ -59,11 +56,9 @@ export function processSingleResponse<T>(response: any): T | null {
   return response.data as T;
 }
 
-
 export function hasData(response: any): boolean {
   return response && response.data !== undefined && response.data !== null;
 }
-
 
 export function extractErrorMessage(errorResponse: any): string | null {
   if (!errorResponse) {

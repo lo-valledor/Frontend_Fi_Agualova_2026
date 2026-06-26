@@ -2,31 +2,30 @@ import { useEffect, useState } from 'react';
 
 import { mantencionService } from '~/services/mantencionService';
 import type {
-  CiclosFacturacion,
-  Claves,
-  ComboAsociadoConceptos,
-  Conceptos,
+  CicloFacturacion,
+  Clave,
+  Concepto,
+  ConceptoAsociables,
   Empalme,
   Marca,
   Nicho,
   Parametro,
-  Sectores,
-  Tarifas,
-  TiposContrato,
-  Zonas
+  Sector,
+  Tarifa,
+  TipoContrato,
+  Zona
 } from '~/types/mantencion';
 import { handleDataLoad } from './utils/data-loader';
 
-
 export function useCiclosFacturacion() {
-  const [data, setData] = useState<CiclosFacturacion[]>([]);
+  const [data, setData] = useState<CicloFacturacion[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     handleDataLoad(
       () => mantencionService.getCiclosFacturacion(),
-      (result) => setData(result || []),
+      result => setData(result || []),
       setError,
       setLoading
     );
@@ -39,16 +38,15 @@ export function useCiclosFacturacion() {
   };
 }
 
-
 export function useClaves() {
-  const [data, setData] = useState<Claves[]>([]);
+  const [data, setData] = useState<Clave[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     handleDataLoad(
       () => mantencionService.getClaves(),
-      (result) => setData(result || []),
+      result => setData(result || []),
       setError,
       setLoading
     );
@@ -61,11 +59,10 @@ export function useClaves() {
   };
 }
 
-
 export function useConceptos() {
   const [data, setData] = useState<{
-    conceptos: Conceptos[];
-    comboAsociadoConceptos: ComboAsociadoConceptos[];
+    conceptos: Concepto[];
+    comboAsociadoConceptos: ConceptoAsociables[];
   } | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -73,7 +70,15 @@ export function useConceptos() {
   useEffect(() => {
     handleDataLoad(
       () => mantencionService.getConceptosData(),
-      setData,
+      result =>
+        setData(
+          result
+            ? {
+                conceptos: result.conceptos,
+                comboAsociadoConceptos: result.conceptoAsociables
+              }
+            : null
+        ),
       setError,
       setLoading
     );
@@ -85,7 +90,6 @@ export function useConceptos() {
     error
   };
 }
-
 
 export function useEmpalmes() {
   const [data, setData] = useState<Empalme[]>([]);
@@ -95,7 +99,7 @@ export function useEmpalmes() {
   useEffect(() => {
     handleDataLoad(
       () => mantencionService.getEmpalmes(),
-      (result) => setData(result || []),
+      result => setData(result || []),
       setError,
       setLoading
     );
@@ -107,7 +111,6 @@ export function useEmpalmes() {
     error
   };
 }
-
 
 export function useMarcas() {
   const [data, setData] = useState<Marca[]>([]);
@@ -117,7 +120,7 @@ export function useMarcas() {
   useEffect(() => {
     handleDataLoad(
       () => mantencionService.getMarcas(),
-      (result) => setData(result || []),
+      result => setData(result || []),
       setError,
       setLoading
     );
@@ -129,7 +132,6 @@ export function useMarcas() {
     error
   };
 }
-
 
 export function useNichos() {
   const [data, setData] = useState<Nicho[]>([]);
@@ -139,7 +141,7 @@ export function useNichos() {
   useEffect(() => {
     handleDataLoad(
       () => mantencionService.getNichos(),
-      (result) => setData(result || []),
+      result => setData(result || []),
       setError,
       setLoading
     );
@@ -151,7 +153,6 @@ export function useNichos() {
     error
   };
 }
-
 
 export function useParametros() {
   const [data, setData] = useState<Parametro[]>([]);
@@ -161,7 +162,7 @@ export function useParametros() {
   useEffect(() => {
     handleDataLoad(
       () => mantencionService.getParametros(),
-      (result) => setData(result || []),
+      result => setData(result || []),
       setError,
       setLoading
     );
@@ -174,16 +175,15 @@ export function useParametros() {
   };
 }
 
-
 export function useSectores() {
-  const [data, setData] = useState<Sectores[]>([]);
+  const [data, setData] = useState<Sector[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     handleDataLoad(
       () => mantencionService.getSectores(),
-      (result) => setData(result || []),
+      result => setData(result || []),
       setError,
       setLoading
     );
@@ -196,16 +196,15 @@ export function useSectores() {
   };
 }
 
-
 export function useTarifas() {
-  const [data, setData] = useState<Tarifas[]>([]);
+  const [data, setData] = useState<Tarifa[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     handleDataLoad(
       () => mantencionService.getTarifas(),
-      (result) => setData(result || []),
+      result => setData(result || []),
       setError,
       setLoading
     );
@@ -218,16 +217,15 @@ export function useTarifas() {
   };
 }
 
-
 export function useTiposContratos() {
-  const [data, setData] = useState<TiposContrato[]>([]);
+  const [data, setData] = useState<TipoContrato[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     handleDataLoad(
       () => mantencionService.getTiposContratos(),
-      (result) => setData(result || []),
+      result => setData(result || []),
       setError,
       setLoading
     );
@@ -240,16 +238,15 @@ export function useTiposContratos() {
   };
 }
 
-
 export function useZonas() {
-  const [data, setData] = useState<Zonas[]>([]);
+  const [data, setData] = useState<Zona[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     handleDataLoad(
       () => mantencionService.getZonas(),
-      (result) => setData(result || []),
+      result => setData(result || []),
       setError,
       setLoading
     );

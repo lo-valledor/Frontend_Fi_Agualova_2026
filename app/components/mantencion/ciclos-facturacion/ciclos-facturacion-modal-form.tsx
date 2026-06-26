@@ -1,11 +1,9 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2 } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
-
-import { useEffect, useState } from 'react';
-
-import { useForm } from 'react-hook-form';
 
 import { Button } from '~/components/ui/button';
 import {
@@ -27,10 +25,13 @@ import {
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
 import { Switch } from '~/components/ui/switch';
-import api from '~/lib/api';
+import { mantencionService } from '~/services/mantencionService';
 import type { CicloFacturacion } from '~/types/mantencion';
 
 const cicloFormSchema = z.object({
+  id: z
+    .number({ message: 'El ID debe ser un número válido.' })
+    .int({ message: 'El ID debe ser un número entero.' }),
   nombre: z
     .string()
     .min(1, { message: 'El nombre es requerido.' })
@@ -79,6 +80,7 @@ export default function CiclosFacturacionModalForm({
   const form = useForm<CicloFormValues>({
     resolver: zodResolver(cicloFormSchema),
     defaultValues: {
+      id: 0,
       nombre: '',
       diaFacturacion: 1,
       diaInicioLectura: 1,
@@ -91,6 +93,7 @@ export default function CiclosFacturacionModalForm({
     if (isOpen) {
       if (mode === 'edit' && ciclo) {
         form.reset({
+          id: ciclo.id,
           nombre: ciclo.nombre,
           diaFacturacion: ciclo.diaFacturacion,
           diaInicioLectura: ciclo.diaInicioLectura,
@@ -99,6 +102,7 @@ export default function CiclosFacturacionModalForm({
         });
       } else {
         form.reset({
+          id: 0,
           nombre: '',
           diaFacturacion: 1,
           diaInicioLectura: 1,
@@ -113,9 +117,9 @@ export default function CiclosFacturacionModalForm({
     setIsLoading(true);
     try {
       if (mode === 'add') {
-        await api.post('/crearCiclo', data);
+        await mantencionService.createCicloFacturacion(data);
       } else if (mode === 'edit' && ciclo) {
-        await api.put('/modificarCiclo', { ...data, id: ciclo.id });
+        await mantencionService.updateCicloFacturacion(data);
       }
 
       onSuccess();
@@ -138,7 +142,7 @@ export default function CiclosFacturacionModalForm({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className='sm:max-w-[550px]'>
+      <DialogContent className="sm:max-w-137.5">
         <DialogHeader>
           <DialogTitle>
             {mode === 'add'
@@ -155,17 +159,17 @@ export default function CiclosFacturacionModalForm({
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(handleSubmit)}
-            className='space-y-4'
+            className="space-y-4"
           >
             <FormField
               control={form.control}
-              name='nombre'
+              name="nombre"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Nombre del Ciclo</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder='Ej: Ciclo Mensual Residencial'
+                      placeholder="Ej: Ciclo Mensual Residencial"
                       {...field}
                     />
                   </FormControl>
@@ -174,19 +178,19 @@ export default function CiclosFacturacionModalForm({
               )}
             />
 
-            <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <FormField
                 control={form.control}
-                name='diaFacturacion'
+                name="diaFacturacion"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Día Facturación</FormLabel>
                     <FormControl>
                       <Input
-                        type='number'
-                        min='1'
-                        max='31'
-                        placeholder='1'
+                        type="number"
+                        min="1"
+                        max="31"
+                        placeholder="1"
                         {...field}
                         onChange={e =>
                           field.onChange(parseInt(e.target.value) || 1)
@@ -201,16 +205,16 @@ export default function CiclosFacturacionModalForm({
 
               <FormField
                 control={form.control}
-                name='diaInicioLectura'
+                name="diaInicioLectura"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Día Inicio Lectura</FormLabel>
                     <FormControl>
                       <Input
-                        type='number'
-                        min='1'
-                        max='31'
-                        placeholder='1'
+                        type="number"
+                        min="1"
+                        max="31"
+                        placeholder="1"
                         {...field}
                         onChange={e =>
                           field.onChange(parseInt(e.target.value) || 1)
@@ -225,16 +229,16 @@ export default function CiclosFacturacionModalForm({
 
               <FormField
                 control={form.control}
-                name='diasVencimientoFactura'
+                name="diasVencimientoFactura"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Días Vencimiento</FormLabel>
                     <FormControl>
                       <Input
-                        type='number'
-                        min='1'
-                        max='365'
-                        placeholder='30'
+                        type="number"
+                        min="1"
+                        max="365"
+                        placeholder="30"
                         {...field}
                         onChange={e =>
                           field.onChange(parseInt(e.target.value) || 30)
@@ -250,10 +254,10 @@ export default function CiclosFacturacionModalForm({
 
             <FormField
               control={form.control}
-              name='estado'
+              name="estado"
               render={({ field }) => (
-                <FormItem className='flex flex-row items-center justify-between rounded-xl border p-3 shadow-sm'>
-                  <div className='space-y-0.5'>
+                <FormItem className="flex flex-row items-center justify-between rounded-xl border p-3 shadow-sm">
+                  <div className="space-y-0.5">
                     <FormLabel>Estado del Ciclo</FormLabel>
                     <FormDescription>
                       {field.value ? 'Ciclo activo' : 'Ciclo inactivo'}
@@ -269,17 +273,17 @@ export default function CiclosFacturacionModalForm({
               )}
             />
 
-            <DialogFooter className='gap-2'>
+            <DialogFooter className="gap-2">
               <Button
-                type='button'
-                variant='outline'
+                type="button"
+                variant="outline"
                 onClick={handleClose}
                 disabled={isLoading}
               >
                 Cancelar
               </Button>
-              <Button type='submit' disabled={isLoading} variant='default'>
-                {isLoading && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
+              <Button type="submit" disabled={isLoading} variant="default">
+                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {mode === 'add' ? 'Crear Ciclo' : 'Actualizar Ciclo'}
               </Button>
             </DialogFooter>

@@ -96,16 +96,16 @@ export function VirtualDataTable<TData, TValue>({
       : 0;
 
   return (
-    <div className='space-y-4'>
+    <div className="space-y-4">
       {/* Search */}
-      <div className='flex justify-between items-center'>
-        <div className='relative w-64'>
-          <Search className='absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
+      <div className="flex justify-between items-center">
+        <div className="relative w-64">
+          <Search className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             placeholder={searchPlaceholder}
             value={globalFilter ?? ''}
             onChange={event => setGlobalFilter(event.target.value)}
-            className='pl-8 h-8 text-sm'
+            className="pl-8 h-8 text-sm"
           />
         </div>
       </div>
@@ -113,23 +113,23 @@ export function VirtualDataTable<TData, TValue>({
       {/* Virtual Table */}
       <div
         ref={parentRef}
-        className='rounded-md border'
+        className="rounded-md border"
         style={{
           height: maxHeight,
           overflow: 'auto'
         }}
       >
         <table
-          className='w-full caption-bottom text-sm'
+          className="w-full caption-bottom text-sm"
           style={{ width: '100%' }}
         >
-          <TableHeader className='sticky top-0 bg-background z-10'>
+          <TableHeader className="sticky top-0 bg-background z-10">
             {table.getHeaderGroups().map(headerGroup => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map(header => (
                   <TableHead
                     key={header.id}
-                    className='bg-background'
+                    className="bg-background"
                     style={{
                       width: `${header.getSize()}px`,
                       minWidth: `${header.column.columnDef.minSize ?? 60}px`,
@@ -152,7 +152,7 @@ export function VirtualDataTable<TData, TValue>({
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className='h-24 text-center'
+                  className="h-24 text-center"
                 >
                   No se encontraron resultados.
                 </TableCell>

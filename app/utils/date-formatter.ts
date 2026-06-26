@@ -1,33 +1,37 @@
 import { format } from 'date-fns';
 
-
-export function formatToDate(dateString: string | null | undefined, fallback = '-'): string {
+export function formatToDate(
+  dateString: string | null | undefined,
+  fallback = '-'
+): string {
   if (!dateString) return fallback;
 
   try {
     return format(new Date(dateString), 'dd-MM-yyyy');
   } catch (error) {
-    // Try to extract date if it's an ISO string
-    console.error('Error formatting date:', error);
+    if (import.meta.env.DEV) console.error('Error formatting date:', error);
     return String(dateString).split('T')[0] || fallback;
   }
 }
 
-
-export function formatToTime(dateString: string | null | undefined, fallback = '-'): string {
+export function formatToTime(
+  dateString: string | null | undefined,
+  fallback = '-'
+): string {
   if (!dateString) return fallback;
 
   try {
     return format(new Date(dateString), 'HH:mm:ss');
-  } catch (_error) {
-    // Try to extract time if it's an ISO string
-    console.error('Error formatting time:', _error);
+  } catch (error) {
+    if (import.meta.env.DEV) console.error('Error formatting time:', error);
     return String(dateString).split('T')[1]?.split('.')[0] || fallback;
   }
 }
 
-
-export function formatToYYYYMMDD(dateString: string | null | undefined, fallback = ''): string {
+export function formatToYYYYMMDD(
+  dateString: string | null | undefined,
+  fallback = ''
+): string {
   if (!dateString) return fallback;
 
   // Split date into parts
@@ -51,7 +55,6 @@ export function formatToYYYYMMDD(dateString: string | null | undefined, fallback
 
   return `${year}${month}${day}`;
 }
-
 
 export function formatSafeDate(
   date: string | null | undefined,
@@ -79,8 +82,10 @@ export function formatSafeDate(
   }
 }
 
-
-export function formatDateForExport(date: string | null | undefined, fallback = ''): string {
+export function formatDateForExport(
+  date: string | null | undefined,
+  fallback = ''
+): string {
   if (!date) return fallback;
 
   try {

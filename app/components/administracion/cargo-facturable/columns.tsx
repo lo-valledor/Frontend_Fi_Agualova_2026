@@ -17,12 +17,12 @@ export const columns = ({
   {
     accessorKey: 'cuenta',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Cuenta' />
+      <DataTableColumnHeader column={column} title="Cuenta" />
     ),
     cell: ({ row }) => (
-      <div className='flex items-center gap-2 min-w-0'>
+      <div className="flex items-center gap-2 min-w-0">
         <span
-          className='font-mono text-xs sm:text-sm font-medium truncate'
+          className="font-mono text-xs sm:text-sm font-medium truncate"
           title={row.original.cuenta}
         >
           {row.original.cuenta}
@@ -36,12 +36,12 @@ export const columns = ({
   {
     accessorKey: 'descripcion',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Descripción' />
+      <DataTableColumnHeader column={column} title="Descripción" />
     ),
     cell: ({ row }) => (
-      <div className='flex items-center gap-2 min-w-0'>
+      <div className="flex items-center gap-2 min-w-0">
         <div
-          className='font-medium text-xs sm:text-sm truncate'
+          className="font-medium text-xs sm:text-sm truncate"
           title={row.original.descripcion}
         >
           {row.original.descripcion}
@@ -55,7 +55,7 @@ export const columns = ({
   {
     accessorKey: 'fijoVariable',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Modalidad' />
+      <DataTableColumnHeader column={column} title="Modalidad" />
     ),
     cell: ({ row }) => {
       const esFijo =
@@ -64,17 +64,17 @@ export const columns = ({
 
       return (
         <Badge
-          variant='secondary'
+          variant="secondary"
           className={`flex items-center gap-1.5 text-xs px-1 sm:px-2 ${
             esFijo
               ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200'
               : 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-200'
           }`}
         >
-          <span className='hidden sm:inline'>
+          <span className="hidden sm:inline">
             {esFijo ? 'Fijo' : 'Variable'}
           </span>
-          <span className='sm:hidden'>{esFijo ? 'F' : 'V'}</span>
+          <span className="sm:hidden">{esFijo ? 'F' : 'V'}</span>
         </Badge>
       );
     },
@@ -85,7 +85,7 @@ export const columns = ({
   {
     accessorKey: 'periodicoEventual',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Frecuencia' />
+      <DataTableColumnHeader column={column} title="Frecuencia" />
     ),
     cell: ({ row }) => {
       const esPeriodico =
@@ -95,17 +95,17 @@ export const columns = ({
 
       return (
         <Badge
-          variant='outline'
+          variant="outline"
           className={`flex items-center gap-1.5 text-xs px-1 sm:px-2 ${
             esPeriodico
               ? 'bg-emerald-100 text-emerald-800 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-300 dark:border-emerald-800'
               : 'bg-amber-100 text-amber-800 border-amber-200 dark:bg-amber-900/20 dark:text-amber-300 dark:border-amber-800'
           }`}
         >
-          <span className='hidden sm:inline'>
+          <span className="hidden sm:inline">
             {esPeriodico ? 'Periódico' : 'Eventual'}
           </span>
-          <span className='sm:hidden'>{esPeriodico ? 'P' : 'E'}</span>
+          <span className="sm:hidden">{esPeriodico ? 'P' : 'E'}</span>
         </Badge>
       );
     },
@@ -116,15 +116,15 @@ export const columns = ({
   {
     accessorKey: 'concepto',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Concepto' />
+      <DataTableColumnHeader column={column} title="Concepto" />
     ),
     cell: ({ row }) => (
       <Badge
-        variant='outline'
-        className='flex items-center gap-1.5 bg-violet-100 text-violet-800 border-violet-200 dark:bg-violet-900/20 dark:text-violet-300 dark:border-violet-800 text-xs px-1 sm:px-2'
+        variant="outline"
+        className="flex items-center gap-1.5 bg-violet-100 text-violet-800 border-violet-200 dark:bg-violet-900/20 dark:text-violet-300 dark:border-violet-800 text-xs px-1 sm:px-2"
         title={row.original.concepto}
       >
-        <span className='truncate max-w-20 sm:max-w-none'>
+        <span className="truncate max-w-20 sm:max-w-none">
           {row.original.concepto}
         </span>
       </Badge>
@@ -136,15 +136,15 @@ export const columns = ({
   {
     accessorKey: 'tarifa',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Tarifa' />
+      <DataTableColumnHeader column={column} title="Tarifa" />
     ),
     cell: ({ row }) => (
       <Badge
-        variant='outline'
-        className='flex items-center gap-1.5 bg-indigo-100 text-indigo-800 border-indigo-200 dark:bg-indigo-900/20 dark:text-indigo-300 dark:border-indigo-800 text-xs px-1 sm:px-2'
+        variant="outline"
+        className="flex items-center gap-1.5 bg-indigo-100 text-indigo-800 border-indigo-200 dark:bg-indigo-900/20 dark:text-indigo-300 dark:border-indigo-800 text-xs px-1 sm:px-2"
         title={row.original.tarifa}
       >
-        <span className='truncate max-w-20 sm:max-w-none'>
+        <span className="truncate max-w-20 sm:max-w-none">
           {row.original.tarifa}
         </span>
       </Badge>
@@ -156,15 +156,15 @@ export const columns = ({
   {
     accessorKey: 'tipoMedidor',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Tipo Medidor' />
+      <DataTableColumnHeader column={column} title="Tipo Medidor" />
     ),
     cell: ({ row }) => (
       <Badge
-        variant='outline'
-        className='flex items-center gap-1.5 bg-teal-100 text-teal-800 border-teal-200 dark:bg-teal-900/20 dark:text-teal-300 dark:border-teal-800 text-xs px-1 sm:px-2'
+        variant="outline"
+        className="flex items-center gap-1.5 bg-teal-100 text-teal-800 border-teal-200 dark:bg-teal-900/20 dark:text-teal-300 dark:border-teal-800 text-xs px-1 sm:px-2"
         title={row.original.tipoMedidor}
       >
-        <span className='truncate max-w-20 sm:max-w-none'>
+        <span className="truncate max-w-20 sm:max-w-none">
           {row.original.tipoMedidor}
         </span>
       </Badge>
@@ -176,24 +176,24 @@ export const columns = ({
   {
     accessorKey: 'tipoCargo',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Tipo Cargo' />
+      <DataTableColumnHeader column={column} title="Tipo Cargo" />
     )
   },
   {
     accessorKey: 'codigoEnerlova',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Código Enerlova' />
+      <DataTableColumnHeader column={column} title="Código Enerlova" />
     )
   },
   {
     id: 'actions',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Acciones' />
+      <DataTableColumnHeader column={column} title="Acciones" />
     ),
     cell: ({ row }) => {
       const isEditing = editingCargoId === row.original.id;
       return (
-        <div className='flex justify-center'>
+        <div className="flex justify-center">
           <TableActions
             onEdit={() => onEdit(row.original)}
             item={row.original}

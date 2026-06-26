@@ -1,8 +1,6 @@
 import { renderHook } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { useExportData, type ExportColumn } from './use-export-data';
-
-
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { type ExportColumn, useExportData } from './use-export-data';
 
 vi.mock('sonner', () => ({
   toast: {
@@ -60,8 +58,6 @@ describe('useExportData - Load Tests', () => {
 
   describe('CSV Export Load Tests', () => {
     it('should format 10000 records for CSV export in < 5s', () => {
-      const { result } = renderHook(() => useExportData());
-
       // Crear 10000 registros de ejemplo
       const records = Array.from({ length: 10000 }, (_, i) => ({
         id: i + 1,
@@ -95,9 +91,7 @@ describe('useExportData - Load Tests', () => {
 
       expect(csvData).toBeTruthy();
       expect(duration).toBeLessThan(5000);
-      console.log(
-        `✓ 10000 CSV records formatted in ${duration.toFixed(2)}ms`
-      );
+      console.log(`✓ 10000 CSV records formatted in ${duration.toFixed(2)}ms`);
     });
 
     it('should handle 50000 CSV records without crashing', () => {
@@ -116,7 +110,12 @@ describe('useExportData - Load Tests', () => {
         { key: 'nombre', header: 'Nombre' },
         { key: 'correo', header: 'Correo' },
         { key: 'estado', header: 'Estado' },
-        { key: 'fecha', header: 'Fecha', formatter: (value: string) => result.current.formatDateForExport(value) }
+        {
+          key: 'fecha',
+          header: 'Fecha',
+          formatter: (value: string) =>
+            result.current.formatDateForExport(value)
+        }
       ];
 
       const start = performance.now();
@@ -177,8 +176,11 @@ describe('useExportData - Load Tests', () => {
       const start = performance.now();
       // Simular cálculos como sumarías, promedios, etc.
       const totalCantidad = records.reduce((sum, r) => sum + r.cantidad, 0);
-      const totalMonto = records.reduce((sum, r) => sum + r.precio * r.cantidad, 0);
-      const promedioCantidad = totalCantidad / records.length;
+      const _totalMonto = records.reduce(
+        (sum, r) => sum + r.precio * r.cantidad,
+        0
+      );
+      const _promedioCantidad = totalCantidad / records.length;
 
       const processedData = records.map((record, index) => ({
         ...record,
@@ -241,7 +243,7 @@ describe('useExportData - Load Tests', () => {
       records.forEach(record => {
         columns.forEach(col => {
           // Simular procesamiento de cada celda
-          const value = record[col.key as string];
+          const _value = record[col.key as string];
           cellCount += 1;
         });
       });
@@ -281,8 +283,6 @@ describe('useExportData - Load Tests', () => {
 
   describe('Concurrent Export Operations', () => {
     it('should handle 10 simultaneous export operations', async () => {
-      const { result } = renderHook(() => useExportData());
-
       const promises = Array.from({ length: 10 }, async (_, batchNum) => {
         const records = Array.from({ length: 5000 }, (_, i) => ({
           id: batchNum * 5000 + i + 1,
@@ -291,7 +291,7 @@ describe('useExportData - Load Tests', () => {
         }));
 
         let processedCount = 0;
-        records.forEach(record => {
+        records.forEach(_record => {
           processedCount += 1;
         });
         return processedCount;
@@ -311,8 +311,6 @@ describe('useExportData - Load Tests', () => {
 
   describe('Memory Stress during Export', () => {
     it('should maintain consistent performance across multiple export cycles', () => {
-      const { result } = renderHook(() => useExportData());
-
       const cycles = 5;
       const recordsPerCycle = 20000;
       const times: number[] = [];
@@ -324,7 +322,7 @@ describe('useExportData - Load Tests', () => {
         }));
 
         const start = performance.now();
-        const sum = records.reduce((acc, r) => acc + r.valor, 0);
+        const _sum = records.reduce((acc, r) => acc + r.valor, 0);
         const duration = performance.now() - start;
         times.push(duration);
       }

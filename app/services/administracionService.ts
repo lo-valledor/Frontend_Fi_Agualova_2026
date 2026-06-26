@@ -1,30 +1,35 @@
 import api from '~/lib/api';
 import type {
   AcometidaDetail,
+  AcometidaFormValues,
+  AcometidaProps,
   AcometidaRow,
+  BuscarAcometidas,
+  BuscarContratosLibres,
   CargoFacturableConceptos,
+  CargoFacturableFormValues,
   CargoFacturableProps,
   CargoFacturableRow,
   CargoFacturableTarifas,
   CargoFacturableTiposMedidor,
   CargosFacturables,
   CargoTipoContrato,
-  ClienteFormValues,
   Cliente,
-  BuscarAcometidas,
-  BuscarContratosLibres,
+  ClienteFormValues,
   ClientesRow,
-  CondicionContratoFormValues,
+  Concepto,
+  Conceptos,
   CondicionContrato,
+  CondicionContratoFormValues,
   Condiciones,
   CondicionesContratoRow,
-  Conceptos,
-  Concepto,
+  ContratoFormValues,
   ContratosRow,
   Empalmes,
   Estado,
   GuardarConfiguracionPayload,
   Marca,
+  MedidorByCodigo,
   MedidoresRow,
   MedidorProps,
   Nichos,
@@ -36,17 +41,13 @@ import type {
   Usuarios
 } from '~/types/administracion';
 
-
 export interface AdministracionServiceResponse<T> {
-  
   data: T | null;
-  
+
   error: string | null;
 }
 
-
 class AdministracionService {
-  
   private processApiResponse<T>(response: any): T[] {
     if (
       response.data &&
@@ -61,7 +62,6 @@ class AdministracionService {
     return [];
   }
 
-  
   async getAcometidasData(): Promise<
     AdministracionServiceResponse<{
       acometidas: AcometidaRow[];
@@ -106,6 +106,32 @@ class AdministracionService {
     }
   }
 
+  async getAcometidasBuscarContratosLibres(
+    nombreCliente?: string,
+    limit?: number,
+    offset?: number
+  ) {
+    try {
+      const params: Record<string, string | number> = {};
+      if (nombreCliente) params.nombreCliente = nombreCliente;
+      if (limit) params.limit = limit;
+      if (offset) params.offset = offset;
+
+      const response = await api.get('/acometidas/buscar-contratos-libres', {
+        params
+      });
+      return {
+        data: this.processApiResponse<BuscarContratosLibres>(response),
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
   async getAcometidaById(
     id: number
   ): Promise<AdministracionServiceResponse<AcometidaDetail>> {
@@ -123,7 +149,40 @@ class AdministracionService {
     }
   }
 
-  
+  async createAcometida(
+    data: AcometidaProps
+  ): Promise<AdministracionServiceResponse<AcometidaProps>> {
+    try {
+      const response = await api.post('/acometidas/crear', data);
+      return {
+        data: response.data as AcometidaProps,
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  async updateAcometida(
+    data: AcometidaFormValues
+  ): Promise<AdministracionServiceResponse<AcometidaFormValues>> {
+    try {
+      const response = await api.put('/acometidas/editar', data);
+      return {
+        data: response.data as AcometidaFormValues,
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
   async getClientesData(): Promise<
     AdministracionServiceResponse<{
       clientes: ClientesRow[];
@@ -156,7 +215,6 @@ class AdministracionService {
     }
   }
 
-  
   async getContratosData(): Promise<
     AdministracionServiceResponse<{
       contratos: ContratosRow[];
@@ -179,7 +237,6 @@ class AdministracionService {
     }
   }
 
-  
   async getClientesBuscar(): Promise<
     AdministracionServiceResponse<ClientesRow[]>
   > {
@@ -197,10 +254,9 @@ class AdministracionService {
     }
   }
 
-  
-  async getContratoById(id: number): Promise<
-    AdministracionServiceResponse<unknown>
-  > {
+  async getContratoById(
+    id: number
+  ): Promise<AdministracionServiceResponse<unknown>> {
     try {
       const resContratos = await api.get(`/contratos/${id}`);
       return {
@@ -215,7 +271,6 @@ class AdministracionService {
     }
   }
 
-  
   async getDataCreacionContrato(): Promise<
     AdministracionServiceResponse<unknown>
   > {
@@ -232,7 +287,23 @@ class AdministracionService {
     }
   }
 
-  
+  async putDataActualizarContrato(
+    data: ContratoFormValues
+  ): Promise<AdministracionServiceResponse<unknown>> {
+    try {
+      const response = await api.put('/contratos/editar', data);
+      return {
+        data: response.data,
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
   async getMedidoresData(): Promise<
     AdministracionServiceResponse<{
       medidores: MedidoresRow[];
@@ -276,7 +347,6 @@ class AdministracionService {
     }
   }
 
-  
   async postMedidoresData(): Promise<
     AdministracionServiceResponse<{
       marca: Marca[];
@@ -304,10 +374,9 @@ class AdministracionService {
     }
   }
 
-  
   async getMedidoresByCodigo({ codigo }: { codigo: string }): Promise<
     AdministracionServiceResponse<{
-      medidor: MedidoresRow | null;
+      medidor: MedidorByCodigo | null;
       marca: Marca[];
       tipoMedidor: Tipo[];
       estados: Estado[];
@@ -331,7 +400,7 @@ class AdministracionService {
 
       return {
         data: {
-          medidor: (resMedidor.data as MedidoresRow) ?? null,
+          medidor: (resMedidor.data as MedidorByCodigo) ?? null,
           marca: this.processApiResponse<Marca>(resMarcas),
           tipoMedidor: this.processApiResponse<Tipo>(resTiposMedidor),
           estados: this.processApiResponse<Estado>(resEstados),
@@ -348,7 +417,6 @@ class AdministracionService {
     }
   }
 
-  
   async getUsuarios(): Promise<AdministracionServiceResponse<Usuarios[]>> {
     try {
       const response = await api.get('GetAllUsers');
@@ -364,7 +432,6 @@ class AdministracionService {
     }
   }
 
-  
   async getCargoTipoContrato(): Promise<
     AdministracionServiceResponse<CargoTipoContrato[]>
   > {
@@ -382,7 +449,6 @@ class AdministracionService {
     }
   }
 
-  
   async getCargoTipoContratoById(cargoTipoContratoId: number): Promise<
     AdministracionServiceResponse<{
       tipoContratoId: number;
@@ -472,9 +538,7 @@ class AdministracionService {
                   );
                   return tipoMedidor === 1;
                 })
-                .map(item =>
-                  toNumber((item as { cargoId?: unknown }).cargoId)
-                )
+                .map(item => toNumber((item as { cargoId?: unknown }).cargoId))
                 .filter((item): item is number => item !== null),
         idsCargosTrifasicos:
           toNumberArray(estructura.idsCargosTrifasicos).length > 0
@@ -486,9 +550,7 @@ class AdministracionService {
                   );
                   return tipoMedidor === 2;
                 })
-                .map(item =>
-                  toNumber((item as { cargoId?: unknown }).cargoId)
-                )
+                .map(item => toNumber((item as { cargoId?: unknown }).cargoId))
                 .filter((item): item is number => item !== null),
         idsCargosAmbos:
           toNumberArray(estructura.idsCargosAmbos).length > 0
@@ -500,9 +562,7 @@ class AdministracionService {
                   );
                   return tipoMedidor === 0;
                 })
-                .map(item =>
-                  toNumber((item as { cargoId?: unknown }).cargoId)
-                )
+                .map(item => toNumber((item as { cargoId?: unknown }).cargoId))
                 .filter((item): item is number => item !== null)
       };
 
@@ -518,9 +578,8 @@ class AdministracionService {
           condiciones: this.processApiResponse<Condiciones>(
             responseCondicionesContrato
           ),
-          cargosFacturables: this.processApiResponse<CargosFacturables>(
-            responseCargos
-          )
+          cargosFacturables:
+            this.processApiResponse<CargosFacturables>(responseCargos)
         },
         error: null
       };
@@ -532,7 +591,6 @@ class AdministracionService {
     }
   }
 
-  
   async getCargoTipoContratoCrear(): Promise<
     AdministracionServiceResponse<{
       tiposContrato: TiposContrato[];
@@ -563,9 +621,8 @@ class AdministracionService {
           condiciones: this.processApiResponse<Condiciones>(
             responseCondicionesContrato
           ),
-          cargosFacturables: this.processApiResponse<CargosFacturables>(
-            responseCargos
-          )
+          cargosFacturables:
+            this.processApiResponse<CargosFacturables>(responseCargos)
         },
         error: null
       };
@@ -597,7 +654,6 @@ class AdministracionService {
     }
   }
 
-  
   async getCondicionesContratoData(): Promise<
     AdministracionServiceResponse<{
       condicionesContrato: CondicionesContratoRow[];
@@ -612,8 +668,9 @@ class AdministracionService {
 
       return {
         data: {
-          condicionesContrato:
-            this.processApiResponse<CondicionesContratoRow>(resCondicionesContrato),
+          condicionesContrato: this.processApiResponse<CondicionesContratoRow>(
+            resCondicionesContrato
+          ),
           conceptos: this.processApiResponse<Concepto>(resConceptos)
         },
         error: null
@@ -626,7 +683,23 @@ class AdministracionService {
     }
   }
 
-  
+  async getCondicionesContratoById(
+    id: number
+  ): Promise<AdministracionServiceResponse<CondicionContrato>> {
+    try {
+      const response = await api.get(`/condiciones-contrato/${id}`);
+      return {
+        data: response.data as CondicionContrato,
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
   async getCargoFacturableData(): Promise<
     AdministracionServiceResponse<{
       cargos: CargoFacturableRow[];
@@ -646,7 +719,8 @@ class AdministracionService {
 
       return {
         data: {
-          cargos: this.processApiResponse<CargoFacturableRow>(resCargoFacturable),
+          cargos:
+            this.processApiResponse<CargoFacturableRow>(resCargoFacturable),
           conceptos:
             this.processApiResponse<CargoFacturableConceptos>(resConceptos),
           tarifas: this.processApiResponse<CargoFacturableTarifas>(resTarifas),
@@ -683,12 +757,12 @@ class AdministracionService {
   }
 
   async createCondicionContrato(
-    data: CondicionContratoFormValues | Record<string, unknown>
-  ): Promise<AdministracionServiceResponse<unknown>> {
+    data: CondicionContratoFormValues
+  ): Promise<AdministracionServiceResponse<CondicionContratoFormValues>> {
     try {
       const response = await api.post('/condiciones-contrato/crear', data);
       return {
-        data: response.data,
+        data: response.data as CondicionContratoFormValues,
         error: null
       };
     } catch (error) {
@@ -700,12 +774,12 @@ class AdministracionService {
   }
 
   async updateCondicionContrato(
-    data: CondicionContratoFormValues | Record<string, unknown>
-  ): Promise<AdministracionServiceResponse<unknown>> {
+    data: CondicionContratoFormValues
+  ): Promise<AdministracionServiceResponse<CondicionContratoFormValues>> {
     try {
       const response = await api.put('/condiciones-contrato/editar', data);
       return {
-        data: response.data,
+        data: response.data as CondicionContratoFormValues,
         error: null
       };
     } catch (error) {
@@ -734,12 +808,12 @@ class AdministracionService {
   }
 
   async createCargoFacturable(
-    data: Record<string, unknown>
-  ): Promise<AdministracionServiceResponse<unknown>> {
+    data: CargoFacturableProps
+  ): Promise<AdministracionServiceResponse<CargoFacturableProps>> {
     try {
       const response = await api.post('/cargos-facturables/crear', data);
       return {
-        data: response.data,
+        data: response.data as CargoFacturableProps,
         error: null
       };
     } catch (error) {
@@ -751,12 +825,12 @@ class AdministracionService {
   }
 
   async updateCargoFacturable(
-    data: Record<string, unknown>
-  ): Promise<AdministracionServiceResponse<unknown>> {
+    data: CargoFacturableFormValues
+  ): Promise<AdministracionServiceResponse<CargoFacturableFormValues>> {
     try {
       const response = await api.put('/cargos-facturables/editar', data);
       return {
-        data: response.data,
+        data: response.data as CargoFacturableFormValues,
         error: null
       };
     } catch (error) {
@@ -767,7 +841,6 @@ class AdministracionService {
     }
   }
 
-  
   async crearContrato(
     contratoData: Record<string, unknown>
   ): Promise<AdministracionServiceResponse<any>> {
@@ -807,7 +880,6 @@ class AdministracionService {
     }
   }
 
-  
   async modificarContrato(
     contratoData: Record<string, unknown>
   ): Promise<AdministracionServiceResponse<any>> {
@@ -848,7 +920,6 @@ class AdministracionService {
     }
   }
 
-  
   async getGiros(): Promise<AdministracionServiceResponse<NombreGiro[]>> {
     try {
       const response = await api.get('/clientes/buscar-giros');
@@ -864,7 +935,6 @@ class AdministracionService {
     }
   }
 
-  
   async getComunas(
     region?: string
   ): Promise<AdministracionServiceResponse<NombreComuna[]>> {
@@ -885,7 +955,6 @@ class AdministracionService {
     }
   }
 
-  
   async getClientesByRut(): Promise<
     AdministracionServiceResponse<ClientesRow[]>
   > {
@@ -903,7 +972,6 @@ class AdministracionService {
     }
   }
 
-  
   async getClienteByRut(
     rut: string
   ): Promise<AdministracionServiceResponse<Cliente>> {
@@ -955,7 +1023,6 @@ class AdministracionService {
     }
   }
 
-  
   async getContratanteByRut(
     rut: string
   ): Promise<AdministracionServiceResponse<unknown>> {
@@ -973,12 +1040,17 @@ class AdministracionService {
     }
   }
 
-  
   async getPropietarioByRut(
-    rut: string
+    nombre?: string,
+    rut?: string
   ): Promise<AdministracionServiceResponse<unknown>> {
     try {
-      const response = await api.get(`/clientes/datos-propietario/${rut}`);
+      const params = new URLSearchParams();
+      if (nombre) params.append('nombre', nombre);
+      if (rut) params.append('rut', rut);
+      const response = await api.get(`/contratos/buscar-propietarios`, {
+        params
+      });
       return {
         data: response.data,
         error: null
@@ -991,7 +1063,6 @@ class AdministracionService {
     }
   }
 
-  
   async crearMedidor(
     data: MedidorProps
   ): Promise<AdministracionServiceResponse<{ id: number }>> {
@@ -1009,7 +1080,6 @@ class AdministracionService {
     }
   }
 
-  
   async modificarMedidor(
     data: MedidorProps
   ): Promise<AdministracionServiceResponse<any>> {
@@ -1030,7 +1100,6 @@ class AdministracionService {
     }
   }
 
-  
   async crearContratante(
     contratanteData: any
   ): Promise<AdministracionServiceResponse<any>> {
@@ -1051,7 +1120,75 @@ class AdministracionService {
     }
   }
 
-  
+  async modificarContratante(
+    contratanteData: any
+  ): Promise<AdministracionServiceResponse<any>> {
+    try {
+      const response = await api.put('/contratante/modificar', contratanteData);
+      return {
+        data: response.data,
+        error: null
+      };
+    } catch (error: any) {
+      return {
+        data: null,
+        error:
+          error.response?.data?.message ||
+          error.message ||
+          'Error al modificar el contratante'
+      };
+    }
+  }
+
+  async getMedidorSubempalmes(): Promise<AdministracionServiceResponse<any[]>> {
+    try {
+      const response = await api.get('/MedidorSubempalmes');
+      return {
+        data: response.data as any[],
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  async modificarSubempalme(
+    payload: any
+  ): Promise<AdministracionServiceResponse<any>> {
+    try {
+      const response = await api.put('/modificar-subempalme', payload);
+      return {
+        data: response.data,
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  async getCargosTiposContrato(): Promise<
+    AdministracionServiceResponse<CargoTipoContrato[]>
+  > {
+    try {
+      const response = await api.get('/cargos-tipos-contrato/buscar');
+      return {
+        data: this.processApiResponse<CargoTipoContrato>(response),
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
   async sincronizarPropietarios(): Promise<
     AdministracionServiceResponse<{
       registrosAfectados: number;
@@ -1059,7 +1196,7 @@ class AdministracionService {
     }>
   > {
     try {
-      const response = await api.put('/contrato/actualizar-propietarios-local');
+      const response = await api.post('/contrato/sincronizar-propietarios');
       return {
         data: response.data as { registrosAfectados: number; mensaje: string },
         error: null
@@ -1071,6 +1208,136 @@ class AdministracionService {
           error.response?.data?.message ||
           error.message ||
           'Error al sincronizar propietarios'
+      };
+    }
+  }
+
+  // Busquedas con limit y offset para paginación
+  async getAcometidaByLimitAndOffset(
+    ubicacion?: string,
+    idSector?: number,
+    idNicho?: number,
+    limit: number = 20,
+    offset: number = 0
+  ): Promise<AdministracionServiceResponse<AcometidaRow[]>> {
+    try {
+      const params: Record<string, string | number> = {
+        limit,
+        offset
+      };
+      if (ubicacion) params.ubicacion = ubicacion;
+      if (idSector) params.idSector = idSector;
+      if (idNicho) params.idNicho = idNicho;
+      const response = await api.get('/acometidas/buscar', { params });
+      return {
+        data: this.processApiResponse<AcometidaRow>(response),
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  async getContratosByLimitAndOffset(params: {
+    nombreCliente?: string;
+    rutCliente?: string;
+    nombrePropietario?: string;
+    rutPropietario?: string;
+    numeroLocal?: string;
+    numeroContrato?: string;
+    Limit?: number;
+    Offset?: number;
+  }): Promise<AdministracionServiceResponse<ContratosRow[]>> {
+    try {
+      const queryParams: Record<string, string | number> = {};
+      if (params.nombreCliente)
+        queryParams.nombreCliente = params.nombreCliente;
+      if (params.rutCliente) queryParams.rutCliente = params.rutCliente;
+      if (params.nombrePropietario) {
+        queryParams.nombrePropietario = params.nombrePropietario;
+      }
+      if (params.rutPropietario) {
+        queryParams.rutPropietario = params.rutPropietario;
+      }
+      if (params.numeroLocal) queryParams.numeroLocal = params.numeroLocal;
+      if (params.numeroContrato) {
+        queryParams.numeroContrato = params.numeroContrato;
+      }
+      if (params.Limit !== undefined) queryParams.Limit = params.Limit;
+      if (params.Offset !== undefined) queryParams.Offset = params.Offset;
+
+      const response = await api.get('/contratos/buscar', {
+        params: queryParams
+      });
+      return {
+        data: this.processApiResponse<ContratosRow>(response),
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error:
+          error instanceof Error ? error.message : 'Error al buscar contratos'
+      };
+    }
+  }
+
+  async getClientesByLimitAndOffset(params: {
+    nombreCliente?: string;
+    limit?: number;
+    offset?: number;
+  }): Promise<AdministracionServiceResponse<ClientesRow[]>> {
+    try {
+      const queryParams: Record<string, string | number> = {};
+      if (params.nombreCliente)
+        queryParams.nombreCliente = params.nombreCliente;
+      if (params.limit !== undefined) queryParams.limit = params.limit;
+      if (params.offset !== undefined) queryParams.offset = params.offset;
+
+      const response = await api.get('/clientes/buscar', {
+        params: queryParams
+      });
+      return {
+        data: this.processApiResponse<ClientesRow>(response),
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error:
+          error instanceof Error ? error.message : 'Error al buscar clientes'
+      };
+    }
+  }
+
+  async getMedidoresByLimitAndOffset(params: {
+    modelo?: string;
+    serie?: string;
+    limit?: number;
+    offset?: number;
+  }): Promise<AdministracionServiceResponse<MedidoresRow[]>> {
+    try {
+      const queryParams: Record<string, string | number> = {};
+      if (params.modelo) queryParams.modelo = params.modelo;
+      if (params.serie) queryParams.serie = params.serie;
+      if (params.limit !== undefined) queryParams.limit = params.limit;
+      if (params.offset !== undefined) queryParams.offset = params.offset;
+
+      const response = await api.get('/medidores/buscar', {
+        params: queryParams
+      });
+      return {
+        data: this.processApiResponse<MedidoresRow>(response),
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error:
+          error instanceof Error ? error.message : 'Error al buscar medidores'
       };
     }
   }

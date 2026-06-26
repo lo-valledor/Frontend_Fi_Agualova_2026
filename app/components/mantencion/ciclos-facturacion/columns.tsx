@@ -17,12 +17,12 @@ export const columns = ({
   {
     accessorKey: 'nombre',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Nombre' />
+      <DataTableColumnHeader column={column} title="Nombre" />
     ),
     cell: ({ row }) => {
       const nombre = row.getValue('nombre');
       return (
-        <div className='max-w-[200px] truncate font-medium'>
+        <div className="max-w-[200px] truncate font-medium">
           {nombre as string}
         </div>
       );
@@ -33,13 +33,13 @@ export const columns = ({
   {
     accessorKey: 'diaFacturacion',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Día de Facturación' />
+      <DataTableColumnHeader column={column} title="Día de Facturación" />
     ),
     cell: ({ row }) => {
       const dia = row.getValue('diaFacturacion');
       return (
-        <div className='text-center'>
-          <Badge variant='outline' className='font-mono'>
+        <div className="text-center">
+          <Badge variant="outline" className="font-mono">
             {dia as number}
           </Badge>
         </div>
@@ -50,13 +50,13 @@ export const columns = ({
   {
     accessorKey: 'diaInicioLectura',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Día Inicio Lectura' />
+      <DataTableColumnHeader column={column} title="Día Inicio Lectura" />
     ),
     cell: ({ row }) => {
       const dia = row.getValue('diaInicioLectura');
       return (
-        <div className='text-center'>
-          <Badge variant='outline' className='font-mono'>
+        <div className="text-center">
+          <Badge variant="outline" className="font-mono">
             {dia as number}
           </Badge>
         </div>
@@ -67,14 +67,14 @@ export const columns = ({
   {
     accessorKey: 'diasVencimientoFactura',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Días Vencimiento' />
+      <DataTableColumnHeader column={column} title="Días Vencimiento" />
     ),
     cell: ({ row }) => {
       const dias = row.getValue('diasVencimientoFactura');
       return (
-        <div className='text-center'>
-          <span className='font-medium'>{dias as number}</span>
-          <span className='text-xs text-muted-foreground ml-1'>días</span>
+        <div className="text-center">
+          <span className="font-medium">{dias as number}</span>
+          <span className="text-xs text-muted-foreground ml-1">días</span>
         </div>
       );
     },
@@ -83,7 +83,7 @@ export const columns = ({
   {
     accessorKey: 'estado',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Estado' />
+      <DataTableColumnHeader column={column} title="Estado" />
     ),
     cell: ({ row }) => {
       const estado = row.getValue('estado');

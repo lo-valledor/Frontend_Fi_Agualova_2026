@@ -1,6 +1,5 @@
 export { formatSafeDate } from '~/utils/date-formatter';
 
-
 export function formatMeterReading(
   value: number | string | null | undefined,
   decimals = 0,
@@ -19,10 +18,9 @@ export function formatMeterReading(
   return numValue.toFixed(decimals);
 }
 
-
 export function formatConsumption(
   consumption: number | null | undefined,
-  unit = 'kWh',
+  unit = 'm³',
   decimals = 2,
   fallback = '0'
 ): string {
@@ -36,7 +34,6 @@ export function formatConsumption(
 
   return `${consumption.toFixed(decimals)} ${unit}`;
 }
-
 
 export function formatEnergyValue(
   value: number | string | null | undefined,
@@ -56,10 +53,9 @@ export function formatEnergyValue(
   return numValue.toFixed(decimals);
 }
 
-
 export function formatPowerDemand(
   demand: number | string | null | undefined,
-  unit = 'kW',
+  unit = 'm³',
   decimals = 2,
   fallback = '-'
 ): string {
@@ -77,7 +73,6 @@ export function formatPowerDemand(
   return `${numDemand.toFixed(decimals)} ${unit}`;
 }
 
-
 export function formatPercentage(
   value: number | null | undefined,
   decimals = 1,
@@ -91,7 +86,6 @@ export function formatPercentage(
   return includeSymbol ? `${formatted}%` : formatted;
 }
 
-
 export function formatSerialNumber(
   serialNumber: string | null | undefined,
   uppercase = true,
@@ -104,7 +98,6 @@ export function formatSerialNumber(
   const trimmed = serialNumber.trim();
   return uppercase ? trimmed.toUpperCase() : trimmed;
 }
-
 
 export function formatTime(
   time: string | null | undefined,

@@ -2,13 +2,12 @@ import { Card, CardContent, CardHeader } from '~/components/ui/card';
 import { Skeleton } from '~/components/ui/skeleton';
 
 interface DataTableSkeletonProps {
-  
   columns?: number;
-  
+
   rows?: number;
-  
+
   showHeader?: boolean;
-  
+
   showPagination?: boolean;
 }
 
@@ -53,7 +52,10 @@ export function DataTableSkeleton({
         <CardContent>
           <div className="space-y-4">
             {/* Table header */}
-            <div className="grid gap-4" style={{ gridTemplateColumns: `repeat(${columns}, 1fr)` }}>
+            <div
+              className="grid gap-4"
+              style={{ gridTemplateColumns: `repeat(${columns}, 1fr)` }}
+            >
               {Array.from({ length: columns }).map((_, i) => (
                 <Skeleton key={i} className="h-10" />
               ))}

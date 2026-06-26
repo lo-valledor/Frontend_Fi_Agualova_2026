@@ -1,7 +1,10 @@
-import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { AcometidaFiltersComponent, type AcometidaFilters } from './acometida-filters';
+import { describe, expect, it, vi } from 'vitest';
+import {
+  type AcometidaFilters,
+  AcometidaFiltersComponent
+} from './acometida-filters';
 
 const mockOnFiltersChange = vi.fn();
 const mockOnClearFilters = vi.fn();
@@ -56,18 +59,13 @@ describe('AcometidaFiltersComponent', () => {
     expect(screen.getByText('2 filtros activos')).toBeInTheDocument();
   });
 
-  it.skip('should call onFiltersChange when a filter is changed', async () => {
-    // Test desactivado - Radix UI Select requiere mocking adicional para testing
-    // Se recomienda usar E2E tests o mocking de react-select para este caso
-  });
-
   it('should call onClearFilters when the clear button is clicked', async () => {
     const user = userEvent.setup();
     const activeFilters: AcometidaFilters = {
-        ...mockFilters,
-        empalmeDescripcion: 'Empalme 1',
-        tieneMedidor: 'true'
-      };
+      ...mockFilters,
+      empalmeDescripcion: 'Empalme 1',
+      tieneMedidor: 'true'
+    };
 
     render(
       <AcometidaFiltersComponent
@@ -81,7 +79,9 @@ describe('AcometidaFiltersComponent', () => {
     const header = screen.getByText('Filtros Avanzados');
     await user.click(header);
 
-    const clearButton = screen.getByRole('button', { name: /limpiar filtros/i });
+    const clearButton = screen.getByRole('button', {
+      name: /limpiar filtros/i
+    });
     await user.click(clearButton);
 
     expect(mockOnClearFilters).toHaveBeenCalled();

@@ -134,51 +134,51 @@ const InvoicesTable = memo(function InvoicesTable({
     children: React.ReactNode;
   }) => (
     <Button
-      variant='ghost'
-      size='sm'
-      className='h-8 gap-1'
+      variant="ghost"
+      size="sm"
+      className="h-8 gap-1"
       onClick={() => handleSort(field)}
     >
       {children}
-      <ArrowUpDown className='h-3 w-3' />
+      <ArrowUpDown className="h-3 w-3" />
     </Button>
   );
 
   return (
-    <Card className='border bg-background'>
+    <Card className="border bg-background">
       <CardHeader>
-        <CardTitle className='text-base'>Tabla Detallada de Facturas</CardTitle>
+        <CardTitle className="text-base">Tabla Detallada de Facturas</CardTitle>
         <CardDescription>
           Historial completo ({facturas.length} facturas)
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className='space-y-4'>
+        <div className="space-y-4">
           {/* Tabla */}
-          <div className='rounded-md border'>
+          <div className="rounded-md border">
             <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>
-                    <SortButton field='periodo'>Periodo</SortButton>
+                    <SortButton field="periodo">Periodo</SortButton>
                   </TableHead>
                   <TableHead>Nro Factura</TableHead>
                   <TableHead>Emisión</TableHead>
                   <TableHead>
-                    <SortButton field='fechaVencimiento'>
+                    <SortButton field="fechaVencimiento">
                       Vencimiento
                     </SortButton>
                   </TableHead>
-                  <TableHead className='text-right'>
-                    <SortButton field='consumoPeriodo'>Consumo</SortButton>
+                  <TableHead className="text-right">
+                    <SortButton field="consumoPeriodo">Consumo</SortButton>
                   </TableHead>
-                  <TableHead className='text-right'>Valor Neto</TableHead>
-                  <TableHead className='text-right'>IVA</TableHead>
-                  <TableHead className='text-right'>
-                    <SortButton field='valorTotal'>Total</SortButton>
+                  <TableHead className="text-right">Valor Neto</TableHead>
+                  <TableHead className="text-right">IVA</TableHead>
+                  <TableHead className="text-right">
+                    <SortButton field="valorTotal">Total</SortButton>
                   </TableHead>
-                  <TableHead className='text-right'>
-                    <SortButton field='costoPorKwh'>$/kWh</SortButton>
+                  <TableHead className="text-right">
+                    <SortButton field="costoPorKwh">$/m³</SortButton>
                   </TableHead>
                   <TableHead>Estado</TableHead>
                   <TableHead>Acciones</TableHead>
@@ -193,12 +193,12 @@ const InvoicesTable = memo(function InvoicesTable({
 
                   return (
                     <TableRow key={index}>
-                      <TableCell className='font-medium'>
-                        <div className='flex flex-col'>
-                          <span className='text-sm'>
+                      <TableCell className="font-medium">
+                        <div className="flex flex-col">
+                          <span className="text-sm">
                             {getNombreMes(mes)} {ano}
                           </span>
-                          <span className='text-xs text-slate-500'>
+                          <span className="text-xs text-slate-500">
                             {factura.periodo}
                           </span>
                         </div>
@@ -206,37 +206,37 @@ const InvoicesTable = memo(function InvoicesTable({
                       <TableCell>
                         <button
                           onClick={() => handleCopyFactura(factura.nroFactura)}
-                          className='flex items-center gap-1 text-sm hover:text-primary transition-colors'
-                          title='Click para copiar'
+                          className="flex items-center gap-1 text-sm hover:text-primary transition-colors"
+                          title="Click para copiar"
                         >
                           {factura.nroFactura}
-                          <Copy className='h-3 w-3' />
+                          <Copy className="h-3 w-3" />
                         </button>
                       </TableCell>
-                      <TableCell className='text-sm'>
+                      <TableCell className="text-sm">
                         {new Date(factura.fechaEmision).toLocaleDateString(
                           'es-CL'
                         )}
                       </TableCell>
-                      <TableCell className='text-sm'>
+                      <TableCell className="text-sm">
                         {new Date(factura.fechaVencimiento).toLocaleDateString(
                           'es-CL'
                         )}
                       </TableCell>
-                      <TableCell className='text-right font-medium'>
+                      <TableCell className="text-right font-medium">
                         {factura.consumoPeriodo.toLocaleString('es-CL')}
-                        <span className='text-xs text-slate-500 ml-1'>kWh</span>
+                        <span className="text-xs text-slate-500 ml-1">m³</span>
                       </TableCell>
-                      <TableCell className='text-right text-sm'>
+                      <TableCell className="text-right text-sm">
                         {formatCurrency(factura.valorNeto!)}
                       </TableCell>
-                      <TableCell className='text-right text-sm text-emerald-600'>
+                      <TableCell className="text-right text-sm text-emerald-600">
                         {formatCurrency(factura.iva!)}
                       </TableCell>
-                      <TableCell className='text-right font-bold'>
+                      <TableCell className="text-right font-bold">
                         {formatCurrency(factura.valorTotal!)}
                       </TableCell>
-                      <TableCell className='text-right text-sm'>
+                      <TableCell className="text-right text-sm">
                         ${factura.costoPorKwh.toFixed(0)}
                       </TableCell>
                       <TableCell>
@@ -246,7 +246,7 @@ const InvoicesTable = memo(function InvoicesTable({
                               ? 'destructive'
                               : 'default'
                           }
-                          className='text-xs'
+                          className="text-xs"
                         >
                           {estado.estado === 'vencida'
                             ? 'Vencida'
@@ -254,8 +254,8 @@ const InvoicesTable = memo(function InvoicesTable({
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        <Button variant='ghost' size='sm' title='Descargar'>
-                          <Download className='h-4 w-4' />
+                        <Button variant="ghost" size="sm" title="Descargar">
+                          <Download className="h-4 w-4" />
                         </Button>
                       </TableCell>
                     </TableRow>
@@ -267,28 +267,28 @@ const InvoicesTable = memo(function InvoicesTable({
 
           {/* Paginación */}
           {totalPages > 1 && (
-            <div className='flex items-center justify-between px-2'>
-              <div className='text-sm text-slate-600 dark:text-slate-400'>
+            <div className="flex items-center justify-between px-2">
+              <div className="text-sm text-slate-600 dark:text-slate-400">
                 Página {currentPage} de {totalPages}
               </div>
-              <div className='flex items-center gap-2'>
+              <div className="flex items-center gap-2">
                 <Button
-                  variant='outline'
-                  size='sm'
+                  variant="outline"
+                  size="sm"
                   onClick={() => setCurrentPage(currentPage - 1)}
                   disabled={currentPage === 1}
                 >
-                  <ChevronLeft className='h-4 w-4' />
+                  <ChevronLeft className="h-4 w-4" />
                   Anterior
                 </Button>
                 <Button
-                  variant='outline'
-                  size='sm'
+                  variant="outline"
+                  size="sm"
                   onClick={() => setCurrentPage(currentPage + 1)}
                   disabled={currentPage === totalPages}
                 >
                   Siguiente
-                  <ChevronRight className='h-4 w-4' />
+                  <ChevronRight className="h-4 w-4" />
                 </Button>
               </div>
             </div>

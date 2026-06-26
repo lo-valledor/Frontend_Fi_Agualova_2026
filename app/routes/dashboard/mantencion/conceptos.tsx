@@ -1,4 +1,3 @@
-/* eslint-disable no-empty-pattern */
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import ConceptosComponent from '~/components/mantencion/conceptos/conceptos-component';
 import { MantencionHydrateFallback } from '~/components/mantencion/mantencion-hydrate-fallback';
@@ -23,7 +22,7 @@ export async function clientLoader() {
   if (result.error || !result.data) {
     return {
       conceptos: [],
-      comboAsociadoConceptos: []
+      conceptoAsociables: []
     };
   }
 
@@ -33,7 +32,7 @@ export async function clientLoader() {
 export default function Conceptos({
   loaderData
 }: Readonly<Route.ComponentProps>) {
-  const { conceptos, comboAsociadoConceptos } = loaderData;
+  const { conceptos, conceptoAsociables } = loaderData;
 
   const pageBreadcrumbs = [{ label: 'Mantención' }, { label: 'Conceptos' }];
 
@@ -42,7 +41,7 @@ export default function Conceptos({
       <BreadcrumbSetter items={pageBreadcrumbs} />
       <ConceptosComponent
         conceptos={conceptos}
-        comboAsociadoConceptos={comboAsociadoConceptos}
+        conceptoAsociables={conceptoAsociables}
       />
     </div>
   );

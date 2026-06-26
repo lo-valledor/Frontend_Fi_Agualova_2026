@@ -1,15 +1,14 @@
 import type { ColumnDef } from '@tanstack/react-table';
 import { format } from 'rut.js';
-
-import { Badge } from '~/components/ui/badge';
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
 import { TableActions } from '~/components/data-table/table-helpers';
-import type { GetContratante, GetComunas } from '~/types/administracion';
+import { Badge } from '~/components/ui/badge';
+import type { GetContratante, NombreComuna } from '~/types/administracion';
 
 interface ContratantesColumnsProps {
   onDetails: (contratante: GetContratante) => void;
   detailingContratanteRut: string | null;
-  comunas: GetComunas[];
+  comunas: NombreComuna[];
 }
 
 export const columns = ({
@@ -20,7 +19,7 @@ export const columns = ({
   {
     accessorKey: 'rut',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='RUT' />
+      <DataTableColumnHeader column={column} title="RUT" />
     ),
     cell: ({ row }) => {
       const nombreCompleto = row.original.esEmpresa
@@ -28,15 +27,15 @@ export const columns = ({
         : `${row.original.nombre} ${row.original.apellido || ''}`.trim();
 
       return (
-        <div className='flex items-center gap-2 sm:gap-3 min-w-0'>
-          <div className='min-w-0 flex-1'>
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+          <div className="min-w-0 flex-1">
             <div
-              className='font-medium truncate text-xs sm:text-sm '
+              className="font-medium truncate text-xs sm:text-sm "
               title={nombreCompleto}
             >
               {nombreCompleto}
             </div>
-            <div className='text-xs font-mono truncate'>
+            <div className="text-xs font-mono truncate">
               {format(row.getValue('rut'))}
             </div>
           </div>
@@ -50,15 +49,15 @@ export const columns = ({
   {
     accessorKey: 'nombre',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Tipo' />
+      <DataTableColumnHeader column={column} title="Tipo" />
     ),
     cell: ({ row }) => {
       return (
-        <div className='flex items-center gap-2 sm:gap-3 min-w-0'>
-          <div className='min-w-0 flex-1'>
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+          <div className="min-w-0 flex-1">
             <Badge
               variant={row.original.esEmpresa ? 'default' : 'secondary'}
-              className='text-xs'
+              className="text-xs"
             >
               {row.original.esEmpresa ? 'Empresa' : 'Persona'}
             </Badge>
@@ -73,24 +72,27 @@ export const columns = ({
   {
     accessorKey: 'direccion',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Dirección' />
+      <DataTableColumnHeader column={column} title="Dirección" />
     ),
     cell: ({ row }) => {
-      // Buscar el nombre de la comuna por su código
+      const matchComuna = comunas.find(c => {
+        if (typeof c === 'string') return c === row.original.comuna;
+        return c.codigo === row.original.comuna;
+      });
       const comunaNombre =
-        comunas.find(c => c.codigo === row.original.comuna)?.nombre ||
+        (typeof matchComuna === 'string' ? matchComuna : matchComuna?.nombre) ||
         row.original.comuna;
 
       return (
-        <div className='flex items-center gap-2 sm:gap-3 min-w-0'>
-          <div className='min-w-0 flex-1'>
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+          <div className="min-w-0 flex-1">
             <div
-              className='font-medium truncate text-xs sm:text-sm'
+              className="font-medium truncate text-xs sm:text-sm"
               title={row.original.direccion || 'No especificada'}
             >
               {row.original.direccion || 'No especificada'}
             </div>
-            <div className='text-xs truncate'>{comunaNombre}</div>
+            <div className="text-xs truncate">{comunaNombre}</div>
           </div>
         </div>
       );
@@ -102,19 +104,19 @@ export const columns = ({
   {
     accessorKey: 'contacto',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Contacto' />
+      <DataTableColumnHeader column={column} title="Contacto" />
     ),
     cell: ({ row }) => {
       return (
-        <div className='flex items-center gap-2 sm:gap-3 min-w-0'>
-          <div className='min-w-0 flex-1'>
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+          <div className="min-w-0 flex-1">
             <div
-              className='font-medium truncate text-xs sm:text-sm'
+              className="font-medium truncate text-xs sm:text-sm"
               title={row.original.contacto || 'No especificado'}
             >
               {row.original.contacto || 'No especificado'}
             </div>
-            <div className='text-xs truncate'>
+            <div className="text-xs truncate">
               {row.original.telefono || 'Sin teléfono'}
             </div>
           </div>
@@ -128,14 +130,14 @@ export const columns = ({
   {
     accessorKey: 'email',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Email' />
+      <DataTableColumnHeader column={column} title="Email" />
     ),
     cell: ({ row }) => {
       return (
-        <div className='flex items-center gap-2 sm:gap-3 min-w-0'>
-          <div className='min-w-0 flex-1'>
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+          <div className="min-w-0 flex-1">
             <div
-              className='font-medium truncate text-xs sm:text-sm'
+              className="font-medium truncate text-xs sm:text-sm"
               title={row.original.email || 'No especificado'}
             >
               {row.original.email || 'No especificado'}
@@ -151,11 +153,11 @@ export const columns = ({
   {
     id: 'actions',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Acciones' />
+      <DataTableColumnHeader column={column} title="Acciones" />
     ),
     cell: ({ row }) => {
       return (
-        <div className='flex items-center justify-center'>
+        <div className="flex items-center justify-center">
           <TableActions
             onView={onDetails}
             item={row.original}

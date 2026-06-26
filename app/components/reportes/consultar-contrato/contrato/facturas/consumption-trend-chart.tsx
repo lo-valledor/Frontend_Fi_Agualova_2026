@@ -94,9 +94,9 @@ const ConsumptionTrendChart = memo(function ConsumptionTrendChart({
   };
 
   return (
-    <Card className='border bg-background'>
+    <Card className="border bg-background">
       <CardHeader>
-        <CardTitle className='text-base'>
+        <CardTitle className="text-base">
           Tendencia de Consumo Mensual
         </CardTitle>
         <CardDescription>
@@ -104,73 +104,71 @@ const ConsumptionTrendChart = memo(function ConsumptionTrendChart({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig} className='h-[400px] w-full'>
-          <ResponsiveContainer width='100%' height='100%'>
+        <ChartContainer config={chartConfig} className="h-[400px] w-full">
+          <ResponsiveContainer width="100%" height="100%">
             <BarChart data={chartData}>
               <CartesianGrid
-                strokeDasharray='3 3'
-                className='stroke-slate-200 dark:stroke-slate-800'
+                strokeDasharray="3 3"
+                className="stroke-slate-200 dark:stroke-slate-800"
               />
               <XAxis
-                dataKey='periodoDisplay'
+                dataKey="periodoDisplay"
                 tickLine={false}
                 axisLine={false}
                 tickMargin={8}
                 fontSize={11}
                 angle={-45}
-                textAnchor='end'
+                textAnchor="end"
                 height={80}
               />
               <YAxis
                 fontSize={11}
                 tickLine={false}
                 axisLine={false}
-                tickFormatter={value => `${value} kWh`}
+                tickFormatter={value => `${value} m³`}
               />
               <Tooltip
                 content={({ active, payload }) => {
                   if (active && payload && payload.length) {
                     const data = payload[0].payload;
                     return (
-                      <div className='rounded-lg border bg-background p-3 shadow-md'>
-                        <div className='space-y-2'>
-                          <div className='font-medium text-sm border-b pb-2'>
+                      <div className="rounded-lg border bg-background p-3 shadow-md">
+                        <div className="space-y-2">
+                          <div className="font-medium text-sm border-b pb-2">
                             {data.periodoDisplay}
                           </div>
-                          <div className='text-xs space-y-1'>
-                            <div className='flex items-center justify-between gap-4'>
-                              <span className='text-slate-600 dark:text-slate-400'>
+                          <div className="text-xs space-y-1">
+                            <div className="flex items-center justify-between gap-4">
+                              <span className="text-slate-600 dark:text-slate-400">
                                 Consumo Total:
                               </span>
-                              <span className='font-medium'>
-                                {data.consumoPeriodo.toLocaleString('es-CL')}{' '}
-                                kWh
+                              <span className="font-medium">
+                                {data.consumoPeriodo.toLocaleString('es-CL')} m³
                               </span>
                             </div>
-                            <div className='flex items-center justify-between gap-4'>
-                              <span className='text-slate-600 dark:text-slate-400'>
+                            <div className="flex items-center justify-between gap-4">
+                              <span className="text-slate-600 dark:text-slate-400">
                                 Energía Base:
                               </span>
-                              <span className='font-medium text-emerald-600'>
-                                {data.energiaBase.toLocaleString('es-CL')} kWh
+                              <span className="font-medium text-emerald-600">
+                                {data.energiaBase.toLocaleString('es-CL')} m³
                               </span>
                             </div>
                             {data.tieneSobreconsumo && (
-                              <div className='flex items-center justify-between gap-4 pt-1 border-t'>
-                                <span className='text-rose-600 font-medium'>
+                              <div className="flex items-center justify-between gap-4 pt-1 border-t">
+                                <span className="text-rose-600 font-medium">
                                   Sobreconsumo:
                                 </span>
-                                <span className='font-bold text-rose-600'>
-                                  {data.sobreconsumo.toLocaleString('es-CL')}{' '}
-                                  kWh
+                                <span className="font-bold text-rose-600">
+                                  {data.sobreconsumo.toLocaleString('es-CL')} m³
                                 </span>
                               </div>
                             )}
-                            <div className='flex items-center justify-between gap-4 pt-1 border-t'>
-                              <span className='text-slate-600 dark:text-slate-400'>
+                            <div className="flex items-center justify-between gap-4 pt-1 border-t">
+                              <span className="text-slate-600 dark:text-slate-400">
                                 Fecha Lectura:
                               </span>
-                              <span className='font-medium text-xs'>
+                              <span className="font-medium text-xs">
                                 {data.fechaLectura}
                               </span>
                             </div>
@@ -194,9 +192,9 @@ const ConsumptionTrendChart = memo(function ConsumptionTrendChart({
 
               {/* Barras de consumo - color rojo si hay sobreconsumo */}
               <Bar
-                dataKey='consumoPeriodo'
+                dataKey="consumoPeriodo"
                 radius={[4, 4, 0, 0]}
-                name='Consumo del Periodo'
+                name="Consumo del Periodo"
               >
                 {chartData.map((entry, index) => (
                   <Cell
@@ -208,45 +206,45 @@ const ConsumptionTrendChart = memo(function ConsumptionTrendChart({
 
               {/* Línea de energía base */}
               <Line
-                type='monotone'
-                dataKey='energiaBase'
-                stroke='#10b981'
+                type="monotone"
+                dataKey="energiaBase"
+                stroke="#10b981"
                 strokeWidth={2}
                 dot={{ fill: '#10b981', r: 3 }}
-                name='Energía Base (línea)'
+                name="Energía Base (línea)"
               />
 
               {/* Línea de promedio (punteada) */}
               <Line
-                type='monotone'
-                dataKey='promedio'
-                stroke='#64748b'
+                type="monotone"
+                dataKey="promedio"
+                stroke="#64748b"
                 strokeWidth={2}
-                strokeDasharray='5 5'
+                strokeDasharray="5 5"
                 dot={false}
-                name='Promedio (línea punteada)'
+                name="Promedio (línea punteada)"
               />
             </BarChart>
           </ResponsiveContainer>
         </ChartContainer>
 
         {/* Leyenda de colores */}
-        <div className='flex items-center justify-center gap-6 mt-4 text-xs'>
-          <div className='flex items-center gap-2'>
-            <div className='w-3 h-3 rounded bg-blue-500' />
+        <div className="flex items-center justify-center gap-6 mt-4 text-xs">
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 rounded bg-blue-500" />
             <span>Consumo Normal</span>
           </div>
-          <div className='flex items-center gap-2'>
-            <div className='w-3 h-3 rounded bg-red-500' />
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 rounded bg-red-500" />
             <span>Con Sobreconsumo</span>
           </div>
-          <div className='flex items-center gap-2'>
-            <div className='w-6 h-0.5 bg-emerald-500' />
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-0.5 bg-emerald-500" />
             <span>Energía Base</span>
           </div>
-          <div className='flex items-center gap-2'>
+          <div className="flex items-center gap-2">
             <div
-              className='w-6 h-0.5 bg-slate-500'
+              className="w-6 h-0.5 bg-slate-500"
               style={{ borderTop: '2px dashed' }}
             />
             <span>Promedio</span>

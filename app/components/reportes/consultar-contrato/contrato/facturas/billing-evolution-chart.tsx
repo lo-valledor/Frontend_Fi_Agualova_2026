@@ -140,25 +140,25 @@ const BillingEvolutionChart = memo(function BillingEvolutionChart({
   };
 
   return (
-    <Card className='border bg-background'>
+    <Card className="border bg-background">
       <CardHeader>
-        <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <CardTitle className='text-base'>
+            <CardTitle className="text-base">
               Evolución de Facturación
             </CardTitle>
             <CardDescription>
               Análisis histórico de valores netos, IVA y totales
             </CardDescription>
           </div>
-          <div className='flex gap-2'>
+          <div className="flex gap-2">
             {(['6m', '1a', '2a', 'todo'] as const).map(range => (
               <Button
                 key={range}
-                size='sm'
+                size="sm"
                 variant={timeRange === range ? 'default' : 'outline'}
                 onClick={() => setTimeRange(range)}
-                className='text-xs h-8'
+                className="text-xs h-8"
               >
                 {range === '6m'
                   ? '6M'
@@ -173,21 +173,21 @@ const BillingEvolutionChart = memo(function BillingEvolutionChart({
         </div>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig} className='h-[400px] w-full'>
-          <ResponsiveContainer width='100%' height='100%'>
+        <ChartContainer config={chartConfig} className="h-100 w-full">
+          <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={chartData}>
               <CartesianGrid
-                strokeDasharray='3 3'
-                className='stroke-slate-200 dark:stroke-slate-800'
+                strokeDasharray="3 3"
+                className="stroke-slate-200 dark:stroke-slate-800"
               />
               <XAxis
-                dataKey='periodoDisplay'
+                dataKey="periodoDisplay"
                 tickLine={false}
                 axisLine={false}
                 tickMargin={8}
                 fontSize={11}
                 angle={-45}
-                textAnchor='end'
+                textAnchor="end"
                 height={80}
               />
               <YAxis
@@ -201,65 +201,65 @@ const BillingEvolutionChart = memo(function BillingEvolutionChart({
                   if (active && payload && payload.length) {
                     const data = payload[0].payload;
                     return (
-                      <div className='rounded-lg border bg-background p-3 shadow-md'>
-                        <div className='space-y-2'>
-                          <div className='font-medium text-sm border-b pb-2'>
+                      <div className="rounded-lg border bg-background p-3 shadow-md">
+                        <div className="space-y-2">
+                          <div className="font-medium text-sm border-b pb-2">
                             {data.periodoDisplay}
                           </div>
-                          <div className='text-xs space-y-1'>
-                            <div className='flex items-center justify-between gap-4'>
-                              <span className='text-slate-600 dark:text-slate-400'>
+                          <div className="text-xs space-y-1">
+                            <div className="flex items-center justify-between gap-4">
+                              <span className="text-slate-600 dark:text-slate-400">
                                 Factura:
                               </span>
-                              <span className='font-medium'>
+                              <span className="font-medium">
                                 {data.nroFactura}
                               </span>
                             </div>
-                            <div className='flex items-center justify-between gap-4'>
-                              <span className='text-slate-600 dark:text-slate-400'>
+                            <div className="flex items-center justify-between gap-4">
+                              <span className="text-slate-600 dark:text-slate-400">
                                 Emisión:
                               </span>
-                              <span className='font-medium text-xs'>
+                              <span className="font-medium text-xs">
                                 {data.fechaEmision}
                               </span>
                             </div>
-                            <div className='flex items-center justify-between gap-4 pt-1 border-t'>
-                              <span className='text-blue-600 font-medium'>
+                            <div className="flex items-center justify-between gap-4 pt-1 border-t">
+                              <span className="text-blue-600 font-medium">
                                 Valor Neto:
                               </span>
-                              <span className='font-medium'>
+                              <span className="font-medium">
                                 {formatCurrency(data.valorNeto)}
                               </span>
                             </div>
-                            <div className='flex items-center justify-between gap-4'>
-                              <span className='text-emerald-600 font-medium'>
+                            <div className="flex items-center justify-between gap-4">
+                              <span className="text-emerald-600 font-medium">
                                 IVA (19%):
                               </span>
-                              <span className='font-medium'>
+                              <span className="font-medium">
                                 {formatCurrency(data.iva)}
                               </span>
                             </div>
-                            <div className='flex items-center justify-between gap-4 pt-1 border-t'>
-                              <span className='text-violet-600 font-bold'>
+                            <div className="flex items-center justify-between gap-4 pt-1 border-t">
+                              <span className="text-violet-600 font-bold">
                                 Total:
                               </span>
-                              <span className='font-bold'>
+                              <span className="font-bold">
                                 {formatCurrency(data.valorTotal)}
                               </span>
                             </div>
-                            <div className='flex items-center justify-between gap-4 pt-1 border-t'>
-                              <span className='text-slate-600 dark:text-slate-400'>
+                            <div className="flex items-center justify-between gap-4 pt-1 border-t">
+                              <span className="text-slate-600 dark:text-slate-400">
                                 Consumo:
                               </span>
-                              <span className='font-medium'>
-                                {data.consumo.toLocaleString('es-CL')} kWh
+                              <span className="font-medium">
+                                {data.consumo.toLocaleString('es-CL')} m³
                               </span>
                             </div>
-                            <div className='flex items-center justify-between gap-4'>
-                              <span className='text-slate-600 dark:text-slate-400'>
-                                Costo/kWh:
+                            <div className="flex items-center justify-between gap-4">
+                              <span className="text-slate-600 dark:text-slate-400">
+                                Costo/m³:
                               </span>
-                              <span className='font-medium'>
+                              <span className="font-medium">
                                 ${data.costoPorKwh.toFixed(0)}
                               </span>
                             </div>
@@ -284,55 +284,55 @@ const BillingEvolutionChart = memo(function BillingEvolutionChart({
 
               {/* Áreas apiladas */}
               <defs>
-                <linearGradient id='colorValorNeto' x1='0' y1='0' x2='0' y2='1'>
-                  <stop offset='5%' stopColor='#3b82f6' stopOpacity={0.3} />
-                  <stop offset='95%' stopColor='#3b82f6' stopOpacity={0.1} />
+                <linearGradient id="colorValorNeto" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.1} />
                 </linearGradient>
-                <linearGradient id='colorIva' x1='0' y1='0' x2='0' y2='1'>
-                  <stop offset='5%' stopColor='#10b981' stopOpacity={0.3} />
-                  <stop offset='95%' stopColor='#10b981' stopOpacity={0.1} />
+                <linearGradient id="colorIva" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#10b981" stopOpacity={0.1} />
                 </linearGradient>
               </defs>
 
               <Area
-                type='monotone'
-                dataKey='valorNeto'
-                stackId='1'
-                stroke='#3b82f6'
+                type="monotone"
+                dataKey="valorNeto"
+                stackId="1"
+                stroke="#3b82f6"
                 strokeWidth={2}
-                fill='url(#colorValorNeto)'
-                name='Valor Neto'
+                fill="url(#colorValorNeto)"
+                name="Valor Neto"
               />
               <Area
-                type='monotone'
-                dataKey='iva'
-                stackId='1'
-                stroke='#10b981'
+                type="monotone"
+                dataKey="iva"
+                stackId="1"
+                stroke="#10b981"
                 strokeWidth={2}
-                fill='url(#colorIva)'
-                name='IVA'
+                fill="url(#colorIva)"
+                name="IVA"
               />
 
               {/* Línea de valor total */}
               <Line
-                type='monotone'
-                dataKey='valorTotal'
-                stroke='#8b5cf6'
+                type="monotone"
+                dataKey="valorTotal"
+                stroke="#8b5cf6"
                 strokeWidth={3}
                 dot={{ fill: '#8b5cf6', r: 4 }}
-                name='Valor Total'
+                name="Valor Total"
               />
 
               {/* Línea de promedio móvil */}
               {chartData.some(d => d.promedioMovil > 0) && (
                 <Line
-                  type='monotone'
-                  dataKey='promedioMovil'
-                  stroke='#64748b'
+                  type="monotone"
+                  dataKey="promedioMovil"
+                  stroke="#64748b"
                   strokeWidth={2}
-                  strokeDasharray='5 5'
+                  strokeDasharray="5 5"
                   dot={false}
-                  name='Promedio Móvil 3M'
+                  name="Promedio Móvil 3M"
                 />
               )}
             </AreaChart>

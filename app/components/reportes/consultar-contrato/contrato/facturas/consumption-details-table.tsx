@@ -115,46 +115,46 @@ const ConsumptionDetailsTable = memo(function ConsumptionDetailsTable({
     children: React.ReactNode;
   }) => (
     <Button
-      variant='ghost'
-      size='sm'
-      className='h-8 gap-1'
+      variant="ghost"
+      size="sm"
+      className="h-8 gap-1"
       onClick={() => handleSort(field)}
     >
       {children}
-      <ArrowUpDown className='h-3 w-3' />
+      <ArrowUpDown className="h-3 w-3" />
     </Button>
   );
 
   return (
-    <Card className='border bg-background'>
+    <Card className="border bg-background">
       <CardHeader>
-        <CardTitle className='text-base'>Detalle de Lecturas</CardTitle>
+        <CardTitle className="text-base">Detalle de Lecturas</CardTitle>
         <CardDescription>
           Tabla completa con todas las lecturas registradas (
           {detalleLecturas.length} registros)
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className='space-y-4'>
+        <div className="space-y-4">
           {/* Tabla */}
-          <div className='rounded-md border'>
+          <div className="rounded-md border">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className='w-[120px]'>
-                    <SortButton field='periodo'>Periodo</SortButton>
+                  <TableHead className="w-30">
+                    <SortButton field="periodo">Periodo</SortButton>
                   </TableHead>
                   <TableHead>
-                    <SortButton field='fechaLectura'>Fecha Lectura</SortButton>
+                    <SortButton field="fechaLectura">Fecha Lectura</SortButton>
                   </TableHead>
-                  <TableHead className='text-right'>Lectura Anterior</TableHead>
-                  <TableHead className='text-right'>Lectura Actual</TableHead>
-                  <TableHead className='text-right'>
-                    <SortButton field='consumoPeriodo'>Consumo</SortButton>
+                  <TableHead className="text-right">Lectura Anterior</TableHead>
+                  <TableHead className="text-right">Lectura Actual</TableHead>
+                  <TableHead className="text-right">
+                    <SortButton field="consumoPeriodo">Consumo</SortButton>
                   </TableHead>
-                  <TableHead className='text-right'>Energía Base</TableHead>
-                  <TableHead className='text-right'>
-                    <SortButton field='sobreconsumo'>Sobreconsumo</SortButton>
+                  <TableHead className="text-right">Energía Base</TableHead>
+                  <TableHead className="text-right">
+                    <SortButton field="sobreconsumo">Sobreconsumo</SortButton>
                   </TableHead>
                   <TableHead>Estado</TableHead>
                 </TableRow>
@@ -162,8 +162,8 @@ const ConsumptionDetailsTable = memo(function ConsumptionDetailsTable({
               <TableBody>
                 {sortedData.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={8} className='text-center py-8'>
-                      <p className='text-slate-500 dark:text-slate-400'>
+                    <TableCell colSpan={8} className="text-center py-8">
+                      <p className="text-slate-500 dark:text-slate-400">
                         No hay datos disponibles
                       </p>
                     </TableCell>
@@ -183,61 +183,61 @@ const ConsumptionDetailsTable = memo(function ConsumptionDetailsTable({
                             : ''
                         }
                       >
-                        <TableCell className='font-medium'>
-                          <div className='flex flex-col'>
-                            <span className='text-sm'>
+                        <TableCell className="font-medium">
+                          <div className="flex flex-col">
+                            <span className="text-sm">
                               {getNombreMes(mes)} {ano}
                             </span>
-                            <span className='text-xs text-slate-500'>
+                            <span className="text-xs text-slate-500">
                               {lectura.periodo}
                             </span>
                           </div>
                         </TableCell>
-                        <TableCell className='text-sm'>
+                        <TableCell className="text-sm">
                           {new Date(lectura.fechaLectura).toLocaleDateString(
                             'es-CL'
                           )}
                         </TableCell>
-                        <TableCell className='text-right text-sm'>
+                        <TableCell className="text-right text-sm">
                           {lectura.lecturaAnterior?.toLocaleString('es-CL') ||
                             '-'}
                         </TableCell>
-                        <TableCell className='text-right text-sm'>
+                        <TableCell className="text-right text-sm">
                           {lectura.lecturaActual?.toLocaleString('es-CL') ||
                             '-'}
                         </TableCell>
-                        <TableCell className='text-right font-medium'>
+                        <TableCell className="text-right font-medium">
                           {lectura.consumoPeriodo?.toLocaleString('es-CL') ||
                             '-'}{' '}
                           {lectura.consumoPeriodo && (
-                            <span className='text-xs text-slate-500'>kWh</span>
+                            <span className="text-xs text-slate-500">m³</span>
                           )}
                         </TableCell>
-                        <TableCell className='text-right text-sm text-emerald-600 dark:text-emerald-400'>
+                        <TableCell className="text-right text-sm text-emerald-600 dark:text-emerald-400">
                           {lectura.energiaBase?.toLocaleString('es-CL') || '-'}
                         </TableCell>
-                        <TableCell className='text-right font-medium'>
+                        <TableCell className="text-right font-medium">
                           {tieneSobreconsumo ? (
-                            <span className='text-rose-600'>
+                            <span className="text-rose-600">
                               {lectura.sobreconsumo?.toLocaleString('es-CL')}{' '}
-                              <span className='text-xs'>kWh</span>
+                              <span className="text-xs">m³</span>
                             </span>
                           ) : (
-                            <span className='text-slate-400'>-</span>
+                            <span className="text-slate-400">-</span>
                           )}
                         </TableCell>
                         <TableCell>
                           {tieneSobreconsumo ? (
                             <Badge
-                              variant='destructive'
-                              className='text-xs font-medium'
+                              variant="destructive"
+                              className="text-xs font-medium"
                             >
                               Alerta
                             </Badge>
                           ) : (
                             <Badge
-                              variant='default'
-                              className='text-xs font-medium'
+                              variant="default"
+                              className="text-xs font-medium"
                             >
                               Normal
                             </Badge>
@@ -253,42 +253,42 @@ const ConsumptionDetailsTable = memo(function ConsumptionDetailsTable({
 
           {/* Paginación */}
           {totalPages > 1 && (
-            <div className='flex items-center justify-between px-2'>
-              <div className='text-sm text-slate-600 dark:text-slate-400'>
+            <div className="flex items-center justify-between px-2">
+              <div className="text-sm text-slate-600 dark:text-slate-400">
                 Página {currentPage} de {totalPages}
               </div>
-              <div className='flex items-center gap-2'>
+              <div className="flex items-center gap-2">
                 <Button
-                  variant='outline'
-                  size='sm'
+                  variant="outline"
+                  size="sm"
                   onClick={() => setCurrentPage(currentPage - 1)}
                   disabled={currentPage === 1}
                 >
-                  <ChevronLeft className='h-4 w-4' />
+                  <ChevronLeft className="h-4 w-4" />
                   Anterior
                 </Button>
                 <Button
-                  variant='outline'
-                  size='sm'
+                  variant="outline"
+                  size="sm"
                   onClick={() => setCurrentPage(currentPage + 1)}
                   disabled={currentPage === totalPages}
                 >
                   Siguiente
-                  <ChevronRight className='h-4 w-4' />
+                  <ChevronRight className="h-4 w-4" />
                 </Button>
               </div>
             </div>
           )}
 
           {/* Resumen de tabla */}
-          <div className='pt-4 border-t text-xs text-slate-600 dark:text-slate-400'>
-            <div className='flex flex-wrap gap-4'>
+          <div className="pt-4 border-t text-xs text-slate-600 dark:text-slate-400">
+            <div className="flex flex-wrap gap-4">
               <div>
-                <span className='font-medium'>Total registros:</span>{' '}
+                <span className="font-medium">Total registros:</span>{' '}
                 {detalleLecturas.length}
               </div>
               <div>
-                <span className='font-medium'>Con sobreconsumo:</span>{' '}
+                <span className="font-medium">Con sobreconsumo:</span>{' '}
                 {
                   detalleLecturas.filter(
                     l => l.sobreconsumo && l.sobreconsumo > 0
@@ -296,7 +296,7 @@ const ConsumptionDetailsTable = memo(function ConsumptionDetailsTable({
                 }
               </div>
               <div>
-                <span className='font-medium'>Normales:</span>{' '}
+                <span className="font-medium">Normales:</span>{' '}
                 {
                   detalleLecturas.filter(
                     l => !l.sobreconsumo || l.sobreconsumo === 0

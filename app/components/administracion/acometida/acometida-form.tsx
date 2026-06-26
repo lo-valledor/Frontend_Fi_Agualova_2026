@@ -1,10 +1,8 @@
 import { Building2, List, Save, Search, User, X, Zap } from 'lucide-react';
-import { toast } from 'sonner';
-
 import { useEffect, useMemo, useState } from 'react';
-
 import { useForm } from 'react-hook-form';
 import Select from 'react-select';
+import { toast } from 'sonner';
 
 import { getReactSelectStyles } from '~/components/shared/react-select-styles';
 import { useTheme } from '~/components/theme-provider';
@@ -35,10 +33,10 @@ import {
   TableRow
 } from '~/components/ui/table';
 import type {
+  AcometidaFormValues,
+  AcometidaProps,
   AcometidaRow,
-  ActualizarAcometidaProps,
   BuscarContratosLibres,
-  CrearAcometidaProps,
   Empalmes,
   Nichos,
   Sectores
@@ -54,9 +52,7 @@ interface SelectOption {
 interface AcometidaFormProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (
-    data: CrearAcometidaProps | ActualizarAcometidaProps
-  ) => Promise<void>;
+  onSubmit: (data: AcometidaProps | AcometidaFormValues) => Promise<void>;
   acometida?: AcometidaRow | null;
   isLoading?: boolean;
   comboEmpalmes: Empalmes[];
@@ -110,7 +106,9 @@ export function AcometidaForm({
   const contratoActualDisponible = useMemo(() => {
     if (!isEdit || !acometida?.contratoId) return null;
 
-    return contratosDisponibles.find(c => c.idContrato === acometida.contratoId);
+    return contratosDisponibles.find(
+      c => c.idContrato === acometida.contratoId
+    );
   }, [isEdit, acometida, contratosDisponibles]);
 
   // Usar estilos compartidos para react-select
@@ -138,13 +136,18 @@ export function AcometidaForm({
       // Siempre establecer el contratoId original, independientemente de si está en la lista
       const contratoId = acometida.contratoId || '';
 
+      // Normalizar el límite a formato "123,4" (coma decimal) para edición
+      const limitePotenciaInicial = (acometida.limitePotencia || '0')
+        .toString()
+        .replace('.', ',');
+
       form.reset({
         ubicacion: acometida.ubicacion || '',
         empalmeId,
         nichoId,
         contratoId,
         codigo: acometida.codigo || '',
-        limitePotencia: acometida.limitePotencia || '0'
+        limitePotencia: limitePotenciaInicial
       });
     } else {
       form.reset({
@@ -170,8 +173,9 @@ export function AcometidaForm({
     const empalmeId = Number(data.empalmeId);
     const nichoId = Number(data.nichoId);
     const codigo = data.codigo.trim();
+    // La API exige "123,4": parseamos coma decimal correctamente
     const limitePotencia = data.limitePotencia
-      ? Number(data.limitePotencia)
+      ? Number(String(data.limitePotencia).replace(',', '.'))
       : 0;
     const contratoId = data.contratoId.trim();
 
@@ -221,30 +225,34 @@ export function AcometidaForm({
       const { empalmeId, nichoId, codigo, limitePotencia, contratoIdFinal } =
         validated;
 
+      // La API exige el Límite de Potencia en formato "123,4" (coma decimal).
+      const limitePotenciaFormato = String(limitePotencia).replace('.', ',');
+
       if (isEdit && acometida) {
-        const submitData: ActualizarAcometidaProps = {
+        // PUT: usar AcometidaFormValues con idAcometida separado.
+        // El `codigo` es el código real de la acometida (no el id).
+        const submitData: AcometidaFormValues = {
           idAcometida: acometida.idAcometida,
+          codigo,
           ubicacion: data.ubicacion.trim(),
-          idEmpalme: empalmeId,
-          idNicho: nichoId,
+          idEmpalme: String(empalmeId),
+          idNicho: String(nichoId),
           idContrato: contratoIdFinal,
-          limitePotencia: String(limitePotencia)
+          limitePotencia: limitePotenciaFormato
         };
         await onSubmit(submitData);
       } else {
-        const submitData: CrearAcometidaProps = {
+        // POST: usar AcometidaProps (sin idAcometida).
+        const submitData: AcometidaProps = {
           ubicacion: data.ubicacion.trim(),
           idEmpalme: empalmeId,
           idNicho: nichoId,
           idContrato: contratoIdFinal,
           codigo,
-          limitePotencia: String(limitePotencia)
+          limitePotencia: limitePotenciaFormato
         };
         await onSubmit(submitData);
       }
-
-      form.reset();
-      onClose();
     } catch (error: any) {
       handleError(error);
     }
@@ -276,14 +284,14 @@ export function AcometidaForm({
   return (
     <>
       <Dialog open={isOpen} onOpenChange={handleClose}>
-        <DialogContent className='min-w-[70vw] max-h-[95vh] min-h-[80vh] overflow-y-auto'>
-          <DialogHeader className='space-y-2'>
-            <div className='flex items-center gap-3'>
-              <div className='p-2 bg-sky-100 dark:bg-sky-900/30 rounded-xl'>
-                <Zap className='h-5 w-5' />
+        <DialogContent className="min-w-[70vw] max-h-[95vh] min-h-[80vh] overflow-y-auto">
+          <DialogHeader className="space-y-2">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-sky-100 dark:bg-sky-900/30 rounded-xl">
+                <Zap className="h-5 w-5" />
               </div>
               <div>
-                <DialogTitle className='text-xl font-semibold'>
+                <DialogTitle className="text-xl font-semibold">
                   {isEdit ? 'Editar Acometida' : 'Nueva Acometida'}
                 </DialogTitle>
                 <DialogDescription>
@@ -298,26 +306,26 @@ export function AcometidaForm({
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(handleSubmit)}
-              className='space-y-6'
+              className="space-y-6"
             >
               {/* Información Básica */}
-              <div className='space-y-4'>
-                <h3 className='text-lg font-semibold pb-3 border-b border-slate-200 dark:border-slate-600'>
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold pb-3 border-b border-slate-200 dark:border-slate-600">
                   📋 Información Básica
                 </h3>
-                <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6'>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                   <FormField
                     control={form.control}
-                    name='codigo'
+                    name="codigo"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className='text-sm font-medium'>
+                        <FormLabel className="text-sm font-medium">
                           Código de Acometida *
                         </FormLabel>
                         <FormControl>
                           <Input
-                            placeholder='Código único'
-                            className='h-12 text-base'
+                            placeholder="Código único"
+                            className="h-12 text-base"
                             {...field}
                           />
                         </FormControl>
@@ -328,16 +336,16 @@ export function AcometidaForm({
 
                   <FormField
                     control={form.control}
-                    name='ubicacion'
+                    name="ubicacion"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className='text-sm font-medium'>
+                        <FormLabel className="text-sm font-medium">
                           Ubicación Física *
                         </FormLabel>
                         <FormControl>
                           <Input
-                            placeholder='Ej: Pasillo 2, Local 15-A'
-                            className='h-12 text-base'
+                            placeholder="Ej: Pasillo 2, Local 15-A"
+                            className="h-12 text-base"
                             {...field}
                           />
                         </FormControl>
@@ -349,42 +357,47 @@ export function AcometidaForm({
               </div>
 
               {/* Contrato */}
-              <div className='space-y-4'>
-                <h3 className='text-lg font-semibold pb-3 border-b border-slate-200 dark:border-slate-600'>
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold pb-3 border-b border-slate-200 dark:border-slate-600">
                   📄 Contrato Asociado
                 </h3>
 
                 {/* Campo de contrato mejorado */}
-                <div className='space-y-2'>
+                <div className="space-y-2">
                   <FormField
                     control={form.control}
-                    name='contratoId'
+                    name="contratoId"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className='text-sm font-medium'>
+                        <FormLabel className="text-sm font-medium">
                           Contrato
                         </FormLabel>
                         <FormControl>
-                          <div className='flex gap-2'>
+                          <div className="flex gap-2">
                             <Input
-                              placeholder='ID del contrato (ej: CON-12345)'
-                              className='h-12 text-base flex-1'
+                              placeholder="ID del contrato (ej: CON-12345)"
+                              className="h-12 text-base flex-1"
                               value={field.value}
                               onChange={field.onChange}
-                              readOnly={isEdit && !contratoActualDisponible && form.getValues('contratoId') === acometida?.contratoId}
+                              readOnly={
+                                isEdit &&
+                                !contratoActualDisponible &&
+                                form.getValues('contratoId') ===
+                                  acometida?.contratoId
+                              }
                             />
                             <Button
-                              type='button'
-                              variant='outline'
+                              type="button"
+                              variant="outline"
                               onClick={() => setModalContratos(true)}
-                              className='h-12 px-4 gap-2 border-blue-200 text-blue-700 hover:bg-blue-50 dark:border-blue-700 dark:text-blue-400 dark:hover:bg-blue-900/20'
+                              className="h-12 px-4 gap-2 border-blue-200 text-blue-700 hover:bg-blue-50 dark:border-blue-700 dark:text-blue-400 dark:hover:bg-blue-900/20"
                             >
-                              <Search className='h-4 w-4' />
+                              <Search className="h-4 w-4" />
                               Buscar
                             </Button>
                           </div>
                         </FormControl>
-                        <p className='text-xs'>
+                        <p className="text-xs">
                           💡 Escriba el ID del contrato o use "Buscar" para
                           explorar la lista completa
                         </p>
@@ -392,24 +405,36 @@ export function AcometidaForm({
                       </FormItem>
                     )}
                   />
-                  
-                  {isEdit && !contratoActualDisponible && form.watch('contratoId') === acometida?.contratoId && (
-                    <div className='p-3 bg-amber-50 dark:bg-amber-900/10 rounded-lg border border-amber-200 dark:border-amber-800 flex items-start gap-2'>
-                      <div className='p-1 bg-amber-100 dark:bg-amber-900/30 rounded-full mt-0.5'>
-                        <svg className='h-3 w-3 text-amber-600 dark:text-amber-400' viewBox='0 0 20 20' fill='currentColor'>
-                          <path fillRule='evenodd' d='M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z' clipRule='evenodd' />
-                        </svg>
+
+                  {isEdit &&
+                    !contratoActualDisponible &&
+                    form.watch('contratoId') === acometida?.contratoId && (
+                      <div className="p-3 bg-amber-50 dark:bg-amber-900/10 rounded-lg border border-amber-200 dark:border-amber-800 flex items-start gap-2">
+                        <div className="p-1 bg-amber-100 dark:bg-amber-900/30 rounded-full mt-0.5">
+                          <svg
+                            className="h-3 w-3 text-amber-600 dark:text-amber-400"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-xs font-medium text-amber-800 dark:text-amber-200">
+                            Contrato actual no visible en lista de disponibles
+                          </p>
+                          <p className="text-[11px] text-amber-700 dark:text-amber-300 mt-0.5">
+                            El contrato "{acometida?.contratoId}" está asignado
+                            actualmente. Si lo cambia, no podrá volver a
+                            seleccionarlo desde la lista.
+                          </p>
+                        </div>
                       </div>
-                      <div className='flex-1'>
-                        <p className='text-xs font-medium text-amber-800 dark:text-amber-200'>
-                          Contrato actual no visible en lista de disponibles
-                        </p>
-                        <p className='text-[11px] text-amber-700 dark:text-amber-300 mt-0.5'>
-                          El contrato "{acometida?.contratoId}" está asignado actualmente. Si lo cambia, no podrá volver a seleccionarlo desde la lista.
-                        </p>
-                      </div>
-                    </div>
-                  )}
+                    )}
                 </div>
 
                 {/* Información del contrato seleccionado - buscar por ID */}
@@ -420,49 +445,49 @@ export function AcometidaForm({
                   if (!contratoEncontrado) return null;
 
                   return (
-                    <div className='p-3 rounded-xl border bg-emerald-50 dark:bg-emerald-900/10 border-border'>
-                      <div className='flex items-center gap-2 mb-3'>
-                        <div className='p-1.5 bg-emerald-100 dark:bg-emerald-900/30 rounded-md'>
-                          <User className='h-4 w-4 text-emerald-600 dark:text-emerald-400' />
+                    <div className="p-3 rounded-xl border bg-emerald-50 dark:bg-emerald-900/10 border-border">
+                      <div className="flex items-center gap-2 mb-3">
+                        <div className="p-1.5 bg-emerald-100 dark:bg-emerald-900/30 rounded-md">
+                          <User className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
                         </div>
-                        <span className='text-sm font-medium text-emerald-700 dark:text-emerald-300'>
+                        <span className="text-sm font-medium text-emerald-700 dark:text-emerald-300">
                           Contrato verificado
                         </span>
-                        <Badge variant='outline' className='font-mono text-xs'>
+                        <Badge variant="outline" className="font-mono text-xs">
                           {contratoEncontrado.idContrato}
                         </Badge>
                       </div>
-                      <div className='grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 text-xs'>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 text-xs">
                         <div>
-                          <span className='font-medium text-emerald-700 dark:text-emerald-300'>
+                          <span className="font-medium text-emerald-700 dark:text-emerald-300">
                             Cliente:
                           </span>
-                          <p className=''>
+                          <p className="">
                             {contratoEncontrado.cliente || 'No disponible'}{' '}
                             {contratoEncontrado.apellido || ''}
                           </p>
                         </div>
                         <div>
-                          <span className='font-medium text-emerald-700 dark:text-emerald-300'>
+                          <span className="font-medium text-emerald-700 dark:text-emerald-300">
                             Empresa:
                           </span>
-                          <p className=''>
+                          <p className="">
                             {contratoEncontrado.empresa || 'No disponible'}
                           </p>
                         </div>
                         <div>
-                          <span className='font-medium text-emerald-700 dark:text-emerald-300'>
+                          <span className="font-medium text-emerald-700 dark:text-emerald-300">
                             Local:
                           </span>
-                          <p className=''>
+                          <p className="">
                             {contratoEncontrado.local || 'No disponible'}
                           </p>
                         </div>
                         <div>
-                          <span className='font-medium text-emerald-700 dark:text-emerald-300'>
+                          <span className="font-medium text-emerald-700 dark:text-emerald-300">
                             Tarifa:
                           </span>
-                          <p className=''>
+                          <p className="">
                             {contratoEncontrado.tarifa || 'No disponible'}
                           </p>
                         </div>
@@ -473,24 +498,24 @@ export function AcometidaForm({
               </div>
 
               {/* Configuración Técnica */}
-              <div className='space-y-4'>
-                <h3 className='text-lg font-semibold pb-3 border-b border-slate-200 dark:border-slate-600'>
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold pb-3 border-b border-slate-200 dark:border-slate-600">
                   ⚡ Configuración Técnica
                 </h3>
-                <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6'>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                   <FormField
                     control={form.control}
-                    name='empalmeId'
+                    name="empalmeId"
                     render={({ field: { onChange, value, ...field } }) => (
                       <FormItem>
-                        <FormLabel className='text-sm font-medium'>
+                        <FormLabel className="text-sm font-medium">
                           Empalme *
                         </FormLabel>
                         <Select
                           {...field}
                           options={empalmeOptions}
                           styles={selectStyles}
-                          placeholder='Seleccionar empalme'
+                          placeholder="Seleccionar empalme"
                           isSearchable
                           value={
                             empalmeOptions.find(
@@ -499,7 +524,7 @@ export function AcometidaForm({
                           }
                           onChange={option => onChange(option?.value || '')}
                           noOptionsMessage={() => 'No se encontraron empalmes'}
-                          menuPlacement='auto'
+                          menuPlacement="auto"
                           maxMenuHeight={280}
                         />
                         <FormMessage />
@@ -509,17 +534,17 @@ export function AcometidaForm({
 
                   <FormField
                     control={form.control}
-                    name='nichoId'
+                    name="nichoId"
                     render={({ field: { onChange, value, ...field } }) => (
                       <FormItem>
-                        <FormLabel className='text-sm font-medium'>
+                        <FormLabel className="text-sm font-medium">
                           Nicho *
                         </FormLabel>
                         <Select
                           {...field}
                           options={nichoOptions}
                           styles={selectStyles}
-                          placeholder='Seleccionar nicho'
+                          placeholder="Seleccionar nicho"
                           isSearchable
                           value={
                             nichoOptions.find(
@@ -528,7 +553,7 @@ export function AcometidaForm({
                           }
                           onChange={option => onChange(option?.value || '')}
                           noOptionsMessage={() => 'No se encontraron nichos'}
-                          menuPlacement='auto'
+                          menuPlacement="auto"
                           maxMenuHeight={280}
                         />
                         <FormMessage />
@@ -538,19 +563,34 @@ export function AcometidaForm({
 
                   <FormField
                     control={form.control}
-                    name='limitePotencia'
+                    name="limitePotencia"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className='text-sm font-medium'>
-                          Límite Potencia (kW)
+                        <FormLabel className="text-sm font-medium">
+                          Límite Potencia (m³)
                         </FormLabel>
                         <FormControl>
                           <Input
-                            placeholder='Ej: 50'
-                            className='h-12 text-base'
-                            {...field}
+                            inputMode="decimal"
+                            placeholder="Ej: 123,4"
+                            className="h-12 text-base"
+                            value={field.value ?? ''}
+                            onChange={event => {
+                              // Permitir solo dígitos, coma y punto
+                              const sanitized = event.target.value
+                                .replace(/[^0-9.,]/g, '')
+                                .replace(/\./g, ',');
+                              field.onChange(sanitized);
+                            }}
+                            onBlur={field.onBlur}
+                            name={field.name}
+                            ref={field.ref}
                           />
                         </FormControl>
+                        <p className="text-xs text-muted-foreground">
+                          Formato: <span className="font-mono">123,4</span>{' '}
+                          (coma decimal).
+                        </p>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -559,15 +599,15 @@ export function AcometidaForm({
 
                 {/* Información del empalme seleccionado */}
                 {empalmeSeleccionado && (
-                  <div className='p-3 bg-sky-50 dark:bg-sky-900/10 rounded-xl border'>
-                    <div className='flex items-center gap-2'>
-                      <Zap className='h-4 w-4' />
-                      <span className='text-sm font-medium text-sky-700 dark:text-sky-300'>
+                  <div className="p-3 bg-sky-50 dark:bg-sky-900/10 rounded-xl border">
+                    <div className="flex items-center gap-2">
+                      <Zap className="h-4 w-4" />
+                      <span className="text-sm font-medium text-sky-700 dark:text-sky-300">
                         Empalme seleccionado:
                       </span>
                       <Badge
-                        variant='outline'
-                        className='text-sky-700 dark:text-sky-300'
+                        variant="outline"
+                        className="text-sky-700 dark:text-sky-300"
                       >
                         {empalmeSeleccionado.descripcion}
                       </Badge>
@@ -577,26 +617,26 @@ export function AcometidaForm({
               </div>
 
               {/* Botones de acción */}
-              <div className='flex justify-end gap-4 pt-6 border-t border-slate-200 dark:border-slate-600'>
+              <div className="flex justify-end gap-4 pt-6 border-t border-slate-200 dark:border-slate-600">
                 <Button
-                  type='button'
-                  variant='outline'
+                  type="button"
+                  variant="outline"
                   onClick={handleClose}
                   disabled={isLoading}
-                  className='gap-2'
+                  className="gap-2"
                 >
-                  <X className='h-4 w-4' />
+                  <X className="h-4 w-4" />
                   Cancelar
                 </Button>
-                <Button type='submit' disabled={isLoading} className='gap-2'>
+                <Button type="submit" disabled={isLoading} className="gap-2">
                   {isLoading ? (
                     <>
-                      <div className='h-4 w-4 animate-spin rounded-xl border-2 border-white border-t-transparent' />
+                      <div className="h-4 w-4 animate-spin rounded-xl border-2 border-white border-t-transparent" />
                       Guardando...
                     </>
                   ) : (
                     <>
-                      <Save className='h-4 w-4' />
+                      <Save className="h-4 w-4" />
                       {isEdit ? 'Actualizar Acometida' : 'Crear Acometida'}
                     </>
                   )}
@@ -609,14 +649,14 @@ export function AcometidaForm({
 
       {/* Modal de Selección de Contratos */}
       <Dialog open={modalContratos} onOpenChange={setModalContratos}>
-        <DialogContent className='min-w-[95vw] max-h-[95vh] overflow-hidden'>
+        <DialogContent className="min-w-[95vw] max-h-[95vh] overflow-hidden">
           <DialogHeader>
-            <div className='flex items-center gap-3'>
-              <div className='p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl'>
-                <List className='h-5 w-5 text-emerald-600 dark:text-emerald-400' />
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl">
+                <List className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
               </div>
               <div>
-                <DialogTitle className='text-xl font-semibold'>
+                <DialogTitle className="text-xl font-semibold">
                   Seleccionar Contrato
                 </DialogTitle>
                 <DialogDescription>
@@ -626,32 +666,30 @@ export function AcometidaForm({
             </div>
           </DialogHeader>
 
-          <div className='space-y-4 overflow-auto'>
+          <div className="space-y-4 overflow-auto">
             {/* Barra de búsqueda */}
-            <div className='relative'>
-              <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground' />
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder='Buscar por ID, cliente, empresa o local...'
+                placeholder="Buscar por ID, cliente, empresa o local..."
                 value={busquedaContrato}
                 onChange={e => setBusquedaContrato(e.target.value)}
-                className='h-11 pl-10'
+                className="h-11 pl-10"
               />
             </div>
 
             {/* Tabla de contratos con scroll horizontal */}
-            <div className='border rounded-xl bg-background h-[50vh] overflow-hidden'>
-              <div className='h-full overflow-auto'>
-                <Table className='min-w-[800px] relative'>
-                  <TableHeader className='bg-muted/50 sticky top-0 z-10'>
+            <div className="border rounded-xl bg-background h-[50vh] overflow-hidden">
+              <div className="h-full overflow-auto">
+                <Table className="min-w-200 relative">
+                  <TableHeader className="bg-muted/50 sticky top-0 z-10">
                     <TableRow>
-                      <TableHead className='min-w-[140px]'>
-                        ID Contrato
-                      </TableHead>
-                      <TableHead className='min-w-[200px]'>Cliente</TableHead>
-                      <TableHead className='min-w-[180px]'>Empresa</TableHead>
-                      <TableHead className='min-w-[120px]'>Local</TableHead>
-                      <TableHead className='min-w-[100px]'>Tarifa</TableHead>
-                      <TableHead className='text-center min-w-[120px] sticky right-0 bg-muted/50 z-20'>
+                      <TableHead className="min-w-35">ID Contrato</TableHead>
+                      <TableHead className="min-w-200">Cliente</TableHead>
+                      <TableHead className="min-w-180">Empresa</TableHead>
+                      <TableHead className="min-w-120">Local</TableHead>
+                      <TableHead className="min-w-100">Tarifa</TableHead>
+                      <TableHead className="text-center min-w-120 sticky right-0 bg-muted/50 z-20">
                         Acción
                       </TableHead>
                     </TableRow>
@@ -661,17 +699,17 @@ export function AcometidaForm({
                       <TableRow>
                         <TableCell
                           colSpan={6}
-                          className='text-center py-12 text-muted-foreground'
+                          className="text-center py-12 text-muted-foreground"
                         >
-                          <div className='flex flex-col items-center gap-3'>
-                            <div className='p-3 bg-background rounded-full'>
-                              <Search className='h-8 w-8 opacity-50' />
+                          <div className="flex flex-col items-center gap-3">
+                            <div className="p-3 bg-background rounded-full">
+                              <Search className="h-8 w-8 opacity-50" />
                             </div>
-                            <div className='space-y-1'>
-                              <p className='font-medium'>
+                            <div className="space-y-1">
+                              <p className="font-medium">
                                 No se encontraron contratos
                               </p>
-                              <p className='text-sm'>
+                              <p className="text-sm">
                                 {busquedaContrato
                                   ? `No hay resultados para "${busquedaContrato}"`
                                   : 'Escriba en el campo de búsqueda para filtrar contratos'}
@@ -684,45 +722,45 @@ export function AcometidaForm({
                     {contratosFiltrados.map(c => (
                       <TableRow
                         key={c.idContrato}
-                        className='hover:bg-muted/50 transition-colors'
+                        className="hover:bg-muted/50 transition-colors"
                       >
                         <TableCell>
                           <Badge
-                            variant='outline'
-                            className='font-mono text-xs'
+                            variant="outline"
+                            className="font-mono text-xs"
                           >
                             {c.idContrato}
                           </Badge>
                         </TableCell>
-                        <TableCell className='font-medium'>
-                          <div className='flex items-center gap-2'>
-                            <User className='h-4 w-4 text-muted-foreground shrink-0' />
-                            <div className='min-w-0'>
-                              <p className='truncate'>
+                        <TableCell className="font-medium">
+                          <div className="flex items-center gap-2">
+                            <User className="h-4 w-4 text-muted-foreground shrink-0" />
+                            <div className="min-w-0">
+                              <p className="truncate">
                                 {c.cliente} {c.apellido}
                               </p>
                             </div>
                           </div>
                         </TableCell>
                         <TableCell>
-                          <div className='flex items-center gap-2'>
-                            <Building2 className='h-4 w-4 text-muted-foreground shrink-0' />
-                            <p className='truncate'>{c.empresa}</p>
+                          <div className="flex items-center gap-2">
+                            <Building2 className="h-4 w-4 text-muted-foreground shrink-0" />
+                            <p className="truncate">{c.empresa}</p>
                           </div>
                         </TableCell>
                         <TableCell>
-                          <p className='truncate'>{c.local}</p>
+                          <p className="truncate">{c.local}</p>
                         </TableCell>
                         <TableCell>
-                          <Badge variant='secondary' className='text-xs'>
+                          <Badge variant="secondary" className="text-xs">
                             {c.tarifa}
                           </Badge>
                         </TableCell>
-                        <TableCell className='text-center sticky right-0 bg-background z-20'>
+                        <TableCell className="text-center sticky right-0 bg-background z-20">
                           <Button
-                            size='sm'
+                            size="sm"
                             onClick={() => handleSelectContrato(c.idContrato)}
-                            className='bg-emerald-600 hover:bg-emerald-700 h-8 px-3 text-xs'
+                            className="bg-emerald-600 hover:bg-emerald-700 h-8 px-3 text-xs"
                           >
                             Seleccionar
                           </Button>
@@ -735,12 +773,12 @@ export function AcometidaForm({
 
               {/* Información de resultados */}
               {contratosFiltrados.length > 0 && (
-                <div className='px-4 py-2 bg-background border-t text-xs text-muted-foreground flex justify-between items-center'>
+                <div className="px-4 py-2 bg-background border-t text-xs text-muted-foreground flex justify-between items-center">
                   <span>
                     Mostrando {contratosFiltrados.length} de{' '}
                     {contratosDisponibles.length} contratos
                   </span>
-                  <span className='hidden sm:inline'>
+                  <span className="hidden sm:inline">
                     💡 Desplácese horizontalmente para ver más columnas
                   </span>
                 </div>

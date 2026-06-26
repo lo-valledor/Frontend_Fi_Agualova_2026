@@ -3,6 +3,8 @@ import { AdministracionHydrateFallback } from '~/components/administracion/admin
 import CondicionesContratoComponent from '~/components/administracion/condiciones-contrato/condiciones-contrato-component';
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import { administracionService } from '~/services/administracionService';
+import type { CondicionesContratoRow } from '~/types/administracion';
+import type { Concepto as ConceptoMantencion } from '~/types/mantencion';
 
 import type { Route } from './+types/condiciones-contrato';
 
@@ -13,6 +15,11 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
+type CondicionesContratoLoaderData = {
+  condicionesContrato: CondicionesContratoRow[];
+  conceptos: ConceptoMantencion[];
+};
+
 export async function clientLoader({}: Route.ClientActionArgs) {
   const result = await administracionService.getCondicionesContratoData();
 
@@ -20,16 +27,22 @@ export async function clientLoader({}: Route.ClientActionArgs) {
     return {
       condicionesContrato: [],
       conceptos: []
-    };
+    } satisfies CondicionesContratoLoaderData;
   }
 
-  return result.data;
+  const data: CondicionesContratoLoaderData = {
+    condicionesContrato: result.data.condicionesContrato,
+    conceptos: result.data.conceptos as unknown as ConceptoMantencion[]
+  };
+
+  return data;
 }
 
 export default function CondicionesContrato({
   loaderData
 }: Readonly<Route.ComponentProps>) {
-  const { condicionesContrato, conceptos } = loaderData;
+  const { condicionesContrato, conceptos } =
+    loaderData as unknown as CondicionesContratoLoaderData;
   const pageBreadcrumbs = [
     { label: 'Administracion' },
     { label: 'Condiciones Contrato' }

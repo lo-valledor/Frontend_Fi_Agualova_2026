@@ -1,9 +1,9 @@
-import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { columns } from './columns';
-import type { Acometida } from '~/types/administracion';
+import { describe, expect, it, vi } from 'vitest';
 import { DataTable } from '~/components/data-table/data-table';
+import type { Acometida } from '~/types/administracion';
+import { columns } from './columns';
 
 const mockOnEdit = vi.fn();
 
@@ -31,7 +31,7 @@ describe('Acometida Columns', () => {
         columns={tableColumns}
         data={mockAcometidas}
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
+        // @ts-expect-error
         globalFilter={{
           value: '',
           onChange: () => {}

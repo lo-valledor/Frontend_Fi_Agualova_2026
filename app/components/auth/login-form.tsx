@@ -19,8 +19,8 @@ import { Button } from '~/components/ui/button';
 import { Input } from '~/components/ui/input';
 import { useAuth } from '~/context/AuthContext';
 import { cn } from '~/lib/utils';
-import { Label } from '../ui/label';
 import { Alert, AlertDescription } from '../ui/alert';
+import { Label } from '../ui/label';
 
 export function LoginForm({
   className,
@@ -89,106 +89,106 @@ export function LoginForm({
       {/* Theme toggle */}
       <Button
         onClick={toggleTheme}
-        variant='ghost'
+        variant="ghost"
         tabIndex={-1}
-        className='absolute top-5 right-5 z-20 p-2.5 rounded-xl bg-background transition-all duration-200'
-        aria-label='Cambiar tema'
+        className="absolute top-5 right-5 z-20 p-2.5 rounded-xl bg-background transition-all duration-200"
+        aria-label="Cambiar tema"
       >
         {theme === 'light' ? (
-          <Moon className='h-4 w-4' />
+          <Moon className="h-4 w-4" />
         ) : (
-          <Sun className='h-4 w-4' />
+          <Sun className="h-4 w-4" />
         )}
       </Button>
 
       {/* Header */}
-      <div className='pt-10 pb-6 px-8 text-center border-b border-border'>
-        <h1 className='text-3xl font-bold mb-2'>Bienvenido</h1>
-        <p className='text-sm text-muted-foreground'>
+      <div className="pt-10 pb-6 px-8 text-center border-b border-border">
+        <h1 className="text-3xl font-bold mb-2">Bienvenido</h1>
+        <p className="text-sm text-muted-foreground">
           Inicia sesión para acceder al sistema
         </p>
       </div>
 
       {/* Form */}
-      <div className='p-8'>
-        <form onSubmit={handleSubmitEvent} className='space-y-5'>
+      <div className="p-8">
+        <form onSubmit={handleSubmitEvent} className="space-y-5">
           {errorMessage && (
             <Alert
-              variant='destructive'
-              className='rounded-xl bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800/50'
+              variant="destructive"
+              className="rounded-xl bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800/50"
             >
-              <AlertCircleIcon className='text-red-600 dark:text-red-400' />
-              <AlertDescription className='text-red-700 dark:text-red-400 font-medium'>
+              <AlertCircleIcon className="text-red-600 dark:text-red-400" />
+              <AlertDescription className="text-red-700 dark:text-red-400 font-medium">
                 {errorMessage}
               </AlertDescription>
             </Alert>
           )}
 
-          <div className='space-y-4'>
-            <div className='space-y-2'>
-              <Label htmlFor='email' className='block text-sm font-semibold'>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="email" className="block text-sm font-semibold">
                 Correo Electrónico
               </Label>
-              <div className='relative group'>
-                <div className='absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none'>
-                  <User className='h-5 w-5 text-muted-foreground group-focus-within:text-ring transition-colors' />
+              <div className="relative group">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <User className="h-5 w-5 text-muted-foreground group-focus-within:text-ring transition-colors" />
                 </div>
                 <Input
-                  id='email'
-                  name='email'
-                  type='email'
-                  placeholder='ejemplo@ejemplo.com'
+                  id="email"
+                  name="email"
+                  type="email"
+                  placeholder="ejemplo@ejemplo.com"
                   value={input.email}
                   onChange={handleInput}
                   required
-                  className='pl-12 h-12 bg-background border-border focus:ring-ring rounded-xl   transition-all'
+                  className="pl-12 h-12 bg-background border-border focus:ring-ring rounded-xl   transition-all"
                 />
               </div>
             </div>
 
-            <div className='space-y-2'>
-              <div className='flex items-center justify-between'>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
                 <Label
-                  htmlFor='password'
-                  className='block text-sm font-semibold'
+                  htmlFor="password"
+                  className="block text-sm font-semibold"
                 >
                   Contraseña
                 </Label>
                 <Link
-                  to='/auth/forgot-password'
+                  to="/auth/forgot-password"
                   tabIndex={-1}
-                  className='text-xs font-medium transition-colors text-primary hover:underline'
+                  className="text-xs font-medium transition-colors text-primary hover:underline"
                 >
                   ¿Olvidaste tu contraseña?
                 </Link>
               </div>
-              <div className='relative group'>
-                <div className='absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none'>
-                  <Lock className='h-5 w-5 text-muted-foreground group-focus-within:text-ring  transition-colors' />
+              <div className="relative group">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <Lock className="h-5 w-5 text-muted-foreground group-focus-within:text-ring  transition-colors" />
                 </div>
                 <Input
-                  id='password'
-                  name='password'
+                  id="password"
+                  name="password"
                   type={showPassword ? 'text' : 'password'}
-                  placeholder='Ingresa tu contraseña'
+                  placeholder="Ingresa tu contraseña"
                   value={input.password}
                   onChange={handleInput}
                   required
-                  className='pl-12 h-12 bg-background border-border focus:ring-ring rounded-xl   transition-all'
+                  className="pl-12 h-12 bg-background border-border focus:ring-ring rounded-xl   transition-all"
                 />
                 <button
-                  type='button'
+                  type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   tabIndex={-1}
-                  className='absolute inset-y-0 right-0 flex items-center pr-4 text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-colors'
+                  className="absolute inset-y-0 right-0 flex items-center pr-4 text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-colors"
                   aria-label={
                     showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'
                   }
                 >
                   {showPassword ? (
-                    <EyeOff className='h-5 w-5 text-primary/30 group-focus-within:text-primary/70 transition-colors' />
+                    <EyeOff className="h-5 w-5 text-primary/30 group-focus-within:text-primary/70 transition-colors" />
                   ) : (
-                    <Eye className='h-5 w-5 text-primary/30 group-focus-within:text-primary/70 transition-colors' />
+                    <Eye className="h-5 w-5 text-primary/30 group-focus-within:text-primary/70 transition-colors" />
                   )}
                 </button>
               </div>
@@ -196,14 +196,14 @@ export function LoginForm({
           </div>
 
           <Button
-            type='submit'
-            variant='default'
+            type="submit"
+            variant="default"
             disabled={loading}
-            className='w-full h-12 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 mt-6'
+            className="w-full h-12 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 mt-6"
           >
             {loading ? (
               <>
-                <Loader2 className='mr-2 h-5 w-5 animate-spin' />
+                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                 Iniciando sesión...
               </>
             ) : (

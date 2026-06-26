@@ -1,16 +1,13 @@
 import type { ExportColumn, ExportConfig } from './types';
 
-
 export class ExportColumnBuilder {
   private columns: ExportColumn[] = [];
 
-  
   addString(key: string, header: string): this {
     this.columns.push({ key, header });
     return this;
   }
 
-  
   addDate(key: string, header: string, locale: string = 'es-CL'): this {
     this.columns.push({
       key,
@@ -39,7 +36,6 @@ export class ExportColumnBuilder {
     return this;
   }
 
-  
   addBoolean(
     key: string,
     header: string,
@@ -57,7 +53,6 @@ export class ExportColumnBuilder {
     return this;
   }
 
-  
   addCustom(
     key: string,
     header: string,
@@ -71,7 +66,6 @@ export class ExportColumnBuilder {
     return this;
   }
 
-  
   addNested(key: string, header: string, extractor: (item: any) => any): this {
     this.columns.push({
       key,
@@ -83,12 +77,10 @@ export class ExportColumnBuilder {
     return this;
   }
 
-  
   build(): ExportColumn[] {
     return this.columns;
   }
 }
-
 
 export const DEFAULT_EXPORT_CONFIG: ExportConfig = {
   format: 'xlsx',
@@ -96,14 +88,12 @@ export const DEFAULT_EXPORT_CONFIG: ExportConfig = {
   includeHeaders: true
 };
 
-
 export function getExportConfig(partial?: Partial<ExportConfig>): ExportConfig {
   return {
     ...DEFAULT_EXPORT_CONFIG,
     ...partial
   };
 }
-
 
 export function validateExportColumns(columns: ExportColumn[]): void {
   if (!Array.isArray(columns) || columns.length === 0) {

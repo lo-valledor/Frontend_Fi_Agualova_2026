@@ -1,11 +1,10 @@
 import { useEffect } from 'react';
 import {
-  createDelayedPrefetchLink,
-  createStaggeredPrefetchLinks,
   createConditionalPrefetchLinks,
-  createHoverPrefetchHandler
+  createDelayedPrefetchLink,
+  createHoverPrefetchHandler,
+  createStaggeredPrefetchLinks
 } from './utils/prefetch-helpers';
-
 
 export function usePrefetch(
   routePath: string,
@@ -20,7 +19,6 @@ export function usePrefetch(
   }, [routePath, delay, enabled]);
 }
 
-
 export function usePrefetchMultiple(
   routes: string[],
   baseDelay: number = 2000,
@@ -32,7 +30,6 @@ export function usePrefetchMultiple(
   }, [routes, baseDelay, increment]);
 }
 
-
 export function usePrefetchConditional(
   routeMap: Record<string, string[]>,
   delay: number = 2000
@@ -43,8 +40,9 @@ export function usePrefetchConditional(
   }, [routeMap, delay]);
 }
 
-
-export function usePrefetchOnHover(routePath: string): { onMouseEnter: () => void } {
+export function usePrefetchOnHover(routePath: string): {
+  onMouseEnter: () => void;
+} {
   const handleMouseEnter = createHoverPrefetchHandler(routePath);
 
   return {

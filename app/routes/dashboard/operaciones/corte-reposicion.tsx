@@ -1,7 +1,10 @@
-/* eslint-disable no-empty-pattern */
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import CorteReposicionComponent from '~/components/operaciones/corte-reposicion/corte-reposicion-component';
 import { operacionesService } from '~/services/operacionesService';
+import type {
+  CorteReposicionBuscarRequest,
+  CorteReposicionResumenResponse
+} from '~/types/operaciones';
 
 import type { Route } from './+types/corte-reposicion';
 
@@ -12,23 +15,32 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export async function clientLoader({}: Route.ClientActionArgs) {
+interface CorteReposicionLoaderData {
+  resumen: CorteReposicionResumenResponse | null;
+  mantenedorCorteData: CorteReposicionBuscarRequest[];
+  error: string | null;
+}
+
+export async function clientLoader({}: Route.ClientLoaderArgs) {
   const result = await operacionesService.getCorteReposicionData();
 
   if (result.error || !result.data) {
     return {
-      totalesData: [],
-      mantenedorCorteData: []
-    };
+      resumen: null,
+      mantenedorCorteData: [],
+      error: 'Error al cargar los datos de corte y reposición'
+    } satisfies CorteReposicionLoaderData;
   }
 
-  return result.data;
+  return {
+    resumen: result.data.resumen,
+    mantenedorCorteData: result.data.mantenedorCorteData,
+    error: null
+  } satisfies CorteReposicionLoaderData;
 }
 
-export default function CorteReposicion({
-  loaderData
-}: Readonly<Route.ComponentProps>) {
-  const { mantenedorCorteData } = loaderData;
+export default function CorteReposicion({ loaderData }: Route.ComponentProps) {
+  const { resumen, mantenedorCorteData, error } = loaderData;
 
   const pageBreadcrumbs = [
     { label: 'Operaciones' },
@@ -38,7 +50,11 @@ export default function CorteReposicion({
   return (
     <div>
       <BreadcrumbSetter items={pageBreadcrumbs} />
-      <CorteReposicionComponent mantenedorCorteData={mantenedorCorteData} />
+      <CorteReposicionComponent
+        resumen={resumen}
+        mantenedorCorteData={mantenedorCorteData}
+        error={error}
+      />
     </div>
   );
 }

@@ -1,10 +1,6 @@
-/* eslint-disable no-empty-pattern */
-import React from 'react';
-
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import AbrirPeriodoFacturacion from '~/components/operaciones/periodo-facturacion/periodo-facturacion-component';
 import { operacionesService } from '~/services/operacionesService';
-
 import type { Route } from './+types/periodo-facturacion';
 
 export function meta({}: Route.MetaArgs) {
@@ -15,22 +11,27 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export async function clientLoader() {
-  const result = await operacionesService.getPeriodoFacturacionData();
+  const result = await operacionesService.getPeriodoFacturacionPageData();
 
   if (result.error || !result.data) {
     return {
       years: [],
-      periodos: []
+      periodos: [],
+      error: result.error || 'Error al cargar los datos'
     };
   }
 
-  return result.data;
+  return {
+    years: result.data.years,
+    periodos: result.data.periodos,
+    error: null
+  };
 }
 
 export default function PeriodoFacturacion({
   loaderData
 }: Route.ComponentProps) {
-  const { years, periodos } = loaderData;
+  const { years, periodos, error } = loaderData;
   const pageBreadcrumbs = [
     { label: 'Operaciones' },
     { label: 'Periodos de Facturación' }
@@ -39,7 +40,11 @@ export default function PeriodoFacturacion({
   return (
     <div>
       <BreadcrumbSetter items={pageBreadcrumbs} />
-      <AbrirPeriodoFacturacion years={years} periodos={periodos} error={null} />
+      <AbrirPeriodoFacturacion
+        years={years}
+        periodos={periodos}
+        error={error}
+      />
     </div>
   );
 }

@@ -21,10 +21,10 @@ export const columns = ({
   {
     id: 'id',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='ID' />
+      <DataTableColumnHeader column={column} title="ID" />
     ),
     cell: ({ row }) => {
-      return <div className='font-medium truncate'>{row.original.id}</div>;
+      return <div className="font-medium truncate">{row.original.id}</div>;
     },
     size: 70,
     minSize: 60,
@@ -33,11 +33,11 @@ export const columns = ({
   {
     id: 'descripcion',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Descripción' />
+      <DataTableColumnHeader column={column} title="Descripción" />
     ),
     cell: ({ row }) => {
       return (
-        <div className='font-medium truncate' title={row.original.descripcion}>
+        <div className="font-medium truncate" title={row.original.descripcion}>
           {row.original.descripcion}
         </div>
       );
@@ -49,11 +49,11 @@ export const columns = ({
   {
     id: 'concepto',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Concepto' />
+      <DataTableColumnHeader column={column} title="Concepto" />
     ),
     cell: ({ row }) => {
       return (
-        <div className='font-medium truncate' title={row.original.concepto}>
+        <div className="font-medium truncate" title={row.original.concepto}>
           {row.original.concepto}
         </div>
       );
@@ -65,11 +65,11 @@ export const columns = ({
   {
     id: 'factorPorcentual',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Factor Porcentual' />
+      <DataTableColumnHeader column={column} title="Factor Porcentual" />
     ),
     cell: ({ row }) => {
       return (
-        <div className='font-medium truncate'>
+        <div className="font-medium truncate">
           {row.original.factorPorcentual}
         </div>
       );
@@ -81,11 +81,11 @@ export const columns = ({
   {
     id: 'valorFijo',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Valor Fijo' />
+      <DataTableColumnHeader column={column} title="Valor Fijo" />
     ),
     cell: ({ row }) => {
       return (
-        <div className='font-medium truncate'>{row.original.valorFijo}</div>
+        <div className="font-medium truncate">{row.original.valorFijo}</div>
       );
     },
     size: 115,
@@ -95,7 +95,7 @@ export const columns = ({
   {
     accessorKey: 'estado',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Estado' />
+      <DataTableColumnHeader column={column} title="Estado" />
     ),
     cell: ({ row }) => {
       const estado = row.getValue('estado') as boolean;

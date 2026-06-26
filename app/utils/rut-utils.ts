@@ -2,7 +2,6 @@ export const cleanRut = (rut: string): string => {
   return rut.replaceAll(/[^\dkK-]/g, '').toUpperCase();
 };
 
-
 export const formatRut = (rut: string): string => {
   const cleaned = cleanRut(rut);
   if (cleaned.length < 2) return cleaned;
@@ -27,12 +26,10 @@ export const formatRut = (rut: string): string => {
   return cleaned;
 };
 
-
 export const isValidRutFormat = (rut: string): boolean => {
   const rutRegex = /^\d{7,8}-[\dkK]$/;
   return rutRegex.test(rut);
 };
-
 
 export const calculateRutVerifier = (rutBody: string): string => {
   let sum = 0;
@@ -52,7 +49,6 @@ export const calculateRutVerifier = (rutBody: string): string => {
   return verifier.toString();
 };
 
-
 export const isValidRut = (rut: string): boolean => {
   if (!isValidRutFormat(rut)) return false;
 
@@ -61,7 +57,6 @@ export const isValidRut = (rut: string): boolean => {
 
   return calculatedVerifier.toUpperCase() === verifier.toUpperCase();
 };
-
 
 export const formatRutWithDots = (rut: string): string => {
   const formatted = formatRut(rut);

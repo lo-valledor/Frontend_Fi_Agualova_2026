@@ -4,11 +4,11 @@ import { format } from 'rut.js';
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
 import { TableActions } from '~/components/data-table/table-helpers';
 import { Badge } from '~/components/ui/badge';
-import type { GetClientes } from '~/types/administracion';
+import type { ClientesRow } from '~/types/administracion';
 
 interface ClientesColumnsProps {
-  onEdit: (cliente: GetClientes) => void;
-  onDetails: (cliente: GetClientes) => void;
+  onEdit: (cliente: ClientesRow) => void;
+  onDetails: (cliente: ClientesRow) => void;
   editingClienteRut: string | null;
   detailingClienteRut: string | null;
 }
@@ -18,23 +18,23 @@ export const columns = ({
   onDetails,
   editingClienteRut,
   detailingClienteRut
-}: ClientesColumnsProps): ColumnDef<GetClientes>[] => [
+}: ClientesColumnsProps): ColumnDef<ClientesRow>[] => [
   {
     accessorKey: 'rut',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Cliente' />
+      <DataTableColumnHeader column={column} title="Cliente" />
     ),
     cell: ({ row }) => {
       return (
-        <div className='flex items-center gap-2 sm:gap-3'>
-          <div className='flex-1'>
+        <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex-1">
             <div
-              className='font-medium text-xs sm:text-sm'
-              title={row.original.nombreCompleto}
+              className="font-medium text-xs sm:text-sm"
+              title={row.original.razonSocialNombre}
             >
-              {row.original.nombreCompleto}
+              {row.original.razonSocialNombre}
             </div>
-            <div className='text-xs font-mono'>
+            <div className="text-xs font-mono">
               {format(row.getValue('rut'))}
             </div>
           </div>
@@ -48,11 +48,11 @@ export const columns = ({
   {
     accessorKey: 'esEmpresa',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Tipo' />
+      <DataTableColumnHeader column={column} title="Tipo" />
     ),
     cell: ({ row }) => (
       <Badge
-        variant='outline'
+        variant="outline"
         className={
           row.getValue('esEmpresa')
             ? 'bg-emerald-100 text-emerald-800 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-300 dark:border-emerald-800 text-xs font-medium px-1 sm:px-2'
@@ -60,10 +60,10 @@ export const columns = ({
         }
         title={row.getValue('esEmpresa') ? 'Empresa' : 'Persona Natural'}
       >
-        <span className='hidden sm:inline'>
+        <span className="hidden sm:inline">
           {row.getValue('esEmpresa') ? 'Empresa' : 'Persona'}
         </span>
-        <span className='sm:hidden'>
+        <span className="sm:hidden">
           {row.getValue('esEmpresa') ? 'Emp' : 'Per'}
         </span>
       </Badge>
@@ -75,12 +75,12 @@ export const columns = ({
   {
     accessorKey: 'direccion',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Dirección' />
+      <DataTableColumnHeader column={column} title="Dirección" />
     ),
     cell: ({ row }) => (
-      <div className='flex items-center gap-1 sm:gap-2 min-w-0'>
+      <div className="flex items-center gap-1 sm:gap-2 min-w-0">
         <span
-          className='font-medium truncate text-xs sm:text-sm'
+          className="font-medium truncate text-xs sm:text-sm"
           title={row.getValue('direccion') || 'Sin dirección'}
         >
           {row.getValue('direccion') || 'N/A'}
@@ -94,12 +94,12 @@ export const columns = ({
   {
     accessorKey: 'comuna',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Comuna' />
+      <DataTableColumnHeader column={column} title="Comuna" />
     ),
     cell: ({ row }) => (
-      <div className='flex items-center gap-1 sm:gap-2 min-w-0'>
+      <div className="flex items-center gap-1 sm:gap-2 min-w-0">
         <span
-          className='font-medium truncate text-xs sm:text-sm '
+          className="font-medium truncate text-xs sm:text-sm "
           title={row.getValue('comuna') || 'Sin comuna'}
         >
           {row.getValue('comuna') || 'N/A'}
@@ -114,12 +114,12 @@ export const columns = ({
   {
     accessorKey: 'contacto',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Contacto' />
+      <DataTableColumnHeader column={column} title="Contacto" />
     ),
     cell: ({ row }) => (
-      <div className='flex items-center gap-2'>
+      <div className="flex items-center gap-2">
         <span
-          className='text-sm truncate'
+          className="text-sm truncate"
           title={row.getValue('contacto') || 'Sin contacto'}
         >
           {row.getValue('contacto') || 'N/A'}
@@ -133,12 +133,12 @@ export const columns = ({
   {
     accessorKey: 'telefono',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Teléfono' />
+      <DataTableColumnHeader column={column} title="Teléfono" />
     ),
     cell: ({ row }) => (
-      <div className='flex items-center gap-2'>
+      <div className="flex items-center gap-2">
         <span
-          className='font-mono text-sm'
+          className="font-mono text-sm"
           title={row.getValue('telefono') || 'Sin teléfono'}
         >
           {row.getValue('telefono') || 'N/A'}
@@ -152,12 +152,12 @@ export const columns = ({
   {
     accessorKey: 'email',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Email' />
+      <DataTableColumnHeader column={column} title="Email" />
     ),
     cell: ({ row }) => (
-      <div className='flex items-center gap-2'>
+      <div className="flex items-center gap-2">
         <span
-          className='font-mono text-sm truncate'
+          className="font-mono text-sm truncate"
           title={row.getValue('email') || 'Sin email'}
         >
           {row.getValue('email') || 'N/A'}
@@ -171,11 +171,11 @@ export const columns = ({
   {
     id: 'actions',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Acciones' />
+      <DataTableColumnHeader column={column} title="Acciones" />
     ),
     cell: ({ row }) => {
       return (
-        <div className='flex items-center justify-center'>
+        <div className="flex items-center justify-center">
           <TableActions
             onView={onDetails}
             onEdit={onEdit}

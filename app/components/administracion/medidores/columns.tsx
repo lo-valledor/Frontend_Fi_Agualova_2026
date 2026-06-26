@@ -1,18 +1,16 @@
 import type { ColumnDef } from '@tanstack/react-table';
 
+import type { MedidorListItem } from '~/components/administracion/medidores/medidores-types';
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
 import {
   EstadoBadge,
   TableActions
 } from '~/components/data-table/table-helpers';
 import { Badge } from '~/components/ui/badge';
-import { Button } from '~/components/ui/button';
-import type { GetMedidores } from '~/types/administracion';
 
 interface MedidoresColumnsProps {
-  onEdit: (medidor: GetMedidores) => void;
-  onAsociarSubempalme: (medidor: GetMedidores) => void;
-  onDelete: (medidor: GetMedidores) => void;
+  onEdit: (medidor: MedidorListItem) => void;
+  onDelete: (medidor: MedidorListItem) => void;
 }
 
 const getTipoBadgeProps = (tipo: string) => {
@@ -22,7 +20,7 @@ const getTipoBadgeProps = (tipo: string) => {
     case 'trifasico':
       return {
         variant: 'outline' as const,
-        className: 'border-blue-500  text-xs sm:text-sm px-1 sm:px-2',
+        className: 'border-blue-500 text-xs sm:text-sm px-1 sm:px-2',
         shortText: 'Tri',
         fullText: 'Trifásico'
       };
@@ -56,39 +54,27 @@ const getTipoBadgeProps = (tipo: string) => {
 
 export const columns = ({
   onEdit,
-  onAsociarSubempalme
-}: MedidoresColumnsProps): ColumnDef<GetMedidores>[] => [
+  onDelete
+}: MedidoresColumnsProps): ColumnDef<MedidorListItem>[] => [
   {
     accessorKey: 'serie',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Serie' />
+      <DataTableColumnHeader column={column} title="Serie" />
     ),
-    cell: ({ row }) => {
-      const medidor = row.original;
-      return (
-        <div className='flex items-center gap-2'>
-          <span className='font-medium text-sm truncate' title={medidor.serie}>
-            {medidor.serie}
-          </span>
-        </div>
-      );
-    },
     minSize: 120,
     maxSize: 150
   },
   {
-    accessorKey: 'codigo',
+    accessorKey: 'idMedidor',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Código' />
+      <DataTableColumnHeader column={column} title="Código" />
     ),
     cell: ({ row }) => {
       const medidor = row.original;
       return (
-        <div className='flex items-center gap-2'>
-          <span className='font-mono text-sm font-medium truncate'>
-            {medidor.codigo}
-          </span>
-        </div>
+        <span className="font-mono text-sm font-medium">
+          {medidor.idMedidor}
+        </span>
       );
     },
     minSize: 100,
@@ -97,87 +83,49 @@ export const columns = ({
   {
     accessorKey: 'marca',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Marca' />
+      <DataTableColumnHeader column={column} title="Marca" />
     ),
-    cell: ({ row }) => {
-      const medidor = row.original;
-      return (
-        <div className='flex items-center gap-2'>
-          <span className='text-sm truncate' title={medidor.marca}>
-            {medidor.marca}
-          </span>
-        </div>
-      );
-    },
     minSize: 100,
     maxSize: 130
   },
   {
     accessorKey: 'modelo',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Modelo' />
+      <DataTableColumnHeader column={column} title="Modelo" />
     ),
-    cell: ({ row }) => {
-      const medidor = row.original;
-      return (
-        <div className='flex items-center gap-2'>
-          <span className='text-sm truncate' title={medidor.modelo}>
-            {medidor.modelo}
-          </span>
-        </div>
-      );
-    },
     minSize: 100,
     maxSize: 130
   },
   {
     accessorKey: 'digitos',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Dígitos' />
+      <DataTableColumnHeader column={column} title="Dígitos" />
     ),
-    cell: ({ row }) => {
-      const medidor = row.original;
-      return (
-        <div className='flex items-center gap-2'>
-          <span className='text-sm font-medium'>{medidor.digitos}</span>
-        </div>
-      );
-    },
     minSize: 70,
     maxSize: 90
   },
   {
-    accessorKey: 'multiplicar',
+    accessorKey: 'multiplicador',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Mult.' />
+      <DataTableColumnHeader column={column} title="Mult." />
     ),
-    cell: ({ row }) => {
-      const medidor = row.original;
-      return (
-        <div className='flex items-center gap-2'>
-          <span className='text-sm font-medium'>{medidor.multiplicar}</span>
-        </div>
-      );
-    },
     minSize: 60,
-    maxSize: 80
+    maxSize: 90
   },
   {
     accessorKey: 'tipo',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Tipo' />
+      <DataTableColumnHeader column={column} title="Tipo" />
     ),
     cell: ({ row }) => {
       const tipo = row.getValue('tipo') as string;
       const { variant, className, shortText, fullText } =
         getTipoBadgeProps(tipo);
       return (
-        <div className='flex items-center gap-2'>
-          <Badge variant={variant} className={className} title={fullText}>
-            <span className='hidden sm:inline'>{tipo}</span>
-            <span className='sm:hidden'>{shortText}</span>
-          </Badge>
-        </div>
+        <Badge variant={variant} className={className} title={fullText}>
+          <span className="hidden sm:inline">{tipo}</span>
+          <span className="sm:hidden">{shortText}</span>
+        </Badge>
       );
     },
     minSize: 90,
@@ -186,115 +134,69 @@ export const columns = ({
   {
     accessorKey: 'codigoAcometida',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Acometida' />
+      <DataTableColumnHeader column={column} title="Acometida" />
     ),
     cell: ({ row }) => {
-      const medidor = row.original;
+      const value = row.original.codigoAcometida;
       return (
-        <div className='flex items-center gap-2'>
-          <Badge
-            variant='outline'
-            className='bg-sky-100 text-sky-800 border-sky-200 dark:bg-sky-900/20 dark:text-sky-300 dark:border-sky-800 text-sm font-mono'
-            title={medidor.codigoAcometida}
-          >
-            <span className='truncate max-w-[100px]'>
-              {medidor.codigoAcometida}
-            </span>
-          </Badge>
-        </div>
+        <Badge
+          variant="outline"
+          className="bg-sky-100 text-sky-800 border-sky-200 dark:bg-sky-900/20 dark:text-sky-300 dark:border-sky-800 text-sm font-mono"
+          title={value}
+        >
+          <span className="truncate max-w-[100px]">
+            {value || 'Sin asociar'}
+          </span>
+        </Badge>
       );
     },
     minSize: 130,
-    maxSize: 160
+    maxSize: 180
   },
   {
     accessorKey: 'ubicacion',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Ubicación' />
+      <DataTableColumnHeader column={column} title="Ubicación" />
     ),
-    cell: ({ row }) => {
-      const medidor = row.original;
-      return (
-        <div className='flex items-center gap-2'>
-          <span
-            className='text-sm truncate max-w-[120px]'
-            title={medidor.ubicacion}
-          >
-            {medidor.ubicacion}
-          </span>
-        </div>
-      );
-    },
     minSize: 120,
-    maxSize: 150
+    maxSize: 170
   },
   {
     accessorKey: 'fechaInicio',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='F. Inicio' />
+      <DataTableColumnHeader column={column} title="F. Inicio" />
     ),
-    cell: ({ row }) => {
-      const medidor = row.original;
-      return (
-        <div className='flex items-center gap-2'>
-          <span className='text-sm font-medium '>{medidor.fechaInicio}</span>
-        </div>
-      );
-    },
     minSize: 100,
     maxSize: 130
   },
   {
     accessorKey: 'estado',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Estado' />
+      <DataTableColumnHeader column={column} title="Estado" />
     ),
-    cell: ({ row }) => {
-      return <EstadoBadge estado={row.getValue('estado')} />;
-    },
+    cell: ({ row }) => <EstadoBadge estado={row.getValue('estado')} />,
     minSize: 80,
     maxSize: 100
   },
   {
     id: 'actions',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Acciones' />
+      <DataTableColumnHeader column={column} title="Acciones" />
     ),
     cell: ({ row }) => {
       const medidor = row.original;
       return (
-        <div className='flex items-center justify-center gap-1'>
+        <div className="flex items-center justify-center gap-1">
           <TableActions
             onEdit={onEdit}
+            onDelete={onDelete}
             item={medidor}
             showView={false}
-            showDelete={false}
           />
-          <Button
-            size='sm'
-            variant='ghost'
-            onClick={() => onAsociarSubempalme(medidor)}
-            className='h-8 w-8 p-0'
-            title='Asociar subempalme'
-          >
-            <svg
-              className='h-4 w-4'
-              fill='none'
-              stroke='currentColor'
-              viewBox='0 0 24 24'
-            >
-              <path
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                strokeWidth={2}
-                d='M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1'
-              />
-            </svg>
-          </Button>
         </div>
       );
     },
-    minSize: 80,
-    maxSize: 100
+    minSize: 100,
+    maxSize: 120
   }
 ];

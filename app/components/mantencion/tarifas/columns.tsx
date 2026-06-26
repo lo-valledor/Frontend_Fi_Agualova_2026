@@ -17,10 +17,10 @@ export const createColumns = ({
   {
     accessorKey: 'codigo',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Código' />
+      <DataTableColumnHeader column={column} title="Código" />
     ),
     cell: ({ row }) => (
-      <Badge variant='outline' className='font-mono'>
+      <Badge variant="outline" className="font-mono">
         {row.getValue('codigo')}
       </Badge>
     )
@@ -28,10 +28,10 @@ export const createColumns = ({
   {
     accessorKey: 'nombre',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Nombre' />
+      <DataTableColumnHeader column={column} title="Nombre" />
     ),
     cell: ({ row }) => (
-      <div className='truncate font-medium' title={row.getValue('nombre')}>
+      <div className="truncate font-medium" title={row.getValue('nombre')}>
         {row.getValue('nombre')}
       </div>
     )

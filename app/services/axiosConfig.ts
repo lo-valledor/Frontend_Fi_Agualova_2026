@@ -5,12 +5,10 @@ import { toast } from 'sonner';
 // TIPOS
 // ============================================================================
 
-
 interface AxiosConfig {
   readonly baseURL: string;
   readonly timeout: number;
 }
-
 
 interface ExpectedErrorRoutes {
   readonly status: number;
@@ -61,7 +59,6 @@ const AXIOS_CONFIG: AxiosConfig = {
   timeout: REQUEST_TIMEOUT_MS
 };
 
-
 const EXPECTED_ERROR_ROUTES: readonly ExpectedErrorRoutes[] = [
   {
     status: 401,
@@ -86,37 +83,33 @@ const EXPECTED_ERROR_ROUTES: readonly ExpectedErrorRoutes[] = [
 // INSTANCIAS
 // ============================================================================
 
-
 const refreshAxiosInstance: AxiosInstance = axios.create(AXIOS_CONFIG);
-
 
 const axiosInstance: AxiosInstance = axios.create(AXIOS_CONFIG);
 
 // ============================================================================
-// FUNCIONES PRIVADAS
+// HELPERS DE TOKEN (única fuente de verdad para localStorage)
 // ============================================================================
 
-
-function getStoredToken(): string | null {
+export function getAuthToken(): string | null {
+  if (typeof localStorage === 'undefined') return null;
   return localStorage.getItem('token');
 }
 
-
-function saveToken(token: string): void {
+export function setAuthToken(token: string): void {
+  if (typeof localStorage === 'undefined') return;
   localStorage.setItem('token', token);
 }
 
-
-function clearToken(): void {
+export function clearAuthToken(): void {
+  if (typeof localStorage === 'undefined') return;
   localStorage.removeItem('token');
 }
 
-
 function redirectToSessionExpired(): void {
-  clearToken();
+  clearAuthToken();
   globalThis.location.href = '/session-expired';
 }
-
 
 function isExpectedError(
   requestUrl: string | undefined,
@@ -132,7 +125,6 @@ function isExpectedError(
     expectedRoute?.routes.some(route => requestUrl.includes(route)) ?? false
   );
 }
-
 
 function extractErrorMessage(
   errorData: unknown,
@@ -152,11 +144,9 @@ function extractErrorMessage(
   return defaultMessage;
 }
 
-
 function handleNetworkError(): void {
   toast.error('Error de red. Por favor, verifica tu conexión.');
 }
-
 
 function handleBadRequestError(errorData: unknown): void {
   const message = extractErrorMessage(
@@ -166,22 +156,18 @@ function handleBadRequestError(errorData: unknown): void {
   toast.error(message);
 }
 
-
 function handleForbiddenError(): void {
   toast.error('No tienes permiso para realizar esta acción.');
 }
-
 
 function handleServerError(): void {
   toast.error('Error del servidor. Por favor, intenta más tarde.');
 }
 
-
 function handleNotFoundError(errorData: unknown): void {
   const message = extractErrorMessage(errorData, 'Recurso no encontrado.');
   toast.error(message);
 }
-
 
 function handleGenericError(errorData: unknown): void {
   const message = extractErrorMessage(
@@ -190,7 +176,6 @@ function handleGenericError(errorData: unknown): void {
   );
   toast.error(message);
 }
-
 
 async function attemptTokenRefresh(): Promise<string> {
   const response = await refreshAxiosInstance.post<{ token: string }>(
@@ -204,7 +189,6 @@ async function attemptTokenRefresh(): Promise<string> {
 
   return newToken;
 }
-
 
 async function handleUnauthorizedError(
   error: AxiosError,
@@ -227,7 +211,7 @@ async function handleUnauthorizedError(
 
   try {
     const newToken = await attemptTokenRefresh();
-    saveToken(newToken);
+    setAuthToken(newToken);
     originalRequest.headers.Authorization = `Bearer ${newToken}`;
     return axiosInstance(originalRequest);
   } catch {
@@ -236,7 +220,6 @@ async function handleUnauthorizedError(
     throw error;
   }
 }
-
 
 async function handleErrorResponse(error: AxiosError): Promise<void> {
   if (!error.response) {
@@ -281,10 +264,9 @@ async function handleErrorResponse(error: AxiosError): Promise<void> {
 // INTERCEPTORES
 // ============================================================================
 
-
 axiosInstance.interceptors.request.use(
   config => {
-    const token = getStoredToken();
+    const token = getAuthToken();
 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -294,7 +276,6 @@ axiosInstance.interceptors.request.use(
   },
   error => Promise.reject(error)
 );
-
 
 axiosInstance.interceptors.response.use(
   response => response,

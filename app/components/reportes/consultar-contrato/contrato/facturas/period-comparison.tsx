@@ -103,18 +103,18 @@ const PeriodComparison = memo(function PeriodComparison({
   }, [facturas, selectedPeriods]);
 
   return (
-    <Card className='border bg-background'>
+    <Card className="border bg-background">
       <CardHeader>
-        <CardTitle className='text-base'>Comparación de Periodos</CardTitle>
+        <CardTitle className="text-base">Comparación de Periodos</CardTitle>
         <CardDescription>
           Selecciona dos periodos para comparar métricas
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className='space-y-4'>
+        <div className="space-y-4">
           {/* Selectores */}
-          <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-            <div className='space-y-2'>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
               <Label>Periodo 1</Label>
               <Select
                 value={selectedPeriods[0]}
@@ -123,7 +123,7 @@ const PeriodComparison = memo(function PeriodComparison({
                 }
               >
                 <SelectTrigger>
-                  <SelectValue placeholder='Selecciona periodo' />
+                  <SelectValue placeholder="Selecciona periodo" />
                 </SelectTrigger>
                 <SelectContent>
                   {periodoOptions.map(opt => (
@@ -135,7 +135,7 @@ const PeriodComparison = memo(function PeriodComparison({
               </Select>
             </div>
 
-            <div className='space-y-2'>
+            <div className="space-y-2">
               <Label>Periodo 2</Label>
               <Select
                 value={selectedPeriods[1]}
@@ -144,7 +144,7 @@ const PeriodComparison = memo(function PeriodComparison({
                 }
               >
                 <SelectTrigger>
-                  <SelectValue placeholder='Selecciona periodo' />
+                  <SelectValue placeholder="Selecciona periodo" />
                 </SelectTrigger>
                 <SelectContent>
                   {periodoOptions.map(opt => (
@@ -159,17 +159,17 @@ const PeriodComparison = memo(function PeriodComparison({
 
           {/* Resultados de comparación */}
           {comparison && (
-            <div className='mt-6 space-y-4'>
+            <div className="mt-6 space-y-4">
               {/* Consumo */}
-              <div className='p-4 rounded-lg bg-slate-50 dark:bg-slate-900/50'>
-                <div className='flex items-center justify-between mb-2'>
-                  <span className='text-sm font-medium'>Consumo (kWh)</span>
+              <div className="p-4 rounded-lg bg-slate-50 dark:bg-slate-900/50">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium">Consumo (m³)</span>
                   {comparison.consumo.porcentaje !== 0 && (
-                    <div className='flex items-center gap-1'>
+                    <div className="flex items-center gap-1">
                       {comparison.consumo.porcentaje > 0 ? (
-                        <TrendingUp className='h-4 w-4 text-rose-600' />
+                        <TrendingUp className="h-4 w-4 text-rose-600" />
                       ) : (
-                        <TrendingDown className='h-4 w-4 text-emerald-600' />
+                        <TrendingDown className="h-4 w-4 text-emerald-600" />
                       )}
                       <span
                         className={`text-sm font-medium ${comparison.consumo.porcentaje > 0 ? 'text-rose-600' : 'text-emerald-600'}`}
@@ -180,7 +180,7 @@ const PeriodComparison = memo(function PeriodComparison({
                     </div>
                   )}
                 </div>
-                <div className='flex justify-between text-xs text-slate-600 dark:text-slate-400'>
+                <div className="flex justify-between text-xs text-slate-600 dark:text-slate-400">
                   <span>
                     {comparison.periodo1.consumoPeriodo.toLocaleString('es-CL')}
                   </span>
@@ -192,15 +192,15 @@ const PeriodComparison = memo(function PeriodComparison({
               </div>
 
               {/* Valor Total */}
-              <div className='p-4 rounded-lg bg-slate-50 dark:bg-slate-900/50'>
-                <div className='flex items-center justify-between mb-2'>
-                  <span className='text-sm font-medium'>Valor Total</span>
+              <div className="p-4 rounded-lg bg-slate-50 dark:bg-slate-900/50">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium">Valor Total</span>
                   {comparison.valorTotal.porcentaje !== 0 && (
-                    <div className='flex items-center gap-1'>
+                    <div className="flex items-center gap-1">
                       {comparison.valorTotal.porcentaje > 0 ? (
-                        <TrendingUp className='h-4 w-4 text-rose-600' />
+                        <TrendingUp className="h-4 w-4 text-rose-600" />
                       ) : (
-                        <TrendingDown className='h-4 w-4 text-emerald-600' />
+                        <TrendingDown className="h-4 w-4 text-emerald-600" />
                       )}
                       <span
                         className={`text-sm font-medium ${comparison.valorTotal.porcentaje > 0 ? 'text-rose-600' : 'text-emerald-600'}`}
@@ -211,23 +211,23 @@ const PeriodComparison = memo(function PeriodComparison({
                     </div>
                   )}
                 </div>
-                <div className='flex justify-between text-xs text-slate-600 dark:text-slate-400'>
+                <div className="flex justify-between text-xs text-slate-600 dark:text-slate-400">
                   <span>{formatCurrency(comparison.periodo1.valorTotal!)}</span>
                   <span>→</span>
                   <span>{formatCurrency(comparison.periodo2.valorTotal!)}</span>
                 </div>
               </div>
 
-              {/* Costo por kWh */}
-              <div className='p-4 rounded-lg bg-slate-50 dark:bg-slate-900/50'>
-                <div className='flex items-center justify-between mb-2'>
-                  <span className='text-sm font-medium'>Costo por kWh</span>
+              {/* Costo por m³ */}
+              <div className="p-4 rounded-lg bg-slate-50 dark:bg-slate-900/50">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium">Costo por m³</span>
                   {comparison.costoPorKwh.porcentaje !== 0 && (
-                    <div className='flex items-center gap-1'>
+                    <div className="flex items-center gap-1">
                       {comparison.costoPorKwh.porcentaje > 0 ? (
-                        <TrendingUp className='h-4 w-4 text-rose-600' />
+                        <TrendingUp className="h-4 w-4 text-rose-600" />
                       ) : (
-                        <TrendingDown className='h-4 w-4 text-emerald-600' />
+                        <TrendingDown className="h-4 w-4 text-emerald-600" />
                       )}
                       <span
                         className={`text-sm font-medium ${comparison.costoPorKwh.porcentaje > 0 ? 'text-rose-600' : 'text-emerald-600'}`}
@@ -238,7 +238,7 @@ const PeriodComparison = memo(function PeriodComparison({
                     </div>
                   )}
                 </div>
-                <div className='flex justify-between text-xs text-slate-600 dark:text-slate-400'>
+                <div className="flex justify-between text-xs text-slate-600 dark:text-slate-400">
                   <span>${comparison.periodo1.costoPorKwh.toFixed(0)}</span>
                   <span>→</span>
                   <span>${comparison.periodo2.costoPorKwh.toFixed(0)}</span>
@@ -248,7 +248,7 @@ const PeriodComparison = memo(function PeriodComparison({
           )}
 
           {!comparison && (
-            <div className='text-center py-8 text-slate-500 text-sm'>
+            <div className="text-center py-8 text-slate-500 text-sm">
               Selecciona dos periodos para comparar
             </div>
           )}

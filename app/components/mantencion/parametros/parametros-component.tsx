@@ -1,10 +1,8 @@
 import { LayoutList, Plus } from 'lucide-react';
 import { motion } from 'motion/react';
-import { toast } from 'sonner';
-
-import React, { useMemo, useState } from 'react';
-
+import { useCallback, useMemo, useState } from 'react';
 import { useRevalidator } from 'react-router';
+import { toast } from 'sonner';
 
 import { DataTable } from '~/components/data-table/data-table';
 import { ModernHeader } from '~/components/shared/modern-header';
@@ -16,6 +14,7 @@ import {
   CardHeader,
   CardTitle
 } from '~/components/ui/card';
+import { mantencionService } from '~/services/mantencionService';
 import type { Parametro } from '~/types/mantencion';
 
 import { createColumns } from './columns';
@@ -31,52 +30,58 @@ export default function ParametrosComponent({
   parametros
 }: Readonly<ParametrosComponentProps>) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedParametro, setSelectedParametro] = useState<
-    Parametro | undefined
-  >(undefined);
+  const [selectedParametro, setSelectedParametro] = useState<Parametro | null>(
+    null
+  );
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
 
   const revalidator = useRevalidator();
 
-  const handleAdd = () => {
-    setSelectedParametro(undefined);
+  const handleAdd = useCallback(() => {
+    setSelectedParametro(null);
     setModalMode('add');
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const handleEdit = (parametro: Parametro) => {
+  const handleEdit = useCallback((parametro: Parametro) => {
     setSelectedParametro(parametro);
     setModalMode('edit');
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const handleDelete = async (parametro: Parametro) => {
-    if (
-      globalThis.confirm(
-        `¿Está seguro de que desea eliminar el parámetro "${parametro.nombre}"?`
-      )
-    ) {
-      try {
-        const { default: api } = await import('~/lib/api');
-        await api.delete(`/parametros/eliminar/${parametro.id}`);
+  const handleDelete = useCallback(
+    async (parametro: Parametro) => {
+      if (
+        globalThis.confirm(
+          `¿Está seguro de que desea eliminar el parámetro "${parametro.nombre}"?`
+        )
+      ) {
+        try {
+          const result = await mantencionService.deleteParametro(parametro.id);
+          if (result.error) {
+            throw new Error(result.error);
+          }
 
-        toast.success('Parámetro eliminado exitosamente');
-        revalidator.revalidate();
-      } catch (error) {
-        console.error('Error al eliminar el parámetro:', error);
-        toast.error('Error al eliminar el parámetro');
+          toast.success('Parámetro eliminado exitosamente');
+          revalidator.revalidate();
+        } catch (error) {
+          console.error('Error al eliminar el parámetro:', error);
+          toast.error('Error al eliminar el parámetro');
+        }
       }
-    }
-  };
+    },
+    [revalidator]
+  );
 
-  const handleSuccess = () => {
+  const handleSuccess = useCallback(() => {
+    revalidator.revalidate();
+    setIsModalOpen(false);
     toast.success(
       modalMode === 'add'
         ? 'Parámetro creado exitosamente'
         : 'Parámetro actualizado exitosamente'
     );
-    revalidator.revalidate();
-  };
+  }, [modalMode, revalidator]);
 
   const columns = useMemo(
     () =>
@@ -88,20 +93,20 @@ export default function ParametrosComponent({
   );
 
   return (
-    <div className='min-h-screen bg-background'>
-      <div className='container mx-auto p-4 sm:p-6 space-y-6'>
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto p-4 sm:p-6 space-y-6">
         <header>
           <ModernHeader
-            title='Parámetros'
-            description='Gestiona los parámetros del sistema'
+            title="Parámetros"
+            description="Gestiona los parámetros del sistema"
             actions={
-              <Button onClick={handleAdd} variant='default' size='sm'>
-                <Plus className='mr-2 h-4 w-4' />
+              <Button onClick={handleAdd} variant="default" size="sm">
+                <Plus className="mr-2 h-4 w-4" />
                 Agregar Parámetro
               </Button>
             }
           />
-          <div className='industrial-divider mt-4' />
+          <div className="industrial-divider mt-4" />
         </header>
 
         <motion.div
@@ -109,26 +114,26 @@ export default function ParametrosComponent({
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.25, ease: mechanicalEase }}
         >
-          <Card className='overflow-hidden border border-border bg-card shadow-sm'>
-            <CardHeader className='p-4 pb-3'>
-              <div className='flex items-center gap-3'>
-                <div className='flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-accent text-accent-foreground border border-border'>
-                  <LayoutList className='h-4 w-4' />
+          <Card className="overflow-hidden border border-border bg-card shadow-sm">
+            <CardHeader className="p-4 pb-3">
+              <div className="flex items-center gap-3">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-accent text-accent-foreground border border-border">
+                  <LayoutList className="h-4 w-4" />
                 </div>
                 <div>
-                  <CardTitle className='text-xs font-bold uppercase tracking-wide text-foreground'>
+                  <CardTitle className="text-xs font-bold uppercase tracking-wide text-foreground">
                     Listado de Parámetros
                   </CardTitle>
-                  <CardDescription className='text-xs mt-0.5 text-muted-foreground'>
+                  <CardDescription className="text-xs mt-0.5 text-muted-foreground">
                     {parametros.length} parámetro
                     {parametros.length !== 1 ? 's' : ''}
                   </CardDescription>
                 </div>
               </div>
             </CardHeader>
-            <div className='industrial-divider' />
-            <CardContent className='relative p-4'>
-              <div className='overflow-x-auto -mx-1'>
+            <div className="industrial-divider" />
+            <CardContent className="relative p-4">
+              <div className="overflow-x-auto -mx-1">
                 <DataTable columns={columns} data={parametros} />
               </div>
             </CardContent>

@@ -1,23 +1,20 @@
-import { toast } from 'sonner';
 import { AxiosError } from 'axios';
+import { toast } from 'sonner';
 
-import axiosInstance from './axiosConfig';
+import axiosInstance, { clearAuthToken, setAuthToken } from './axiosConfig';
 
 // ============================================================================
 // TIPOS
 // ============================================================================
-
 
 interface LoginCredentials {
   email: string;
   password: string;
 }
 
-
 interface AuthTokenResponse {
   token: string;
 }
-
 
 class AuthenticationError extends Error {
   constructor(
@@ -54,7 +51,6 @@ function extractErrorMessage(error: unknown, defaultMessage: string): string {
   return defaultMessage;
 }
 
-
 function validateTokenResponse(
   response: any
 ): asserts response is { data: AuthTokenResponse } {
@@ -66,16 +62,13 @@ function validateTokenResponse(
   }
 }
 
-
 function persistToken(token: string): void {
-  localStorage.setItem('token', token);
+  setAuthToken(token);
 }
-
 
 function clearStoredToken(): void {
-  localStorage.removeItem('token');
+  clearAuthToken();
 }
-
 
 function handleAuthenticationError(error: unknown): never {
   if (!(error instanceof AxiosError)) {
@@ -113,9 +106,7 @@ function handleAuthenticationError(error: unknown): never {
 // SERVICIO DE AUTENTICACIÓN
 // ============================================================================
 
-
 class AuthService {
-  
   async login(credentials: LoginCredentials): Promise<string> {
     try {
       const response = await axiosInstance.post<AuthTokenResponse>(
@@ -140,7 +131,6 @@ class AuthService {
     }
   }
 
-  
   async logout(): Promise<void> {
     try {
       await axiosInstance.post('/logout');
@@ -155,7 +145,6 @@ class AuthService {
     }
   }
 
-  
   async refreshToken(): Promise<string> {
     try {
       const response =
@@ -177,7 +166,6 @@ class AuthService {
     }
   }
 
-  
   async requestPasswordRecovery(email: string): Promise<void> {
     try {
       await axiosInstance.post('/forgot-password', { email });
@@ -197,7 +185,6 @@ class AuthService {
     return this.requestPasswordRecovery(email);
   }
 
-  
   async resetPassword(resetToken: string, newPassword: string): Promise<void> {
     try {
       await axiosInstance.post('/reset-password', {

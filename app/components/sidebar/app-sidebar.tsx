@@ -12,10 +12,6 @@ import { AnimatePresence, motion } from 'motion/react';
 
 import * as React from 'react';
 import { Link, useLocation } from 'react-router';
-
-import { useDebounce } from '~/hooks/shared/use-debounce';
-import { usePeriodoAbierto } from '~/hooks/use-operaciones';
-
 import {
   Collapsible,
   CollapsibleContent,
@@ -33,6 +29,8 @@ import {
   SidebarMenuItem,
   SidebarRail
 } from '~/components/ui/sidebar';
+import { useDebounce } from '~/hooks/shared/use-debounce';
+import { usePeriodoAbierto } from '~/hooks/use-operaciones';
 
 import { SearchForm } from './search-form';
 
@@ -48,14 +46,6 @@ const data = {
         {
           title: 'Monitor de Lecturas',
           url: '/dashboard/monitor/monitor-lecturas'
-        },
-        {
-          title: 'Exportar Lecturas',
-          url: '/dashboard/monitor/exportar-lecturas'
-        },
-        {
-          title: 'Importar Lecturas',
-          url: '/dashboard/monitor/importar-lecturas'
         }
       ]
     },
@@ -214,8 +204,12 @@ const data = {
           url: '/dashboard/reportes/consultar-contrato'
         },
         {
-          title: 'Resumen Facturación',
-          url: '/dashboard/reportes/resumen-facturacion'
+          title: 'Nota de Cobro',
+          url: '/dashboard/reportes/nota-de-cobro'
+        },
+        {
+          title: 'Ver Facturas',
+          url: '/dashboard/reportes/ver-facturas'
         }
       ]
     },
@@ -290,33 +284,33 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar {...props}>
       {/* ── Branded Header ── */}
-      <SidebarHeader className='border-b border-sidebar-border px-4 py-3'>
-        <div className='flex items-center gap-3'>
-          <div className='flex h-8 w-8 items-center justify-center rounded-md'>
-            <img src='/logo-agualova.png' alt='Logo' width={32} height={32} />
+      <SidebarHeader className="border-b border-sidebar-border px-4 py-3">
+        <div className="flex items-center gap-3">
+          <div className="flex h-8 w-8 items-center justify-center rounded-md">
+            <img src="/logo-agualova.png" alt="Logo" width={32} height={32} />
           </div>
-          <div className='flex flex-col'>
-            <span className='text-sm font-black tracking-tight leading-none'>
+          <div className="flex flex-col">
+            <span className="text-sm font-black tracking-tight leading-none">
               ENERLOVA
             </span>
           </div>
         </div>
-        <div className='mt-3'>
+        <div className="mt-3">
           <SearchForm onSearchChange={setSearchTerm} searchTerm={searchTerm} />
         </div>
       </SidebarHeader>
 
       {/* ── Navigation ── */}
-      <SidebarContent className='px-2 py-2 gap-0'>
-        <AnimatePresence mode='wait'>
+      <SidebarContent className="px-2 py-2 gap-0">
+        <AnimatePresence mode="wait">
           {filteredNavMain.length > 0 ? (
             <motion.div
-              key='nav-list'
+              key="nav-list"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.15 }}
-              className='space-y-0.5'
+              className="space-y-0.5"
             >
               {filteredNavMain.map((item, sectionIndex) => {
                 const isActive = item.items?.some(
@@ -336,31 +330,31 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     <Collapsible
                       title={item.title}
                       defaultOpen={isActive}
-                      className='group/collapsible'
+                      className="group/collapsible"
                     >
-                      <SidebarGroup className='py-0'>
+                      <SidebarGroup className="py-0">
                         <SidebarGroupLabel
                           asChild
-                          className='group/label text-sidebar-foreground hover:bg-sidebar-accent/60 rounded-md transition-colors duration-150 h-auto'
+                          className="group/label text-sidebar-foreground hover:bg-sidebar-accent/60 rounded-md transition-colors duration-150 h-auto"
                         >
-                          <CollapsibleTrigger className='w-full px-2 py-2 flex items-center justify-between'>
-                            <div className='flex items-center gap-2.5'>
+                          <CollapsibleTrigger className="w-full px-2 py-2 flex items-center justify-between">
+                            <div className="flex items-center gap-2.5">
                               {item.icon && (
-                                <div className='flex h-6 w-6 items-center justify-center rounded bg-sidebar-accent/80 text-sidebar-accent-foreground'>
-                                  <item.icon className='h-3.5 w-3.5' />
+                                <div className="flex h-6 w-6 items-center justify-center rounded bg-sidebar-accent/80 text-sidebar-accent-foreground">
+                                  <item.icon className="h-3.5 w-3.5" />
                                 </div>
                               )}
-                              <span className='text-xs font-bold tracking-wide uppercase'>
+                              <span className="text-xs font-bold tracking-wide uppercase">
                                 {item.title}
                               </span>
                             </div>
-                            <ChevronRight className='h-3 w-3 text-muted-foreground transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90' />
+                            <ChevronRight className="h-3 w-3 text-muted-foreground transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                           </CollapsibleTrigger>
                         </SidebarGroupLabel>
 
                         <CollapsibleContent>
-                          <SidebarGroupContent className='pt-0.5 pb-1'>
-                            <SidebarMenu className='gap-0'>
+                          <SidebarGroupContent className="pt-0.5 pb-1">
+                            <SidebarMenu className="gap-0">
                               {item.items.map((menuItem, menuIndex) => {
                                 const isDisabled =
                                   (menuItem as any).disabled || false;
@@ -397,22 +391,22 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                                         }
                                       >
                                         {isDisabled ? (
-                                          <div className='flex items-center gap-2 px-2 text-xs'>
-                                            <Lock className='h-3 w-3 shrink-0 opacity-50' />
-                                            <span className='truncate'>
+                                          <div className="flex items-center gap-2 px-2 text-xs">
+                                            <Lock className="h-3 w-3 shrink-0 opacity-50" />
+                                            <span className="truncate">
                                               {menuItem.title}
                                             </span>
                                           </div>
                                         ) : (
                                           <Link
                                             to={menuItem.url}
-                                            className='flex items-center gap-2 px-2 text-xs w-full'
+                                            className="flex items-center gap-2 px-2 text-xs w-full"
                                           >
                                             {/* Active indicator strip */}
                                             {active && (
                                               <motion.div
-                                                layoutId='sidebar-active-strip'
-                                                className='energy-strip energy-strip-active'
+                                                layoutId="sidebar-active-strip"
+                                                className="energy-strip energy-strip-active"
                                                 transition={{
                                                   type: 'spring',
                                                   stiffness: 500,
@@ -427,7 +421,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                                                   : 'bg-muted-foreground/30'
                                               }`}
                                             />
-                                            <span className='truncate'>
+                                            <span className="truncate">
                                               {menuItem.title}
                                             </span>
                                           </Link>
@@ -445,7 +439,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
                     {/* Industrial divider between sections */}
                     {sectionIndex < filteredNavMain.length - 1 && (
-                      <div className='industrial-divider mx-3 my-1' />
+                      <div className="industrial-divider mx-3 my-1" />
                     )}
                   </motion.div>
                 );
@@ -453,21 +447,21 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             </motion.div>
           ) : (
             <motion.div
-              key='nav-empty'
+              key="nav-empty"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className='flex flex-col items-center py-10 px-4 text-center'
+              className="flex flex-col items-center py-10 px-4 text-center"
             >
-              <p className='text-xs text-muted-foreground'>
+              <p className="text-xs text-muted-foreground">
                 Sin resultados para{' '}
-                <span className='font-medium text-foreground'>
+                <span className="font-medium text-foreground">
                   &ldquo;{searchTerm}&rdquo;
                 </span>
               </p>
               <button
                 onClick={() => setSearchTerm('')}
-                className='mt-2 text-xs text-primary hover:underline underline-offset-2'
+                className="mt-2 text-xs text-primary hover:underline underline-offset-2"
               >
                 Limpiar búsqueda
               </button>

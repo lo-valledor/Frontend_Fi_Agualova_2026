@@ -1,11 +1,9 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2 } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
-
-import React, { useEffect, useState } from 'react';
-
-import { useForm } from 'react-hook-form';
 
 import { Button } from '~/components/ui/button';
 import {
@@ -27,8 +25,8 @@ import {
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
 import { Switch } from '~/components/ui/switch';
-import api from '~/lib/api';
-import type { Zona } from '~/types/mantencion';
+import { mantencionService } from '~/services/mantencionService';
+import type { Zona, ZonaFormValues, ZonaProps } from '~/types/mantencion';
 
 const zonaFormSchema = z.object({
   nombre: z
@@ -42,7 +40,7 @@ const zonaFormSchema = z.object({
   estado: z.boolean()
 });
 
-type ZonaFormValues = z.infer<typeof zonaFormSchema>;
+type ZonaFormInput = z.infer<typeof zonaFormSchema>;
 
 interface ZonaFormModalProps {
   isOpen: boolean;
@@ -61,7 +59,7 @@ export default function ZonaFormModal({
 }: ZonaFormModalProps) {
   const [isLoading, setIsLoading] = useState(false);
 
-  const form = useForm<ZonaFormValues>({
+  const form = useForm<ZonaFormInput>({
     resolver: zodResolver(zonaFormSchema),
     defaultValues: {
       nombre: '',
@@ -88,13 +86,24 @@ export default function ZonaFormModal({
     }
   }, [isOpen, mode, zona, form]);
 
-  const handleSubmit = async (data: ZonaFormValues) => {
+  const handleSubmit = async (data: ZonaFormInput) => {
     setIsLoading(true);
     try {
       if (mode === 'add') {
-        await api.post('/zonas/crear', data);
+        const payload: ZonaProps = {
+          nombre: data.nombre,
+          referencia: data.referencia,
+          estado: data.estado
+        };
+        await mantencionService.createZona(payload);
       } else if (mode === 'edit' && zona) {
-        await api.put('/zonas/editar/', { ...data, id: zona.id });
+        const payload: ZonaFormValues = {
+          id: zona.id,
+          nombre: data.nombre,
+          referencia: data.referencia,
+          estado: data.estado
+        };
+        await mantencionService.updateZona(payload);
       }
       onSuccess();
     } catch (error) {
@@ -116,7 +125,7 @@ export default function ZonaFormModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className='sm:max-w-md'>
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>
             {mode === 'add' ? 'Agregar Nueva Zona' : 'Editar Zona'}
@@ -131,16 +140,16 @@ export default function ZonaFormModal({
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(handleSubmit)}
-            className='space-y-4'
+            className="space-y-4"
           >
             <FormField
               control={form.control}
-              name='nombre'
+              name="nombre"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Nombre</FormLabel>
                   <FormControl>
-                    <Input placeholder='Ej: Zona Norte' {...field} />
+                    <Input placeholder="Ej: Zona Norte" {...field} />
                   </FormControl>
                   <FormDescription>Máximo 50 caracteres</FormDescription>
                   <FormMessage />
@@ -150,12 +159,12 @@ export default function ZonaFormModal({
 
             <FormField
               control={form.control}
-              name='referencia'
+              name="referencia"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Referencia</FormLabel>
                   <FormControl>
-                    <Input placeholder='Ej: ZN-01' {...field} />
+                    <Input placeholder="Ej: ZN-01" {...field} />
                   </FormControl>
                   <FormDescription>Máximo 20 caracteres</FormDescription>
                   <FormMessage />
@@ -165,10 +174,10 @@ export default function ZonaFormModal({
 
             <FormField
               control={form.control}
-              name='estado'
+              name="estado"
               render={({ field }) => (
-                <FormItem className='flex flex-row items-center justify-between rounded-xl border p-3 shadow-sm'>
-                  <div className='space-y-0.5'>
+                <FormItem className="flex flex-row items-center justify-between rounded-xl border p-3 shadow-sm">
+                  <div className="space-y-0.5">
                     <FormLabel>Estado de la Zona</FormLabel>
                     <FormDescription>
                       {field.value ? 'Zona activa' : 'Zona inactiva'}
@@ -184,17 +193,17 @@ export default function ZonaFormModal({
               )}
             />
 
-            <DialogFooter className='gap-2'>
+            <DialogFooter className="gap-2">
               <Button
-                type='button'
-                variant='outline'
+                type="button"
+                variant="outline"
                 onClick={handleClose}
                 disabled={isLoading}
               >
                 Cancelar
               </Button>
-              <Button type='submit' disabled={isLoading} variant='default'>
-                {isLoading && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
+              <Button type="submit" disabled={isLoading} variant="default">
+                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {mode === 'add' ? 'Crear Zona' : 'Actualizar Zona'}
               </Button>
             </DialogFooter>

@@ -17,14 +17,14 @@ export const columns = ({
   {
     accessorKey: 'nombre',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Nombre' />
+      <DataTableColumnHeader column={column} title="Nombre" />
     ),
     cell: ({ row }) => {
       const sector = row.original;
       return (
-        <div className='flex items-center space-x-3'>
+        <div className="flex items-center space-x-3">
           <div>
-            <div className='font-medium '>{sector.nombre}</div>
+            <div className="font-medium ">{sector.nombre}</div>
           </div>
         </div>
       );
@@ -35,12 +35,12 @@ export const columns = ({
   {
     accessorKey: 'zona',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Zona' />
+      <DataTableColumnHeader column={column} title="Zona" />
     ),
     cell: ({ row }) => {
       const zona = row.getValue('zona') as string;
       return (
-        <Badge variant='outline' className='font-medium'>
+        <Badge variant="outline" className="font-medium">
           {zona}
         </Badge>
       );
@@ -50,7 +50,7 @@ export const columns = ({
   {
     accessorKey: 'estado',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Estado' />
+      <DataTableColumnHeader column={column} title="Estado" />
     ),
     cell: ({ row }) => {
       const estado = row.getValue('estado') as boolean;

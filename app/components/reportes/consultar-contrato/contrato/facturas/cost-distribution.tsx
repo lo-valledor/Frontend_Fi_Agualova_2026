@@ -62,23 +62,23 @@ const CostDistribution = memo(function CostDistribution({
   };
 
   return (
-    <Card className='border bg-background'>
+    <Card className="border bg-background">
       <CardHeader>
-        <CardTitle className='text-base'>Distribución de Costos</CardTitle>
+        <CardTitle className="text-base">Distribución de Costos</CardTitle>
         <CardDescription>Proporción entre Valor Neto e IVA</CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig} className='h-[350px] w-full'>
-          <ResponsiveContainer width='100%' height='100%'>
+        <ChartContainer config={chartConfig} className="h-[350px] w-full">
+          <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
                 data={distributionData.data}
-                cx='50%'
-                cy='50%'
+                cx="50%"
+                cy="50%"
                 innerRadius={80}
                 outerRadius={120}
                 paddingAngle={5}
-                dataKey='value'
+                dataKey="value"
               >
                 {distributionData.data.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={entry.color} />
@@ -89,25 +89,25 @@ const CostDistribution = memo(function CostDistribution({
                   if (active && payload && payload.length) {
                     const data = payload[0].payload;
                     return (
-                      <div className='rounded-lg border bg-background p-3 shadow-md'>
-                        <div className='space-y-2'>
-                          <div className='font-medium text-sm border-b pb-2'>
+                      <div className="rounded-lg border bg-background p-3 shadow-md">
+                        <div className="space-y-2">
+                          <div className="font-medium text-sm border-b pb-2">
                             {data.name}
                           </div>
-                          <div className='text-xs space-y-1'>
-                            <div className='flex items-center justify-between gap-4'>
-                              <span className='text-slate-600 dark:text-slate-400'>
+                          <div className="text-xs space-y-1">
+                            <div className="flex items-center justify-between gap-4">
+                              <span className="text-slate-600 dark:text-slate-400">
                                 Monto:
                               </span>
-                              <span className='font-bold'>
+                              <span className="font-bold">
                                 {formatCurrency(data.value)}
                               </span>
                             </div>
-                            <div className='flex items-center justify-between gap-4'>
-                              <span className='text-slate-600 dark:text-slate-400'>
+                            <div className="flex items-center justify-between gap-4">
+                              <span className="text-slate-600 dark:text-slate-400">
                                 Porcentaje:
                               </span>
-                              <span className='font-medium'>
+                              <span className="font-medium">
                                 {data.porcentaje.toFixed(1)}%
                               </span>
                             </div>
@@ -121,22 +121,22 @@ const CostDistribution = memo(function CostDistribution({
               />
               {/* Centro del donut con total */}
               <text
-                x='50%'
-                y='50%'
-                textAnchor='middle'
-                dominantBaseline='middle'
+                x="50%"
+                y="50%"
+                textAnchor="middle"
+                dominantBaseline="middle"
               >
                 <tspan
-                  x='50%'
-                  dy='-0.5em'
-                  className='text-xs fill-slate-600 dark:fill-slate-400'
+                  x="50%"
+                  dy="-0.5em"
+                  className="text-xs fill-slate-600 dark:fill-slate-400"
                 >
                   Total Histórico
                 </tspan>
                 <tspan
-                  x='50%'
-                  dy='1.5em'
-                  className='text-xl font-bold fill-slate-900 dark:fill-slate-100'
+                  x="50%"
+                  dy="1.5em"
+                  className="text-xl font-bold fill-slate-900 dark:fill-slate-100"
                 >
                   {formatCurrency(distributionData.total)}
                 </tspan>
@@ -146,14 +146,14 @@ const CostDistribution = memo(function CostDistribution({
         </ChartContainer>
 
         {/* Leyenda */}
-        <div className='mt-4 flex items-center justify-center gap-6'>
+        <div className="mt-4 flex items-center justify-center gap-6">
           {distributionData.data.map((item, index) => (
-            <div key={index} className='flex items-center gap-2'>
+            <div key={index} className="flex items-center gap-2">
               <div
-                className='w-3 h-3 rounded'
+                className="w-3 h-3 rounded"
                 style={{ backgroundColor: item.color }}
               />
-              <span className='text-xs'>
+              <span className="text-xs">
                 {item.name}: {item.porcentaje.toFixed(1)}%
               </span>
             </div>

@@ -17,13 +17,12 @@ import { Card } from '~/components/ui/card';
 import { Separator } from '~/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
 import type { DetalleFacturas, DetalleLecturas } from '~/types/reportes';
-
+import BillingEvolutionChart from './billing-evolution-chart';
 import BillingKPIs from './billing-kpis';
 import CostAnalysisChart from './cost-analysis-chart';
+import CostDistribution from './cost-distribution';
 import InvoicesTable from './invoices-table';
 import PaymentTimeline from './payment-timeline';
-import BillingEvolutionChart from './billing-evolution-chart';
-import CostDistribution from './cost-distribution';
 import PeriodComparison from './period-comparison';
 
 interface BillingDashboardProps {
@@ -40,7 +39,7 @@ export const formatCurrency = (value: number): string => {
   })}`;
 };
 
-// Función para calcular costo por kWh
+// Función para calcular costo por m³
 export const calcularCostoPorKwh = (
   valorTotal: number,
   consumo: number
@@ -190,11 +189,11 @@ const BillingDashboard = memo(function BillingDashboard({
       'Nro Factura',
       'Fecha Emisión',
       'Fecha Vencimiento',
-      'Consumo kWh',
+      'Consumo m³',
       'Valor Neto',
       'IVA',
       'Valor Total',
-      'Costo por kWh',
+      'Costo por m³',
       'Tarifa'
     ];
 
@@ -224,32 +223,32 @@ const BillingDashboard = memo(function BillingDashboard({
   };
 
   return (
-    <div className='space-y-4 sm:space-y-6'>
+    <div className="space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className='text-xl font-semibold flex items-center gap-2'>
-            <DollarSign className='h-5 w-5 text-emerald-600' />
+          <h2 className="text-xl font-semibold flex items-center gap-2">
+            <DollarSign className="h-5 w-5 text-emerald-600" />
             Dashboard de Facturación
           </h2>
-          <p className='text-sm text-slate-600 dark:text-slate-400'>
+          <p className="text-sm text-slate-600 dark:text-slate-400">
             Gestión financiera y administrativa de facturas eléctricas
           </p>
         </div>
 
-        <div className='flex gap-2'>
+        <div className="flex gap-2">
           <Button
-            variant='outline'
-            size='sm'
+            variant="outline"
+            size="sm"
             onClick={handleExportCSV}
-            className='gap-2'
+            className="gap-2"
           >
-            <Download className='h-4 w-4' />
-            <span className='hidden sm:inline'>Exportar</span>
+            <Download className="h-4 w-4" />
+            <span className="hidden sm:inline">Exportar</span>
           </Button>
-          <Button variant='outline' size='sm' className='gap-2'>
-            <RotateCw className='h-4 w-4' />
-            <span className='hidden sm:inline'>Actualizar</span>
+          <Button variant="outline" size="sm" className="gap-2">
+            <RotateCw className="h-4 w-4" />
+            <span className="hidden sm:inline">Actualizar</span>
           </Button>
         </div>
       </div>
@@ -261,7 +260,7 @@ const BillingDashboard = memo(function BillingDashboard({
 
       {/* Alertas */}
       {alertas.length > 0 && (
-        <div className='space-y-2'>
+        <div className="space-y-2">
           {alertas.map((alerta, index) => (
             <Alert
               key={index}
@@ -272,9 +271,9 @@ const BillingDashboard = memo(function BillingDashboard({
               }
             >
               {alerta.tipo === 'vencida' || alerta.tipo === 'aumento' ? (
-                <AlertTriangle className='h-4 w-4' />
+                <AlertTriangle className="h-4 w-4" />
               ) : (
-                <Info className='h-4 w-4' />
+                <Info className="h-4 w-4" />
               )}
               <AlertTitle>
                 {alerta.tipo === 'vencida'
@@ -295,31 +294,31 @@ const BillingDashboard = memo(function BillingDashboard({
       <Tabs
         value={activeTab}
         onValueChange={setActiveTab}
-        className='space-y-4'
+        className="space-y-4"
       >
-        <TabsList className='w-full justify-start'>
-          <TabsTrigger value='analisis' className='gap-2'>
-            <TrendingUp className='h-4 w-4' />
+        <TabsList className="w-full justify-start">
+          <TabsTrigger value="analisis" className="gap-2">
+            <TrendingUp className="h-4 w-4" />
             Análisis Financiero
           </TabsTrigger>
-          <TabsTrigger value='desglose' className='gap-2'>
-            <FileText className='h-4 w-4' />
+          <TabsTrigger value="desglose" className="gap-2">
+            <FileText className="h-4 w-4" />
             Desglose de Costos
           </TabsTrigger>
-          <TabsTrigger value='facturas' className='gap-2'>
-            <Calendar className='h-4 w-4' />
+          <TabsTrigger value="facturas" className="gap-2">
+            <Calendar className="h-4 w-4" />
             Facturas
           </TabsTrigger>
         </TabsList>
 
         {/* Tab: Análisis Financiero */}
-        <TabsContent value='analisis' className='space-y-4'>
+        <TabsContent value="analisis" className="space-y-4">
           <BillingEvolutionChart facturas={facturasConConsumo} />
         </TabsContent>
 
         {/* Tab: Desglose de Costos */}
-        <TabsContent value='desglose' className='space-y-4'>
-          <div className='grid gap-4 grid-cols-1 lg:grid-cols-2'>
+        <TabsContent value="desglose" className="space-y-4">
+          <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
             <CostAnalysisChart facturas={facturasConConsumo} />
             <CostDistribution facturas={facturasConConsumo} />
           </div>
@@ -331,8 +330,8 @@ const BillingDashboard = memo(function BillingDashboard({
         </TabsContent>
 
         {/* Tab: Facturas */}
-        <TabsContent value='facturas' className='space-y-4'>
-          <Card className='p-4'>
+        <TabsContent value="facturas" className="space-y-4">
+          <Card className="p-4">
             <PaymentTimeline facturas={facturasConConsumo} />
           </Card>
           <InvoicesTable facturas={facturasConConsumo} />
@@ -340,7 +339,7 @@ const BillingDashboard = memo(function BillingDashboard({
       </Tabs>
 
       {/* Footer */}
-      <div className='text-center text-xs text-slate-500 dark:text-slate-400'>
+      <div className="text-center text-xs text-slate-500 dark:text-slate-400">
         Última actualización: {new Date().toLocaleString('es-CL')} • Tarifa:{' '}
         {facturasValidas[0]?.tarifa || 'N/A'}
       </div>

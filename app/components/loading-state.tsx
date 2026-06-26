@@ -34,9 +34,9 @@ export function LoadingState({
 
   if (variant === 'inline') {
     return (
-      <div className='flex items-center justify-center p-4'>
-        <div className='flex items-center gap-3'>
-          <div className='relative'>
+      <div className="flex items-center justify-center p-4">
+        <div className="flex items-center gap-3">
+          <div className="relative">
             <div
               className={`${sizeClasses[size]} rounded-full border-2 border-border`}
             ></div>
@@ -44,7 +44,7 @@ export function LoadingState({
               className={`absolute top-0 left-0 ${sizeClasses[size]} rounded-full border-2 border-transparent  animate-spin`}
             ></div>
           </div>
-          <div className='text-sm'>{title}</div>
+          <div className="text-sm">{title}</div>
         </div>
       </div>
     );
@@ -52,33 +52,33 @@ export function LoadingState({
 
   if (variant === 'fullscreen') {
     return (
-      <div className='min-h-screen flex items-center justify-center p-4'>
-        <div className='w-full max-w-md'>
-          <Card className='border-0 shadow-2xl bg-background backdrop-blur-sm'>
-            <CardHeader className='text-center pb-4'>
-              <div className='mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full  shadow-lg'>
-                <Zap className='h-8 w-8' />
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <div className="w-full max-w-md">
+          <Card className="border-0 shadow-2xl bg-background backdrop-blur-sm">
+            <CardHeader className="text-center pb-4">
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full  shadow-lg">
+                <Zap className="h-8 w-8" />
               </div>
-              <CardTitle className='text-xl font-semibold'>{title}</CardTitle>
-              <CardDescription className=''>{description}</CardDescription>
+              <CardTitle className="text-xl font-semibold">{title}</CardTitle>
+              <CardDescription className="">{description}</CardDescription>
             </CardHeader>
 
-            <CardContent className='space-y-6'>
-              <div className='flex justify-center'>
-                <div className='relative'>
-                  <div className='h-12 w-12 rounded-full border-4 border-border'></div>
-                  <div className='absolute top-0 left-0 h-12 w-12 rounded-full border-4 border-transparent  animate-spin'></div>
+            <CardContent className="space-y-6">
+              <div className="flex justify-center">
+                <div className="relative">
+                  <div className="h-12 w-12 rounded-full border-4 border-border"></div>
+                  <div className="absolute top-0 left-0 h-12 w-12 rounded-full border-4 border-transparent  animate-spin"></div>
                 </div>
               </div>
 
               {showRetry && onRetry && (
-                <div className='pt-4'>
+                <div className="pt-4">
                   <Button
                     onClick={onRetry}
-                    variant='outline'
-                    className='w-full'
+                    variant="outline"
+                    className="w-full"
                   >
-                    <Loader2 className='mr-2 h-4 w-4 animate-spin' />
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Reintentar
                   </Button>
                 </div>
@@ -92,8 +92,8 @@ export function LoadingState({
 
   // Default variant
   return (
-    <div className='flex flex-col items-center justify-center p-8 space-y-4'>
-      <div className='relative'>
+    <div className="flex flex-col items-center justify-center p-8 space-y-4">
+      <div className="relative">
         <div
           className={`${sizeClasses[size]} rounded-full border-2 border-border`}
         ></div>
@@ -102,14 +102,14 @@ export function LoadingState({
         ></div>
       </div>
 
-      <div className='text-center space-y-2'>
-        <h3 className='text-lg font-semibold'>{title}</h3>
-        <p className='text-sm'>{description}</p>
+      <div className="text-center space-y-2">
+        <h3 className="text-lg font-semibold">{title}</h3>
+        <p className="text-sm">{description}</p>
       </div>
 
       {showRetry && onRetry && (
-        <Button onClick={onRetry} variant='outline' size='sm'>
-          <Loader2 className='mr-2 h-4 w-4 animate-spin' />
+        <Button onClick={onRetry} variant="outline" size="sm">
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
           Reintentar
         </Button>
       )}
@@ -130,8 +130,8 @@ export function EmptyState({
 }: EmptyStateProps) {
   return (
     <Card className={`mt-4 ${className}`}>
-      <CardContent className='flex items-center justify-center p-8'>
-        <p className=''>{message}</p>
+      <CardContent className="flex items-center justify-center p-8">
+        <p className="">{message}</p>
       </CardContent>
     </Card>
   );

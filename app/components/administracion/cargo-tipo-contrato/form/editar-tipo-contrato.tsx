@@ -1,11 +1,10 @@
-import CargoTipoContratoForm from './cargo-tipo-contrato-form';
-
 import type {
   CargosFacturables,
   Conceptos,
   Condiciones,
   GuardarConfiguracionPayload
 } from '~/types/administracion';
+import CargoTipoContratoForm from './cargo-tipo-contrato-form';
 
 export default function EditarTipoContrato({
   tipoContratoId,
@@ -24,7 +23,7 @@ export default function EditarTipoContrato({
 }>) {
   return (
     <CargoTipoContratoForm
-      mode='edit'
+      mode="edit"
       tipoContratoId={tipoContratoId}
       tipoContratoLabel={tipoContrato}
       initialValue={configuracion}

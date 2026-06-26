@@ -52,20 +52,20 @@ export function Combobox({
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
-          variant='outline'
-          role='combobox'
+          variant="outline"
+          role="combobox"
           aria-expanded={open}
           className={cn('w-full justify-between', className)}
           disabled={disabled}
         >
-          <span className='truncate'>
+          <span className="truncate">
             {selectedOption ? selectedOption.label : placeholder}
           </span>
-          <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent
-        className='w-[--radix-popover-trigger-width] p-0'
+        className="w-[--radix-popover-trigger-width] p-0"
         style={{
           maxHeight: 'var(--radix-popover-content-available-height)'
         }}
@@ -74,7 +74,7 @@ export function Combobox({
           <CommandInput placeholder={searchPlaceholder} />
           <CommandList>
             <CommandEmpty>{emptyMessage}</CommandEmpty>
-            <CommandGroup className='max-h-72 overflow-y-auto'>
+            <CommandGroup className="max-h-72 overflow-y-auto">
               {options.map(option => (
                 <CommandItem
                   key={option.value}

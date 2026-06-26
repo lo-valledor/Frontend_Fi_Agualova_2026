@@ -3,7 +3,6 @@ export interface ValidationResult {
   error?: string;
 }
 
-
 export function validatePeriod(
   mes: string | null | undefined,
   anio: string | null | undefined
@@ -39,7 +38,6 @@ export function validatePeriod(
   return { isValid: true };
 }
 
-
 export function validatePrice(
   price: number | string | null | undefined
 ): ValidationResult {
@@ -72,7 +70,6 @@ export function validatePrice(
   return { isValid: true };
 }
 
-
 export function validateUserCredentials(
   username: string | null | undefined,
   password: string | null | undefined
@@ -104,7 +101,6 @@ export function validateUserCredentials(
   return { isValid: true };
 }
 
-
 export function validateCycle(
   ciclo: string | null | undefined
 ): ValidationResult {
@@ -117,7 +113,6 @@ export function validateCycle(
 
   return { isValid: true };
 }
-
 
 export function validateSelection<T>(
   items: T[] | null | undefined,

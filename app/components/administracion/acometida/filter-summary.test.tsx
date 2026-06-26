@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import { describe, expect, it } from 'vitest';
 import { FilterSummary } from './filter-summary';
 
 describe('FilterSummary', () => {
@@ -26,7 +26,9 @@ describe('FilterSummary', () => {
       />
     );
 
-    expect(screen.getByText('Mostrando 5 de 10 acometidas')).toBeInTheDocument();
+    expect(
+      screen.getByText('Mostrando 5 de 10 acometidas')
+    ).toBeInTheDocument();
     expect(screen.getByText('50%')).toBeInTheDocument();
     expect(screen.getByText('1 filtro aplicado')).toBeInTheDocument();
   });

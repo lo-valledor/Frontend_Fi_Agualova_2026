@@ -31,8 +31,8 @@ export function DeleteConfirmationDialog({
           <AlertDialogDescription>
             Esta acción no se puede deshacer. Se eliminará permanentemente el
             usuario{' '}
-            <span className='font-semibold text-foreground'>
-              {user?.nombres} {user?.apellidos}
+            <span className="font-semibold text-foreground">
+              {user?.nombre_Usuario} {user?.apellidos_Usuario}
             </span>{' '}
             del sistema.
           </AlertDialogDescription>
@@ -41,7 +41,7 @@ export function DeleteConfirmationDialog({
           <AlertDialogCancel>Cancelar</AlertDialogCancel>
           <AlertDialogAction
             onClick={onConfirm}
-            className='bg-red-600 hover:bg-red-700 focus:ring-red-600'
+            className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
           >
             Eliminar Usuario
           </AlertDialogAction>

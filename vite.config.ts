@@ -1,9 +1,9 @@
 import { reactRouter } from '@react-router/dev/vite';
 import tailwindcss from '@tailwindcss/vite';
+import path from 'path';
+import type { Plugin } from 'vite';
 import { defineConfig } from 'vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
-import type { Plugin } from 'vite';
-import path from 'path';
 
 // Plugin para cargar el CSS correcto según el entorno
 function envCssPlugin(): Plugin {
@@ -28,10 +28,10 @@ function envCssPlugin(): Plugin {
 }
 
 export default defineConfig({
-  plugins: [
-    envCssPlugin(),
-    tailwindcss(),
-    reactRouter(),
-    tsconfigPaths()
-  ]
+  plugins: [envCssPlugin(), tailwindcss(), reactRouter(), tsconfigPaths()],
+  resolve: {
+    alias: {
+      '~': path.resolve(__dirname, './app')
+    }
+  }
 });

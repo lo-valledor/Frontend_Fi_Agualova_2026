@@ -13,8 +13,8 @@ export const createMenusColumns = (
     header: 'ID',
     cell: ({ row }: any) => (
       <Badge
-        variant='secondary'
-        className='font-mono text-xs bg-background  dark:text-slate-300'
+        variant="secondary"
+        className="font-mono text-xs bg-background  dark:text-slate-300"
       >
         #{row.getValue('idMenu')}
       </Badge>
@@ -24,7 +24,7 @@ export const createMenusColumns = (
     accessorKey: 'nombreMenu',
     header: 'Nombre',
     cell: ({ row }: any) => (
-      <div className='max-w-[200px] truncate font-medium'>
+      <div className="max-w-[200px] truncate font-medium">
         {row.getValue('nombreMenu')}
       </div>
     )
@@ -33,7 +33,7 @@ export const createMenusColumns = (
     accessorKey: 'ruta',
     header: 'Ruta',
     cell: ({ row }: any) => (
-      <div className='max-w-[250px] truncate font-mono text-xs'>
+      <div className="max-w-[250px] truncate font-mono text-xs">
         {row.getValue('ruta') || 'Sin ruta'}
       </div>
     )
@@ -42,7 +42,7 @@ export const createMenusColumns = (
     accessorKey: 'orden',
     header: 'Orden',
     cell: ({ row }: any) => (
-      <div className='text-center font-mono text-sm'>
+      <div className="text-center font-mono text-sm">
         {row.getValue('orden')}
       </div>
     )
@@ -51,7 +51,7 @@ export const createMenusColumns = (
     accessorKey: 'icono',
     header: 'Icono',
     cell: ({ row }: any) => (
-      <div className='max-w-[150px] truncate font-mono text-xs'>
+      <div className="max-w-[150px] truncate font-mono text-xs">
         {row.getValue('icono') || 'Sin icono'}
       </div>
     )
@@ -77,22 +77,22 @@ export const createMenusColumns = (
     cell: ({ row }: any) => {
       const menu = row.original;
       return (
-        <div className='flex gap-1'>
+        <div className="flex gap-1">
           <Button
-            size='sm'
-            variant='ghost'
+            size="sm"
+            variant="ghost"
             onClick={() => onEdit(menu)}
-            className='h-8 w-8 p-0 hover:bg-blue-100 dark:hover:bg-blue-900/50 text-slate-600 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400'
+            className="h-8 w-8 p-0 hover:bg-blue-100 dark:hover:bg-blue-900/50 text-slate-600 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400"
           >
-            <Edit className='h-3 w-3' />
+            <Edit className="h-3 w-3" />
           </Button>
           <Button
-            size='sm'
-            variant='ghost'
+            size="sm"
+            variant="ghost"
             onClick={() => onDelete(menu)}
-            className='h-8 w-8 p-0 hover:bg-red-100 dark:hover:bg-red-900/50 text-slate-600 hover:text-red-600 dark:text-slate-400 dark:hover:text-red-400'
+            className="h-8 w-8 p-0 hover:bg-red-100 dark:hover:bg-red-900/50 text-slate-600 hover:text-red-600 dark:text-slate-400 dark:hover:text-red-400"
           >
-            <Trash2 className='h-3 w-3' />
+            <Trash2 className="h-3 w-3" />
           </Button>
         </div>
       );

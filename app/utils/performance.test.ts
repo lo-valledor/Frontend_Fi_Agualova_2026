@@ -1,9 +1,7 @@
-import { describe, it, expect } from 'vitest';
-import { validatePassword } from './password-validation';
-import { formatRut, isValidRutFormat, cleanRut } from './rut-utils';
+import { describe, expect, it } from 'vitest';
 import { formatToDate } from './date-formatter';
-
-
+import { validatePassword } from './password-validation';
+import { cleanRut, formatRut, isValidRutFormat } from './rut-utils';
 
 describe('Performance Tests - Utilidades Críticas', () => {
   describe('Password Validation Performance', () => {

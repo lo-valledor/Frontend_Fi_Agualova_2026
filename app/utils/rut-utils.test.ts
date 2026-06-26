@@ -1,11 +1,11 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
+  calculateRutVerifier,
   cleanRut,
   formatRut,
-  isValidRutFormat,
-  calculateRutVerifier,
+  formatRutWithDots,
   isValidRut,
-  formatRutWithDots
+  isValidRutFormat
 } from './rut-utils';
 
 describe('rut-utils', () => {

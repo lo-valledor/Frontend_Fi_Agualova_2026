@@ -22,20 +22,20 @@ export async function handleDataLoad<T, R = T>(
 
     setError('No se pudieron cargar los datos');
   } catch (err) {
-    const errorMessage = err instanceof Error ? err.message : 'Error desconocido';
+    const errorMessage =
+      err instanceof Error ? err.message : 'Error desconocido';
     setError(errorMessage);
   } finally {
     setLoading(false);
   }
 }
 
-
-export function isValidResult<T>(
-  result: { data?: T | null; error?: string | null }
-): boolean {
+export function isValidResult<T>(result: {
+  data?: T | null;
+  error?: string | null;
+}): boolean {
   return !result.error && !!result.data;
 }
-
 
 export function extractErrorMessage(error: any): string {
   if (typeof error === 'string') return error;

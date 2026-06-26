@@ -1,22 +1,19 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ArrowLeft, Save, User } from 'lucide-react';
-import { toast } from 'sonner';
-import { z } from 'zod';
-
-import React, { useEffect, useState } from 'react';
-
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router';
+import { toast } from 'sonner';
+import { z } from 'zod';
 
 import { ModernHeader } from '~/components/shared/modern-header';
 import { Button } from '~/components/ui/button';
 import { Form } from '~/components/ui/form';
-import api from '~/lib/api';
 import { administracionService } from '~/services/administracionService';
 import type {
-  GetComunas,
   GetContratante,
-  GetGiros
+  NombreComuna,
+  NombreGiro
 } from '~/types/administracion';
 import { formatRut, isValidRutFormat } from '~/utils/rut-utils';
 
@@ -57,9 +54,9 @@ export default function EditarContratanteComponent() {
   const { id: rut } = useParams<{ id: string }>();
 
   const [contratante, setContratante] = useState<GetContratante | null>(null);
-  const [, setGiros] = useState<GetGiros[]>([]);
-  const [, setComunas] = useState<GetComunas[]>([]);
-  const [existingContratantes, setExistingContratantes] = useState<string[]>(
+  const [, setGiros] = useState<NombreGiro[]>([]);
+  const [, setComunas] = useState<NombreComuna[]>([]);
+  const [existingContratantes, _setExistingContratantes] = useState<string[]>(
     []
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -97,23 +94,15 @@ export default function EditarContratanteComponent() {
       }
 
       try {
-        const [contratantesDataResult, contratanteResult] = await Promise.all([
-          administracionService.getContratantesData(),
-          administracionService.getContratanteByRut(rut)
-        ]);
+        const [girosResult, comunasResult, contratanteResult] =
+          await Promise.all([
+            administracionService.getGiros(),
+            administracionService.getComunas(),
+            administracionService.getContratanteByRut(rut)
+          ]);
 
-        if (contratantesDataResult.error) {
-          toast.error(contratantesDataResult.error);
-          return;
-        }
-
-        if (contratantesDataResult.data) {
-          setGiros(contratantesDataResult.data.giros);
-          setComunas(contratantesDataResult.data.comunas);
-          setExistingContratantes(
-            contratantesDataResult.data.contratantes.map(c => c.rut)
-          );
-        }
+        if (girosResult.data) setGiros(girosResult.data);
+        if (comunasResult.data) setComunas(comunasResult.data);
 
         if (contratanteResult.error) {
           toast.error(contratanteResult.error);
@@ -122,18 +111,19 @@ export default function EditarContratanteComponent() {
         }
 
         if (contratanteResult.data) {
-          const formattedRut = formatRut(contratanteResult.data.rut || '');
-          setContratante({ ...contratanteResult.data, rut: formattedRut });
+          const data = contratanteResult.data as Partial<GetContratante>;
+          const formattedRut = formatRut(data.rut || '');
+          setContratante({ ...(data as GetContratante), rut: formattedRut });
           form.reset({
             rut: formattedRut,
-            nombre: contratanteResult.data.nombre || '',
-            apellido: contratanteResult.data.apellido || '',
-            esEmpresa: contratanteResult.data.esEmpresa || false,
-            direccion: contratanteResult.data.direccion || '',
-            codComuna: contratanteResult.data.comuna || '',
-            contacto: contratanteResult.data.contacto || '',
-            telefono: contratanteResult.data.telefono || '',
-            correo: contratanteResult.data.email || ''
+            nombre: data.nombre || '',
+            apellido: data.apellido || '',
+            esEmpresa: data.esEmpresa || false,
+            direccion: data.direccion || '',
+            codComuna: data.comuna || '',
+            contacto: data.contacto || '',
+            telefono: data.telefono || '',
+            correo: data.email || ''
           });
         }
       } catch (error) {
@@ -187,7 +177,7 @@ export default function EditarContratanteComponent() {
         rut: formatRut(data.rut)
       };
 
-      await api.put('/contratante/modificar', {
+      await administracionService.modificarContratante({
         ...formattedData,
         id: contratante?.rut
       });
@@ -202,10 +192,10 @@ export default function EditarContratanteComponent() {
 
   if (isLoading) {
     return (
-      <div className='min-h-screen bg-background flex items-center justify-center'>
-        <div className='text-center'>
-          <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4'></div>
-          <p className='text-muted-foreground'>
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">
             Cargando datos del contratante...
           </p>
         </div>
@@ -215,12 +205,12 @@ export default function EditarContratanteComponent() {
 
   if (!contratante) {
     return (
-      <div className='min-h-screen bg-background flex items-center justify-center'>
-        <div className='text-center'>
-          <p className='text-muted-foreground'>Contratante no encontrado</p>
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-muted-foreground">Contratante no encontrado</p>
           <Button
             onClick={() => navigate('/dashboard/administracion/contratantes')}
-            className='mt-4'
+            className="mt-4"
           >
             Volver
           </Button>
@@ -230,27 +220,27 @@ export default function EditarContratanteComponent() {
   }
 
   return (
-    <div className='min-h-screen bg-background'>
-      <div className='sticky top-0 z-10 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60'>
-        <div className='container mx-auto px-4 py-4'>
+    <div className="min-h-screen bg-background">
+      <div className="sticky top-0 z-10 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
+        <div className="container mx-auto px-4 py-4">
           <ModernHeader
-            title='Editar Contratante'
+            title="Editar Contratante"
             description={`Modificación de datos del contratante ${contratante.rut}`}
             actions={
               <>
                 <Button
-                  variant='ghost'
+                  variant="ghost"
                   onClick={() =>
                     navigate('/dashboard/administracion/contratantes')
                   }
                   disabled={isSubmitting}
-                  className='gap-2'
+                  className="gap-2"
                 >
-                  <ArrowLeft className='h-4 w-4' />
+                  <ArrowLeft className="h-4 w-4" />
                   Volver
                 </Button>
                 <Button
-                  variant='outline'
+                  variant="outline"
                   onClick={() =>
                     navigate('/dashboard/administracion/contratantes')
                   }
@@ -260,10 +250,10 @@ export default function EditarContratanteComponent() {
                 </Button>
                 <Button
                   onClick={form.handleSubmit(onSubmit)}
-                  className='gap-2'
+                  className="gap-2"
                   disabled={isSubmitting}
                 >
-                  <Save className='h-4 w-4' />
+                  <Save className="h-4 w-4" />
                   {isSubmitting ? 'Actualizando...' : 'Actualizar Contratante'}
                 </Button>
               </>
@@ -272,19 +262,19 @@ export default function EditarContratanteComponent() {
         </div>
       </div>
 
-      <div className='container mx-auto px-4 py-6 space-y-6'>
-        <div className='bg-background rounded-xl shadow-sm border border-border'>
+      <div className="container mx-auto px-4 py-6 space-y-6">
+        <div className="bg-background rounded-xl shadow-sm border border-border">
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
-              className='p-6 space-y-8'
+              className="p-6 space-y-8"
             >
               {/* Resto del formulario idéntico al de crear, solo cambiando el título y botones */}
               {/* Por brevedad, copio la estructura pero es idéntica */}
-              <div className='space-y-6'>
-                <div className='flex items-center gap-2 pb-2 border-b'>
-                  <User className='h-5 w-5 text-orange-600' />
-                  <h3 className='text-lg font-medium'>Información Básica</h3>
+              <div className="space-y-6">
+                <div className="flex items-center gap-2 pb-2 border-b">
+                  <User className="h-5 w-5 text-orange-600" />
+                  <h3 className="text-lg font-medium">Información Básica</h3>
                 </div>
 
                 {/* Campos de formulario idénticos al componente crear */}

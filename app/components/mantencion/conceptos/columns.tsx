@@ -17,11 +17,11 @@ export const createColumns = ({
   {
     accessorKey: 'denominacion',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Denominación' />
+      <DataTableColumnHeader column={column} title="Denominación" />
     ),
     cell: ({ row }) => (
       <div
-        className='max-w-[150px] truncate font-medium'
+        className="max-w-[150px] truncate font-medium"
         title={row.getValue('denominacion')}
       >
         {row.getValue('denominacion')}
@@ -31,11 +31,11 @@ export const createColumns = ({
   {
     accessorKey: 'descripcion',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Descripción' />
+      <DataTableColumnHeader column={column} title="Descripción" />
     ),
     cell: ({ row }) => (
       <div
-        className='max-w-[200px] truncate'
+        className="max-w-[200px] truncate"
         title={row.getValue('descripcion')}
       >
         {row.getValue('descripcion')}
@@ -45,10 +45,10 @@ export const createColumns = ({
   {
     accessorKey: 'unidad',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Unidad' />
+      <DataTableColumnHeader column={column} title="Unidad" />
     ),
     cell: ({ row }) => (
-      <Badge variant='outline' className='font-mono'>
+      <Badge variant="outline" className="font-mono">
         {row.getValue('unidad')}
       </Badge>
     )
@@ -56,7 +56,7 @@ export const createColumns = ({
   {
     accessorKey: 'fijoVariable',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Fijo/Variable' />
+      <DataTableColumnHeader column={column} title="Fijo/Variable" />
     ),
     cell: ({ row }) => {
       const valor = (row.getValue('fijoVariable') as string)?.toUpperCase();
@@ -78,11 +78,11 @@ export const createColumns = ({
   {
     accessorKey: 'conceptoAsociado',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Asociado' />
+      <DataTableColumnHeader column={column} title="Asociado" />
     ),
     cell: ({ row }) => (
       <div
-        className='max-w-[150px] truncate'
+        className="max-w-[150px] truncate"
         title={row.getValue('conceptoAsociado') || 'N/A'}
       >
         {row.getValue('conceptoAsociado') || 'N/A'}

@@ -1,20 +1,16 @@
-import { BaseApiService } from '~/services/core/base-service';
 import type { ServiceResponse } from '~/services/core/api-response';
+import { BaseApiService } from '~/services/core/base-service';
 import type { Roles } from '~/types/roles-permisos';
-
 
 export interface AssignUserRolesRequest {
   roles: number[];
 }
 
-
 export class UsuarioRolesService extends BaseApiService {
-  
   constructor(httpClient?: any) {
     super(httpClient);
   }
 
-  
   async getByUsuario(codigoUsuario: string): Promise<ServiceResponse<Roles[]>> {
     if (!codigoUsuario?.trim()) {
       return this.handleError(
@@ -29,7 +25,6 @@ export class UsuarioRolesService extends BaseApiService {
     }, `Error al obtener roles del usuario ${codigoUsuario}`);
   }
 
-  
   async assignToUsuario(
     codigoUsuario: string,
     request: AssignUserRolesRequest
@@ -51,16 +46,8 @@ export class UsuarioRolesService extends BaseApiService {
     const endpoint = `${codigoUsuario}/roles`;
 
     return this.executeDataOperation(async () => {
-      console.log('📤 API Request:', {
-        endpoint,
-        method: 'POST',
-        body: request.roles
-      });
-
       // El API espera un array directo, no un objeto con propiedad roles
       const response = await this.httpClient.post(endpoint, request.roles);
-
-      console.log('📥 API Response:', response);
 
       // Respuesta 204 significa éxito sin contenido
       if (response.status === 204) {
@@ -72,7 +59,6 @@ export class UsuarioRolesService extends BaseApiService {
     }, `Error al asignar roles al usuario ${codigoUsuario}`);
   }
 
-  
   async removeFromUsuario(
     codigoUsuario: string,
     idRol: number
@@ -94,14 +80,7 @@ export class UsuarioRolesService extends BaseApiService {
     const endpoint = `${codigoUsuario}/roles/${idRol}`;
 
     return this.executeDataOperation(async () => {
-      console.log('📤 API Request:', {
-        endpoint,
-        method: 'DELETE'
-      });
-
       await this.httpClient.delete(endpoint);
-
-      console.log('📥 API Response: Success');
 
       return true;
     }, `Error al quitar el rol ${idRol} del usuario ${codigoUsuario}`);

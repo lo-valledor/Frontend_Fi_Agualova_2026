@@ -1,5 +1,4 @@
-import type { RevisarPrecioDos, RevisarPrecioUno } from '~/types/operaciones';
-
+import type { RevisionPreciosBuscarRequest } from '~/types/operaciones';
 
 export interface PriceValidationResult {
   totalValidos: number;
@@ -8,41 +7,36 @@ export interface PriceValidationResult {
   todosConfirmados: boolean;
 }
 
-
-export function filtrarPreciosValidos<T extends { indice?: string }>(
-  precios: T[]
-): T[] {
-  return precios.filter(p => p.indice && p.indice !== '' && p.indice !== '0');
+/**
+ * Filtra precios con índice válido (mayor a cero).
+ * Un índice de 0 indica que el cargo no tiene valor asignado.
+ */
+export function filtrarPreciosValidos(
+  precios: RevisionPreciosBuscarRequest[]
+): RevisionPreciosBuscarRequest[] {
+  return precios.filter(p => p.indice > 0);
 }
 
-
-export function contarConfirmados<T extends { confirmacion?: string }>(
-  precios: T[],
-  confirmacionField: keyof T = 'confirmacion' as keyof T
+/**
+ * Cuenta precios confirmados utilizando el campo booleano estaConfirmado.
+ */
+export function contarConfirmados(
+  precios: RevisionPreciosBuscarRequest[]
 ): number {
-  return precios.filter(
-    p => (p as any)[confirmacionField] === 'Confirmado'
-  ).length;
+  return precios.filter(p => p.estaConfirmado).length;
 }
 
-
+/**
+ * Valida el estado global de confirmación de precios.
+ * Considera confirmado únicamente si existen precios válidos y todos están confirmados.
+ */
 export function validarPreciosConfirmados(
-  preciosUno: RevisarPrecioUno[],
-  preciosDos: RevisarPrecioDos[]
+  precios: RevisionPreciosBuscarRequest[]
 ): PriceValidationResult {
-  // Filtrar solo precios con índice válido
-  const preciosUnoValidos = filtrarPreciosValidos(preciosUno);
-  const preciosDosValidos = filtrarPreciosValidos(preciosDos);
-
-  // Contar confirmados
-  const preciosUnoConfirmados = contarConfirmados(preciosUnoValidos);
-  const preciosDosConfirmados = contarConfirmados(preciosDosValidos);
-
-  const totalValidos = preciosUnoValidos.length + preciosDosValidos.length;
-  const totalConfirmados = preciosUnoConfirmados + preciosDosConfirmados;
+  const preciosValidos = filtrarPreciosValidos(precios);
+  const totalValidos = preciosValidos.length;
+  const totalConfirmados = contarConfirmados(preciosValidos);
   const totalPendientes = totalValidos - totalConfirmados;
-
-  // Solo si TODOS los precios válidos están confirmados
   const todosConfirmados = totalValidos > 0 && totalPendientes === 0;
 
   return {

@@ -1,15 +1,15 @@
 import {
   type ColumnDef,
   type ExpandedState,
-  type RowSelectionState,
   flexRender,
   getCoreRowModel,
   getExpandedRowModel,
+  type RowSelectionState,
   useReactTable
 } from '@tanstack/react-table';
 import { useVirtualizer } from '@tanstack/react-virtual';
 
-import { useRef, useState, useMemo } from 'react';
+import { useMemo, useRef, useState } from 'react';
 
 import {
   Table,
@@ -19,15 +19,15 @@ import {
   TableHeader,
   TableRow
 } from '~/components/ui/table';
-import {
-  type CalculoPrefacturaCargo,
-  type CalculoPrefacturaCompleto
+import type {
+  RevisarCalculosPrefactura,
+  RevisarCalculosPrefacturaCargo
 } from '~/types/operaciones';
 
 interface HierarchicalDataTableVirtualizedProps {
-  columns: ColumnDef<CalculoPrefacturaCompleto>[];
-  data: CalculoPrefacturaCompleto[];
-  onSelectionChange?: (selectedContratos: CalculoPrefacturaCompleto[]) => void;
+  columns: ColumnDef<RevisarCalculosPrefactura>[];
+  data: RevisarCalculosPrefactura[];
+  onSelectionChange?: (selectedContratos: RevisarCalculosPrefactura[]) => void;
 }
 
 // Tipo para representar una fila virtual (puede ser principal o cargo)
@@ -35,7 +35,7 @@ type VirtualRow =
   | {
       type: 'main';
       index: number;
-      data: CalculoPrefacturaCompleto;
+      data: RevisarCalculosPrefactura;
     }
   | {
       type: 'cargo-header';
@@ -45,7 +45,7 @@ type VirtualRow =
       type: 'cargo';
       parentIndex: number;
       cargoIndex: number;
-      cargo: CalculoPrefacturaCargo;
+      cargo: RevisarCalculosPrefacturaCargo;
     }
   | {
       type: 'cargo-separator';
@@ -84,7 +84,7 @@ export function HierarchicalDataTableVirtualized({
     },
     getCoreRowModel: getCoreRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
-    getSubRows: row => (row.cargos ? [] : undefined)
+    getSubRows: row => (row.detalleCargos ? [] : undefined)
   });
 
   // Calcular las filas virtuales (incluyendo filas principales + cargos expandidos)
@@ -103,8 +103,8 @@ export function HierarchicalDataTableVirtualized({
       // Si está expandida, agregar filas de cargos
       if (
         row.getIsExpanded() &&
-        row.original.cargos &&
-        row.original.cargos.length > 0
+        row.original.detalleCargos &&
+        row.original.detalleCargos.length > 0
       ) {
         // Encabezado de cargos
         result.push({
@@ -113,7 +113,7 @@ export function HierarchicalDataTableVirtualized({
         });
 
         // Cada cargo
-        row.original.cargos.forEach((cargo, cargoIndex) => {
+        row.original.detalleCargos.forEach((cargo, cargoIndex) => {
           result.push({
             type: 'cargo',
             parentIndex: index,
@@ -158,25 +158,25 @@ export function HierarchicalDataTableVirtualized({
   const tableRows = table.getRowModel().rows;
 
   // Renderizar una fila de cargo
-  const renderCargoRow = (cargo: CalculoPrefacturaCargo) => (
+  const renderCargoRow = (cargo: RevisarCalculosPrefacturaCargo) => (
     <>
-      <TableCell colSpan={9} className='py-0 px-0.5'></TableCell>
-      <TableCell className='py-0 px-0.5'>
-        <span className='font-medium col-span-2'>{cargo.codigoAgualova}</span>
+      <TableCell colSpan={9} className="py-0 px-0.5"></TableCell>
+      <TableCell className="py-0 px-0.5">
+        <span className="font-medium col-span-2">{cargo.codigoCargo}</span>
       </TableCell>
-      <TableCell colSpan={2} className='pl-2 py-0 px-0.5'>
-        <span className='font-medium col-span-2'>{cargo.descripcion}</span>
+      <TableCell colSpan={2} className="pl-2 py-0 px-0.5">
+        <span className="font-medium col-span-2">{cargo.descripcion}</span>
       </TableCell>
-      <TableCell className='text-[12px] text-right py-0 px-0.5'>
-        <span className='text-slate-700 dark:text-slate-300'>
+      <TableCell className="text-[12px] text-right py-0 px-0.5">
+        <span className="text-slate-700 dark:text-slate-300">
           {cargo.cantidad?.toLocaleString('es-CL')}
         </span>
       </TableCell>
-      <TableCell className='text-[12px] text-right font-medium text-emerald-700 dark:text-emerald-300 py-0 px-0.5'>
+      <TableCell className="text-[12px] text-right font-medium text-emerald-700 dark:text-emerald-300 py-0 px-0.5">
         ${(cargo.precioUnitario || 0).toLocaleString('es-CL')}
       </TableCell>
-      <TableCell className='text-[12px] text-right font-semibold text-sky-700 dark:text-sky-300 py-0 px-0.5'>
-        ${(cargo.subtotal || 0).toLocaleString('es-CL')}
+      <TableCell className="text-[12px] text-right font-semibold text-sky-700 dark:text-sky-300 py-0 px-0.5">
+        ${(cargo.subTotal || 0).toLocaleString('es-CL')}
       </TableCell>
     </>
   );
@@ -184,48 +184,48 @@ export function HierarchicalDataTableVirtualized({
   // Renderizar encabezado de cargos
   const renderCargoHeader = () => (
     <>
-      <TableCell colSpan={9} className='py-0 px-0.5'></TableCell>
-      <TableCell className='font-semibold text-[12px] text-sky-700 dark:text-sky-300 uppercase tracking-wide py-0 px-0.5'>
+      <TableCell colSpan={9} className="py-0 px-0.5"></TableCell>
+      <TableCell className="font-semibold text-[12px] text-sky-700 dark:text-sky-300 uppercase tracking-wide py-0 px-0.5">
         Código
       </TableCell>
       <TableCell
         colSpan={2}
-        className='text-center font-semibold text-[12px] text-sky-700 dark:text-sky-300 uppercase tracking-wide py-0 px-0.5'
+        className="text-center font-semibold text-[12px] text-sky-700 dark:text-sky-300 uppercase tracking-wide py-0 px-0.5"
       >
         Descripción Cargo
       </TableCell>
-      <TableCell className='font-semibold text-[12px] text-sky-700 dark:text-sky-300 text-right uppercase tracking-wide py-0 px-0.5'>
+      <TableCell className="font-semibold text-[12px] text-sky-700 dark:text-sky-300 text-right uppercase tracking-wide py-0 px-0.5">
         Cantidad
       </TableCell>
-      <TableCell className='font-semibold text-[12px] text-sky-700 dark:text-sky-300 text-right uppercase tracking-wide py-0 px-0.5'>
+      <TableCell className="font-semibold text-[12px] text-sky-700 dark:text-sky-300 text-right uppercase tracking-wide py-0 px-0.5">
         Precio Unit.
       </TableCell>
-      <TableCell className='font-semibold text-[12px] text-sky-700 dark:text-sky-300 text-right uppercase tracking-wide py-0 px-0.5'>
+      <TableCell className="font-semibold text-[12px] text-sky-700 dark:text-sky-300 text-right uppercase tracking-wide py-0 px-0.5">
         Subtotal
       </TableCell>
-      <TableCell className='py-0 px-0.5'></TableCell>
+      <TableCell className="py-0 px-0.5"></TableCell>
     </>
   );
 
   return (
-    <div className='w-full overflow-x-auto'>
+    <div className="w-full overflow-x-auto">
       <div
         ref={tableContainerRef}
-        className='rounded-xl border border-border/60 shadow-sm overflow-auto'
+        className="rounded-xl border border-border/60 shadow-sm overflow-auto"
         style={{ height: '600px' }}
       >
-        <Table className='w-full text-[12px] min-w-[1600px]'>
-          <TableHeader className='bg-background/50 sticky top-0 z-10'>
+        <Table className="w-full text-[12px] min-w-[1600px]">
+          <TableHeader className="bg-background/50 sticky top-0 z-10">
             {table.getHeaderGroups().map(headerGroup => (
               <TableRow
                 key={headerGroup.id}
-                className='border-b border-border/60 h-6'
+                className="border-b border-border/60 h-6"
               >
                 {headerGroup.headers.map(header => {
                   return (
                     <TableHead
                       key={header.id}
-                      className='font-semibold py-0.5 px-1  text-[12px] h-6 overflow-hidden'
+                      className="font-semibold py-0.5 px-1  text-[12px] h-6 overflow-hidden"
                       style={{
                         width: header.getSize(),
                         minWidth:
@@ -250,14 +250,14 @@ export function HierarchicalDataTableVirtualized({
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className='h-32 text-center'
+                  className="h-32 text-center"
                 >
-                  <div className='flex flex-col items-center gap-3 text-muted-foreground'>
-                    <div className='p-3 bg-background rounded-full'>
-                      <span className='text-2xl'>📊</span>
+                  <div className="flex flex-col items-center gap-3 text-muted-foreground">
+                    <div className="p-3 bg-background rounded-full">
+                      <span className="text-2xl">📊</span>
                     </div>
-                    <p className='font-medium'>No se encontraron resultados</p>
-                    <p className='text-sm'>
+                    <p className="font-medium">No se encontraron resultados</p>
+                    <p className="text-sm">
                       Ajusta los filtros de búsqueda para ver datos
                     </p>
                   </div>
@@ -288,13 +288,13 @@ export function HierarchicalDataTableVirtualized({
                       <TableRow
                         key={`main-${vRow.index}`}
                         data-state={row.getIsSelected() && 'selected'}
-                        className='hover:bg-muted transition-colors border-b border-border/40 h-6'
+                        className="hover:bg-muted transition-colors border-b border-border/40 h-6"
                         data-index={virtualItem.index}
                       >
                         {row.getVisibleCells().map(cell => (
                           <TableCell
                             key={cell.id}
-                            className='py-0 px-1 text-[12px] h-6 overflow-hidden'
+                            className="py-0 px-1 text-[12px] h-6 overflow-hidden"
                           >
                             {flexRender(
                               cell.column.columnDef.cell,
@@ -311,7 +311,7 @@ export function HierarchicalDataTableVirtualized({
                     return (
                       <TableRow
                         key={`cargo-header-${vRow.parentIndex}`}
-                        className='bg-sky-100/50 dark:bg-sky-900/20 border-l-2 border-l-sky-500 dark:border-l-sky-400 hover:bg-sky-100/50 dark:hover:bg-sky-900/20 h-5'
+                        className="bg-sky-100/50 dark:bg-sky-900/20 border-l-2 border-l-sky-500 dark:border-l-sky-400 hover:bg-sky-100/50 dark:hover:bg-sky-900/20 h-5"
                         data-index={virtualItem.index}
                       >
                         {renderCargoHeader()}
@@ -324,7 +324,7 @@ export function HierarchicalDataTableVirtualized({
                     return (
                       <TableRow
                         key={`cargo-${vRow.parentIndex}-${vRow.cargoIndex}`}
-                        className='bg-sky-50/30 dark:bg-sky-900/10 border-l-2 border-l-sky-300 dark:border-l-sky-700 hover:bg-sky-50/50 dark:hover:bg-sky-900/20 transition-colors h-6'
+                        className="bg-sky-50/30 dark:bg-sky-900/10 border-l-2 border-l-sky-300 dark:border-l-sky-700 hover:bg-sky-50/50 dark:hover:bg-sky-900/20 transition-colors h-6"
                         data-index={virtualItem.index}
                       >
                         {renderCargoRow(vRow.cargo)}
@@ -337,12 +337,12 @@ export function HierarchicalDataTableVirtualized({
                     return (
                       <TableRow
                         key={`separator-${vRow.parentIndex}`}
-                        className='h-1'
+                        className="h-1"
                         data-index={virtualItem.index}
                       >
                         <TableCell
                           colSpan={columns.length}
-                          className='p-0 bg-slate-50/30 dark:bg-slate-900/30 border-b border-border/60'
+                          className="p-0 bg-slate-50/30 dark:bg-slate-900/30 border-b border-border/60"
                         ></TableCell>
                       </TableRow>
                     );

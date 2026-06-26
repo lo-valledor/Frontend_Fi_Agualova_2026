@@ -26,7 +26,7 @@ export function ErrorAlert({
 
   return (
     <Alert
-      variant='destructive'
+      variant="destructive"
       className={`${
         isWarning
           ? 'border-orange-200 dark:border-orange-800 bg-orange-50 dark:bg-orange-950/20 text-orange-700 dark:text-orange-300'
@@ -34,26 +34,26 @@ export function ErrorAlert({
       }`}
     >
       {isWarning ? (
-        <AlertTriangle className='h-4 w-4' />
+        <AlertTriangle className="h-4 w-4" />
       ) : (
-        <AlertCircle className='h-4 w-4' />
+        <AlertCircle className="h-4 w-4" />
       )}
-      <AlertTitle className='text-sm sm:text-base font-semibold'>
+      <AlertTitle className="text-sm sm:text-base font-semibold">
         {title}
       </AlertTitle>
-      <AlertDescription className='space-y-3'>
-        <p className='text-xs sm:text-sm'>{message}</p>
+      <AlertDescription className="space-y-3">
+        <p className="text-xs sm:text-sm">{message}</p>
 
         {/* Botones de acción */}
         {actions.length > 0 && (
-          <div className='flex flex-col sm:flex-row gap-2 pt-2'>
+          <div className="flex flex-col sm:flex-row gap-2 pt-2">
             {actions.map((action, index) => (
               <Button
                 key={index}
                 variant={action.variant || 'outline'}
-                size='sm'
+                size="sm"
                 onClick={action.onClick}
-                className='w-full sm:w-auto text-xs sm:text-sm'
+                className="w-full sm:w-auto text-xs sm:text-sm"
               >
                 {action.label}
               </Button>

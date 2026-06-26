@@ -1,4 +1,8 @@
-import type { Fila, Medidor, NichoBusqueda } from '~/types/monitor';
+import type {
+  MonitorFilas,
+  MonitorMedidores,
+  MonitorNichosGet
+} from '~/types/monitor';
 import { getMeterStatus } from './monitor-status';
 
 export interface StatsData {
@@ -11,9 +15,8 @@ export interface StatsData {
   imported: number;
 }
 
-
 export function calculateNichoStats(
-  nicho: NichoBusqueda | null | undefined
+  nicho: MonitorNichosGet | null | undefined
 ): StatsData {
   const defaultStats: StatsData = {
     total: 0,
@@ -79,9 +82,8 @@ export function calculateNichoStats(
   }, defaultStats);
 }
 
-
 export function calculateTotalStats(
-  nichos: NichoBusqueda[] | null | undefined
+  nichos: MonitorNichosGet[] | null | undefined
 ): StatsData {
   const defaultStats: StatsData = {
     total: 0,
@@ -114,7 +116,6 @@ export function calculateTotalStats(
   }, defaultStats);
 }
 
-
 export function calculatePercentage(
   value: number,
   total: number,
@@ -127,7 +128,6 @@ export function calculatePercentage(
   const percentage = (value / total) * 100;
   return percentage.toFixed(decimals);
 }
-
 
 export function calculateConsumption(
   currentReading: number | null | undefined,
@@ -155,11 +155,10 @@ export function calculateConsumption(
   return consumption >= 0 ? consumption : 0;
 }
 
-
 export function aggregateMetersByStatus(
-  medidores: Medidor[] | null | undefined
-): Record<string, Medidor[]> {
-  const defaultGrouping: Record<string, Medidor[]> = {};
+  medidores: MonitorMedidores[] | null | undefined
+): Record<string, MonitorMedidores[]> {
+  const defaultGrouping: Record<string, MonitorMedidores[]> = {};
 
   // Handle null/undefined/empty array
   if (!medidores || !Array.isArray(medidores) || medidores.length === 0) {
@@ -182,10 +181,9 @@ export function aggregateMetersByStatus(
   }, defaultGrouping);
 }
 
-
 export function getAllMetersFromNicho(
-  nicho: NichoBusqueda | null | undefined
-): Medidor[] {
+  nicho: MonitorNichosGet | null | undefined
+): MonitorMedidores[] {
   // Handle null/undefined nicho
   if (!nicho || !Array.isArray(nicho.filas)) {
     return [];
@@ -200,10 +198,9 @@ export function getAllMetersFromNicho(
   });
 }
 
-
 export function getProblemMeters(
-  nicho: NichoBusqueda | null | undefined
-): Medidor[] {
+  nicho: MonitorNichosGet | null | undefined
+): MonitorMedidores[] {
   const allMeters = getAllMetersFromNicho(nicho);
 
   return allMeters.filter(medidor => {
@@ -212,9 +209,8 @@ export function getProblemMeters(
   });
 }
 
-
 export function countMetersBySeverity(
-  fila: Fila | null | undefined
+  fila: MonitorFilas | null | undefined
 ): Record<number, number> {
   const defaultCounts = { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0 };
 

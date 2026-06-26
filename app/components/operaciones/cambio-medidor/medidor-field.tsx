@@ -48,7 +48,7 @@ export default function MedidorField({
   const colors = colorVariants[colorScheme];
 
   return (
-    <div className='space-y-1 sm:space-y-2'>
+    <div className="space-y-1 sm:space-y-2">
       <Label
         htmlFor={id}
         className={`text-xs sm:text-sm ${colors.label} font-medium`}

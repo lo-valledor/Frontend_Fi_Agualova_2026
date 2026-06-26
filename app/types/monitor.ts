@@ -1,4 +1,43 @@
-// Tipos centralizados para los componentes de monitor
+// Tipos Sistema de Agualova - Módulo de Monitor
+export type MonitorPeriodos = {
+  value: string;
+  text: string;
+  fechaInicio: string | null;
+  fechaFin: string | null;
+};
+
+export type MonitorClaves = {
+  value: string;
+  text: string;
+  grupo: string;
+};
+
+export type MonitorSectores = {
+  secId: number;
+  descripcion: string;
+  estado: number;
+  color: number;
+};
+
+export type MonitorMedidores = {
+  id: number;
+  nSerie: string;
+  claveHtml: string;
+  ultimaLectura: number;
+  fechaLectura: string;
+  consumo: number;
+  clave: string;
+};
+
+export type MonitorFilas = {
+  numero: number;
+  medidores: MonitorMedidores[];
+};
+
+export type MonitorNichos = {
+  nombre: string;
+  filas: MonitorFilas[];
+};
 
 // Tipos base de useMonitor
 export interface Periodo {
@@ -13,248 +52,115 @@ export interface Periodo {
 export interface Sector {
   sectorId: string;
   descripcion: string;
-  infoAdicional: string;
   estado: number;
   color: number;
 }
 
-export interface Clave {
-  IdClave: number;
-  DescripcionClave: string;
-  IdentificadorDeAgrupacion: string;
-}
-
-export interface Lectura {
-  IdLectura: number;
-  Sector: string;
-  Periodo: string;
-  FechaLectura: string;
-  EstadoLectura: number;
-}
-
-// Tipos para MedidorNicho
-export interface MedidorNicho {
-  Nro: number;
-  LM_Periodo: string;
+export type MonitorGrillaProps = {
+  periodo: string;
   sector: string;
-  nicho: string;
-  ubicacion: string;
-  tarifa: string;
-  local: string;
-  SE_ID: number;
-  se_ordenlectura: number;
-  ME_ID: number;
-  SE_ID1: number;
-  ME_NSerie: string;
-  ME_Digitos: number;
-  ME_ConstanteMultiplicar: number;
-  LM_ID: number;
-  LM_FechaLectura: string | null;
-  LM_ValorUltimaLectura: number;
-  LMC_ValorUltimaLectEnergiaReactiva: number;
-  LM_ConsumoMesAnterior: string;
-  LM_ConsumoAñoAnterior: string;
-  LMC_EnergiaActiva: number;
-  LMC_ConsumoEnergiaActiva: number;
-  LMC_EnergiaReactiva: number;
-  LMC_DemandaSuministrada: string;
-  LMC_FechaDemandaSuminis: string;
-  LMC_HoraDemandaSuminis: string;
-  LMC_DemandaPunta: string;
-  LMC_FechaDemandaPunta: string;
-  LMC_HoraDemandaPunta: string;
-  LMC_ConsumoEnergiaReactiva: number;
-  LMC_ValorUltimaLectEnergiaActiva: string;
-  LMC_ValorUltimaLectEnergiaReactiva1: string;
-  LMC_ConsAñoAnteriorEnActiva: string;
-  LMC_ConsAñoAnteriorEnReactiva: string;
-  LMC_PorcentajeMultaMalFactorPotencia: string;
-  Estado: number;
-}
+  medidor: string;
+  fechaIni: string;
+  fechaFin: string;
+  clave: string;
+  criterio: string;
+};
 
-// Tipos para Nicho de MonitorNichos (alias de MedidorNicho por compatibilidad)
-export type MedidorNichoItem = MedidorNicho;
-
-// Tipos para DetallesMedidor
-export interface EtapaUno {
-  ME_NSerie: string;
-  ME_ConstanteMultiplicar: number;
-  TM_Descripcion: string;
-  SE_Codigo: string;
-  TF_Codigo: string;
-}
-
-export interface EtapaDos {
-  LM_Periodo: string;
-  LM_FechaLectura: string;
-  LM_ValorLecturaActual: number;
-  LM_ConsumoPeriodo: number;
-  LM_Observaciones: string;
-}
-
-export interface EtapaTres {
-  CLA_ID: number;
-  CLA_Codigo: string;
-  CLA_Descripcion: string;
-  CLA_Tipo: number;
-  CLL_Fecha: string;
-}
-
-export interface EtapaCuatro {
-  LM_ID: number;
-  LM_Periodo: string;
-  LM_FechaLectura: string;
-  LM_ValorLecturaActual: number;
-  LM_ConsumoPeriodo: number;
-  LM_Observaciones: string;
-}
-
-// Tipos para LecturaBT43
-export interface LecturaBT43 {
-  LM_ID: number;
-  LMC_EnergiaActiva: number;
-  LMC_EnergiaReactiva: number;
-  LMC_DemandaSuministrada: number;
-  LMC_FechaDemandaSuminis: string;
-  LMC_HoraDemandaSuminis: string;
-  LMC_DemandaPunta: number;
-  LMC_FechaDemandaPunta: string;
-  LMC_HoraDemandaPunta: string;
-  LMC_ConsumoEnergiaActiva: number;
-  LMC_ConsumoEnergiaReactiva: number;
-  LMC_ValorUltimaLectEnergiaActiva: number;
-  LMC_ValorUltimaLectEnergiaReactiva: number;
-  LMC_ConsAñoAnteriorEnActiva: number;
-  LMC_ConsAñoAnteriorEnReactiva: number;
-  LMC_PorcentajeMultaMalFactorPotencia: number;
-  LM_FechaLectura: string;
-}
-
-// Tipos actualizados para ResultadosBusqueda (nuevo formato JSON)
-export interface Medidor {
-  id: number;
-  nSerie: string;
-  claveHtml: string;
-  estadoFactura: number;
-  estadoClave: number;
-  ultimaLectura: number;
-  fechaLectura: string | null;
-  consumo: number;
-  clave: string | null;
-}
-
-export interface Fila {
-  numero: number;
-  medidores: Medidor[];
-}
-
-export interface NichoBusqueda {
+export type MonitorNichosGet = {
   nombre: string;
-  filas: Fila[];
-}
+  filas: MonitorFilas[];
+};
 
-export interface ResultadoBusqueda {
-  filas: Fila[];
-  nichos: NichoBusqueda[];
-}
-
-// Tipos para EditarMedidores
-export interface FormDataBT1y2 {
-  lmid: string;
-  vactual: string;
-  consumo: string;
-  claid: string;
-}
-
-export interface FormDataBT43 {
-  lmId: number;
-  lecturaActiva: number;
-  claveActivaId: string;
-  lecturaReactiva: number;
-  claveReactivaId: string;
-  consumoActiva: number;
-  consumoReactiva: number;
-  dp: number;
-  dpFecha: string;
-  dpHora: string;
-  ds: number;
-  dsFecha: string;
-  dsHora: string;
-}
-
-export interface MedidorCard {
-  claveHtml(claveHtml: string): unknown;
-  medidor: Medidor;
-  onRefresh: () => void;
-}
-
-export interface CompararConsumoMedidor {
-  tipoPeriodo: string;
-  lM_Periodo: string;
-  lM_FechaLectura: string;
-  lM_ValorLecturaActual: number;
-  lM_ConsumoPeriodo: number;
-}
-
-// Importar ImportarLecturas
-
-export interface EstadoProcesamiento {
-  periodoActivo: string;
-  registrosPendientes: number;
-  fechaConsulta: string;
-  estado: string;
-}
-
-export interface RegistrosPendientes {
-  registrosPendientes: number;
-  mensaje: string;
-}
-
-export interface DetalleLecturaPendiente {
-  sector: string;
-  nicho: string;
-  estado: number;
-  cantidad: number;
-}
-
-export interface ValidacionLecturasPendientes {
-  mensaje: string;
-  sinPendientes: boolean;
-  periodo: string;
-  totalPendientes: number;
-  detalles: DetalleLecturaPendiente[];
-}
-
-export interface DetalleProcesamientoItem {
-  numeroSerie: string;
+// historial-lectura
+export type MonitorCabecera = {
+  nroMedidor: string;
+  constante: string;
+  tipo: string;
+  subempalme: string;
   tarifa: string;
-  lecturaAnteriorKwh: number;
-  consumoEnergiaKwh: number;
-  usuarioCarga: string;
-  estado: string;
-  mensaje: string;
-}
+};
 
-export interface ProcesamientoResult {
-  exitoso: boolean;
-  mensaje: string;
-  registrosActualizados: number;
-  fechaProcesamiento: string;
+export type MonitorMedidorClaves = {
+  codigo: string;
+  descripcion: string;
+  tipo: string;
+  fecha: string;
+};
+
+export type MonitorLecturasAnteriores = {
   periodo: string;
-  detalles: DetalleProcesamientoItem[];
-}
+  fechaLectura: string;
+  ultimaLectura: string;
+  lecturaActual: string;
+  consumoPeriodo: string;
+  consumoAdicional: string;
+  observacion: string;
+};
+
+export type MonitorHistorialLectura = {
+  estadoFacturar: number;
+  permiteAceptar: boolean;
+  permiteIngresar: boolean;
+  cabecera: MonitorCabecera;
+  claves: MonitorMedidorClaves[];
+  lecturasAnteriores: MonitorLecturasAnteriores[];
+  complementoBT43: string | null;
+};
+
+export type MonitorDetalleRegistro = {
+  lmId: number;
+  ultimaLectura: number;
+  serieMedidor: string;
+  digitos: number;
+  constante: number;
+  codigoSubempalme: string;
+  ubicacion: string;
+  modelo: number;
+  tieneAdicional: boolean;
+  serieAdicional: null | string;
+  digitosAdicional: number;
+  constanteAdicional: number;
+  tipoMedidorAdicional: number;
+  subempalmeAdicional: null | string;
+  ultimaLecturaAdicional: number;
+};
+
+export type MonitorProps = {
+  idLectura: number;
+  fecha: string;
+  lecturaActual: number;
+  lecturaAnterior: number;
+  existeAdicional: boolean;
+  tipoAdicional: number;
+  lecturaActualAd: number;
+  lecturaAnteriorAd: number;
+};
+
+export type MonitorReabrirPeriodoProps = {
+  periodoId: string;
+  claveId: number;
+  descripcion: string;
+};
+
+export type MonitorHabilitarEdicionProps = {
+  lecturaId: number;
+  claveId: number;
+  descripcion: string;
+};
+
+export type MonitorAceptarMasivoLecturas = {
+  lecturasIds: number[];
+};
 
 // ============================================
 // Enhanced Types for Refactored Components
 // ============================================
-
 
 export interface ValidationResult {
   isValid: boolean;
   error: string | null;
   value?: unknown;
 }
-
 
 export interface StatsData {
   total: number;
@@ -266,7 +172,6 @@ export interface StatsData {
   imported: number;
 }
 
-
 export type MeterStatusType =
   | 'SINLEC' // Sin Lectura
   | 'SINCLA' // Lectura Normal
@@ -277,7 +182,6 @@ export type MeterStatusType =
   | 'LECIMP' // En Facturación
   | 'IMPORT'; // Lecturas Importadas
 
-
 export interface MeterStatusInfo {
   color: string;
   bgColor: string;
@@ -287,7 +191,6 @@ export interface MeterStatusInfo {
   icon: unknown; // Will be React.ReactElement at runtime
   severity: 0 | 1 | 2 | 3 | 4;
 }
-
 
 export interface SearchParams {
   sector: string;

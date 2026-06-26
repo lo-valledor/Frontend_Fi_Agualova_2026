@@ -1,11 +1,13 @@
-import axios from 'axios';
+import type { PropietariosRow } from '~/types/administracion';
+import { type ApiErrorInfo, extractApiErrorMessage } from './api-error';
 
-import type {
-  GetPropietario,
-  PropietarioErrorInfo,
-  PropietarioModalState
-} from '~/types/administracion';
+type PropietarioModalState = {
+  details: {
+    isOpen: boolean;
+  };
+};
 
+type PropietarioErrorInfo = ApiErrorInfo;
 
 export function createInitialPropietarioModalState(): PropietarioModalState {
   return {
@@ -15,46 +17,24 @@ export function createInitialPropietarioModalState(): PropietarioModalState {
   };
 }
 
-
 export function extractPropietarioErrorMessage(
   error: unknown,
   defaultMessage: string = 'Error al procesar propietario'
 ): PropietarioErrorInfo {
-  const isNetworkError = axios.isAxiosError(error) && !error.response;
-
-  if (axios.isAxiosError(error) && error.response?.data) {
-    const responseData = error.response.data as Record<string, any>;
-    return {
-      message: responseData.message || responseData.error || defaultMessage,
-      isNetworkError: false
-    };
-  }
-
-  if (error instanceof Error) {
-    return {
-      message: error.message || defaultMessage,
-      isNetworkError
-    };
-  }
-
-  return {
-    message: defaultMessage,
-    isNetworkError
-  };
+  return extractApiErrorMessage(error, defaultMessage);
 }
 
-
 export function isValidPropietarioForOperation(
-  propietario: GetPropietario | null | undefined
-): propietario is GetPropietario {
+  propietario: PropietariosRow | null | undefined
+): propietario is PropietariosRow {
   return propietario !== null && propietario !== undefined && !!propietario.rut;
 }
 
-
-export function isPropietariosListEmpty(propietarios: GetPropietario[]): boolean {
+export function isPropietariosListEmpty(
+  propietarios: PropietariosRow[]
+): boolean {
   return !Array.isArray(propietarios) || propietarios.length === 0;
 }
-
 
 export function getSyncStatusMessage(isSyncing: boolean): string {
   return isSyncing ? 'Sincronizando...' : 'Sincronizar con Locales';

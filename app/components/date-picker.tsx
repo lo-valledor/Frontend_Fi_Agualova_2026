@@ -115,12 +115,12 @@ export function DatePicker({
       {/* Trigger Button */}
       <button
         ref={triggerRef}
-        type='button'
+        type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className='w-full px-3 py-2 text-left border rounded-md bg-background border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition-colors duration-200 flex items-center justify-between'
+        className="w-full px-3 py-2 text-left border rounded-md bg-background border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition-colors duration-200 flex items-center justify-between"
       >
-        <div className='flex items-center'>
-          <CalendarIcon className='mr-2 h-4 w-4 ' />
+        <div className="flex items-center">
+          <CalendarIcon className="mr-2 h-4 w-4 " />
           <span className={dateValue ? '' : ''}>
             {dateValue && isValid(dateValue)
               ? format(dateValue, 'dd-MM-yyyy')
@@ -129,11 +129,11 @@ export function DatePicker({
         </div>
         {dateValue && (
           <button
-            type='button'
+            type="button"
             onClick={handleClear}
-            className='ml-2 p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700  hover:text-gray-700 dark:hover:text-gray-200 transition-colors'
+            className="ml-2 p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700  hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
           >
-            <X className='h-3 w-3' />
+            <X className="h-3 w-3" />
           </button>
         )}
       </button>
@@ -142,49 +142,49 @@ export function DatePicker({
       {isOpen && (
         <div
           ref={popoverRef}
-          className='absolute z-50 mt-1 bg-background border border-border rounded-xl shadow-lg p-4 min-w-[280px]'
+          className="absolute z-50 mt-1 bg-background border border-border rounded-xl shadow-lg p-4 min-w-[280px]"
           style={{
             left: 0,
             top: '100%'
           }}
         >
           {/* Header con navegación */}
-          <div className='flex items-center justify-between mb-4'>
+          <div className="flex items-center justify-between mb-4">
             <button
-              type='button'
+              type="button"
               onClick={previousMonth}
-              className='p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100 transition-colors'
+              className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100 transition-colors"
             >
-              <ChevronLeft className='h-4 w-4' />
+              <ChevronLeft className="h-4 w-4" />
             </button>
 
-            <h2 className='text-sm font-semibold '>
+            <h2 className="text-sm font-semibold ">
               {format(currentMonth, 'MMMM yyyy', { locale: es })}
             </h2>
 
             <button
-              type='button'
+              type="button"
               onClick={nextMonth}
-              className='p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100 transition-colors'
+              className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100 transition-colors"
             >
-              <ChevronRight className='h-4 w-4' />
+              <ChevronRight className="h-4 w-4" />
             </button>
           </div>
 
           {/* Días de la semana */}
-          <div className='grid grid-cols-7 gap-1 mb-2'>
+          <div className="grid grid-cols-7 gap-1 mb-2">
             {weekDays.map(day => (
-              <div key={day} className='p-2 text-center text-xs font-medium '>
+              <div key={day} className="p-2 text-center text-xs font-medium ">
                 {day}
               </div>
             ))}
           </div>
 
           {/* Calendario de días */}
-          <div className='grid grid-cols-7 gap-1'>
+          <div className="grid grid-cols-7 gap-1">
             {/* Días vacíos para el offset */}
             {emptyDays.map((_, index) => (
-              <div key={`empty-${index}`} className='p-2' />
+              <div key={`empty-${index}`} className="p-2" />
             ))}
 
             {/* Días del mes */}
@@ -196,7 +196,7 @@ export function DatePicker({
               return (
                 <button
                   key={day.toISOString()}
-                  type='button'
+                  type="button"
                   onClick={() => handleDateSelect(day)}
                   className={`
                     p-2 text-sm rounded-md transition-colors duration-150 relative
@@ -217,7 +217,7 @@ export function DatePicker({
                 >
                   {format(day, 'd')}
                   {isTodayDate && !isSelected && (
-                    <div className='absolute bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-blue-600 dark:bg-blue-400 rounded-full' />
+                    <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-blue-600 dark:bg-blue-400 rounded-full" />
                   )}
                 </button>
               );
@@ -226,14 +226,14 @@ export function DatePicker({
 
           {/* Footer con botón limpiar */}
           {dateValue && (
-            <div className='mt-3 pt-3 border-t border-border'>
+            <div className="mt-3 pt-3 border-t border-border">
               <button
-                type='button'
+                type="button"
                 onClick={() => {
                   setDate(undefined);
                   setIsOpen(false);
                 }}
-                className='w-full px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700 rounded transition-colors'
+                className="w-full px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700 rounded transition-colors"
               >
                 Limpiar selección
               </button>

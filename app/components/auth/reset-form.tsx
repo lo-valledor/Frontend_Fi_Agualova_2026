@@ -1,4 +1,13 @@
-import { AlertCircleIcon, ArrowLeft, Eye, EyeOff, Loader2, Lock, Moon, Sun } from 'lucide-react';
+import {
+  AlertCircleIcon,
+  ArrowLeft,
+  Eye,
+  EyeOff,
+  Loader2,
+  Lock,
+  Moon,
+  Sun
+} from 'lucide-react';
 
 import type React from 'react';
 import { useState } from 'react';
@@ -54,7 +63,9 @@ export function ResetForm({ className, token, ...props }: ResetFormProps) {
     // Validar seguridad de la contraseña usando utilidades
     const securityCheck = isPasswordSecure(password);
     if (!securityCheck.isSecure) {
-      setErrorMessage(securityCheck.reason || 'La contraseña no es suficientemente segura.');
+      setErrorMessage(
+        securityCheck.reason || 'La contraseña no es suficientemente segura.'
+      );
       return;
     }
 
@@ -98,61 +109,61 @@ export function ResetForm({ className, token, ...props }: ResetFormProps) {
       {/* Theme toggle */}
       <Button
         onClick={toggleTheme}
-        variant='ghost'
-        size='icon'
-        className='absolute top-4 right-4 z-10'
-        aria-label='Toggle theme'
+        variant="ghost"
+        size="icon"
+        className="absolute top-4 right-4 z-10"
+        aria-label="Toggle theme"
       >
         {theme === 'light' ? (
-          <Moon className='h-4 w-4' />
+          <Moon className="h-4 w-4" />
         ) : (
-          <Sun className='h-4 w-4' />
+          <Sun className="h-4 w-4" />
         )}
       </Button>
 
-      <CardHeader className='text-center space-y-2'>
-        <CardTitle className='text-2xl'>Restablecer Contraseña</CardTitle>
+      <CardHeader className="text-center space-y-2">
+        <CardTitle className="text-2xl">Restablecer Contraseña</CardTitle>
         <CardDescription>
           Ingrese su nueva contraseña para restablecer el acceso
         </CardDescription>
       </CardHeader>
 
       <CardContent>
-        <form onSubmit={handleSubmitEvent} className='space-y-4'>
+        <form onSubmit={handleSubmitEvent} className="space-y-4">
           {errorMessage && (
-            <Alert variant='destructive'>
-              <AlertCircleIcon className='h-4 w-4' />
+            <Alert variant="destructive">
+              <AlertCircleIcon className="h-4 w-4" />
               <AlertDescription>{errorMessage}</AlertDescription>
             </Alert>
           )}
 
-          <div className='space-y-2'>
-            <Label htmlFor='password'>Nueva Contraseña</Label>
-            <div className='relative'>
-              <Lock className='absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground' />
+          <div className="space-y-2">
+            <Label htmlFor="password">Nueva Contraseña</Label>
+            <div className="relative">
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                id='password'
-                name='password'
+                id="password"
+                name="password"
                 type={showPassword ? 'text' : 'password'}
-                placeholder='Cree una contraseña segura'
+                placeholder="Cree una contraseña segura"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={e => setPassword(e.target.value)}
                 required
                 disabled={loading}
-                className='pl-10 pr-10'
-                autoComplete='new-password'
+                className="pl-10 pr-10"
+                autoComplete="new-password"
               />
               <Button
-                type='button'
-                variant='ghost'
-                size='icon'
+                type="button"
+                variant="ghost"
+                size="icon"
                 onClick={() => setShowPassword(!showPassword)}
-                className='absolute right-0 top-1/2 -translate-y-1/2 h-full px-3 hover:bg-transparent'
+                className="absolute right-0 top-1/2 -translate-y-1/2 h-full px-3 hover:bg-transparent"
               >
                 {showPassword ? (
-                  <EyeOff className='h-4 w-4 text-muted-foreground' />
+                  <EyeOff className="h-4 w-4 text-muted-foreground" />
                 ) : (
-                  <Eye className='h-4 w-4 text-muted-foreground' />
+                  <Eye className="h-4 w-4 text-muted-foreground" />
                 )}
               </Button>
             </div>
@@ -167,42 +178,42 @@ export function ResetForm({ className, token, ...props }: ResetFormProps) {
             )}
           </div>
 
-          <div className='space-y-2'>
-            <Label htmlFor='confirmPassword'>Confirmar Contraseña</Label>
-            <div className='relative'>
-              <Lock className='absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground' />
+          <div className="space-y-2">
+            <Label htmlFor="confirmPassword">Confirmar Contraseña</Label>
+            <div className="relative">
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                id='confirmPassword'
-                name='confirmPassword'
+                id="confirmPassword"
+                name="confirmPassword"
                 type={showConfirmPassword ? 'text' : 'password'}
-                placeholder='Confirme su contraseña'
+                placeholder="Confirme su contraseña"
                 value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
+                onChange={e => setConfirmPassword(e.target.value)}
                 required
                 disabled={loading}
-                className='pl-10 pr-10'
-                autoComplete='new-password'
+                className="pl-10 pr-10"
+                autoComplete="new-password"
               />
               <Button
-                type='button'
-                variant='ghost'
-                size='icon'
+                type="button"
+                variant="ghost"
+                size="icon"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className='absolute right-0 top-1/2 -translate-y-1/2 h-full px-3 hover:bg-transparent'
+                className="absolute right-0 top-1/2 -translate-y-1/2 h-full px-3 hover:bg-transparent"
               >
                 {showConfirmPassword ? (
-                  <EyeOff className='h-4 w-4 text-muted-foreground' />
+                  <EyeOff className="h-4 w-4 text-muted-foreground" />
                 ) : (
-                  <Eye className='h-4 w-4 text-muted-foreground' />
+                  <Eye className="h-4 w-4 text-muted-foreground" />
                 )}
               </Button>
             </div>
           </div>
 
-          <Button type='submit' disabled={loading} className='w-full'>
+          <Button type="submit" disabled={loading} className="w-full">
             {loading ? (
               <>
-                <Loader2 className='mr-2 h-4 w-4 animate-spin' />
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 Restableciendo contraseña...
               </>
             ) : (
@@ -210,12 +221,12 @@ export function ResetForm({ className, token, ...props }: ResetFormProps) {
             )}
           </Button>
 
-          <div className='text-center mt-4'>
+          <div className="text-center mt-4">
             <Link
-              to='/auth/login'
-              className='inline-flex items-center gap-2 text-sm text-primary hover:underline'
+              to="/auth/login"
+              className="inline-flex items-center gap-2 text-sm text-primary hover:underline"
             >
-              <ArrowLeft className='h-4 w-4' />
+              <ArrowLeft className="h-4 w-4" />
               Volver al inicio de sesión
             </Link>
           </div>

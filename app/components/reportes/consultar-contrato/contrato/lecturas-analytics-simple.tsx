@@ -1,37 +1,34 @@
 import {
+  flexRender,
+  getCoreRowModel,
+  getSortedRowModel,
+  type SortingState,
+  useReactTable
+} from '@tanstack/react-table';
+import { useVirtualizer } from '@tanstack/react-virtual';
+import {
   Activity,
+  AlertTriangle,
   BarChart3,
+  Calendar,
   ChevronDown,
   ChevronUp,
   TrendingDown,
   TrendingUp,
-  Zap,
-  AlertTriangle,
-  Calendar
+  Zap
 } from 'lucide-react';
-
-import { memo, useMemo, useState, useRef } from 'react';
-
+import { memo, useMemo, useRef, useState } from 'react';
 import {
   Area,
   AreaChart,
-  XAxis,
-  YAxis,
   Bar,
   BarChart,
   ComposedChart,
   Line,
-  ResponsiveContainer
+  ResponsiveContainer,
+  XAxis,
+  YAxis
 } from 'recharts';
-
-import { useVirtualizer } from '@tanstack/react-virtual';
-import {
-  flexRender,
-  getCoreRowModel,
-  getSortedRowModel,
-  useReactTable,
-  type SortingState
-} from '@tanstack/react-table';
 
 import { ExportButton } from '~/components/shared/export-button';
 import { Badge } from '~/components/ui/badge';
@@ -39,11 +36,10 @@ import { Button } from '~/components/ui/button';
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
-  CardTitle,
-  CardDescription
+  CardTitle
 } from '~/components/ui/card';
-import { TooltipProvider } from '~/components/ui/tooltip';
 import {
   ChartContainer,
   ChartTooltip,
@@ -57,9 +53,10 @@ import {
   TableHeader,
   TableRow
 } from '~/components/ui/table';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '~/components/ui/tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
+import { TooltipProvider } from '~/components/ui/tooltip';
 import type { ExportColumn } from '~/hooks/shared/use-export-data';
-import { useExportPDF, type PDFSection } from '~/hooks/shared/use-export-pdf';
+import { type PDFSection, useExportPDF } from '~/hooks/shared/use-export-pdf';
 import type { DetalleLecturas } from '~/types/reportes';
 
 import { lecturasTableColumns } from './columns-lecturas';
@@ -91,9 +88,9 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
       { key: 'fechaLectura', header: 'Fecha Lectura' },
       { key: 'lecturaAnterior', header: 'Lectura Anterior' },
       { key: 'lecturaActual', header: 'Lectura Actual' },
-      { key: 'consumoPeriodo', header: 'Consumo Período (kWh)' },
-      { key: 'energiaBase', header: 'Energía Base (kWh)' },
-      { key: 'sobreconsumo', header: 'Sobreconsumo (kWh)' }
+      { key: 'consumoPeriodo', header: 'Consumo Período (m³)' },
+      { key: 'energiaBase', header: 'Energía Base (m³)' },
+      { key: 'sobreconsumo', header: 'Sobreconsumo (m³)' }
     ],
     []
   );
@@ -345,7 +342,7 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
 
   const chartConfig = {
     consumo: {
-      label: 'Consumo (kWh)',
+      label: 'Consumo (m³)',
       color: '#3b82f6'
     },
     energiaBase: {
@@ -397,23 +394,23 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
         kpis: [
           {
             label: 'Total Consumo',
-            value: `${analyticsData.totalConsumo.toLocaleString('es-CL')} kWh`
+            value: `${analyticsData.totalConsumo.toLocaleString('es-CL')} m³`
           },
           {
             label: 'Promedio Período',
-            value: `${analyticsData.promedioConsumo.toLocaleString('es-CL')} kWh`
+            value: `${analyticsData.promedioConsumo.toLocaleString('es-CL')} m³`
           },
           {
             label: 'Consumo Máximo',
-            value: `${analyticsData.maxConsumo.toLocaleString('es-CL')} kWh`
+            value: `${analyticsData.maxConsumo.toLocaleString('es-CL')} m³`
           },
           {
             label: 'Consumo Mínimo',
-            value: `${analyticsData.minConsumo.toLocaleString('es-CL')} kWh`
+            value: `${analyticsData.minConsumo.toLocaleString('es-CL')} m³`
           },
           {
             label: 'Total Sobreconsumo',
-            value: `${analyticsData.totalSobreconsumo.toLocaleString('es-CL')} kWh`
+            value: `${analyticsData.totalSobreconsumo.toLocaleString('es-CL')} m³`
           },
           {
             label: 'Variación Promedio',
@@ -445,13 +442,13 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
             key: 'consumo',
             header: 'Consumo',
             align: 'right',
-            formatter: (val: number) => `${val.toLocaleString('es-CL')} kWh`
+            formatter: (val: number) => `${val.toLocaleString('es-CL')} m³`
           },
           {
             key: 'sobreconsumo',
             header: 'Sobreconsumo',
             align: 'right',
-            formatter: (val: number) => `${val.toLocaleString('es-CL')} kWh`
+            formatter: (val: number) => `${val.toLocaleString('es-CL')} m³`
           }
         ]
       }
@@ -472,9 +469,9 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
 
   if (detalleLecturas.length === 0) {
     return (
-      <Card className='border bg-background'>
-        <CardContent className='pt-6 text-center'>
-          <div className='text-slate-500'>
+      <Card className="border bg-background">
+        <CardContent className="pt-6 text-center">
+          <div className="text-slate-500">
             No hay datos de lecturas disponibles
           </div>
         </CardContent>
@@ -484,43 +481,43 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
 
   return (
     <TooltipProvider>
-      <div className='space-y-6'>
+      <div className="space-y-6">
         {/* Filtros de tiempo y exportación */}
-        <Card className='border bg-background'>
-          <CardContent className='pt-4'>
-            <div className='flex flex-col sm:flex-row justify-between gap-4'>
-              <div className='flex flex-wrap gap-2'>
+        <Card className="border bg-background">
+          <CardContent className="pt-4">
+            <div className="flex flex-col sm:flex-row justify-between gap-4">
+              <div className="flex flex-wrap gap-2">
                 <Button
                   variant={timeRange === '6m' ? 'default' : 'outline'}
-                  size='sm'
+                  size="sm"
                   onClick={() => setTimeRange('6m')}
                 >
-                  <Calendar className='h-3 w-3 mr-1' />6 meses
+                  <Calendar className="h-3 w-3 mr-1" />6 meses
                 </Button>
                 <Button
                   variant={timeRange === '1a' ? 'default' : 'outline'}
-                  size='sm'
+                  size="sm"
                   onClick={() => setTimeRange('1a')}
                 >
                   1 año
                 </Button>
                 <Button
                   variant={timeRange === '2a' ? 'default' : 'outline'}
-                  size='sm'
+                  size="sm"
                   onClick={() => setTimeRange('2a')}
                 >
                   2 años
                 </Button>
                 <Button
                   variant={timeRange === '5a' ? 'default' : 'outline'}
-                  size='sm'
+                  size="sm"
                   onClick={() => setTimeRange('5a')}
                 >
                   5 años
                 </Button>
                 <Button
                   variant={timeRange === 'todo' ? 'default' : 'outline'}
-                  size='sm'
+                  size="sm"
                   onClick={() => setTimeRange('todo')}
                 >
                   Todo
@@ -530,7 +527,7 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
                 data={detalleLecturas}
                 columns={lecturasColumns}
                 filename={`lecturas_contrato_${contratoId}`}
-                size='sm'
+                size="sm"
                 enablePDF={true}
                 onPDFExport={handlePDFExport}
               />
@@ -539,107 +536,101 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
         </Card>
 
         {/* KPIs mejorados en grid */}
-        <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6'>
-          <Card className='border bg-linear-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900'>
-            <CardContent className='pt-4'>
-              <div className='flex items-center justify-between'>
-                <div className='flex-1'>
-                  <p className='text-xs font-medium text-blue-700 dark:text-blue-300'>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+          <Card className="border bg-linear-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900">
+            <CardContent className="pt-4">
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <p className="text-xs font-medium text-blue-700 dark:text-blue-300">
                     Consumo Total
                   </p>
-                  <p className='text-xl font-bold text-blue-900 dark:text-blue-100'>
+                  <p className="text-xl font-bold text-blue-900 dark:text-blue-100">
                     {analyticsData.totalConsumo.toLocaleString('es-CL')}
                   </p>
-                  <p className='text-xs text-blue-600 dark:text-blue-400'>
-                    kWh
-                  </p>
+                  <p className="text-xs text-blue-600 dark:text-blue-400">m³</p>
                 </div>
-                <Zap className='h-8 w-8 text-blue-600 dark:text-blue-400 opacity-50' />
+                <Zap className="h-8 w-8 text-blue-600 dark:text-blue-400 opacity-50" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className='border bg-linear-to-br from-emerald-50 to-emerald-100 dark:from-emerald-950 dark:to-emerald-900'>
-            <CardContent className='pt-4'>
-              <div className='flex items-center justify-between'>
-                <div className='flex-1'>
-                  <p className='text-xs font-medium text-emerald-700 dark:text-emerald-300'>
+          <Card className="border bg-linear-to-br from-emerald-50 to-emerald-100 dark:from-emerald-950 dark:to-emerald-900">
+            <CardContent className="pt-4">
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <p className="text-xs font-medium text-emerald-700 dark:text-emerald-300">
                     Promedio Período
                   </p>
-                  <p className='text-xl font-bold text-emerald-900 dark:text-emerald-100'>
+                  <p className="text-xl font-bold text-emerald-900 dark:text-emerald-100">
                     {analyticsData.promedioConsumo.toLocaleString('es-CL')}
                   </p>
-                  <p className='text-xs text-emerald-600 dark:text-emerald-400'>
-                    kWh
+                  <p className="text-xs text-emerald-600 dark:text-emerald-400">
+                    m³
                   </p>
                 </div>
-                <Activity className='h-8 w-8 text-emerald-600 dark:text-emerald-400 opacity-50' />
+                <Activity className="h-8 w-8 text-emerald-600 dark:text-emerald-400 opacity-50" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className='border bg-linear-to-br from-rose-50 to-rose-100 dark:from-rose-950 dark:to-rose-900'>
-            <CardContent className='pt-4'>
-              <div className='flex items-center justify-between'>
-                <div className='flex-1'>
-                  <p className='text-xs font-medium text-rose-700 dark:text-rose-300'>
+          <Card className="border bg-linear-to-br from-rose-50 to-rose-100 dark:from-rose-950 dark:to-rose-900">
+            <CardContent className="pt-4">
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <p className="text-xs font-medium text-rose-700 dark:text-rose-300">
                     Máximo
                   </p>
-                  <p className='text-xl font-bold text-rose-900 dark:text-rose-100'>
+                  <p className="text-xl font-bold text-rose-900 dark:text-rose-100">
                     {analyticsData.maxConsumo.toLocaleString('es-CL')}
                   </p>
-                  <p className='text-xs text-rose-600 dark:text-rose-400'>
-                    kWh
-                  </p>
+                  <p className="text-xs text-rose-600 dark:text-rose-400">m³</p>
                 </div>
-                <TrendingUp className='h-8 w-8 text-rose-600 dark:text-rose-400 opacity-50' />
+                <TrendingUp className="h-8 w-8 text-rose-600 dark:text-rose-400 opacity-50" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className='border bg-linear-to-br from-cyan-50 to-cyan-100 dark:from-cyan-950 dark:to-cyan-900'>
-            <CardContent className='pt-4'>
-              <div className='flex items-center justify-between'>
-                <div className='flex-1'>
-                  <p className='text-xs font-medium text-cyan-700 dark:text-cyan-300'>
+          <Card className="border bg-linear-to-br from-cyan-50 to-cyan-100 dark:from-cyan-950 dark:to-cyan-900">
+            <CardContent className="pt-4">
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <p className="text-xs font-medium text-cyan-700 dark:text-cyan-300">
                     Mínimo
                   </p>
-                  <p className='text-xl font-bold text-cyan-900 dark:text-cyan-100'>
+                  <p className="text-xl font-bold text-cyan-900 dark:text-cyan-100">
                     {analyticsData.minConsumo.toLocaleString('es-CL')}
                   </p>
-                  <p className='text-xs text-cyan-600 dark:text-cyan-400'>
-                    kWh
-                  </p>
+                  <p className="text-xs text-cyan-600 dark:text-cyan-400">m³</p>
                 </div>
-                <TrendingDown className='h-8 w-8 text-cyan-600 dark:text-cyan-400 opacity-50' />
+                <TrendingDown className="h-8 w-8 text-cyan-600 dark:text-cyan-400 opacity-50" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className='border bg-linear-to-br from-amber-50 to-amber-100 dark:from-amber-950 dark:to-amber-900'>
-            <CardContent className='pt-4'>
-              <div className='flex items-center justify-between'>
-                <div className='flex-1'>
-                  <p className='text-xs font-medium text-amber-700 dark:text-amber-300'>
+          <Card className="border bg-linear-to-br from-amber-50 to-amber-100 dark:from-amber-950 dark:to-amber-900">
+            <CardContent className="pt-4">
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <p className="text-xs font-medium text-amber-700 dark:text-amber-300">
                     Sobreconsumo
                   </p>
-                  <p className='text-xl font-bold text-amber-900 dark:text-amber-100'>
+                  <p className="text-xl font-bold text-amber-900 dark:text-amber-100">
                     {analyticsData.totalSobreconsumo.toLocaleString('es-CL')}
                   </p>
-                  <p className='text-xs text-amber-600 dark:text-amber-400'>
+                  <p className="text-xs text-amber-600 dark:text-amber-400">
                     {analyticsData.periodosConSobreconsumo} períodos
                   </p>
                 </div>
-                <AlertTriangle className='h-8 w-8 text-amber-600 dark:text-amber-400 opacity-50' />
+                <AlertTriangle className="h-8 w-8 text-amber-600 dark:text-amber-400 opacity-50" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className='border bg-linear-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900'>
-            <CardContent className='pt-4'>
-              <div className='flex items-center justify-between'>
-                <div className='flex-1'>
-                  <p className='text-xs font-medium text-slate-700 dark:text-slate-300'>
+          <Card className="border bg-linear-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900">
+            <CardContent className="pt-4">
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <p className="text-xs font-medium text-slate-700 dark:text-slate-300">
                     Tendencia
                   </p>
                   <Badge
@@ -650,36 +641,36 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
                           ? 'default'
                           : 'secondary'
                     }
-                    className='mt-2'
+                    className="mt-2"
                   >
                     {analyticsData.tendencia === 'up' ? (
                       <>
-                        <TrendingUp className='h-3 w-3 mr-1' />
+                        <TrendingUp className="h-3 w-3 mr-1" />
                         Al alza
                       </>
                     ) : analyticsData.tendencia === 'down' ? (
                       <>
-                        <TrendingDown className='h-3 w-3 mr-1' />A la baja
+                        <TrendingDown className="h-3 w-3 mr-1" />A la baja
                       </>
                     ) : (
                       'Estable'
                     )}
                   </Badge>
-                  <p className='text-xs text-slate-600 dark:text-slate-400 mt-1'>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
                     {analyticsData.variacionPromedio > 0 ? '+' : ''}
                     {analyticsData.variacionPromedio.toFixed(1)}%
                   </p>
                 </div>
-                <BarChart3 className='h-8 w-8 text-slate-600 dark:text-slate-400 opacity-50' />
+                <BarChart3 className="h-8 w-8 text-slate-600 dark:text-slate-400 opacity-50" />
               </div>
             </CardContent>
           </Card>
         </div>
 
         {/* Gráficos con tabs */}
-        <Card className='border bg-background'>
+        <Card className="border bg-background">
           <CardHeader>
-            <CardTitle className='text-base'>
+            <CardTitle className="text-base">
               Análisis Visual de Consumo
             </CardTitle>
             <CardDescription>
@@ -691,23 +682,20 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
               value={activeChart}
               onValueChange={v => setActiveChart(v as any)}
             >
-              <TabsList className='grid w-full grid-cols-3 mb-4'>
-                <TabsTrigger value='evolution'>Evolución Total</TabsTrigger>
-                <TabsTrigger value='comparison'>
+              <TabsList className="grid w-full grid-cols-3 mb-4">
+                <TabsTrigger value="evolution">Evolución Total</TabsTrigger>
+                <TabsTrigger value="comparison">
                   Base vs Sobreconsumo
                 </TabsTrigger>
-                <TabsTrigger value='analysis'>Lecturas Acumuladas</TabsTrigger>
+                <TabsTrigger value="analysis">Lecturas Acumuladas</TabsTrigger>
               </TabsList>
 
-              <TabsContent value='evolution' className='mt-0'>
-                <ChartContainer
-                  config={chartConfig}
-                  className='h-[350px] w-full'
-                >
-                  <ResponsiveContainer width='100%' height='100%'>
+              <TabsContent value="evolution" className="mt-0">
+                <ChartContainer config={chartConfig} className="h-87.5 w-full">
+                  <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={analyticsData.filteredLecturas}>
                       <XAxis
-                        dataKey='fechaCorta'
+                        dataKey="fechaCorta"
                         tickLine={false}
                         axisLine={false}
                         tickMargin={8}
@@ -726,34 +714,34 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
                           return label;
                         }}
                         formatter={value => [
-                          `${Number(value).toLocaleString('es-CL')} kWh`,
+                          `${Number(value).toLocaleString('es-CL')} m³`,
                           'Consumo'
                         ]}
                       />
                       <defs>
                         <linearGradient
-                          id='colorConsumo'
-                          x1='0'
-                          y1='0'
-                          x2='0'
-                          y2='1'
+                          id="colorConsumo"
+                          x1="0"
+                          y1="0"
+                          x2="0"
+                          y2="1"
                         >
                           <stop
-                            offset='5%'
-                            stopColor='#3b82f6'
+                            offset="5%"
+                            stopColor="#3b82f6"
                             stopOpacity={0.3}
                           />
                           <stop
-                            offset='95%'
-                            stopColor='#3b82f6'
+                            offset="95%"
+                            stopColor="#3b82f6"
                             stopOpacity={0}
                           />
                         </linearGradient>
                       </defs>
                       <Area
-                        dataKey='consumo'
-                        fill='url(#colorConsumo)'
-                        stroke='#3b82f6'
+                        dataKey="consumo"
+                        fill="url(#colorConsumo)"
+                        stroke="#3b82f6"
                         strokeWidth={2}
                       />
                     </AreaChart>
@@ -761,15 +749,12 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
                 </ChartContainer>
               </TabsContent>
 
-              <TabsContent value='comparison' className='mt-0'>
-                <ChartContainer
-                  config={chartConfig}
-                  className='h-[350px] w-full'
-                >
-                  <ResponsiveContainer width='100%' height='100%'>
+              <TabsContent value="comparison" className="mt-0">
+                <ChartContainer config={chartConfig} className="h-87.5 w-full">
+                  <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={analyticsData.filteredLecturas}>
                       <XAxis
-                        dataKey='fechaCorta'
+                        dataKey="fechaCorta"
                         tickLine={false}
                         axisLine={false}
                         tickMargin={8}
@@ -779,40 +764,37 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
                       <ChartTooltip
                         content={<ChartTooltipContent />}
                         formatter={(value, name) => [
-                          `${Number(value).toLocaleString('es-CL')} kWh`,
+                          `${Number(value).toLocaleString('es-CL')} m³`,
                           name === 'energiaBase'
                             ? 'Energía Base'
                             : 'Sobreconsumo'
                         ]}
                       />
                       <Bar
-                        dataKey='energiaBase'
-                        fill='#10b981'
-                        stackId='energia'
+                        dataKey="energiaBase"
+                        fill="#10b981"
+                        stackId="energia"
                         radius={[0, 0, 4, 4]}
-                        name='Energía Base'
+                        name="Energía Base"
                       />
                       <Bar
-                        dataKey='sobreconsumo'
-                        fill='#ef4444'
-                        stackId='energia'
+                        dataKey="sobreconsumo"
+                        fill="#ef4444"
+                        stackId="energia"
                         radius={[4, 4, 0, 0]}
-                        name='Sobreconsumo'
+                        name="Sobreconsumo"
                       />
                     </BarChart>
                   </ResponsiveContainer>
                 </ChartContainer>
               </TabsContent>
 
-              <TabsContent value='analysis' className='mt-0'>
-                <ChartContainer
-                  config={chartConfig}
-                  className='h-[350px] w-full'
-                >
-                  <ResponsiveContainer width='100%' height='100%'>
+              <TabsContent value="analysis" className="mt-0">
+                <ChartContainer config={chartConfig} className="h-87.5 w-full">
+                  <ResponsiveContainer width="100%" height="100%">
                     <ComposedChart data={analyticsData.filteredLecturas}>
                       <XAxis
-                        dataKey='fechaCorta'
+                        dataKey="fechaCorta"
                         tickLine={false}
                         axisLine={false}
                         tickMargin={8}
@@ -829,20 +811,20 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
                         ]}
                       />
                       <Line
-                        type='monotone'
-                        dataKey='lecturaAnterior'
-                        stroke='#8b5cf6'
+                        type="monotone"
+                        dataKey="lecturaAnterior"
+                        stroke="#8b5cf6"
                         strokeWidth={1.5}
                         dot={{ r: 2 }}
-                        name='Lectura Anterior'
+                        name="Lectura Anterior"
                       />
                       <Line
-                        type='monotone'
-                        dataKey='lecturaActual'
-                        stroke='#f59e0b'
+                        type="monotone"
+                        dataKey="lecturaActual"
+                        stroke="#f59e0b"
                         strokeWidth={2}
                         dot={{ fill: '#f59e0b', r: 3 }}
-                        name='Lectura Actual'
+                        name="Lectura Actual"
                       />
                     </ComposedChart>
                   </ResponsiveContainer>
@@ -855,18 +837,18 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
         <Separator />
 
         {/* Tabla de datos colapsable */}
-        <Card className='border bg-background'>
+        <Card className="border bg-background">
           <CardHeader
-            className='flex flex-row items-center justify-between space-y-0 pb-4 cursor-pointer'
+            className="flex flex-row items-center justify-between space-y-0 pb-4 cursor-pointer"
             onClick={() => setShowDataTable(!showDataTable)}
           >
-            <CardTitle className='text-base flex items-center gap-2'>
+            <CardTitle className="text-base flex items-center gap-2">
               Historial Detallado de Lecturas ({detalleLecturas.length}{' '}
               registros - {analyticsData.lecturasValidas} con consumo)
               {showDataTable ? (
-                <ChevronUp className='h-4 w-4' />
+                <ChevronUp className="h-4 w-4" />
               ) : (
-                <ChevronDown className='h-4 w-4' />
+                <ChevronDown className="h-4 w-4" />
               )}
             </CardTitle>
           </CardHeader>
@@ -874,15 +856,15 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
             <CardContent>
               <div
                 ref={tableContainerRef}
-                className='relative rounded-md border overflow-auto'
+                className="relative rounded-md border overflow-auto"
                 style={{ height: '500px' }}
               >
-                <table className='w-full table-fixed caption-bottom text-sm'>
-                  <TableHeader className='sticky top-0 z-20 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/70 shadow-xs'>
+                <table className="w-full table-fixed caption-bottom text-sm">
+                  <TableHeader className="sticky top-0 z-20 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/70 shadow-xs">
                     {table.getHeaderGroups().map(headerGroup => (
                       <TableRow
                         key={headerGroup.id}
-                        className='hover:bg-transparent'
+                        className="hover:bg-transparent"
                       >
                         {headerGroup.headers.map(header => {
                           const columnDef = header.column.columnDef;
@@ -890,7 +872,7 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
                           return (
                             <TableHead
                               key={header.id}
-                              className='h-[50px] px-3 text-xs font-medium border-b border-border'
+                              className="h-12.5 px-3 text-xs font-medium border-b border-border"
                               style={{
                                 width: `${width}px`,
                                 minWidth: `${width}px`,
@@ -930,7 +912,7 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
                             transform: `translateY(${virtualRow.start}px)`,
                             display: 'table'
                           }}
-                          className='border-b hover:bg-muted'
+                          className="border-b hover:bg-muted"
                         >
                           {row.getVisibleCells().map(cell => {
                             const columnDef = cell.column.columnDef;
@@ -938,7 +920,7 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
                             return (
                               <TableCell
                                 key={cell.id}
-                                className='h-[50px] px-3 py-1 text-sm'
+                                className="h-12.5 px-3 py-1 text-sm"
                                 style={{
                                   width: `${width}px`,
                                   minWidth: `${width}px`,
@@ -958,7 +940,7 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
                   </TableBody>
                 </table>
                 {rows.length === 0 && (
-                  <div className='h-20 flex items-center justify-center text-sm text-muted-foreground'>
+                  <div className="h-20 flex items-center justify-center text-sm text-muted-foreground">
                     No se encontraron lecturas.
                   </div>
                 )}

@@ -64,8 +64,9 @@ export function UserRolesModal({
       }
 
       // Obtener roles actuales del usuario
-      const userRolesResponse =
-        await rolesPermisosService.getRolesUsuario(String(user.idUsuario));
+      const userRolesResponse = await rolesPermisosService.getRolesUsuario(
+        String(user.id)
+      );
       if (userRolesResponse.error) {
         throw new Error(userRolesResponse.error);
       }
@@ -77,14 +78,10 @@ export function UserRolesModal({
       setUserRoles(currentUserRoles);
 
       // Pre-seleccionar los roles actuales del usuario
-      const currentRoleIds = new Set(
-        currentUserRoles.map(role => role.idRol)
-      );
+      const currentRoleIds = new Set(currentUserRoles.map(role => role.idRol));
       setSelectedRoleIds(currentRoleIds);
     } catch (error: any) {
-      toast.error(
-        error.message || 'Error al obtener la información de roles'
-      );
+      toast.error(error.message || 'Error al obtener la información de roles');
     } finally {
       setLoading(false);
     }
@@ -119,22 +116,12 @@ export function UserRolesModal({
       const rolesToRemove = Array.from(currentRoleIds).filter(
         id => !newSelectedRoleIds.has(id)
       );
-
-      console.log('🔍 DEBUG - User ID:', user.idUsuario);
-      console.log('🔍 DEBUG - Roles a agregar:', rolesToAdd);
-      console.log('🔍 DEBUG - Roles a quitar:', rolesToRemove);
-
       // Asignar roles nuevos
       if (rolesToAdd.length > 0) {
-        console.log('📤 DEBUG - Enviando POST a:', `${user.idUsuario}/roles`);
-        console.log('📤 DEBUG - Body:', { roles: rolesToAdd });
-
         const response = await rolesPermisosService.asignarRolesUsuario(
-          String(user.idUsuario),
+          String(user.id),
           { roles: rolesToAdd }
         );
-
-        console.log('📥 DEBUG - Response asignar:', response);
 
         if (response.error) {
           throw new Error(response.error);
@@ -143,14 +130,10 @@ export function UserRolesModal({
 
       // Quitar roles removidos
       for (const roleId of rolesToRemove) {
-        console.log('📤 DEBUG - Enviando DELETE a:', `${user.idUsuario}/roles/${roleId}`);
-
         const response = await rolesPermisosService.quitarRolUsuario(
-          String(user.idUsuario),
+          String(user.id),
           roleId
         );
-
-        console.log('📥 DEBUG - Response quitar:', response);
 
         if (response.error) {
           throw new Error(response.error);
@@ -187,7 +170,9 @@ export function UserRolesModal({
     return false;
   };
 
-  const getRoleStatus = (roleId: number): 'current' | 'new' | 'removed' | 'none' => {
+  const getRoleStatus = (
+    roleId: number
+  ): 'current' | 'new' | 'removed' | 'none' => {
     const wasCurrent = userRoles.some(role => role.idRol === roleId);
     const isSelected = selectedRoleIds.has(roleId);
 
@@ -199,48 +184,48 @@ export function UserRolesModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className='sm:max-w-[700px] max-h-[90vh] overflow-y-auto'>
-        <DialogHeader className='space-y-3'>
-          <DialogTitle className='text-2xl font-bold flex items-center gap-3 text-sky-900 dark:text-sky-100'>
-            <div className='p-2 bg-sky-100 dark:bg-sky-900/30 rounded-xl'>
-              <Users className='h-6 w-6' />
+      <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
+        <DialogHeader className="space-y-3">
+          <DialogTitle className="text-2xl font-bold flex items-center gap-3 text-sky-900 dark:text-sky-100">
+            <div className="p-2 bg-sky-100 dark:bg-sky-900/30 rounded-xl">
+              <Users className="h-6 w-6" />
             </div>
             Gestionar Roles de Usuario
           </DialogTitle>
-          <DialogDescription className='text-base text-muted-foreground'>
+          <DialogDescription className="text-base text-muted-foreground">
             {user && (
               <span>
                 Asigna o quita roles para{' '}
-                <span className='font-semibold'>
-                  {user.nombres} {user.apellidos}
+                <span className="font-semibold">
+                  {user.nombre_Usuario} {user.apellidos_Usuario}
                 </span>{' '}
-                (@{user.nombreDeUsuario})
+                (@{user.userName})
               </span>
             )}
           </DialogDescription>
         </DialogHeader>
 
-        <div className='mt-4'>
+        <div className="mt-4">
           {loading ? (
-            <div className='flex justify-center items-center py-12'>
-              <div className='animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent' />
+            <div className="flex justify-center items-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent" />
             </div>
           ) : availableRoles.length === 0 ? (
-            <div className='flex flex-col items-center justify-center py-12 text-muted-foreground'>
-              <Users className='h-12 w-12 mb-4 opacity-50' />
-              <p className='text-lg font-medium'>
+            <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+              <Users className="h-12 w-12 mb-4 opacity-50" />
+              <p className="text-lg font-medium">
                 No hay roles disponibles en el sistema
               </p>
             </div>
           ) : (
-            <div className='border rounded-lg overflow-hidden'>
+            <div className="border rounded-lg overflow-hidden">
               <Table>
                 <TableHeader>
-                  <TableRow className='bg-muted/50'>
-                    <TableHead className='font-semibold w-12'></TableHead>
-                    <TableHead className='font-semibold'>Rol</TableHead>
-                    <TableHead className='font-semibold'>Descripción</TableHead>
-                    <TableHead className='font-semibold text-center'>
+                  <TableRow className="bg-muted/50">
+                    <TableHead className="font-semibold w-12"></TableHead>
+                    <TableHead className="font-semibold">Rol</TableHead>
+                    <TableHead className="font-semibold">Descripción</TableHead>
+                    <TableHead className="font-semibold text-center">
                       Estado
                     </TableHead>
                   </TableRow>
@@ -269,27 +254,27 @@ export function UserRolesModal({
                               }
                             />
                           </TableCell>
-                          <TableCell className='font-medium'>
+                          <TableCell className="font-medium">
                             {role.nombreRol}
                           </TableCell>
-                          <TableCell className='text-sm text-muted-foreground'>
+                          <TableCell className="text-sm text-muted-foreground">
                             {role.descripcion || 'Sin descripción'}
                           </TableCell>
-                          <TableCell className='text-center'>
+                          <TableCell className="text-center">
                             {status === 'current' && (
-                              <Badge className='bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'>
-                                <Check className='h-3 w-3 mr-1' />
+                              <Badge className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                                <Check className="h-3 w-3 mr-1" />
                                 Asignado
                               </Badge>
                             )}
                             {status === 'new' && (
-                              <Badge className='bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'>
+                              <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
                                 Nuevo
                               </Badge>
                             )}
                             {status === 'removed' && (
-                              <Badge className='bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'>
-                                <X className='h-3 w-3 mr-1' />
+                              <Badge className="bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
+                                <X className="h-3 w-3 mr-1" />
                                 Se quitará
                               </Badge>
                             )}
@@ -304,14 +289,14 @@ export function UserRolesModal({
         </div>
 
         {!loading && availableRoles.length > 0 && (
-          <div className='mt-4 text-sm text-muted-foreground'>
-            <div className='flex justify-between items-center'>
+          <div className="mt-4 text-sm text-muted-foreground">
+            <div className="flex justify-between items-center">
               <span>
                 Roles seleccionados: {selectedRoleIds.size} de{' '}
                 {availableRoles.filter(r => r.estadoRol).length}
               </span>
               {hasChanges() && (
-                <Badge variant='outline' className='text-amber-600'>
+                <Badge variant="outline" className="text-amber-600">
                   Hay cambios sin guardar
                 </Badge>
               )}
@@ -319,12 +304,8 @@ export function UserRolesModal({
           </div>
         )}
 
-        <DialogFooter className='mt-6'>
-          <Button
-            variant='outline'
-            onClick={onClose}
-            disabled={saving}
-          >
+        <DialogFooter className="mt-6">
+          <Button variant="outline" onClick={onClose} disabled={saving}>
             Cancelar
           </Button>
           <Button

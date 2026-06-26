@@ -1,23 +1,38 @@
 import api from '~/lib/api';
 import type {
-  Anio,
-  CalculoPrefacturaCargoResponse,
-  CalculoPrefacturaDetalle,
-  Ciclo,
-  ConsultarAsignacionSectores,
-  ConsultarMantenedorRevisionCorte,
-  ConsultarSectores,
-  EstadoProceso,
-  IdentificadorProceso,
-  OpcionesPrepararLecturas,
-  PeriodoAbierto,
-  Periodos,
-  PreciosCargoEnel,
-  PreciosCargoAgualova,
-  RevisarPrecioDos,
-  RevisarPrecioUno,
-  TotalesCorteReposicion,
-  ValidarSectoresPendientes
+  CambioMedidorBuscarAntiguoRequest,
+  CambioMedidorBuscarNuevoRequest,
+  CambioMedidorEjecutarCambioRequest,
+  CerrarLecturasBuscarEstadisticasRequest,
+  CerrarLecturasCerrarRequest,
+  CerrarLecturasCerrarResponse,
+  CerrarLecturasFiltrosCiclosResponse,
+  CerrarLecturasFiltrosPeriodosResponse,
+  CorteReposicionBuscarRequest,
+  CorteReposicionLiberarRequest,
+  CorteReposicionRegistrarCorteRequest,
+  CorteReposicionResumenResponse,
+  LanzarCalculoResponse,
+  PeriodosAniosDisponiblesResponse,
+  PeriodosBuscarRequest,
+  PeriodosCrearRequest,
+  PreciosConsultarRequest,
+  PreciosGuardarMasivoRequest,
+  PrepararLecturasBuscarNichosRequest,
+  PrepararLecturasFiltrosCiclosResponse,
+  PrepararLecturasFiltrosPeriodosResponse,
+  PrepararLecturasGenerarRequest,
+  RevisarCalculosBuscarPrefacturasResponse,
+  RevisarCalculosEstadoProcesoRequest,
+  RevisarCalculosFiltrosCiclosResponse,
+  RevisarCalculosFiltrosPeriodosResponse,
+  RevisarCalculosLanzarCalculoRequest,
+  RevisionPreciosBuscarRequest,
+  RevisionPreciosConfirmarRequest,
+  RevisionPreciosCorregirRequest,
+  RevisionPreciosDetalleCorreccionResponse,
+  SAPEmpresas,
+  SAPSugeridos
 } from '~/types/operaciones';
 
 export interface OperacionesServiceResponse<T> {
@@ -25,14 +40,147 @@ export interface OperacionesServiceResponse<T> {
   error: string | null;
 }
 
+export interface SAPDownloadFile {
+  blob: Blob;
+  filename: string | null;
+  contentType: string | null;
+}
+
 class OperacionesService {
+  /**
+   * Algunos endpoints del backend devuelven status 200 con un body
+   * `{ message: "Error: ..." }` para señalar fallos. Este helper extrae ese
+   * mensaje para que el llamador lo trate como error.
+   */
+  private extractErrorFromResponse(data: unknown): string | null {
+    if (data && typeof data === 'object' && 'message' in data) {
+      const message = String((data as { message: unknown }).message);
+      if (message.toLowerCase().startsWith('error:')) {
+        return message;
+      }
+    }
+    return null;
+  }
+
+  private processApiResponse<T>(response: unknown): T[] {
+    if (
+      typeof response === 'object' &&
+      response !== null &&
+      'data' in response
+    ) {
+      const data = (response as { data?: unknown }).data;
+
+      if (
+        typeof data === 'object' &&
+        data !== null &&
+        'data' in data &&
+        Array.isArray((data as { data?: unknown }).data)
+      ) {
+        return (data as { data: T[] }).data;
+      }
+
+      if (Array.isArray(data)) {
+        return data as T[];
+      }
+    }
+
+    return [];
+  }
+
+  private normalizeSapEmpresas(response: unknown): SAPEmpresas[] {
+    const empresas = this.processApiResponse<SAPEmpresas>(response);
+
+    if (empresas.length > 0) {
+      return empresas;
+    }
+
+    if (
+      typeof response === 'object' &&
+      response !== null &&
+      'data' in response &&
+      typeof (response as { data?: unknown }).data === 'object' &&
+      (response as { data?: unknown }).data !== null
+    ) {
+      const data = (response as { data: unknown }).data;
+
+      if (Array.isArray(data)) {
+        return data as SAPEmpresas[];
+      }
+
+      if ('id' in (data as object) && 'nombre' in (data as object)) {
+        return [data as SAPEmpresas];
+      }
+    }
+
+    return [];
+  }
+
+  private normalizeSapSugeridos(response: unknown): SAPSugeridos | null {
+    if (
+      typeof response === 'object' &&
+      response !== null &&
+      'data' in response &&
+      typeof (response as { data?: unknown }).data === 'object' &&
+      (response as { data?: unknown }).data !== null
+    ) {
+      const data = (response as { data: unknown }).data;
+
+      if (
+        'nombreEncabezado' in (data as object) &&
+        'nombreDetalle' in (data as object)
+      ) {
+        return data as SAPSugeridos;
+      }
+    }
+
+    return null;
+  }
+
+  private extractFilenameFromHeaders(headers: unknown): string | null {
+    if (!headers || typeof headers !== 'object') {
+      return null;
+    }
+
+    const contentDisposition =
+      'content-disposition' in headers
+        ? String(
+            (headers as Record<string, unknown>)['content-disposition'] ?? ''
+          )
+        : '';
+
+    if (!contentDisposition) {
+      return null;
+    }
+
+    const utf8Match = contentDisposition.match(/filename\*=UTF-8''([^;]+)/i);
+    if (utf8Match?.[1]) {
+      return decodeURIComponent(utf8Match[1]);
+    }
+
+    const filenameMatch = contentDisposition.match(
+      /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/
+    );
+
+    if (filenameMatch?.[1]) {
+      return filenameMatch[1].replace(/['"]/g, '');
+    }
+
+    return null;
+  }
+
+  /**
+   * Periodos Facturacion
+   * @returns
+   */
   async getPeriodoAbierto(): Promise<
-    OperacionesServiceResponse<PeriodoAbierto[]>
+    OperacionesServiceResponse<PrepararLecturasFiltrosPeriodosResponse[]>
   > {
     try {
-      const response = await api.get('/ConsultarPeriodoAbierto');
+      const response = await api.get('/preparar-lecturas/filtros/periodos');
       return {
-        data: response.data as PeriodoAbierto[],
+        data: this.processApiResponse<PrepararLecturasFiltrosPeriodosResponse>(
+          response
+        ),
         error: null
       };
     } catch (error) {
@@ -43,11 +191,23 @@ class OperacionesService {
     }
   }
 
-  async getCiclosFacturacion(): Promise<OperacionesServiceResponse<Ciclo[]>> {
+  async getPeriodoFacturacionData(
+    mes?: string,
+    anio?: string,
+    limit?: number,
+    offset?: number
+  ): Promise<OperacionesServiceResponse<PeriodosBuscarRequest[]>> {
     try {
-      const response = await api.get('/ciclos-facturacion-activos');
+      const params = new URLSearchParams();
+      if (mes) params.append('mes', mes);
+      if (anio) params.append('anio', anio);
+      if (limit) params.append('limit', limit.toString());
+      if (offset) params.append('offset', offset.toString());
+      const response = await api.get('/periodos/buscar', {
+        params
+      });
       return {
-        data: response.data as Ciclo[],
+        data: this.processApiResponse<PeriodosBuscarRequest>(response),
         error: null
       };
     } catch (error) {
@@ -58,30 +218,45 @@ class OperacionesService {
     }
   }
 
-  async getPrepararLecturasData(): Promise<
+  async getPeriodosAniosDisponibles(): Promise<
+    OperacionesServiceResponse<PeriodosAniosDisponiblesResponse[]>
+  > {
+    try {
+      const response = await api.get('/periodos/anios-disponibles');
+      return {
+        data: this.processApiResponse<PeriodosAniosDisponiblesResponse>(
+          response
+        ),
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  async getPeriodoFacturacionPageData(): Promise<
     OperacionesServiceResponse<{
-      periodoAbierto: PeriodoAbierto[];
-      lecturasPendientes: ValidarSectoresPendientes;
-      sectores: ConsultarSectores[];
-      opcionesPreparar: OpcionesPrepararLecturas[];
+      years: PeriodosAniosDisponiblesResponse[];
+      periodos: PeriodosBuscarRequest[];
     }>
   > {
     try {
-      const [periodoAbierto, lecturasPendientes, sectores, opcionesPreparar] =
-        await Promise.all([
-          api.get('/ConsultarPeriodoAbierto'),
-          api.get('/validar-lecturas-pendientes'),
-          api.get('/consultar-sectores'),
-          api.get('/opciones-preparar-lecturas', { params: { control: '1' } })
-        ]);
+      const [yearsResponse, periodosResponse] = await Promise.all([
+        api.get('/periodos/anios-disponibles'),
+        api.get('/periodos/buscar')
+      ]);
 
       return {
         data: {
-          periodoAbierto: periodoAbierto.data as PeriodoAbierto[],
-          lecturasPendientes:
-            lecturasPendientes.data as ValidarSectoresPendientes,
-          sectores: sectores.data as ConsultarSectores[],
-          opcionesPreparar: opcionesPreparar.data as OpcionesPrepararLecturas[]
+          years:
+            this.processApiResponse<PeriodosAniosDisponiblesResponse>(
+              yearsResponse
+            ),
+          periodos:
+            this.processApiResponse<PeriodosBuscarRequest>(periodosResponse)
         },
         error: null
       };
@@ -93,21 +268,23 @@ class OperacionesService {
     }
   }
 
-  async getAsignacionSectores(
-    cicloFacturable: string,
-    periodo: string
-  ): Promise<OperacionesServiceResponse<ConsultarAsignacionSectores[]>> {
+  async getPeriodoFacturacionByLimitAndOffset(
+    mes?: string,
+    anio?: string,
+    limit?: number,
+    offset?: number
+  ): Promise<OperacionesServiceResponse<PeriodosBuscarRequest[]>> {
     try {
       const params = new URLSearchParams();
-      params.append('cicloFacturable', cicloFacturable);
-      params.append('periodo', periodo);
-
-      const response = await api.get('/consultar-asignacion-sectores', {
+      if (mes) params.append('mes', mes);
+      if (anio) params.append('anio', anio);
+      if (limit) params.append('limit', limit.toString());
+      if (offset) params.append('offset', offset.toString());
+      const response = await api.get('/periodos/buscar', {
         params
       });
-
       return {
-        data: response.data as ConsultarAsignacionSectores[],
+        data: this.processApiResponse<PeriodosBuscarRequest>(response),
         error: null
       };
     } catch (error) {
@@ -117,356 +294,213 @@ class OperacionesService {
       };
     }
   }
+
+  async getCiclosFacturacion(): Promise<
+    OperacionesServiceResponse<PrepararLecturasFiltrosCiclosResponse[]>
+  > {
+    try {
+      const response = await api.get('/preparar-lecturas/filtros/ciclos');
+      return {
+        data: this.processApiResponse<PrepararLecturasFiltrosCiclosResponse>(
+          response
+        ),
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  async postCrearPeriodoFacturacion(request: PeriodosCrearRequest) {
+    try {
+      const response = await api.post('/periodos/crear', request);
+      return {
+        data: response.data,
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  async postCerrarPeriodoFacturacion(codigo: string) {
+    try {
+      const params = new URLSearchParams();
+      params.append('codigo', codigo);
+      const response = await api.post(
+        `/periodos/cerrar/${codigo}`,
+        {},
+        { params }
+      );
+      return {
+        data: response.data,
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  /**
+   * Preparar lecturas
+   * @returns
+   */
+
+  async getPrepararLecturasData(): Promise<
+    OperacionesServiceResponse<{
+      periodoAbierto: PrepararLecturasFiltrosPeriodosResponse[];
+      ciclos: PrepararLecturasFiltrosCiclosResponse[];
+    }>
+  > {
+    try {
+      const [periodoAbierto, ciclos] = await Promise.all([
+        api.get('/preparar-lecturas/filtros/periodos'),
+        api.get('/preparar-lecturas/filtros/ciclos')
+      ]);
+
+      return {
+        data: {
+          periodoAbierto:
+            this.processApiResponse<PrepararLecturasFiltrosPeriodosResponse>(
+              periodoAbierto
+            ),
+          ciclos:
+            this.processApiResponse<PrepararLecturasFiltrosCiclosResponse>(
+              ciclos
+            )
+        },
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  async postGenerarLecturas(
+    request: PrepararLecturasGenerarRequest
+  ): Promise<OperacionesServiceResponse<any>> {
+    try {
+      const response = await api.post('/preparar-lecturas/generar', request);
+      const errorFromBody = this.extractErrorFromResponse(response.data);
+      if (errorFromBody) {
+        return { data: null, error: errorFromBody };
+      }
+      return {
+        data: response.data,
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  async getBuscarNichos(
+    cicloId: number,
+    periodoId: string
+  ): Promise<
+    OperacionesServiceResponse<PrepararLecturasBuscarNichosRequest[]>
+  > {
+    try {
+      const params = new URLSearchParams();
+      params.append('cicloId', cicloId.toString());
+      params.append('periodoId', periodoId);
+      const response = await api.get('/preparar-lecturas/buscar-nichos', {
+        params
+      });
+      return {
+        data: this.processApiResponse<PrepararLecturasBuscarNichosRequest>(
+          response
+        ),
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  /**
+   * Precios Cargo
+   * @param mes
+   * @param anio
+   * @returns
+   */
 
   async getPreciosCargoData(
     mes: string,
     anio: string
-  ): Promise<
-    OperacionesServiceResponse<{
-      tablaEnel: PreciosCargoEnel[];
-      tablaAgualova: PreciosCargoAgualova[];
-    }>
-  > {
-    try {
-      const [resTablaEnel, resTablaAgualova] = await Promise.all([
-        api.get(`/consulta-precio-pago?mes=${mes}&año=${anio}`),
-        api.get(`/consulta-precio-pago-tabla`)
-      ]);
-
-      return {
-        data: {
-          tablaEnel: resTablaEnel.data as PreciosCargoEnel[],
-          tablaAgualova: resTablaAgualova.data as PreciosCargoAgualova[]
-        },
-        error: null
-      };
-    } catch (error) {
-      return {
-        data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido'
-      };
-    }
-  }
-
-  async getRevisarPrecioData(dia: string = '15'): Promise<
-    OperacionesServiceResponse<{
-      dataPeriodoAbierto: PeriodoAbierto[];
-      dataConsultarPreciosUno: RevisarPrecioUno[];
-      dataConsultarPreciosDos: RevisarPrecioDos[];
-      ciclosFacturacion: Array<{
-        diaFacturacion: string;
-        descripcion: string;
-      }>;
-    }>
-  > {
-    try {
-      // Carga paralela de datos básicos
-      const [periodoAbierto, ciclosFacturacion] = await Promise.all([
-        api.get('/ConsultarPeriodoAbierto'),
-        api.get('/ciclos-facturacion-activos')
-      ]);
-
-      const dataPeriodoAbierto = periodoAbierto.data as PeriodoAbierto[];
-      const dataCiclosFacturacion = ciclosFacturacion.data as Array<{
-        diaFacturacion: string;
-        descripcion: string;
-      }>;
-
-      if (!dataPeriodoAbierto || dataPeriodoAbierto.length === 0) {
-        return {
-          data: {
-            dataPeriodoAbierto: [],
-            dataConsultarPreciosUno: [],
-            dataConsultarPreciosDos: [],
-            ciclosFacturacion: []
-          },
-          error: 'No hay periodo abierto'
-        };
-      }
-
-      // Validar si el ciclo es válido para el mes actual
-      const mes = dataPeriodoAbierto[0].mes;
-      const anio = dataPeriodoAbierto[0].anio;
-
-      // Cargar datos de precios
-      const [resConsultarPreciosUno, resConsultarPreciosDos] =
-        await Promise.all([
-          api.get(`/ConsultarPreciosUno?mes=${mes}&año=${anio}`),
-          api.get(`/ConsultarPreciosDos?mes=${mes}&año=${anio}&dia=${dia}`)
-        ]);
-
-      return {
-        data: {
-          dataPeriodoAbierto,
-          dataConsultarPreciosUno:
-            resConsultarPreciosUno.data as RevisarPrecioUno[],
-          dataConsultarPreciosDos:
-            resConsultarPreciosDos.data as RevisarPrecioDos[],
-          ciclosFacturacion: dataCiclosFacturacion
-        },
-        error: null
-      };
-    } catch (error) {
-      return {
-        data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido'
-      };
-    }
-  }
-
-  async getCorteReposicionData(): Promise<
-    OperacionesServiceResponse<{
-      totalesData: TotalesCorteReposicion[];
-      mantenedorCorteData: ConsultarMantenedorRevisionCorte[];
-    }>
-  > {
-    try {
-      const [res, resCorte] = await Promise.all([
-        api.get('consulta-registros-revision?acometida=0'),
-        api.get('consulta-mantenedor-revision-corte')
-      ]);
-
-      return {
-        data: {
-          totalesData: res.data as TotalesCorteReposicion[],
-          mantenedorCorteData:
-            resCorte.data as ConsultarMantenedorRevisionCorte[]
-        },
-        error: null
-      };
-    } catch (error) {
-      return {
-        data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido'
-      };
-    }
-  }
-
-  async getCerrarLecturasData(): Promise<
-    OperacionesServiceResponse<{
-      periodoAbierto: PeriodoAbierto[];
-      ciclosFacturacion: Ciclo[];
-    }>
-  > {
-    try {
-      const [periodoAbierto, ciclosFacturacion] = await Promise.all([
-        api.get('/ConsultarPeriodoAbierto'),
-        api.get('/ciclos-facturacion-activos')
-      ]);
-
-      return {
-        data: {
-          periodoAbierto: periodoAbierto.data as PeriodoAbierto[],
-          ciclosFacturacion: ciclosFacturacion.data as Ciclo[]
-        },
-        error: null
-      };
-    } catch (error) {
-      return {
-        data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido'
-      };
-    }
-  }
-
-  async getPeriodoFacturacionData(): Promise<
-    OperacionesServiceResponse<{
-      years: Anio[];
-      periodos: Periodos[];
-    }>
-  > {
-    try {
-      const [resYears, resPeriodos] = await Promise.all([
-        api.get('/consulta-año'),
-        api.get('/consulta-periodo')
-      ]);
-
-      return {
-        data: {
-          years: resYears.data as Anio[],
-          periodos: resPeriodos.data as Periodos[]
-        },
-        error: null
-      };
-    } catch (error) {
-      return {
-        data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido'
-      };
-    }
-  }
-
-  async getPreciosPorCiclo(
-    mes: number,
-    anio: number,
-    dia: string
-  ): Promise<
-    OperacionesServiceResponse<{
-      preciosUno: RevisarPrecioUno[];
-      preciosDos: RevisarPrecioDos[];
-    }>
-  > {
-    try {
-      const [resConsultarPreciosUno, resConsultarPreciosDos] =
-        await Promise.all([
-          api.get(`/ConsultarPreciosUno?mes=${mes}&año=${anio}`),
-          api.get(`/ConsultarPreciosDos?mes=${mes}&año=${anio}&dia=${dia}`)
-        ]);
-
-      return {
-        data: {
-          preciosUno: resConsultarPreciosUno.data as RevisarPrecioUno[],
-          preciosDos: resConsultarPreciosDos.data as RevisarPrecioDos[]
-        },
-        error: null
-      };
-    } catch (error) {
-      return {
-        data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido'
-      };
-    }
-  }
-
-  // ============ MÉTODOS PARA FLUJO DE CÁLCULO DE FACTURACIÓN ============
-
-  async lanzarCalculoFacturacion(
-    cicloFacturacion: number,
-    periodoFacturable: string
-  ): Promise<OperacionesServiceResponse<any>> {
-    try {
-      const response = await api.post('/lanzar-calculo-facturacion', {
-        cicloFacturacion,
-        periodoFacturable
-      });
-      return {
-        data: response.data,
-        error: null
-      };
-    } catch (error) {
-      return {
-        data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido'
-      };
-    }
-  }
-
-  async obtenerIdentificadorProceso(
-    cicloId: string,
-    periodoId: string,
-    modo: number = 1
-  ): Promise<OperacionesServiceResponse<IdentificadorProceso[]>> {
-    try {
-      const response = await api.get('/identificador-proceso', {
-        params: { cicloId, periodoId, modo }
-      });
-      return {
-        data: response.data as IdentificadorProceso[],
-        error: null
-      };
-    } catch (error) {
-      return {
-        data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido'
-      };
-    }
-  }
-
-  async verificarEstadoProceso(
-    procesoId: string
-  ): Promise<OperacionesServiceResponse<EstadoProceso[]>> {
-    try {
-      const response = await api.get('/estado-proceso', {
-        params: { procesoId }
-      });
-      return {
-        data: response.data as EstadoProceso[],
-        error: null
-      };
-    } catch (error) {
-      return {
-        data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido'
-      };
-    }
-  }
-
-  async consultarEncabezadoPrefactura(
-    cicloId: string,
-    periodo: string
-  ): Promise<OperacionesServiceResponse<CalculoPrefacturaDetalle[]>> {
-    try {
-      const response = await api.get('/calculo-prefactura-encabezado', {
-        params: { cicloId, periodo }
-      });
-      return {
-        data: response.data as CalculoPrefacturaDetalle[],
-        error: null
-      };
-    } catch (error) {
-      return {
-        data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido'
-      };
-    }
-  }
-
-  async consultarCargosPrefactura(
-    cicloId: string,
-    periodo: string
-  ): Promise<OperacionesServiceResponse<CalculoPrefacturaCargoResponse[]>> {
-    try {
-      const response = await api.get('/calculo-prefactura-cargos', {
-        params: { cicloId, periodo }
-      });
-      return {
-        data: response.data as CalculoPrefacturaCargoResponse[],
-        error: null
-      };
-    } catch (error) {
-      return {
-        data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido'
-      };
-    }
-  }
-
-  async generarDetalleFactura(
-    lecturaId: number,
-    periodoId: string
-  ): Promise<OperacionesServiceResponse<any>> {
-    try {
-      const response = await api.post('/generar-detalle-factura', {
-        lecturaId,
-        periodoId
-      });
-      return {
-        data: response.data,
-        error: null
-      };
-    } catch (error) {
-      return {
-        data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido'
-      };
-    }
-  }
-
-  async verificarEstadoCierreLecturas(
-    cicloFacturable: string,
-    periodo: string
-  ): Promise<OperacionesServiceResponse<any[]>> {
+  ): Promise<OperacionesServiceResponse<PreciosConsultarRequest[]>> {
     try {
       const params = new URLSearchParams();
-      params.append('cicloFacturable', cicloFacturable);
-      params.append('periodo', periodo);
+      params.append('mes', mes);
+      params.append('anio', anio);
 
-      const response = await api.get('/estado-cierre-lecturas', {
+      const response = await api.get('/precios/consultar', {
+        params
+      });
+      return {
+        data: response.data as PreciosConsultarRequest[],
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  async postGuardarPreciosCargoMasivo(
+    request: PreciosGuardarMasivoRequest
+  ): Promise<OperacionesServiceResponse<any>> {
+    try {
+      const response = await api.post('/precios/guardar-masivo', request);
+      return {
+        data: response.data,
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  /** Revisar Precios */
+
+  async getRevisarPreciosData(
+    mes: string,
+    anio: string
+  ): Promise<OperacionesServiceResponse<RevisionPreciosBuscarRequest[]>> {
+    try {
+      const params = new URLSearchParams();
+      params.append('mes', mes);
+      params.append('anio', anio);
+
+      const response = await api.get('/revision-precios/buscar', {
         params
       });
 
       return {
-        data: response.data as any[],
+        data: this.processApiResponse<RevisionPreciosBuscarRequest>(response),
         error: null
       };
     } catch (error) {
@@ -477,18 +511,630 @@ class OperacionesService {
     }
   }
 
-  async obtenerIdentificadorProcesoActual(
-    cicloId: string,
-    periodoId: string,
-    modo: number = 1
-  ): Promise<OperacionesServiceResponse<IdentificadorProceso>> {
+  async postConfirmarRevisionPrecios(
+    request: RevisionPreciosConfirmarRequest
+  ): Promise<OperacionesServiceResponse<any>> {
     try {
-      const response = await api.get('/identificador-proceso', {
-        params: { cicloId, periodoId, modo }
-      });
+      const response = await api.post('/revision-precios/confirmar', request);
+      const errorFromBody = this.extractErrorFromResponse(response.data);
+      if (errorFromBody) {
+        return { data: null, error: errorFromBody };
+      }
+      return {
+        data: response.data,
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  async getDetalleCorreccionCodigoCargo(
+    indice: number
+  ): Promise<
+    OperacionesServiceResponse<RevisionPreciosDetalleCorreccionResponse>
+  > {
+    try {
+      const response = await api.get(
+        `/revision-precios/detalle-correccion/${indice}`
+      );
+      return {
+        data: response.data as RevisionPreciosDetalleCorreccionResponse,
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  async postCorregirPrecioCargo(
+    request: RevisionPreciosCorregirRequest
+  ): Promise<OperacionesServiceResponse<any>> {
+    try {
+      const response = await api.post('/revision-precios/corregir', request);
+      const errorFromBody = this.extractErrorFromResponse(response.data);
+      if (errorFromBody) {
+        return { data: null, error: errorFromBody };
+      }
+      return {
+        data: response.data,
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  /**
+   * Cerrar Lecturas
+   */
+  async getObtenerCiclos(): Promise<
+    OperacionesServiceResponse<CerrarLecturasFiltrosCiclosResponse>
+  > {
+    try {
+      const response = await api.get('/cerrar-lecturas/filtros/ciclos');
+      return {
+        data: response.data as CerrarLecturasFiltrosCiclosResponse,
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  async getObtenerPeriodosCerrarLecturas(): Promise<
+    OperacionesServiceResponse<CerrarLecturasFiltrosPeriodosResponse[]>
+  > {
+    try {
+      const response = await api.get('/cerrar-lecturas/filtros/periodos');
+      return {
+        data: response.data as CerrarLecturasFiltrosPeriodosResponse[],
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  async getObtenerGrilla(
+    cicloId: number,
+    periodoId: string
+  ): Promise<
+    OperacionesServiceResponse<CerrarLecturasBuscarEstadisticasRequest[]>
+  > {
+    try {
+      const response = await api.get(
+        `/cerrar-lecturas/buscar-estadisticas?cicloId=${cicloId}&periodoId=${periodoId}`
+      );
+      return {
+        data: response.data as CerrarLecturasBuscarEstadisticasRequest[],
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  async postCerrarLecturas(
+    request: CerrarLecturasCerrarRequest
+  ): Promise<OperacionesServiceResponse<CerrarLecturasCerrarResponse>> {
+    try {
+      const response = await api.post('/cerrar-lecturas/cerrar', request);
+      return {
+        data: response.data as CerrarLecturasCerrarResponse,
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  async getObtenerGrillaData(): Promise<
+    OperacionesServiceResponse<CerrarLecturasBuscarEstadisticasRequest[]>
+  > {
+    try {
+      const response = await api.get('/cerrar-lecturas/buscar-estadisticas');
+      return {
+        data: response.data as CerrarLecturasBuscarEstadisticasRequest[],
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  /** Corte y Reposición */
+
+  async getCorteReposicionData(): Promise<
+    OperacionesServiceResponse<{
+      resumen: CorteReposicionResumenResponse;
+      mantenedorCorteData: CorteReposicionBuscarRequest[];
+    }>
+  > {
+    try {
+      const [resResumen, ResData] = await Promise.all([
+        api.get('/corte-reposicion/resumen'),
+        api.get('/corte-reposicion/buscar')
+      ]);
 
       return {
-        data: response.data as IdentificadorProceso,
+        data: {
+          resumen:
+            this.processApiResponse<CorteReposicionResumenResponse>(
+              resResumen
+            )[0],
+          mantenedorCorteData:
+            this.processApiResponse<CorteReposicionBuscarRequest>(ResData)
+        },
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  async getBuscarCorteReposicion(acomedita?: string) {
+    try {
+      const params = new URLSearchParams();
+      if (acomedita) {
+        params.append('acometida', acomedita);
+      }
+
+      const response = await api.get('/corte-reposicion/buscar', {
+        params
+      });
+      return {
+        data: response.data,
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  async postIniciarProcesoCorteReposicion() {
+    try {
+      const response = await api.post('/corte-reposicion/iniciar', {});
+      return {
+        data: response.data,
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  async postFinalizarProcesoCorteReposicion() {
+    try {
+      const response = await api.post('/corte-reposicion/finalizar', {});
+      return {
+        data: response.data,
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  async postActualizarProcesoCorteReposicion() {
+    try {
+      const response = await api.post(
+        '/corte-reposicion/actualizar-estados',
+        {}
+      );
+      return {
+        data: response.data,
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  async getConsultarDeuda(acometida: string) {
+    try {
+      const params = new URLSearchParams();
+      params.append('acometida', acometida);
+      const response = await api.get('/corte-reposicion/consultar-deuda', {
+        params
+      });
+      return {
+        data: response.data,
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  async postLiberarAcometida(request: CorteReposicionLiberarRequest) {
+    try {
+      const response = await api.post('/corte-reposicion/liberar', request);
+      return {
+        data: response.data,
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  async postRegistrarCorte(request: CorteReposicionRegistrarCorteRequest) {
+    try {
+      const response = await api.post(
+        '/corte-reposicion/registrar-corte',
+        request
+      );
+      return {
+        data: response.data,
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  async postSolicitarReposicion(contratoId: number, acometida: string) {
+    try {
+      const response = await api.post(
+        '/corte-reposicion/solicitar-reposicion',
+        { contratoId, acometida }
+      );
+      return {
+        data: response.data,
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  /**
+   * Revisar Calculos
+   */
+  async getRevisarCalculosData() {
+    try {
+      const [filtrosCiclos, filtrosPeriodos] = await Promise.all([
+        api.get('/revisar-calculos/filtros/ciclos'),
+        api.get('/revisar-calculos/filtros/periodos')
+      ]);
+      return {
+        data: {
+          filtrosCiclos:
+            filtrosCiclos.data as RevisarCalculosFiltrosCiclosResponse,
+          filtrosPeriodos:
+            filtrosPeriodos.data as RevisarCalculosFiltrosPeriodosResponse
+        },
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  async getRevisarCalculosEstadoProceso(
+    cicloId: number,
+    periodoId: string
+  ): Promise<OperacionesServiceResponse<RevisarCalculosEstadoProcesoRequest>> {
+    try {
+      const params = new URLSearchParams();
+      params.append('cicloId', cicloId.toString());
+      params.append('periodoId', periodoId);
+      const response = await api.get('/revisar-calculos/estado-proceso', {
+        params
+      });
+      return {
+        data: response.data as RevisarCalculosEstadoProcesoRequest,
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  async postRevisarCalculosLanzarCalculo(
+    request: RevisarCalculosLanzarCalculoRequest
+  ): Promise<OperacionesServiceResponse<LanzarCalculoResponse>> {
+    try {
+      const response = await api.post(
+        '/revisar-calculos/lanzar-calculo',
+        request
+      );
+      return {
+        data: response.data as LanzarCalculoResponse,
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  async getRevisarCalculosBuscarPrefacturas(
+    cicloId: number,
+    periodoId: string,
+    rut?: string,
+    nombre?: string,
+    sector?: string,
+    local?: string,
+    modo?: string,
+    procesoId?: number
+  ): Promise<
+    OperacionesServiceResponse<RevisarCalculosBuscarPrefacturasResponse>
+  > {
+    try {
+      const params = new URLSearchParams();
+      params.append('cicloId', cicloId.toString());
+      params.append('periodoId', periodoId);
+      if (rut) params.append('rut', rut);
+      if (nombre) params.append('nombre', nombre);
+      if (sector) params.append('sector', sector);
+      if (local) params.append('local', local);
+      if (modo) params.append('modo', modo);
+      if (procesoId) params.append('procesoId', procesoId.toString());
+      const response = await api.get('/revisar-calculos/buscar-prefacturas', {
+        params
+      });
+      return {
+        data: response.data as RevisarCalculosBuscarPrefacturasResponse,
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  async postRevisarCalculosAceptar(periodoId: string, lecturaIds: number[]) {
+    try {
+      const params = new URLSearchParams();
+      params.append('periodoId', periodoId);
+
+      const response = await api.post('/revisar-calculos/aceptar', lecturaIds, {
+        params
+      });
+      return {
+        data: response.data,
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  /**
+   * cambio Medidor
+   */
+  async getBuscarMedidorAntiguo(acometida?: string, serie?: string) {
+    try {
+      const params = new URLSearchParams();
+      if (acometida || serie) {
+        if (acometida) params.append('acometida', acometida);
+        if (serie) params.append('serie', serie);
+      } else {
+        throw new Error(
+          'Se debe proporcionar al menos un parámetro: acometida o número de serie'
+        );
+      }
+      const response = await api.get('/cambio-medidor/buscar-antiguo', {
+        params
+      });
+      return {
+        data: response.data as CambioMedidorBuscarAntiguoRequest,
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  async getBuscarMedidorNuevo(serie: string) {
+    try {
+      const params = new URLSearchParams();
+      params.append('serie', serie);
+      const response = await api.get('/cambio-medidor/buscar-nuevo', {
+        params
+      });
+      return {
+        data: response.data as CambioMedidorBuscarNuevoRequest,
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  async postEjecutarCambioMedidor(request: CambioMedidorEjecutarCambioRequest) {
+    try {
+      const response = await api.post(
+        '/cambio-medidor/ejecutar-cambio',
+        request
+      );
+      return {
+        data: response.data,
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  /**
+   * Archivos SAP
+   */
+  async getArchivoSAPEmpresas() {
+    try {
+      const response = await api.get('archivo-sap/empresas');
+      const errorFromBody = this.extractErrorFromResponse(response.data);
+
+      if (errorFromBody) {
+        return {
+          data: null,
+          error: errorFromBody
+        };
+      }
+
+      return {
+        data: this.normalizeSapEmpresas(response),
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  async getNombresSugeridos() {
+    try {
+      const response = await api.get('archivo-sap/nombres-sugeridos');
+      const errorFromBody = this.extractErrorFromResponse(response.data);
+
+      if (errorFromBody) {
+        return {
+          data: null,
+          error: errorFromBody
+        };
+      }
+
+      return {
+        data: this.normalizeSapSugeridos(response),
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  async getDescargarEnacabezado(empresaId: string, nombreArchivo: string) {
+    const params = new URLSearchParams();
+    params.append('empresaId', empresaId);
+    params.append('nombreArchivo', nombreArchivo);
+
+    try {
+      const response = await api.get('/archivo-sap/descargar-encabezado', {
+        params,
+        responseType: 'blob'
+      });
+      const filename = this.extractFilenameFromHeaders(response.headers);
+
+      return {
+        data: {
+          blob: response.data as Blob,
+          filename,
+          contentType:
+            typeof response.headers?.['content-type'] === 'string'
+              ? response.headers['content-type']
+              : null
+        } as SAPDownloadFile,
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  async getDescargarDetalle(empresaId: string, nombreArchivo: string) {
+    const params = new URLSearchParams();
+    params.append('empresaId', empresaId);
+    params.append('nombreArchivo', nombreArchivo);
+
+    try {
+      const response = await api.get('/archivo-sap/descargar-detalle', {
+        params,
+        responseType: 'blob'
+      });
+      const filename = this.extractFilenameFromHeaders(response.headers);
+
+      return {
+        data: {
+          blob: response.data as Blob,
+          filename,
+          contentType:
+            typeof response.headers?.['content-type'] === 'string'
+              ? response.headers['content-type']
+              : null
+        } as SAPDownloadFile,
         error: null
       };
     } catch (error) {

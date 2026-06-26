@@ -1,21 +1,23 @@
-import { useState, useEffect } from 'react';
 import {
-  Upload,
-  FileSpreadsheet,
-  X,
   AlertCircle,
   CheckCircle2,
+  ChevronDown,
+  Eye,
+  FileSpreadsheet,
   Info,
   Play,
   RefreshCw,
-  Eye,
-  ChevronDown
+  Upload,
+  X
 } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import * as XLSX from 'xlsx';
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
+import { ForceReprocessDialog } from '~/components/monitor/importar-lecturas/force-reprocess-dialog';
 import { ModernHeader } from '~/components/shared/modern-header';
-import { ResultadoProcesamientoModal } from './resultado-procesamiento-modal';
+import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert';
+import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
 import {
   Card,
@@ -24,30 +26,56 @@ import {
   CardHeader,
   CardTitle
 } from '~/components/ui/card';
-import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert';
-import { Badge } from '~/components/ui/badge';
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger
 } from '~/components/ui/collapsible';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription
-} from '~/components/ui/dialog';
-import { Input } from '~/components/ui/input';
-import { Checkbox } from '~/components/ui/checkbox';
-import type {
-  EstadoProcesamiento,
-  ProcesamientoResult,
-  RegistrosPendientes,
-  ValidacionLecturasPendientes
-} from '~/types/monitor';
+import { getAuthToken } from '~/services/axiosConfig';
+import { ResultadoProcesamientoModal } from './resultado-procesamiento-modal';
 
-// Interfaces para los nuevos endpoints
+interface EstadoProcesamiento {
+  periodoActivo: string;
+  registrosPendientes: number;
+  estado: string;
+}
+
+interface DetalleProcesamientoItem {
+  numeroSerie: string;
+  tarifa: string;
+  lecturaAnteriorKwh: number;
+  consumoEnergiaKwh: number;
+  usuarioCarga: string;
+  estado: string;
+  mensaje: string;
+}
+
+interface ProcesamientoResult {
+  exitoso: boolean;
+  mensaje: string;
+  registrosActualizados: number;
+  fechaProcesamiento: string;
+  periodo: string;
+  detalles: DetalleProcesamientoItem[];
+}
+
+interface RegistrosPendientes {
+  mensaje: string;
+}
+
+interface DetallePendiente {
+  sector: string;
+  nicho: string;
+  cantidad: number;
+}
+
+interface ValidacionLecturasPendientes {
+  sinPendientes: boolean;
+  mensaje: string;
+  periodo: string;
+  totalPendientes: number;
+  detalles: DetallePendiente[];
+}
 
 export default function ImportarLecturasComponent() {
   const [file, setFile] = useState<File | null>(null);
@@ -72,12 +100,10 @@ export default function ImportarLecturasComponent() {
   const [showResultModal, setShowResultModal] = useState(false);
   const [validacionLecturas, setValidacionLecturas] =
     useState<ValidacionLecturasPendientes | null>(null);
-  const [loadingValidacion, setLoadingValidacion] = useState(false);
-  const [showDetallesPendientes, setShowDetallesPendientes] = useState(false);
+  const [_loadingValidacion, setLoadingValidacion] = useState(false);
+  const [_showDetallesPendientes, _setShowDetallesPendientes] = useState(false);
   const [yaProcesado, setYaProcesado] = useState(false);
   const [forceReprocessOpen, setForceReprocessOpen] = useState(false);
-  const [confirmPeriodInput, setConfirmPeriodInput] = useState('');
-  const [ackRiskChecked, setAckRiskChecked] = useState(false);
 
   const pageBreadcrumbs = [
     { label: 'Monitor' },
@@ -92,13 +118,13 @@ export default function ImportarLecturasComponent() {
     'Fecha de Emisión',
     'Tarifa',
     'Fecha Última Lectura',
-    'Última Lectura (kWh)',
+    'Última Lectura (m³)',
     'Fecha Lectura Anterior',
-    'Lectura Anterior (kWh)',
-    'Consumo Energía (kWh)',
-    'Demanda Máx. Suministrada (kW)',
-    'Demanda Máx. Hora Punta (kW)',
-    'Demanda Máx. Potencia Leída Punta (kW)',
+    'Lectura Anterior (m³)',
+    'Consumo Energía (m³)',
+    'Demanda Máx. Suministrada (m³)',
+    'Demanda Máx. Hora Punta (m³)',
+    'Demanda Máx. Potencia Leída Punta (m³)',
     'Cargo Fijo',
     'Servicio Público Base',
     'Tramo Fondo Estabilización',
@@ -115,15 +141,15 @@ export default function ImportarLecturasComponent() {
     'Cobro Potencia Adicional',
     'Cobro Potencia Adicional de Invierno',
     'Cobro por Electricidad Consumida Sobre Límite',
-    'Promedio D.M. Suministrada (kW)',
+    'Promedio D.M. Suministrada (m³)',
     'Cobro D.M. Suministrada',
     'Demanda en Horas de Punta',
     'Cobro Demanda en Horas de Punta',
     'Cobro por Demanda Máxima de Potencia',
     'Presencia en Punta',
-    'Potencia Contratada (kW)',
+    'Potencia Contratada (m³)',
     'Cobro Potencia Contratada',
-    'Prom. D.M. Pot. Leída en Punta (kW)',
+    'Prom. D.M. Pot. Leída en Punta (m³)',
     'Cobro D.M. Pot. Leída en Punta',
     'Factor de Potencia Medio',
     'Multa Factor de Potencia',
@@ -318,7 +344,7 @@ export default function ImportarLecturasComponent() {
       const formData = new FormData();
       formData.append('file', file);
 
-      const token = localStorage.getItem('token');
+      const token = getAuthToken();
       const ENERLINK_API_URL = import.meta.env.VITE_API_URL;
       const baseUrl = ENERLINK_API_URL || '';
       const url = `${baseUrl}/upload`;
@@ -354,7 +380,7 @@ export default function ImportarLecturasComponent() {
   const fetchEstadoProcesamiento = async () => {
     setLoadingEstado(true);
     try {
-      const token = localStorage.getItem('token');
+      const token = getAuthToken();
       const VITE_API_URL = import.meta.env.VITE_API_URL;
       const baseUrl = VITE_API_URL || '';
       const url = `${baseUrl}/estado-procesamiento`;
@@ -385,7 +411,7 @@ export default function ImportarLecturasComponent() {
   const fetchRegistrosPendientes = async () => {
     setLoadingRegistros(true);
     try {
-      const token = localStorage.getItem('token');
+      const token = getAuthToken();
       const VITE_API_URL = import.meta.env.VITE_API_URL;
       const baseUrl = VITE_API_URL || '';
       const url = `${baseUrl}/registros-pendientes`;
@@ -426,7 +452,7 @@ export default function ImportarLecturasComponent() {
     }
     setProcessingBT(true);
     try {
-      const token = localStorage.getItem('token');
+      const token = getAuthToken();
       const ENERLINK_API_URL = import.meta.env.VITE_API_URL;
       const baseUrl = ENERLINK_API_URL || '';
       const url = `${baseUrl}/procesar-bt1-bt2`;
@@ -471,7 +497,7 @@ export default function ImportarLecturasComponent() {
   const fetchValidacionLecturasPendientes = async () => {
     setLoadingValidacion(true);
     try {
-      const token = localStorage.getItem('token');
+      const token = getAuthToken();
       const VITE_API_URL = import.meta.env.VITE_API_URL;
       const baseUrl = VITE_API_URL || '';
 
@@ -524,22 +550,22 @@ export default function ImportarLecturasComponent() {
   }, []);
 
   return (
-    <div className='min-h-screen bg-background'>
-      <div className='container mx-auto p-6 space-y-6'>
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto p-6 space-y-6">
         <BreadcrumbSetter items={pageBreadcrumbs} />
 
         {/* Header */}
         <ModernHeader
-          title='Importar Lecturas'
-          description='Carga un archivo Excel con las lecturas de medidores para importarlas al sistema'
+          title="Importar Lecturas"
+          description="Carga un archivo Excel con las lecturas de medidores para importarlas al sistema"
         />
 
         {/* Panel de Control Principal */}
-        <div className='grid grid-cols-1 lg:grid-cols-3 gap-4'>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           {/* Estado del Sistema */}
-          <Card className='lg:col-span-2'>
+          <Card className="lg:col-span-2">
             <CardHeader>
-              <div className='flex items-center justify-between'>
+              <div className="flex items-center justify-between">
                 <div>
                   <CardTitle>Estado del Sistema</CardTitle>
                   <CardDescription>
@@ -549,8 +575,8 @@ export default function ImportarLecturasComponent() {
                 <Button
                   onClick={fetchEstadoProcesamiento}
                   disabled={loadingEstado}
-                  variant='outline'
-                  size='icon'
+                  variant="outline"
+                  size="icon"
                 >
                   <RefreshCw
                     className={`h-4 w-4 ${loadingEstado ? 'animate-spin' : ''}`}
@@ -560,16 +586,16 @@ export default function ImportarLecturasComponent() {
             </CardHeader>
             <CardContent>
               {loadingEstado ? (
-                <div className='flex items-center justify-center py-12'>
-                  <div className='animate-spin  h-8 w-8 border-2 border-border border-t-border' />
+                <div className="flex items-center justify-center py-12">
+                  <div className="animate-spin  h-8 w-8 border-2 border-border border-t-border" />
                 </div>
               ) : estadoProcesamiento ? (
-                <div className='grid grid-cols-3 gap-4'>
-                  <div className='text-center p-4 rounded-radius border border-border'>
-                    <div className='text-2xl font-bold mb-1'>
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="text-center p-4 rounded-radius border border-border">
+                    <div className="text-2xl font-bold mb-1">
                       {estadoProcesamiento.periodoActivo}
                     </div>
-                    <div className='text-xs font-medium text-muted-foreground'>
+                    <div className="text-xs font-medium text-muted-foreground">
                       Período Activo
                     </div>
                   </div>
@@ -601,17 +627,17 @@ export default function ImportarLecturasComponent() {
                     </div>
                   </div>
 
-                  <div className='text-center p-4 rounded-radius bg-muted/30 border border-border'>
-                    <Badge variant='secondary' className='mb-1'>
+                  <div className="text-center p-4 rounded-radius bg-muted/30 border border-border">
+                    <Badge variant="secondary" className="mb-1">
                       {estadoProcesamiento.estado}
                     </Badge>
-                    <div className='text-[10px] text-muted-foreground'>
+                    <div className="text-[10px] text-muted-foreground">
                       Estado
                     </div>
                   </div>
                 </div>
               ) : (
-                <div className='text-center py-12 text-muted-foreground'>
+                <div className="text-center py-12 text-muted-foreground">
                   No se pudo cargar el estado
                 </div>
               )}
@@ -624,17 +650,17 @@ export default function ImportarLecturasComponent() {
               <CardTitle>Acciones</CardTitle>
               <CardDescription>Consultas y procesamiento</CardDescription>
             </CardHeader>
-            <CardContent className='space-y-3'>
+            <CardContent className="space-y-3">
               <Button
                 onClick={fetchRegistrosPendientes}
                 disabled={loadingRegistros}
-                variant='default'
-                className='w-full gap-2'
+                variant="default"
+                className="w-full gap-2"
               >
                 {loadingRegistros ? (
-                  <div className='animate-spin rounded-full h-4 w-4 border-2 border-border border-t-transparent' />
+                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-border border-t-transparent" />
                 ) : (
-                  <Info className='h-4 w-4' />
+                  <Info className="h-4 w-4" />
                 )}
                 <span>Consultar Pendientes</span>
               </Button>
@@ -646,32 +672,32 @@ export default function ImportarLecturasComponent() {
                   estadoProcesamiento?.registrosPendientes === 0 ||
                   yaProcesado
                 }
-                variant='destructive'
-                className='w-full gap-2'
+                variant="destructive"
+                className="w-full gap-2"
               >
                 {processingBT ? (
-                  <div className='animate-spin rounded-full h-4 w-4 border-2 border-border border-t-transparent' />
+                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-border border-t-transparent" />
                 ) : (
-                  <Play className='h-4 w-4' />
+                  <Play className="h-4 w-4" />
                 )}
                 <span>Procesar BT1-BT2</span>
               </Button>
               {estadoProcesamiento?.registrosPendientes === 0 && (
-                <p className='text-xs text-center text-muted-foreground'>
+                <p className="text-xs text-center text-muted-foreground">
                   No hay lecturas pendientes
                 </p>
               )}
               {yaProcesado && (
-                <p className='text-xs text-center text-muted-foreground'>
+                <p className="text-xs text-center text-muted-foreground">
                   Este período ya fue procesado
                 </p>
               )}
               {yaProcesado && estadoProcesamiento?.periodoActivo && (
                 <Button
                   onClick={() => setForceReprocessOpen(true)}
-                  variant='outline'
-                  size='sm'
-                  className='w-full mt-2'
+                  variant="outline"
+                  size="sm"
+                  className="w-full mt-2"
                 >
                   Permitir reprocesar período
                 </Button>
@@ -681,77 +707,77 @@ export default function ImportarLecturasComponent() {
         </div>
 
         {/* Notificaciones y Alertas - Minimalistas */}
-        <div className='space-y-3'>
+        <div className="space-y-3">
           {/* Resultado de registros pendientes */}
           {registrosPendientes && (
-            <Alert className='relative pr-10'>
-              <Info className='h-4 w-4' />
+            <Alert className="relative pr-10">
+              <Info className="h-4 w-4" />
               <AlertTitle>Registros Pendientes</AlertTitle>
               <AlertDescription>{registrosPendientes.mensaje}</AlertDescription>
               <Button
-                variant='ghost'
-                size='icon'
-                className='absolute top-2 right-2 h-8 w-8'
+                variant="ghost"
+                size="icon"
+                className="absolute top-2 right-2 h-8 w-8"
                 onClick={() => setRegistrosPendientes(null)}
-                aria-label='Cerrar'
+                aria-label="Cerrar"
               >
-                <X className='h-4 w-4' />
+                <X className="h-4 w-4" />
               </Button>
             </Alert>
           )}
 
           {/* Resultado del procesamiento */}
           {procesamientoResult && (
-            <Card className='border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/20'>
-              <CardHeader className='pb-3'>
-                <div className='flex items-start justify-between'>
-                  <div className='flex items-center gap-3'>
-                    <div className='p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-full'>
-                      <CheckCircle2 className='h-5 w-5 text-emerald-600 dark:text-emerald-400' />
+            <Card className="border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/20">
+              <CardHeader className="pb-3">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-full">
+                      <CheckCircle2 className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
                     </div>
                     <div>
-                      <CardTitle className='text-emerald-900 dark:text-emerald-100'>
+                      <CardTitle className="text-emerald-900 dark:text-emerald-100">
                         Procesamiento Completado
                       </CardTitle>
-                      <CardDescription className='text-emerald-700 dark:text-emerald-300'>
+                      <CardDescription className="text-emerald-700 dark:text-emerald-300">
                         {procesamientoResult.mensaje}
                       </CardDescription>
                     </div>
                   </div>
                   <Button
                     onClick={() => setProcesamientoResult(null)}
-                    variant='ghost'
-                    size='icon'
-                    className='text-emerald-600 hover:text-emerald-700 hover:bg-emerald-100 dark:hover:bg-emerald-900/30'
+                    variant="ghost"
+                    size="icon"
+                    className="text-emerald-600 hover:text-emerald-700 hover:bg-emerald-100 dark:hover:bg-emerald-900/30"
                   >
-                    <X className='h-4 w-4' />
+                    <X className="h-4 w-4" />
                   </Button>
                 </div>
               </CardHeader>
-              <CardContent className='space-y-4'>
+              <CardContent className="space-y-4">
                 {/* Resumen en grid */}
-                <div className='grid grid-cols-3 gap-3'>
-                  <div className='p-3 bg-white dark:bg-background rounded-lg border border-emerald-200 dark:border-emerald-800'>
-                    <div className='text-2xl font-bold text-emerald-700 dark:text-emerald-400'>
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="p-3 bg-white dark:bg-background rounded-lg border border-emerald-200 dark:border-emerald-800">
+                    <div className="text-2xl font-bold text-emerald-700 dark:text-emerald-400">
                       {procesamientoResult.registrosActualizados}
                     </div>
-                    <div className='text-xs text-emerald-600 dark:text-emerald-500 mt-0.5'>
+                    <div className="text-xs text-emerald-600 dark:text-emerald-500 mt-0.5">
                       Registros Actualizados
                     </div>
                   </div>
-                  <div className='p-3 bg-white dark:bg-background rounded-lg border border-emerald-200 dark:border-emerald-800'>
-                    <div className='text-2xl font-bold text-emerald-700 dark:text-emerald-400'>
+                  <div className="p-3 bg-white dark:bg-background rounded-lg border border-emerald-200 dark:border-emerald-800">
+                    <div className="text-2xl font-bold text-emerald-700 dark:text-emerald-400">
                       {procesamientoResult.periodo}
                     </div>
-                    <div className='text-xs text-emerald-600 dark:text-emerald-500 mt-0.5'>
+                    <div className="text-xs text-emerald-600 dark:text-emerald-500 mt-0.5">
                       Período
                     </div>
                   </div>
-                  <div className='p-3 bg-white dark:bg-background rounded-lg border border-emerald-200 dark:border-emerald-800'>
-                    <div className='text-2xl font-bold text-emerald-700 dark:text-emerald-400'>
+                  <div className="p-3 bg-white dark:bg-background rounded-lg border border-emerald-200 dark:border-emerald-800">
+                    <div className="text-2xl font-bold text-emerald-700 dark:text-emerald-400">
                       {procesamientoResult.detalles?.length || 0}
                     </div>
-                    <div className='text-xs text-emerald-600 dark:text-emerald-500 mt-0.5'>
+                    <div className="text-xs text-emerald-600 dark:text-emerald-500 mt-0.5">
                       Detalles Procesados
                     </div>
                   </div>
@@ -760,11 +786,11 @@ export default function ImportarLecturasComponent() {
                 {/* Botón de ver detalles */}
                 <Button
                   onClick={() => setShowResultModal(true)}
-                  variant='outline'
-                  size='sm'
-                  className='w-full gap-2 border-emerald-300 dark:border-emerald-700 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/30'
+                  variant="outline"
+                  size="sm"
+                  className="w-full gap-2 border-emerald-300 dark:border-emerald-700 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/30"
                 >
-                  <Eye className='h-4 w-4' />
+                  <Eye className="h-4 w-4" />
                   Ver Detalles Completos
                 </Button>
               </CardContent>
@@ -773,17 +799,17 @@ export default function ImportarLecturasComponent() {
 
           {/* Error de validación */}
           {error && (
-            <Alert variant='destructive'>
-              <AlertCircle className='h-4 w-4' />
+            <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
               <AlertTitle>Error de Validación</AlertTitle>
-              <AlertDescription className='space-y-2'>
+              <AlertDescription className="space-y-2">
                 <p>{error}</p>
                 {error.includes('período') && estadoProcesamiento && (
-                  <div className='mt-3 p-3 bg-destructive/10 rounded-radius border border-destructive/20'>
-                    <p className='text-sm font-medium mb-2'>💡 Solución</p>
-                    <p className='text-xs'>
+                  <div className="mt-3 p-3 bg-destructive/10 rounded-radius border border-destructive/20">
+                    <p className="text-sm font-medium mb-2">💡 Solución</p>
+                    <p className="text-xs">
                       Asegúrate de que la columna "Periodo" contenga:{' '}
-                      <code className='px-2 py-0.5 bg-muted rounded font-mono'>
+                      <code className="px-2 py-0.5 bg-muted rounded font-mono">
                         {estadoProcesamiento.periodoActivo}
                       </code>
                     </p>
@@ -951,93 +977,20 @@ export default function ImportarLecturasComponent() {
         />
 
         {/* Diálogo para forzar reprocesamiento */}
-        <Dialog open={forceReprocessOpen} onOpenChange={setForceReprocessOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Forzar reprocesamiento</DialogTitle>
-              <DialogDescription>
-                Esta acción permitirá procesar BT1-BT2 nuevamente para el
-                período actual. Úsalo solo si estás seguro de que es necesario.
-              </DialogDescription>
-            </DialogHeader>
-            <div className='space-y-3'>
-              <div className='text-sm text-muted-foreground'>
-                Período activo:{' '}
-                <code className='font-mono'>
-                  {estadoProcesamiento?.periodoActivo || 'N/D'}
-                </code>
-              </div>
-              <div className='space-y-2'>
-                <label className='text-xs font-medium'>
-                  Escribe el período activo para confirmar
-                </label>
-                <Input
-                  value={confirmPeriodInput}
-                  onChange={e => setConfirmPeriodInput(e.target.value)}
-                  placeholder='Ej: 102025'
-                />
-              </div>
-              <div className='flex items-center gap-2'>
-                <Checkbox
-                  checked={ackRiskChecked}
-                  onCheckedChange={checked =>
-                    setAckRiskChecked(Boolean(checked))
-                  }
-                  id='ack-risk'
-                />
-                <label
-                  htmlFor='ack-risk'
-                  className='text-xs text-muted-foreground'
-                >
-                  Entiendo el riesgo de reprocesar lecturas en el mismo período.
-                </label>
-              </div>
-              <div className='flex justify-end gap-2 mt-2'>
-                <Button
-                  variant='ghost'
-                  onClick={() => {
-                    setForceReprocessOpen(false);
-                    setConfirmPeriodInput('');
-                    setAckRiskChecked(false);
-                  }}
-                >
-                  Cancelar
-                </Button>
-                <Button
-                  disabled={
-                    !estadoProcesamiento?.periodoActivo ||
-                    confirmPeriodInput !== estadoProcesamiento?.periodoActivo ||
-                    !ackRiskChecked
-                  }
-                  onClick={() => {
-                    const periodo = estadoProcesamiento?.periodoActivo;
-                    if (periodo) {
-                      const key = `bt1bt2_processed_period:${periodo}`;
-                      localStorage.removeItem(key);
-                      setYaProcesado(false);
-                      toast.success(
-                        'Se habilitó el reprocesamiento para este período'
-                      );
-                    }
-                    setForceReprocessOpen(false);
-                    setConfirmPeriodInput('');
-                    setAckRiskChecked(false);
-                  }}
-                >
-                  Habilitar reprocesar
-                </Button>
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
+        <ForceReprocessDialog
+          open={forceReprocessOpen}
+          onOpenChange={setForceReprocessOpen}
+          periodoActivo={estadoProcesamiento?.periodoActivo ?? ''}
+          onConfirm={() => setYaProcesado(false)}
+        />
 
         {/* Zona de Carga de Archivos */}
         <Card>
           <CardHeader>
-            <div className='flex items-center justify-between'>
-              <div className='flex items-center gap-3'>
-                <div className='p-2 bg-primary/10 rounded-radius'>
-                  <FileSpreadsheet className='h-5 w-5 text-primary' />
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-primary/10 rounded-radius">
+                  <FileSpreadsheet className="h-5 w-5 text-primary" />
                 </div>
                 <div>
                   <CardTitle>Cargar Archivo Excel</CardTitle>
@@ -1054,9 +1007,9 @@ export default function ImportarLecturasComponent() {
               onOpenChange={setShowRequirements}
             >
               <CollapsibleTrigger asChild>
-                <Button variant='ghost' className='w-full justify-between mb-4'>
-                  <div className='flex items-center gap-2'>
-                    <Info className='h-4 w-4' />
+                <Button variant="ghost" className="w-full justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <Info className="h-4 w-4" />
                     <span>Requisitos del archivo</span>
                   </div>
                   <ChevronDown
@@ -1065,23 +1018,23 @@ export default function ImportarLecturasComponent() {
                 </Button>
               </CollapsibleTrigger>
               <CollapsibleContent>
-                <div className='p-4 bg-muted/30 rounded-radius border border-border mb-4'>
-                  <div className='grid grid-cols-1 md:grid-cols-3 gap-3 text-xs'>
-                    <div className='flex items-center gap-2'>
-                      <div className='w-1.5 h-1.5 rounded-full bg-primary' />
-                      <span className='text-muted-foreground'>
+                <div className="p-4 bg-muted/30 rounded-radius border border-border mb-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+                    <div className="flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                      <span className="text-muted-foreground">
                         Formato: .xlsx o .xls
                       </span>
                     </div>
-                    <div className='flex items-center gap-2'>
-                      <div className='w-1.5 h-1.5 rounded-full bg-primary' />
-                      <span className='text-muted-foreground'>
+                    <div className="flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                      <span className="text-muted-foreground">
                         Tamaño máximo: 10 MB
                       </span>
                     </div>
-                    <div className='flex items-center gap-2'>
-                      <div className='w-1.5 h-1.5 rounded-full bg-primary' />
-                      <span className='text-muted-foreground'>
+                    <div className="flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                      <span className="text-muted-foreground">
                         {REQUIRED_COLUMNS.length} columnas requeridas
                       </span>
                     </div>
@@ -1092,20 +1045,20 @@ export default function ImportarLecturasComponent() {
                   >
                     <CollapsibleTrigger asChild>
                       <Button
-                        variant='link'
-                        size='sm'
-                        className='mt-2 p-0 h-auto'
+                        variant="link"
+                        size="sm"
+                        className="mt-2 p-0 h-auto"
                       >
                         {showColumnInfo ? 'Ocultar' : 'Ver'} lista de columnas
                       </Button>
                     </CollapsibleTrigger>
                     <CollapsibleContent>
-                      <div className='mt-3 p-3 bg-card rounded-radius border border-border max-h-40 overflow-y-auto'>
-                        <div className='grid grid-cols-2 md:grid-cols-3 gap-2'>
+                      <div className="mt-3 p-3 bg-card rounded-radius border border-border max-h-40 overflow-y-auto">
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                           {REQUIRED_COLUMNS.map((col, idx) => (
                             <div
                               key={idx}
-                              className='text-xs text-muted-foreground'
+                              className="text-xs text-muted-foreground"
                             >
                               • {col}
                             </div>
@@ -1144,7 +1097,7 @@ export default function ImportarLecturasComponent() {
                       : 'border-border hover:border-primary hover:bg-accent/50'
                 }`}
               >
-                <div className='flex flex-col items-center gap-6 text-center'>
+                <div className="flex flex-col items-center gap-6 text-center">
                   <div
                     className={`relative transition-all duration-300 ${isDragging ? 'scale-110' : ''}`}
                   >
@@ -1167,65 +1120,65 @@ export default function ImportarLecturasComponent() {
                   </div>
 
                   <div>
-                    <p className='text-lg font-semibold text-background-900 dark:text-background-100 mb-2'>
+                    <p className="text-lg font-semibold text-background-900 dark:text-background-100 mb-2">
                       {isDragging
                         ? '¡Suelta el archivo aquí!'
                         : 'Arrastra tu archivo Excel'}
                     </p>
-                    <p className='text-sm text-background-600 dark:text-background-400'>
+                    <p className="text-sm text-background-600 dark:text-background-400">
                       o haz clic en el botón para seleccionar
                     </p>
                   </div>
 
                   <input
-                    type='file'
-                    accept='.xlsx,.xls'
+                    type="file"
+                    accept=".xlsx,.xls"
                     onChange={handleFileInput}
-                    className='hidden'
-                    id='file-upload'
+                    className="hidden"
+                    id="file-upload"
                   />
 
                   <Button asChild>
                     <label
-                      htmlFor='file-upload'
-                      className='cursor-pointer gap-2'
+                      htmlFor="file-upload"
+                      className="cursor-pointer gap-2"
                     >
-                      <FileSpreadsheet className='h-4 w-4' />
+                      <FileSpreadsheet className="h-4 w-4" />
                       Seleccionar Archivo
                     </label>
                   </Button>
                 </div>
               </div>
             ) : (
-              <div className='space-y-4'>
+              <div className="space-y-4">
                 {/* Archivo cargado */}
-                <Alert className='bg-emerald-50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-800'>
-                  <FileSpreadsheet className='h-5 w-5 text-emerald-500' />
-                  <div className='flex items-center justify-between flex-1'>
-                    <div className='flex-1 min-w-0'>
-                      <AlertTitle className='flex items-center gap-2 text-emerald-900 dark:text-emerald-100'>
-                        <span className='truncate'>{file.name}</span>
+                <Alert className="bg-emerald-50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-800">
+                  <FileSpreadsheet className="h-5 w-5 text-emerald-500" />
+                  <div className="flex items-center justify-between flex-1">
+                    <div className="flex-1 min-w-0">
+                      <AlertTitle className="flex items-center gap-2 text-emerald-900 dark:text-emerald-100">
+                        <span className="truncate">{file.name}</span>
                         {isValidFile && (
                           <Badge
-                            variant='secondary'
-                            className='bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400'
+                            variant="secondary"
+                            className="bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400"
                           >
-                            <CheckCircle2 className='h-3 w-3 mr-1' />
+                            <CheckCircle2 className="h-3 w-3 mr-1" />
                             Validado
                           </Badge>
                         )}
                       </AlertTitle>
-                      <AlertDescription className='text-emerald-700 dark:text-emerald-300'>
+                      <AlertDescription className="text-emerald-700 dark:text-emerald-300">
                         {(file.size / 1024).toFixed(2)} KB
                       </AlertDescription>
                     </div>
                     <Button
                       onClick={handleRemoveFile}
-                      variant='ghost'
-                      size='icon'
-                      className='text-red-500 hover:text-red-700 hover:bg-red-100 dark:hover:bg-red-900/30'
+                      variant="ghost"
+                      size="icon"
+                      className="text-red-500 hover:text-red-700 hover:bg-red-100 dark:hover:bg-red-900/30"
                     >
-                      <X className='h-5 w-5' />
+                      <X className="h-5 w-5" />
                     </Button>
                   </div>
                 </Alert>
@@ -1235,18 +1188,18 @@ export default function ImportarLecturasComponent() {
                   <Button
                     onClick={handleImportar}
                     disabled={isImporting}
-                    variant='default'
-                    size='lg'
-                    className='w-full gap-2'
+                    variant="default"
+                    size="lg"
+                    className="w-full gap-2"
                   >
                     {isImporting ? (
                       <>
-                        <div className='animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent' />
+                        <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent" />
                         <span>Cargando archivo...</span>
                       </>
                     ) : (
                       <>
-                        <Upload className='h-5 w-5' />
+                        <Upload className="h-5 w-5" />
                         <span>Importar Lecturas</span>
                       </>
                     )}
@@ -1257,11 +1210,11 @@ export default function ImportarLecturasComponent() {
 
             {/* Estado de validación */}
             {isValidating && (
-              <div className='flex flex-col items-center justify-center py-8 space-y-4'>
-                <div className='animate-spin rounded-full h-12 w-12 border-4 border-border border-t-primary' />
-                <div className='text-center'>
-                  <p className='font-semibold mb-1'>Validando archivo...</p>
-                  <p className='text-sm text-muted-foreground'>
+              <div className="flex flex-col items-center justify-center py-8 space-y-4">
+                <div className="animate-spin rounded-full h-12 w-12 border-4 border-border border-t-primary" />
+                <div className="text-center">
+                  <p className="font-semibold mb-1">Validando archivo...</p>
+                  <p className="text-sm text-muted-foreground">
                     Verificando estructura y columnas requeridas
                   </p>
                 </div>

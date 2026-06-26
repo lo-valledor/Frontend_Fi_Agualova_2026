@@ -1,13 +1,14 @@
 import { Download, FileSpreadsheet, X } from 'lucide-react';
+import { toast } from 'sonner';
 import * as XLSX from 'xlsx';
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
-  DialogTitle,
-  DialogDescription
+  DialogTitle
 } from '~/components/ui/dialog';
 import {
   Table,
@@ -17,7 +18,6 @@ import {
   TableHeader,
   TableRow
 } from '~/components/ui/table';
-import { toast } from 'sonner';
 
 interface DetalleProcesamientoItem {
   numeroSerie: string;
@@ -104,8 +104,8 @@ export function ResultadoProcesamientoModal({
       const encabezadosDetalles = [
         'Número de Serie',
         'Tarifa',
-        'Lectura Anterior (kWh)',
-        'Consumo Energía (kWh)',
+        'Lectura Anterior (m³)',
+        'Consumo Energía (m³)',
         'Usuario Carga',
         'Estado',
         'Mensaje'
@@ -162,11 +162,11 @@ export function ResultadoProcesamientoModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className='min-w-[95vw] w-full max-h-[90vh] flex flex-col'>
+      <DialogContent className="min-w-[95vw] w-full max-h-[90vh] flex flex-col">
         <DialogHeader>
-          <div className='flex items-center justify-between p-2'>
+          <div className="flex items-center justify-between p-2">
             <div>
-              <DialogTitle className='text-xl'>
+              <DialogTitle className="text-xl">
                 Resultado del Procesamiento
               </DialogTitle>
               <DialogDescription>
@@ -174,102 +174,102 @@ export function ResultadoProcesamientoModal({
               </DialogDescription>
             </div>
             <Button
-              variant='default'
-              size='sm'
+              variant="default"
+              size="sm"
               onClick={exportarAExcel}
-              className='flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600'
+              className="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600"
             >
-              <Download className='h-4 w-4' />
+              <Download className="h-4 w-4" />
               Exportar a Excel
             </Button>
           </div>
         </DialogHeader>
 
-        <div className='space-y-4 flex-1 overflow-hidden flex flex-col'>
+        <div className="space-y-4 flex-1 overflow-hidden flex flex-col">
           {/* Resumen del procesamiento */}
-          <div className='grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-background rounded-xl border'>
-            <div className='text-center'>
-              <div className='text-2xl font-bold text-green-700 dark:text-green-300'>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-background rounded-xl border">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-green-700 dark:text-green-300">
                 {resultado.registrosActualizados}
               </div>
-              <div className='text-xs text-muted-foreground'>
+              <div className="text-xs text-muted-foreground">
                 Registros Actualizados
               </div>
             </div>
-            <div className='text-center'>
-              <div className='text-sm font-medium'>{resultado.periodo}</div>
-              <div className='text-xs text-muted-foreground'>Período</div>
+            <div className="text-center">
+              <div className="text-sm font-medium">{resultado.periodo}</div>
+              <div className="text-xs text-muted-foreground">Período</div>
             </div>
-            <div className='text-center'>
+            <div className="text-center">
               <Badge variant={resultado.exitoso ? 'default' : 'destructive'}>
                 {resultado.exitoso ? 'Exitoso' : 'Falló'}
               </Badge>
-              <div className='text-xs text-muted-foreground mt-1'>Estado</div>
+              <div className="text-xs text-muted-foreground mt-1">Estado</div>
             </div>
-            <div className='text-center'>
-              <div className='text-xs font-mono'>
+            <div className="text-center">
+              <div className="text-xs font-mono">
                 {formatearFechaLocal(resultado.fechaProcesamiento)}
               </div>
-              <div className='text-xs text-muted-foreground'>Fecha</div>
+              <div className="text-xs text-muted-foreground">Fecha</div>
             </div>
           </div>
 
           {/* Mensaje del resultado */}
-          <div className='p-3 bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-xl'>
-            <p className='text-sm text-green-800 dark:text-green-200'>
+          <div className="p-3 bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-xl">
+            <p className="text-sm text-green-800 dark:text-green-200">
               {resultado.mensaje}
             </p>
           </div>
 
           {/* Tabla de detalles */}
           {resultado.detalles && resultado.detalles.length > 0 && (
-            <div className='flex-1 overflow-hidden flex flex-col'>
-              <div className='flex items-center justify-between mb-2'>
-                <h4 className='text-sm font-medium'>
+            <div className="flex-1 overflow-hidden flex flex-col">
+              <div className="flex items-center justify-between mb-2">
+                <h4 className="text-sm font-medium">
                   Detalles del procesamiento ({resultado.detalles.length}{' '}
                   registros)
                 </h4>
-                <Badge variant='outline'>
-                  <FileSpreadsheet className='h-3 w-3 mr-1' />
+                <Badge variant="outline">
+                  <FileSpreadsheet className="h-3 w-3 mr-1" />
                   {resultado.detalles.length} filas
                 </Badge>
               </div>
 
-              <div className='flex-1 border rounded-xl overflow-auto'>
+              <div className="flex-1 border rounded-xl overflow-auto">
                 <Table>
-                  <TableHeader className='sticky top-0 bg-background z-10'>
+                  <TableHeader className="sticky top-0 bg-background z-10">
                     <TableRow>
-                      <TableHead className='min-w-[140px]'>
+                      <TableHead className="min-w-35">
                         Número de Serie
                       </TableHead>
-                      <TableHead className='min-w-20'>Tarifa</TableHead>
-                      <TableHead className='text-right min-w-[150px]'>
-                        Lectura Ant. (kWh)
+                      <TableHead className="min-w-20">Tarifa</TableHead>
+                      <TableHead className="text-right min-w-37.5">
+                        Lectura Ant. (m³)
                       </TableHead>
-                      <TableHead className='text-right min-w-[140px]'>
-                        Consumo (kWh)
+                      <TableHead className="text-right min-w-35">
+                        Consumo (m³)
                       </TableHead>
-                      <TableHead className='min-w-[120px]'>Usuario</TableHead>
-                      <TableHead className='min-w-[110px]'>Estado</TableHead>
-                      <TableHead className='min-w-[250px]'>Mensaje</TableHead>
+                      <TableHead className="min-w-30">Usuario</TableHead>
+                      <TableHead className="min-w-30">Estado</TableHead>
+                      <TableHead className="min-w-62.5">Mensaje</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {resultado.detalles.map(detalle => (
                       <TableRow key={detalle.numeroSerie}>
-                        <TableCell className='font-mono text-xs'>
+                        <TableCell className="font-mono text-xs">
                           {detalle.numeroSerie}
                         </TableCell>
                         <TableCell>
-                          <Badge variant='outline'>{detalle.tarifa}</Badge>
+                          <Badge variant="outline">{detalle.tarifa}</Badge>
                         </TableCell>
-                        <TableCell className='text-right font-mono text-xs'>
+                        <TableCell className="text-right font-mono text-xs">
                           {detalle.lecturaAnteriorKwh.toLocaleString()}
                         </TableCell>
-                        <TableCell className='text-right font-mono text-xs'>
+                        <TableCell className="text-right font-mono text-xs">
                           {detalle.consumoEnergiaKwh.toLocaleString()}
                         </TableCell>
-                        <TableCell className='text-xs'>
+                        <TableCell className="text-xs">
                           {detalle.usuarioCarga}
                         </TableCell>
                         <TableCell>
@@ -279,12 +279,12 @@ export function ResultadoProcesamientoModal({
                                 ? 'default'
                                 : 'destructive'
                             }
-                            className='text-xs'
+                            className="text-xs"
                           >
                             {detalle.estado}
                           </Badge>
                         </TableCell>
-                        <TableCell className='text-xs text-muted-foreground'>
+                        <TableCell className="text-xs text-muted-foreground">
                           {detalle.mensaje || '-'}
                         </TableCell>
                       </TableRow>
@@ -296,9 +296,9 @@ export function ResultadoProcesamientoModal({
           )}
         </div>
 
-        <div className='flex justify-end gap-2 pt-4 border-t'>
-          <Button variant='outline' onClick={onClose}>
-            <X className='h-4 w-4 mr-2' />
+        <div className="flex justify-end gap-2 pt-4 border-t">
+          <Button variant="outline" onClick={onClose}>
+            <X className="h-4 w-4 mr-2" />
             Cerrar
           </Button>
         </div>

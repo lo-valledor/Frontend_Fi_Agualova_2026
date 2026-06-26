@@ -1,8 +1,6 @@
 /* eslint-disable unused-imports/no-unused-vars */
 import { Edit, Eye } from 'lucide-react';
 
-import React from 'react';
-
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
 
@@ -31,29 +29,29 @@ export function TableActions({
   loadingDelete?: boolean;
 }) {
   return (
-    <div className='flex gap-1'>
+    <div className="flex gap-1">
       {showView && (
         <Button
-          variant='ghost'
-          size='sm'
+          variant="ghost"
+          size="sm"
           onClick={() => onView?.(item)}
-          title='Ver'
+          title="Ver"
           disabled={loadingView}
-          className='h-8 w-8 p-0'
+          className="h-8 w-8 p-0"
         >
-          <Eye className='h-4 w-4' />
+          <Eye className="h-4 w-4" />
         </Button>
       )}
       {showEdit && (
         <Button
-          variant='ghost'
-          size='sm'
+          variant="ghost"
+          size="sm"
           onClick={() => onEdit?.(item)}
-          title='Editar'
+          title="Editar"
           disabled={loadingEdit}
-          className='h-8 w-8 p-0'
+          className="h-8 w-8 p-0"
         >
-          <Edit className='h-4 w-4' />
+          <Edit className="h-4 w-4" />
         </Button>
       )}
     </div>
@@ -80,7 +78,7 @@ export function EstadoBadge({ estado }: { estado: boolean | string }) {
 export function FechaCell({ fecha }: { fecha: string | Date }) {
   const date = typeof fecha === 'string' ? new Date(fecha) : fecha;
   return (
-    <div className='text-sm text-muted-foreground'>
+    <div className="text-sm text-muted-foreground">
       {Number.isNaN(date.getTime()) ? '' : date.toLocaleDateString('es-ES')}
     </div>
   );

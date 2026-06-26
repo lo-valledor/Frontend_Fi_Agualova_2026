@@ -17,12 +17,12 @@ export const columns = ({
   {
     accessorKey: 'id',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='ID' />
+      <DataTableColumnHeader column={column} title="ID" />
     ),
     cell: ({ row }) => {
       const id = row.getValue('id');
       return (
-        <div className='w-16 font-mono text-sm font-medium text-center'>
+        <div className="w-16 font-mono text-sm font-medium text-center">
           {id as number}
         </div>
       );
@@ -34,14 +34,14 @@ export const columns = ({
   {
     accessorKey: 'nombre',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Sector' />
+      <DataTableColumnHeader column={column} title="Sector" />
     ),
     cell: ({ row }) => {
       const nicho = row.original;
       return (
-        <div className='flex items-center space-x-3'>
+        <div className="flex items-center space-x-3">
           <div>
-            <div className='font-medium '>{nicho.nombre}</div>
+            <div className="font-medium ">{nicho.nombre}</div>
           </div>
         </div>
       );
@@ -52,12 +52,12 @@ export const columns = ({
   {
     accessorKey: 'ubicacion',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Ubicación' />
+      <DataTableColumnHeader column={column} title="Ubicación" />
     ),
     cell: ({ row }) => {
       const ubicacion = row.getValue('ubicacion');
       return (
-        <div className='max-w-[200px] truncate text-sm text-muted-foreground'>
+        <div className="max-w-[200px] truncate text-sm text-muted-foreground">
           {ubicacion as string}
         </div>
       );
@@ -67,7 +67,7 @@ export const columns = ({
   {
     accessorKey: 'estado',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Estado' />
+      <DataTableColumnHeader column={column} title="Estado" />
     ),
     cell: ({ row }) => {
       const estado = row.getValue('estado');

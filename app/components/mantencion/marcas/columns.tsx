@@ -17,13 +17,13 @@ export const columns = ({
   {
     accessorKey: 'id',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='ID' />
+      <DataTableColumnHeader column={column} title="ID" />
     ),
     cell: ({ row }) => {
       const id = row.getValue('id') as string;
       return (
-        <div className='flex items-center'>
-          <Badge variant='outline' className='font-mono'>
+        <div className="flex items-center">
+          <Badge variant="outline" className="font-mono">
             {id}
           </Badge>
         </div>
@@ -35,11 +35,11 @@ export const columns = ({
   {
     accessorKey: 'nombre',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Nombre' />
+      <DataTableColumnHeader column={column} title="Nombre" />
     ),
     cell: ({ row }) => {
       const nombre = row.getValue('nombre') as string;
-      return <div className='max-w-[200px] truncate font-medium'>{nombre}</div>;
+      return <div className="max-w-[200px] truncate font-medium">{nombre}</div>;
     },
     enableSorting: true
   },

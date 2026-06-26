@@ -18,22 +18,22 @@ import {
 } from '~/components/ui/card';
 import type {
   GetContratante,
-  GetComunas,
-  GetGiros
+  NombreComuna,
+  NombreGiro
 } from '~/types/administracion';
 
 import { columns } from './columns';
+import {
+  type ContratanteFilters,
+  ContratanteFiltersComponent
+} from './contratante-filters';
 import { ContratanteDetailsModal } from './detalles-contratante';
 import { FilterSummary } from './filter-summary';
-import {
-  ContratanteFiltersComponent,
-  type ContratanteFilters
-} from './contratante-filters';
 
 interface ContratantesComponentProps {
   contratantes: GetContratante[];
-  comunas: GetComunas[];
-  giros: GetGiros[];
+  comunas: NombreComuna[];
+  giros: NombreGiro[];
 }
 
 interface FilterOptions {
@@ -180,32 +180,32 @@ export default function ContratantesComponent({
   const mechanicalEase = [0.25, 0.1, 0.25, 1] as const;
 
   return (
-    <div className='min-h-screen bg-background'>
-      <div className='container mx-auto p-4 sm:p-6 space-y-6'>
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto p-4 sm:p-6 space-y-6">
         <header>
           <ModernHeader
-            title='Contratantes'
-            description='Gestiona los contratantes del sistema'
+            title="Contratantes"
+            description="Gestiona los contratantes del sistema"
             actions={
-              <div className='flex gap-2'>
+              <div className="flex gap-2">
                 <ExportButton
                   data={filteredContratantes}
                   columns={contratanteColumns}
-                  filename='contratantes'
-                  size='sm'
+                  filename="contratantes"
+                  size="sm"
                 />
                 <Button
                   onClick={handleAddContratante}
-                  variant='default'
-                  size='sm'
+                  variant="default"
+                  size="sm"
                 >
-                  <Plus className='mr-2 h-4 w-4' />
+                  <Plus className="mr-2 h-4 w-4" />
                   Agregar Contratante
                 </Button>
               </div>
             }
           />
-          <div className='industrial-divider mt-4' />
+          <div className="industrial-divider mt-4" />
         </header>
 
         <ContratanteFiltersComponent
@@ -227,36 +227,36 @@ export default function ContratantesComponent({
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.25, ease: mechanicalEase }}
         >
-          <Card className='overflow-hidden border border-border bg-card shadow-sm'>
-            <CardHeader className='p-4 pb-3'>
-              <div className='flex items-center gap-3'>
-                <div className='flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-accent text-accent-foreground border border-border'>
-                  <LayoutList className='h-4 w-4' />
+          <Card className="overflow-hidden border border-border bg-card shadow-sm">
+            <CardHeader className="p-4 pb-3">
+              <div className="flex items-center gap-3">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-accent text-accent-foreground border border-border">
+                  <LayoutList className="h-4 w-4" />
                 </div>
                 <div>
-                  <CardTitle className='text-xs font-bold uppercase tracking-wide text-foreground'>
+                  <CardTitle className="text-xs font-bold uppercase tracking-wide text-foreground">
                     Listado de Contratantes
                   </CardTitle>
-                  <CardDescription className='text-xs mt-0.5 text-muted-foreground'>
+                  <CardDescription className="text-xs mt-0.5 text-muted-foreground">
                     {filteredContratantes.length} contratante
                     {filteredContratantes.length !== 1 ? 's' : ''}
                   </CardDescription>
                 </div>
               </div>
             </CardHeader>
-            <div className='industrial-divider' />
-            <CardContent className='p-4'>
-              <div className='overflow-x-auto -mx-1'>
+            <div className="industrial-divider" />
+            <CardContent className="p-4">
+              <div className="overflow-x-auto -mx-1">
                 <VirtualDataTable
-              columns={columns({
-                onDetails: handleDetailsContratante,
-                detailingContratanteRut,
-                comunas
-              })}
-              data={filteredContratantes}
-              searchPlaceholder='Buscar por RUT, nombre o email...'
-              estimateRowHeight={60}
-              maxHeight='600px'
+                  columns={columns({
+                    onDetails: handleDetailsContratante,
+                    detailingContratanteRut,
+                    comunas
+                  })}
+                  data={filteredContratantes}
+                  searchPlaceholder="Buscar por RUT, nombre o email..."
+                  estimateRowHeight={60}
+                  maxHeight="600px"
                 />
               </div>
             </CardContent>

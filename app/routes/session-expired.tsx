@@ -10,6 +10,7 @@ import {
   CardHeader,
   CardTitle
 } from '~/components/ui/card';
+import { clearAuthToken } from '~/services/axiosConfig';
 
 interface SessionExpiredProps {
   message?: string;
@@ -21,9 +22,8 @@ const SessionExpired: React.FC<SessionExpiredProps> = ({
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Limpiar el sessionStorage y localStorage
     sessionStorage.removeItem('token');
-    localStorage.removeItem('token');
+    clearAuthToken();
 
     // Redirigir automáticamente al login después de un breve delay
     const timer = setTimeout(() => {
@@ -38,20 +38,20 @@ const SessionExpired: React.FC<SessionExpiredProps> = ({
   };
 
   return (
-    <div className='flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900'>
-      <Card className='w-[350px]'>
-        <CardHeader className='text-center'>
-          <CardTitle className='text-xl text-red-600'>
+    <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900">
+      <Card className="w-[350px]">
+        <CardHeader className="text-center">
+          <CardTitle className="text-xl text-red-600">
             Sesión finalizada
           </CardTitle>
           <CardDescription>{message}</CardDescription>
         </CardHeader>
-        <CardContent className='space-y-4'>
-          <div className='text-center text-sm text-muted-foreground'>
+        <CardContent className="space-y-4">
+          <div className="text-center text-sm text-muted-foreground">
             Serás redirigido al login automáticamente...
           </div>
 
-          <Button onClick={handleLogin} className='w-full'>
+          <Button onClick={handleLogin} className="w-full">
             Ir al login ahora
           </Button>
         </CardContent>

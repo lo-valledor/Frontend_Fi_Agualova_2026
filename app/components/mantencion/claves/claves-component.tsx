@@ -1,10 +1,8 @@
 import { LayoutList, Plus } from 'lucide-react';
 import { motion } from 'motion/react';
-import { toast } from 'sonner';
-
-import React, { useCallback, useMemo, useState } from 'react';
-
+import { useCallback, useMemo, useState } from 'react';
 import { useRevalidator } from 'react-router';
+import { toast } from 'sonner';
 
 import { DataTable } from '~/components/data-table/data-table';
 import { ModernHeader } from '~/components/shared/modern-header';
@@ -16,6 +14,7 @@ import {
   CardHeader,
   CardTitle
 } from '~/components/ui/card';
+import { mantencionService } from '~/services/mantencionService';
 import type { Clave } from '~/types/mantencion';
 
 import ClaveFormModal from './clave-form-modal';
@@ -58,8 +57,10 @@ export default function ClavesComponent({
         )
       ) {
         try {
-          const { default: api } = await import('~/lib/api');
-          await api.delete(`/eliminarClaves/${clave.id}`);
+          const result = await mantencionService.deleteClave(clave.id);
+          if (result.error) {
+            throw new Error(result.error);
+          }
 
           toast.success('Clave eliminada exitosamente');
           revalidator.revalidate();
@@ -92,20 +93,20 @@ export default function ClavesComponent({
   );
 
   return (
-    <div className='min-h-screen bg-background'>
-      <div className='container mx-auto p-4 sm:p-6 space-y-6'>
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto p-4 sm:p-6 space-y-6">
         <header>
           <ModernHeader
-            title='Claves'
-            description='Gestiona las claves del sistema'
+            title="Claves"
+            description="Gestiona las claves del sistema"
             actions={
-              <Button onClick={handleAdd} variant='default' size='sm'>
-                <Plus className='mr-2 h-4 w-4' />
+              <Button onClick={handleAdd} variant="default" size="sm">
+                <Plus className="mr-2 h-4 w-4" />
                 Agregar Clave
               </Button>
             }
           />
-          <div className='industrial-divider mt-4' />
+          <div className="industrial-divider mt-4" />
         </header>
 
         <motion.div
@@ -113,25 +114,25 @@ export default function ClavesComponent({
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.25, ease: mechanicalEase }}
         >
-          <Card className='overflow-hidden border border-border bg-card shadow-sm'>
-            <CardHeader className='p-4 pb-3'>
-              <div className='flex items-center gap-3'>
-                <div className='flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-accent text-accent-foreground border border-border'>
-                  <LayoutList className='h-4 w-4' />
+          <Card className="overflow-hidden border border-border bg-card shadow-sm">
+            <CardHeader className="p-4 pb-3">
+              <div className="flex items-center gap-3">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-accent text-accent-foreground border border-border">
+                  <LayoutList className="h-4 w-4" />
                 </div>
                 <div>
-                  <CardTitle className='text-xs font-bold uppercase tracking-wide text-foreground'>
+                  <CardTitle className="text-xs font-bold uppercase tracking-wide text-foreground">
                     Listado de Claves
                   </CardTitle>
-                  <CardDescription className='text-xs mt-0.5 text-muted-foreground'>
+                  <CardDescription className="text-xs mt-0.5 text-muted-foreground">
                     {claves.length} clave{claves.length !== 1 ? 's' : ''}
                   </CardDescription>
                 </div>
               </div>
             </CardHeader>
-            <div className='industrial-divider' />
-            <CardContent className='relative p-4'>
-              <div className='overflow-x-auto -mx-1'>
+            <div className="industrial-divider" />
+            <CardContent className="relative p-4">
+              <div className="overflow-x-auto -mx-1">
                 <DataTable columns={columns} data={claves} />
               </div>
             </CardContent>

@@ -17,11 +17,11 @@ export const createColumns = ({
   {
     accessorKey: 'nombre',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Nombre' />
+      <DataTableColumnHeader column={column} title="Nombre" />
     ),
     cell: ({ row }) => (
       <div
-        className='max-w-[200px] truncate font-medium'
+        className="max-w-[200px] truncate font-medium"
         title={row.getValue('nombre')}
       >
         {row.getValue('nombre')}
@@ -31,10 +31,10 @@ export const createColumns = ({
   {
     accessorKey: 'valor',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Valor' />
+      <DataTableColumnHeader column={column} title="Valor" />
     ),
     cell: ({ row }) => (
-      <div className='max-w-[150px] truncate' title={row.getValue('valor')}>
+      <div className="max-w-[150px] truncate" title={row.getValue('valor')}>
         {row.getValue('valor')}
       </div>
     )
@@ -42,10 +42,10 @@ export const createColumns = ({
   {
     accessorKey: 'sigla',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Sigla' />
+      <DataTableColumnHeader column={column} title="Sigla" />
     ),
     cell: ({ row }) => (
-      <Badge variant='outline' className='font-mono'>
+      <Badge variant="outline" className="font-mono">
         {row.getValue('sigla')}
       </Badge>
     )
@@ -53,7 +53,7 @@ export const createColumns = ({
   {
     accessorKey: 'estado',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Estado' />
+      <DataTableColumnHeader column={column} title="Estado" />
     ),
     cell: ({ row }) => {
       const estado = row.getValue('estado') as boolean;

@@ -1,7 +1,6 @@
-import { Calendar, Clock, Hash, Scissors } from 'lucide-react';
-import { toast } from 'sonner';
-
+import { Calendar, Clock, Scissors } from 'lucide-react';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 import { Button } from '~/components/ui/button';
 import {
@@ -21,51 +20,58 @@ import {
   TooltipProvider,
   TooltipTrigger
 } from '~/components/ui/tooltip';
-import api from '~/lib/api';
+import { operacionesService } from '~/services/operacionesService';
+import type { CorteReposicionRegistrarCorteRequest } from '~/types/operaciones';
 
 interface CorteRegistradoDialogProps {
   acometida: string;
   onSuccess: () => void;
-  disabled?: boolean;
 }
+
+interface FormState {
+  fecha: string;
+  hora: string;
+}
+
+const FORM_INICIAL: FormState = { fecha: '', hora: '' };
 
 export function CorteRegistradoDialog({
   acometida,
-  onSuccess,
-  disabled = false
+  onSuccess
 }: Readonly<CorteRegistradoDialogProps>) {
   const [open, setOpen] = useState(false);
-  const [fecha, setFecha] = useState('');
-  const [hora, setHora] = useState('');
-  const [periodo, setPeriodo] = useState('');
+  const [form, setForm] = useState<FormState>(FORM_INICIAL);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = async () => {
-    if (!isFormValid) return;
+  const handleSubmit = async (): Promise<void> => {
+    if (!form.fecha || !form.hora) return;
 
     setIsSubmitting(true);
     try {
-      await api.post('corte-registrado', null, {
-        params: { acometida, fecha, hora, periodo }
-      });
+      const request: CorteReposicionRegistrarCorteRequest = {
+        acometida,
+        fecha: form.fecha,
+        hora: form.hora
+      };
+      const result = await operacionesService.postRegistrarCorte(request);
+      if (result.error) {
+        toast.error(result.error);
+        return;
+      }
       toast.success('Corte registrado correctamente');
-      onSuccess();
       setOpen(false);
-      // Limpiar formulario
-      setFecha('');
-      setHora('');
-      setPeriodo('');
-    } catch (error) {
-      toast.error(
-        'Error al registrar el corte. Intente nuevamente.',
-        error as any
-      );
+      setForm(FORM_INICIAL);
+      onSuccess();
+    } catch (err) {
+      toast.error('Error al registrar el corte', {
+        description: String(err)
+      });
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const isFormValid = fecha && hora && periodo;
+  const isFormValid = Boolean(form.fecha && form.hora);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -74,93 +80,76 @@ export function CorteRegistradoDialog({
           <TooltipTrigger asChild>
             <DialogTrigger asChild>
               <Button
-                variant='outline'
-                size='icon'
-                className='h-8 w-8 border-rose-500 text-rose-500 hover:bg-rose-50 hover:border-rose-600 dark:border-rose-700 dark:text-rose-400 dark:hover:bg-rose-900/30 dark:hover:border-rose-600 transition-colors'
-                disabled={disabled}
+                variant="outline"
+                size="icon"
+                className="h-8 w-8 border-rose-500 text-rose-500 hover:bg-rose-50 hover:border-rose-600 dark:border-rose-700 dark:text-rose-400 dark:hover:bg-rose-900/30 dark:hover:border-rose-600 transition-colors"
               >
-                <Scissors className='h-4 w-4' />
+                <Scissors className="h-4 w-4" />
               </Button>
             </DialogTrigger>
           </TooltipTrigger>
           <TooltipContent>
-            <p>
-              {disabled
-                ? 'No tiene permisos para registrar cortes'
-                : 'Registrar Corte'}
-            </p>
+            <p>Registrar Corte</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
-      <DialogContent className='mx-4 sm:max-w-md'>
+      <DialogContent className="mx-4 sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className='flex items-center gap-2 text-sm'>
-            <div className='flex h-5 w-5 items-center justify-center rounded-full bg-rose-500 shrink-0'>
-              <Scissors className='h-3 w-3 text-white' />
+          <DialogTitle className="flex items-center gap-2 text-sm">
+            <div className="flex h-5 w-5 items-center justify-center rounded-full bg-rose-500 shrink-0">
+              <Scissors className="h-3 w-3 text-white" />
             </div>
-            <span className='truncate'>Registrar Corte - {acometida}</span>
+            <span className="truncate">Registrar Corte - {acometida}</span>
           </DialogTitle>
-          <DialogDescription className='text-xs'>
+          <DialogDescription className="text-xs">
             Complete los datos para registrar el corte
           </DialogDescription>
         </DialogHeader>
-        <div className='space-y-3'>
-          <div className='bg-muted rounded-lg p-3 border space-y-3'>
-            <div className='space-y-1'>
+        <div className="space-y-3">
+          <div className="bg-muted rounded-lg p-3 border space-y-3">
+            <div className="space-y-1">
               <Label
-                htmlFor='fecha'
-                className='flex items-center gap-1 text-xs'
+                htmlFor="fecha"
+                className="flex items-center gap-1 text-xs"
               >
-                <Calendar className='h-3 w-3' />
+                <Calendar className="h-3 w-3" />
                 Fecha
               </Label>
               <Input
-                id='fecha'
-                value={fecha}
-                onChange={e => setFecha(e.target.value)}
-                placeholder='dd-MM-yyyy'
-                className='text-xs h-8'
+                id="fecha"
+                type="date"
+                value={form.fecha}
+                onChange={e =>
+                  setForm(prev => ({ ...prev, fecha: e.target.value }))
+                }
+                className="text-xs h-8"
               />
             </div>
-            <div className='space-y-1'>
-              <Label htmlFor='hora' className='flex items-center gap-1 text-xs'>
-                <Clock className='h-3 w-3' />
+            <div className="space-y-1">
+              <Label htmlFor="hora" className="flex items-center gap-1 text-xs">
+                <Clock className="h-3 w-3" />
                 Hora
               </Label>
               <Input
-                id='hora'
-                value={hora}
-                onChange={e => setHora(e.target.value)}
-                placeholder='HH:mm:ss'
-                className='text-xs h-8'
-              />
-            </div>
-            <div className='space-y-1'>
-              <Label
-                htmlFor='periodo'
-                className='flex items-center gap-1 text-xs'
-              >
-                <Hash className='h-3 w-3' />
-                Periodo
-              </Label>
-              <Input
-                id='periodo'
-                value={periodo}
-                onChange={e => setPeriodo(e.target.value)}
-                placeholder='MMAAAA'
-                className='text-xs h-8'
+                id="hora"
+                type="time"
+                value={form.hora}
+                onChange={e =>
+                  setForm(prev => ({ ...prev, hora: e.target.value }))
+                }
+                className="text-xs h-8"
               />
             </div>
           </div>
         </div>
         <DialogFooter>
           <Button
-            type='submit'
+            type="submit"
             onClick={handleSubmit}
             disabled={!isFormValid || isSubmitting}
-            className='w-full text-xs h-8'
+            className="w-full text-xs h-8"
           >
-            <Scissors className='h-3 w-3 mr-1' />
+            <Scissors className="h-3 w-3 mr-1" />
             {isSubmitting ? 'Guardando...' : 'Guardar'}
           </Button>
         </DialogFooter>

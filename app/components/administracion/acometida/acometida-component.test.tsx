@@ -1,15 +1,15 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router';
-import AcometidaComponent from './acometida-component';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type {
-  Acometida,
-  ComboEmpalmes,
-  ComboNichos,
-  ComboSectores,
-  ContratosDisponibles
+  AcometidaRow,
+  BuscarContratosLibres,
+  Empalmes,
+  Nichos,
+  Sectores
 } from '~/types/administracion';
+import AcometidaComponent from './acometida-component';
 
 // Mock del contexto de autenticación
 vi.mock('~/context/AuthContext', () => ({
@@ -38,30 +38,19 @@ vi.mock('sonner', () => ({
   }
 }));
 
-// Mock de la API
-vi.mock('~/lib/api', () => ({
-  default: {
-    post: vi.fn(),
-    put: vi.fn()
-  }
+const administracionServiceMock = vi.hoisted(() => ({
+  getAcometidaByLimitAndOffset: vi.fn(),
+  createAcometida: vi.fn(),
+  updateAcometida: vi.fn()
 }));
 
-// Mock de hooks personalizados
-vi.mock('~/hooks/administracion/use-acometida-filters', () => ({
-  useAcometidaFilters: (acometidas: Acometida[]) => ({
-    filteredAcometidas: acometidas,
-    filterStats: {
-      total: acometidas.length,
-      filtered: acometidas.length,
-      activeFilters: 0,
-      isFiltered: false
-    },
-    filterOptions: {
-      empalmes: [],
-      nichos: [],
-      sectores: []
-    }
-  })
+vi.mock('~/services/administracionService', () => ({
+  administracionService: {
+    getAcometidaByLimitAndOffset:
+      administracionServiceMock.getAcometidaByLimitAndOffset,
+    createAcometida: administracionServiceMock.createAcometida,
+    updateAcometida: administracionServiceMock.updateAcometida
+  }
 }));
 
 vi.mock('~/hooks/administracion/use-export-acometidas', () => ({
@@ -72,53 +61,47 @@ vi.mock('~/hooks/administracion/use-export-acometidas', () => ({
 
 describe('AcometidaComponent', () => {
   // Datos de prueba
-  const mockAcometidas: Acometida[] = [
+  const mockAcometidas: AcometidaRow[] = [
     {
-      acometidaId: 1,
+      idAcometida: 1,
       codigo: '5A-003',
       ubicacion: 'Local 5A-003',
       contratoId: '1001',
-      empalmeDescripcion: '317517-K',
-      nichoDescripcion: 'PLACA7',
-      sectorDescripcion: 'CFLV S.A.',
-      limitePotencia: null,
-      numeroMedidor: '98340738'
+      empalme: '317517-K',
+      nicho: 'PLACA7',
+      sector: 'CFLV S.A.',
+      limitePotencia: '0',
+      medidor: '98340738'
     },
     {
-      acometidaId: 1,
-      codigo: '5A-003',
-      ubicacion: 'Local 5A-003',
-      contratoId: '1001',
-      empalmeDescripcion: '317517-K',
-      nichoDescripcion: 'PLACA7',
-      sectorDescripcion: 'CFLV S.A.',
-      limitePotencia: null,
-      numeroMedidor: '98340738'
+      idAcometida: 2,
+      codigo: '5A-004',
+      ubicacion: 'Local 5A-004',
+      contratoId: '1002',
+      empalme: '317518-K',
+      nicho: 'PLACA8',
+      sector: 'CFLV S.A.',
+      limitePotencia: '0',
+      medidor: '98340739'
     }
   ];
 
-  const mockComboEmpalmes: ComboEmpalmes[] = [{ id: '1', nombre: 'Empalme 1' }];
+  const mockComboEmpalmes: Empalmes[] = [{ id: '1', descripcion: 'Empalme 1' }];
 
-  const mockComboNichos: ComboNichos[] = [{ id: '1', nombre: 'Nicho 1' }];
+  const mockComboNichos: Nichos[] = [{ id: '1', descripcion: 'Nicho 1' }];
 
-  const mockComboSectores: ComboSectores[] = [{ id: '1', nombre: 'Sector A' }];
+  const mockComboSectores: Sectores[] = [{ id: '1', descripcion: 'Sector A' }];
 
-  const mockContratosDisponibles: ContratosDisponibles[] = [
+  const mockContratosDisponibles: BuscarContratosLibres[] = [
     {
-      contratoId: '100',
+      idContrato: '100',
       local: 'Local 100',
       tipoContrato: 'Tipo 1',
       tarifa: 'Tarifa 1',
       propietario: 'Propietario 1',
-      clienteNombre: 'Cliente 1',
-      clienteApellidos: 'Apellidos 1',
-      empresa: 'Empresa 1',
-      fechaInicio: '2023-01-01',
-      fechaFin: '2023-12-31',
-      direccionEnvio: 'Dirección 1',
-      limiteInventario: 1000,
-      cicloFacturacion: 'Mensual',
-      estadoActivo: true
+      cliente: 'Cliente 1',
+      apellido: 'Apellidos 1',
+      empresa: 'Empresa 1'
     }
   ];
 
@@ -130,17 +113,29 @@ describe('AcometidaComponent', () => {
     contratosDisponibles: mockContratosDisponibles
   };
 
+  const renderAcometidaComponent = async (
+    props: Partial<typeof defaultProps> = {}
+  ) => {
+    render(
+      <MemoryRouter>
+        <AcometidaComponent {...defaultProps} {...props} />
+      </MemoryRouter>
+    );
+
+    await screen.findByText(/acometidas en esta página/i);
+  };
+
   beforeEach(() => {
     vi.clearAllMocks();
+    administracionServiceMock.getAcometidaByLimitAndOffset.mockResolvedValue({
+      data: mockAcometidas,
+      error: null
+    });
   });
 
   describe('Renderizado inicial', () => {
-    it('debería renderizar el componente correctamente', () => {
-      render(
-        <MemoryRouter>
-          <AcometidaComponent {...defaultProps} />
-        </MemoryRouter>
-      );
+    it('debería renderizar el componente correctamente', async () => {
+      await renderAcometidaComponent();
 
       // Verificar que el título está presente
       expect(screen.getByText('Acometidas')).toBeInTheDocument();
@@ -149,12 +144,8 @@ describe('AcometidaComponent', () => {
       ).toBeInTheDocument();
     });
 
-    it('debería mostrar el botón de agregar acometida', () => {
-      render(
-        <MemoryRouter>
-          <AcometidaComponent {...defaultProps} />
-        </MemoryRouter>
-      );
+    it('debería mostrar el botón de agregar acometida', async () => {
+      await renderAcometidaComponent();
 
       const addButton = screen.getByRole('button', {
         name: /agregar acometida/i
@@ -163,43 +154,29 @@ describe('AcometidaComponent', () => {
       expect(addButton).not.toBeDisabled();
     });
 
-    it('debería mostrar el número correcto de registros', () => {
-      render(
-        <MemoryRouter>
-          <AcometidaComponent {...defaultProps} />
-        </MemoryRouter>
-      );
+    it('debería mostrar el número correcto de registros', async () => {
+      await renderAcometidaComponent();
 
-      expect(screen.getByText('2 acometidas')).toBeInTheDocument();
+      expect(
+        await screen.findByText('2 acometidas en esta página')
+      ).toBeInTheDocument();
     });
   });
 
   describe('Búsqueda global', () => {
-    it('debería renderizar el campo de búsqueda', () => {
-      render(
-        <MemoryRouter>
-          <AcometidaComponent {...defaultProps} />
-        </MemoryRouter>
-      );
+    it('debería renderizar el campo de búsqueda', async () => {
+      await renderAcometidaComponent();
 
-      const searchInput = screen.getByPlaceholderText(
-        /buscar por código, ubicación o contrato/i
-      );
+      const searchInput = screen.getByPlaceholderText(/buscar por ubicación/i);
       expect(searchInput).toBeInTheDocument();
     });
 
     it('debería actualizar el valor del campo de búsqueda al escribir', async () => {
       const user = userEvent.setup();
 
-      render(
-        <MemoryRouter>
-          <AcometidaComponent {...defaultProps} />
-        </MemoryRouter>
-      );
+      await renderAcometidaComponent();
 
-      const searchInput = screen.getByPlaceholderText(
-        /buscar por código, ubicación o contrato/i
-      );
+      const searchInput = screen.getByPlaceholderText(/buscar por ubicación/i);
 
       await user.type(searchInput, 'ACO-001');
 
@@ -208,12 +185,8 @@ describe('AcometidaComponent', () => {
   });
 
   describe('Permisos', () => {
-    it('debería mostrar el botón de agregar cuando hay permisos de creación', () => {
-      render(
-        <MemoryRouter>
-          <AcometidaComponent {...defaultProps} />
-        </MemoryRouter>
-      );
+    it('debería mostrar el botón de agregar cuando hay permisos de creación', async () => {
+      await renderAcometidaComponent();
 
       const addButton = screen.getByRole('button', {
         name: /agregar acometida/i
@@ -227,11 +200,7 @@ describe('AcometidaComponent', () => {
     it('debería abrir el modal al hacer clic en agregar acometida', async () => {
       const user = userEvent.setup();
 
-      render(
-        <MemoryRouter>
-          <AcometidaComponent {...defaultProps} />
-        </MemoryRouter>
-      );
+      await renderAcometidaComponent();
 
       const addButton = screen.getByRole('button', {
         name: /agregar acometida/i
@@ -249,27 +218,26 @@ describe('AcometidaComponent', () => {
   });
 
   describe('Manejo de datos vacíos', () => {
-    it('debería mostrar mensaje cuando no hay acometidas', () => {
-      render(
-        <MemoryRouter>
-          <AcometidaComponent {...defaultProps} acometidas={[]} />
-        </MemoryRouter>
-      );
+    it('debería mostrar mensaje cuando no hay acometidas', async () => {
+      administracionServiceMock.getAcometidaByLimitAndOffset.mockResolvedValue({
+        data: [],
+        error: null
+      });
+
+      await renderAcometidaComponent({ acometidas: [] });
 
       expect(
-        screen.getByText('No se encontraron resultados.')
+        await screen.findByText('No hay acometidas registradas en el sistema')
       ).toBeInTheDocument();
-      expect(screen.getByText('0 acometidas')).toBeInTheDocument();
+      expect(
+        screen.getByText('0 acometidas en esta página')
+      ).toBeInTheDocument();
     });
   });
 
   describe('Integración con filtros', () => {
-    it('debería renderizar el componente de filtros', () => {
-      render(
-        <MemoryRouter>
-          <AcometidaComponent {...defaultProps} />
-        </MemoryRouter>
-      );
+    it('debería renderizar el componente de filtros', async () => {
+      await renderAcometidaComponent();
 
       // Verificar que el panel de filtros y el listado están presentes
       expect(screen.getByText('Listado de Acometidas')).toBeInTheDocument();

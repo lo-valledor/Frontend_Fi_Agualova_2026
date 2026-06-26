@@ -1,14 +1,16 @@
 import { useMemo } from 'react';
 
 import type { CargoFilters } from '~/components/administracion/cargo-facturable/cargo-filters';
-import type { BuscarCargoFacturable } from '~/types/administracion';
+import type { CargoFacturableRow } from '~/types/administracion';
 import {
   extractUniqueOptions,
-  filterByString,
-  filterByNormalizedString
+  filterByNormalizedString,
+  filterByString
 } from './utils/filter-utilities';
-import { calculateFilterStats, type FilterStats } from './utils/stats-calculator';
-
+import {
+  calculateFilterStats,
+  type FilterStats
+} from './utils/stats-calculator';
 
 const FIJO_VARIABLE_NORMALIZATIONS = {
   F: 'Fijo',
@@ -20,7 +22,6 @@ const PERIODICO_EVENTUAL_NORMALIZATIONS = {
   E: 'Eventual'
 };
 
-
 export interface CargoFilterOptions {
   tipos: string[];
   fijoVariable: string[];
@@ -30,52 +31,54 @@ export interface CargoFilterOptions {
   tiposMedidor: string[];
 }
 
-
 export interface UseCargoFiltersReturn {
-  filteredCargos: BuscarCargoFacturable[];
+  filteredCargos: CargoFacturableRow[];
   filterStats: FilterStats;
   filterOptions: CargoFilterOptions;
 }
 
-
 export function useCargoFilters(
-  cargos: BuscarCargoFacturable[],
+  cargos: CargoFacturableRow[],
   filters: CargoFilters
 ): UseCargoFiltersReturn {
-  
   const filterOptions = useMemo((): CargoFilterOptions => {
     return {
-      tipos: extractUniqueOptions(cargos, (c) => c.tipo),
+      tipos: extractUniqueOptions(cargos, c => c.tipoCargo ?? ''),
       fijoVariable: [
         ...new Set(
           cargos
-            .map((c) => c.fijoVariable)
+            .map(c => c.fijoVariable)
             .filter((v): v is string => Boolean(v))
-            .map((v) => FIJO_VARIABLE_NORMALIZATIONS[v as keyof typeof FIJO_VARIABLE_NORMALIZATIONS] || v)
+            .map(
+              v =>
+                FIJO_VARIABLE_NORMALIZATIONS[
+                  v as keyof typeof FIJO_VARIABLE_NORMALIZATIONS
+                ] || v
+            )
         )
       ].sort(),
       periodicoEventual: [
         ...new Set(
           cargos
-            .map((c) => c.periodicoEventual)
+            .map(c => c.periodicoEventual)
             .filter((v): v is string => Boolean(v))
             .map(
-              (v) =>
-                PERIODICO_EVENTUAL_NORMALIZATIONS[v as keyof typeof PERIODICO_EVENTUAL_NORMALIZATIONS] || v
+              v =>
+                PERIODICO_EVENTUAL_NORMALIZATIONS[
+                  v as keyof typeof PERIODICO_EVENTUAL_NORMALIZATIONS
+                ] || v
             )
         )
       ].sort(),
-      conceptos: extractUniqueOptions(cargos, (c) => c.concepto),
-      tarifas: extractUniqueOptions(cargos, (c) => c.tarifa),
-      tiposMedidor: extractUniqueOptions(cargos, (c) => c.tipoMedidor)
+      conceptos: extractUniqueOptions(cargos, c => c.concepto),
+      tarifas: extractUniqueOptions(cargos, c => c.tarifa),
+      tiposMedidor: extractUniqueOptions(cargos, c => c.tipoMedidor)
     };
   }, [cargos]);
 
-  
   const filteredCargos = useMemo(() => {
-    return cargos.filter((cargo) => {
-      // Filtros simples de string
-      if (!filterByString(cargo.tipo, filters.tipo)) {
+    return cargos.filter(cargo => {
+      if (!filterByString(cargo.tipoCargo ?? '', filters.tipo)) {
         return false;
       }
 
@@ -91,7 +94,6 @@ export function useCargoFilters(
         return false;
       }
 
-      // Filtros normalizados (backend usa abreviaturas)
       if (
         !filterByNormalizedString(
           cargo.fijoVariable,
@@ -116,7 +118,6 @@ export function useCargoFilters(
     });
   }, [cargos, filters]);
 
-  
   const filterStats = useMemo(
     () => calculateFilterStats(cargos, filteredCargos, filters),
     [cargos.length, filteredCargos.length, filters]

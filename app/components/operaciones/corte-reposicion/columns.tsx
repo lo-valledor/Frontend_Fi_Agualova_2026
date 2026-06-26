@@ -3,23 +3,22 @@ import type { ColumnDef } from '@tanstack/react-table';
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
 import { Badge } from '~/components/ui/badge';
 import { cn } from '~/lib/utils';
-import type { ConsultarMantenedorRevisionCorte } from '~/types/operaciones';
-
+import type { CorteReposicionBuscarRequest } from '~/types/operaciones';
 import { ConsultarAcometidaDialog } from './consultar-acometida-dialog';
 import { CorteRegistradoDialog } from './corte-registrado-dialog';
 import { ReposicionSolicitadaDialog } from './reposicion-solicitada-dialog';
 
-export const columns = (): ColumnDef<ConsultarMantenedorRevisionCorte>[] => [
+export const columns = (): ColumnDef<CorteReposicionBuscarRequest>[] => [
   {
-    accessorKey: 'ctId',
+    accessorKey: 'contratoId',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='ID' />
+      <DataTableColumnHeader column={column} title="ID" />
     ),
     cell: ({ row }) => {
-      const id = row.getValue('ctId');
+      const id = row.getValue('contratoId');
       return (
-        <div className='flex items-center'>
-          <Badge variant='outline' className='font-mono text-xs sm:text-xs'>
+        <div className="flex items-center">
+          <Badge variant="outline" className="font-mono text-xs sm:text-xs">
             {id as string}
           </Badge>
         </div>
@@ -28,14 +27,14 @@ export const columns = (): ColumnDef<ConsultarMantenedorRevisionCorte>[] => [
     size: 80
   },
   {
-    accessorKey: 'seCodigo',
+    accessorKey: 'acometida',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Código' />
+      <DataTableColumnHeader column={column} title="Código" />
     ),
     cell: ({ row }) => {
-      const codigo = row.getValue('seCodigo');
+      const codigo = row.getValue('acometida');
       return (
-        <div className='font-mono text-xs sm:text-sm font-medium'>
+        <div className="font-mono text-xs sm:text-sm font-medium">
           {codigo as string}
         </div>
       );
@@ -43,27 +42,27 @@ export const columns = (): ColumnDef<ConsultarMantenedorRevisionCorte>[] => [
     size: 120
   },
   {
-    accessorKey: 'meNSerie',
+    accessorKey: 'numeroMedidor',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='N° Serie' />
+      <DataTableColumnHeader column={column} title="N° Serie" />
     ),
     cell: ({ row }) => {
-      const serie = row.getValue('meNSerie');
+      const serie = row.getValue('numeroMedidor');
       return (
-        <div className='font-mono text-xs sm:text-sm'>{serie as string}</div>
+        <div className="font-mono text-xs sm:text-sm">{serie as string}</div>
       );
     },
     size: 140
   },
   {
-    accessorKey: 'clRut',
+    accessorKey: 'rutCliente',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='RUT' />
+      <DataTableColumnHeader column={column} title="RUT" />
     ),
     cell: ({ row }) => {
-      const rut = row.getValue('clRut');
+      const rut = row.getValue('rutCliente');
       return (
-        <div className='font-mono text-xs sm:text-sm font-medium'>
+        <div className="font-mono text-xs sm:text-sm font-medium">
           {rut as string}
         </div>
       );
@@ -71,14 +70,14 @@ export const columns = (): ColumnDef<ConsultarMantenedorRevisionCorte>[] => [
     size: 120
   },
   {
-    accessorKey: 'clRazonSocialCompleto',
+    accessorKey: 'nombreCliente',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Razón Social' />
+      <DataTableColumnHeader column={column} title="Razón Social" />
     ),
     cell: ({ row }) => {
-      const razonSocial = row.getValue('clRazonSocialCompleto');
+      const razonSocial = row.getValue('nombreCliente');
       return (
-        <div className='max-w-[120px] sm:max-w-[200px] truncate font-medium text-xs sm:text-sm'>
+        <div className="max-w-30 sm:max-w-50 truncate font-medium text-xs sm:text-sm">
           {razonSocial as string}
         </div>
       );
@@ -86,14 +85,14 @@ export const columns = (): ColumnDef<ConsultarMantenedorRevisionCorte>[] => [
     size: 200
   },
   {
-    accessorKey: 'niDescripcion',
+    accessorKey: 'nicho',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Descripción' />
+      <DataTableColumnHeader column={column} title="Descripción" />
     ),
     cell: ({ row }) => {
-      const descripcion = row.getValue('niDescripcion');
+      const descripcion = row.getValue('nicho');
       return (
-        <div className='max-w-[100px] sm:max-w-[150px] truncate text-xs sm:text-sm'>
+        <div className="max-w-25 sm:max-w-37.5 truncate text-xs sm:text-sm">
           {descripcion as string}
         </div>
       );
@@ -101,23 +100,23 @@ export const columns = (): ColumnDef<ConsultarMantenedorRevisionCorte>[] => [
     size: 150
   },
   {
-    accessorKey: 'secDescripcion',
+    accessorKey: 'sector',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Sección' />
+      <DataTableColumnHeader column={column} title="Sección" />
     ),
     cell: ({ row }) => {
-      const seccion = row.getValue('secDescripcion');
-      return <div className='text-xs sm:text-sm'>{seccion as string}</div>;
+      const seccion = row.getValue('sector');
+      return <div className="text-xs sm:text-sm">{seccion as string}</div>;
     },
     size: 120
   },
   {
-    accessorKey: 'reEstado',
+    accessorKey: 'estado',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Estado' />
+      <DataTableColumnHeader column={column} title="Estado" />
     ),
     cell: ({ row }) => {
-      const estado = row.getValue('reEstado');
+      const estado = row.getValue('estado');
 
       const getEstadoConfig = (estado: string) => {
         switch (estado) {
@@ -174,25 +173,25 @@ export const columns = (): ColumnDef<ConsultarMantenedorRevisionCorte>[] => [
           variant={config.variant}
           className={cn('text-xs font-medium px-1 sm:px-2', config.className)}
         >
-          <span className='hidden sm:inline'>{config.label}</span>
-          <span className='sm:hidden'>{getShortLabel(estado as string)}</span>
+          <span className="hidden sm:inline">{config.label}</span>
+          <span className="sm:hidden">{getShortLabel(estado as string)}</span>
         </Badge>
       );
     },
     size: 140
   },
   {
-    accessorKey: 'reCantDocumentos',
+    accessorKey: 'cantidadDocumentos',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Documentos' />
+      <DataTableColumnHeader column={column} title="Documentos" />
     ),
     cell: ({ row }) => {
-      const documentos = row.getValue('reCantDocumentos');
+      const documentos = row.getValue('cantidadDocumentos');
       return (
-        <div className='text-center'>
+        <div className="text-center">
           <Badge
-            variant='outline'
-            className='font-mono text-xs bg-background px-1 sm:px-2'
+            variant="outline"
+            className="font-mono text-xs bg-background px-1 sm:px-2"
           >
             {documentos as number}
           </Badge>
@@ -202,12 +201,12 @@ export const columns = (): ColumnDef<ConsultarMantenedorRevisionCorte>[] => [
     size: 100
   },
   {
-    accessorKey: 'reDeudaTotal',
+    accessorKey: 'deudaTotal',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Deuda Total' />
+      <DataTableColumnHeader column={column} title="Deuda Total" />
     ),
     cell: ({ row }) => {
-      const deuda = row.getValue('reDeudaTotal');
+      const deuda = row.getValue('deudaTotal');
       const formattedDeuda = new Intl.NumberFormat('es-CL', {
         style: 'currency',
         currency: 'CLP',
@@ -216,8 +215,8 @@ export const columns = (): ColumnDef<ConsultarMantenedorRevisionCorte>[] => [
       }).format(deuda as number);
 
       return (
-        <div className='text-right'>
-          <span className='font-mono text-xs sm:text-sm font-medium'>
+        <div className="text-right">
+          <span className="font-mono text-xs sm:text-sm font-medium">
             {formattedDeuda}
           </span>
         </div>
@@ -229,7 +228,7 @@ export const columns = (): ColumnDef<ConsultarMantenedorRevisionCorte>[] => [
     header: 'Acciones',
     id: 'acciones',
     cell: ({ row, table }) => {
-      const acometida = row.original.seCodigo;
+      const { acometida, contratoId } = row.original;
 
       const handleSuccess = () => {
         (
@@ -238,7 +237,7 @@ export const columns = (): ColumnDef<ConsultarMantenedorRevisionCorte>[] => [
       };
 
       return (
-        <div className='flex items-center justify-center gap-0.5 sm:gap-1'>
+        <div className="flex items-center justify-center gap-0.5 sm:gap-1">
           <ConsultarAcometidaDialog
             acometida={acometida}
             onSuccess={handleSuccess}
@@ -248,6 +247,7 @@ export const columns = (): ColumnDef<ConsultarMantenedorRevisionCorte>[] => [
             onSuccess={handleSuccess}
           />
           <ReposicionSolicitadaDialog
+            contratoId={contratoId}
             acometida={acometida}
             onSuccess={handleSuccess}
           />

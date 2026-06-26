@@ -1,9 +1,15 @@
-import { ArrowLeft, CheckCircle2, FileText, Plus, Save, Trash2, Zap } from 'lucide-react';
-import { toast } from 'sonner';
-
+import {
+  ArrowLeft,
+  CheckCircle2,
+  FileText,
+  Plus,
+  Save,
+  Trash2,
+  Zap
+} from 'lucide-react';
 import { useMemo, useState } from 'react';
-
 import Select from 'react-select';
+import { toast } from 'sonner';
 
 import { ModernHeader } from '~/components/shared/modern-header';
 import { getTailwindSelectStyles } from '~/components/shared/react-select-styles';
@@ -29,7 +35,10 @@ import type {
   TiposContrato
 } from '~/types/administracion';
 
-const selectStyles = getTailwindSelectStyles<{ value: number; label: string }>();
+const selectStyles = getTailwindSelectStyles<{
+  value: number;
+  label: string;
+}>();
 
 export default function CargoTipoContratoForm({
   mode,
@@ -50,31 +59,52 @@ export default function CargoTipoContratoForm({
   cargosFacturables?: CargosFacturables[];
   initialValue?: GuardarConfiguracionPayload;
 }>) {
-  const [selectedTipoContrato, setSelectedTipoContrato] = useState<number | null>(
-    initialTipoContratoId ?? null
+  const [selectedTipoContrato, setSelectedTipoContrato] = useState<
+    number | null
+  >(initialTipoContratoId ?? null);
+  const [selectedCondicion, setSelectedCondicion] = useState<number | null>(
+    null
   );
-  const [selectedCondicion, setSelectedCondicion] = useState<number | null>(null);
-  const [selectedCargoCondicion, setSelectedCargoCondicion] = useState<number | null>(null);
+  const [selectedCargoCondicion, setSelectedCargoCondicion] = useState<
+    number | null
+  >(null);
   const [descripcion, setDescripcion] = useState('');
-  const [selectedCargoMonofasico, setSelectedCargoMonofasico] = useState<number | null>(null);
-  const [selectedCargoTrifasico, setSelectedCargoTrifasico] = useState<number | null>(null);
-  const [selectedCargoAmbos, setSelectedCargoAmbos] = useState<number | null>(null);
+  const [selectedCargoMonofasico, setSelectedCargoMonofasico] = useState<
+    number | null
+  >(null);
+  const [selectedCargoTrifasico, setSelectedCargoTrifasico] = useState<
+    number | null
+  >(null);
+  const [selectedCargoAmbos, setSelectedCargoAmbos] = useState<number | null>(
+    null
+  );
   const [isSaving, setIsSaving] = useState(false);
-  const [configuracion, setConfiguracion] = useState<GuardarConfiguracionPayload>(() => ({
-    idTipoContrato: initialTipoContratoId ?? initialValue?.idTipoContrato ?? 0,
-    condiciones: initialValue?.condiciones ?? [],
-    idsCargosMonofasicos: initialValue?.idsCargosMonofasicos ?? [],
-    idsCargosTrifasicos: initialValue?.idsCargosTrifasicos ?? [],
-    idsCargosAmbos: initialValue?.idsCargosAmbos ?? []
-  }));
+  const [configuracion, setConfiguracion] =
+    useState<GuardarConfiguracionPayload>(() => ({
+      idTipoContrato:
+        initialTipoContratoId ?? initialValue?.idTipoContrato ?? 0,
+      condiciones: initialValue?.condiciones ?? [],
+      idsCargosMonofasicos: initialValue?.idsCargosMonofasicos ?? [],
+      idsCargosTrifasicos: initialValue?.idsCargosTrifasicos ?? [],
+      idsCargosAmbos: initialValue?.idsCargosAmbos ?? []
+    }));
 
   const cargoMap = useMemo(
-    () => new Map(cargosFacturables.map(cargo => [Number(cargo.id), cargo.descripcion])),
+    () =>
+      new Map(
+        cargosFacturables.map(cargo => [Number(cargo.id), cargo.descripcion])
+      ),
     [cargosFacturables]
   );
 
   const condicionMap = useMemo(
-    () => new Map(condiciones.map(condicion => [Number(condicion.id), condicion.descripcion])),
+    () =>
+      new Map(
+        condiciones.map(condicion => [
+          Number(condicion.id),
+          condicion.descripcion
+        ])
+      ),
     [condiciones]
   );
 
@@ -146,7 +176,9 @@ export default function CargoTipoContratoForm({
   const quitarCondicion = (index: number) => {
     setConfiguracion(prev => ({
       ...prev,
-      condiciones: prev.condiciones.filter((_, currentIndex) => currentIndex !== index)
+      condiciones: prev.condiciones.filter(
+        (_, currentIndex) => currentIndex !== index
+      )
     }));
   };
 
@@ -199,7 +231,8 @@ export default function CargoTipoContratoForm({
 
     setIsSaving(true);
 
-    const result = await administracionService.saveCargoTipoContratoConfiguration(payload);
+    const result =
+      await administracionService.saveCargoTipoContratoConfiguration(payload);
 
     setIsSaving(false);
 
@@ -231,55 +264,58 @@ export default function CargoTipoContratoForm({
     values: number[],
     key: 'idsCargosMonofasicos' | 'idsCargosTrifasicos' | 'idsCargosAmbos'
   ) => (
-    <div className='space-y-4'>
-      <h3 className='text-lg font-semibold'>{title}</h3>
-      <div className='space-y-3'>
-        <div className='space-y-2'>
-          <Label className='text-sm font-medium'>Selecciona un cargo</Label>
+    <div className="space-y-4">
+      <h3 className="text-lg font-semibold">{title}</h3>
+      <div className="space-y-3">
+        <div className="space-y-2">
+          <Label className="text-sm font-medium">Selecciona un cargo</Label>
           <Select
-            value={cargoOptions.find(option => option.value === selectedValue) ?? null}
+            value={
+              cargoOptions.find(option => option.value === selectedValue) ??
+              null
+            }
             onChange={option => onChange(option ? option.value : null)}
             options={cargoOptions}
             styles={selectStyles}
-            placeholder='Selecciona un cargo'
+            placeholder="Selecciona un cargo"
             isClearable
             isSearchable
             noOptionsMessage={() => 'No hay cargos disponibles'}
           />
         </div>
         <Button
-          size='sm'
-          variant='default'
-          className='w-full'
+          size="sm"
+          variant="default"
+          className="w-full"
           disabled={!selectedValue}
           onClick={() => agregarCargo(key, selectedValue, () => onChange(null))}
         >
-          <Plus className='mr-2 h-4 w-4' />
+          <Plus className="mr-2 h-4 w-4" />
           Agregar
         </Button>
-        <div className='space-y-2'>
-          <Label className='text-sm font-medium'>Agregadas</Label>
-          <div className='h-32 overflow-y-auto rounded-md border p-2'>
-            <div className='space-y-1'>
+        <div className="space-y-2">
+          <Label className="text-sm font-medium">Agregadas</Label>
+          <div className="h-32 overflow-y-auto rounded-md border p-2">
+            <div className="space-y-1">
               {values.length > 0 ? (
                 values.map(cargoId => (
                   <div
                     key={`${key}-${cargoId}`}
-                    className='flex items-center justify-between rounded bg-muted p-2 text-sm'
+                    className="flex items-center justify-between rounded bg-muted p-2 text-sm"
                   >
                     <span>{cargoMap.get(cargoId) ?? `Cargo ${cargoId}`}</span>
                     <Button
-                      variant='ghost'
-                      size='sm'
-                      className='h-6 w-6 p-0 text-red-600 hover:bg-red-50 hover:text-red-700 dark:hover:bg-red-900/20'
+                      variant="ghost"
+                      size="sm"
+                      className="h-6 w-6 p-0 text-red-600 hover:bg-red-50 hover:text-red-700 dark:hover:bg-red-900/20"
                       onClick={() => quitarCargo(key, cargoId)}
                     >
-                      <Trash2 className='h-3 w-3' />
+                      <Trash2 className="h-3 w-3" />
                     </Button>
                   </div>
                 ))
               ) : (
-                <div className='p-2 text-center text-sm text-muted-foreground'>
+                <div className="p-2 text-center text-sm text-muted-foreground">
                   No hay cargos agregados
                 </div>
               )}
@@ -291,27 +327,43 @@ export default function CargoTipoContratoForm({
   );
 
   return (
-    <div className='min-h-screen bg-background'>
-      <div className='sticky top-0 z-10 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60'>
-        <div className='container mx-auto px-4 py-4'>
+    <div className="min-h-screen bg-background">
+      <div className="sticky top-0 z-10 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
+        <div className="container mx-auto px-4 py-4">
           <ModernHeader
             title={
               mode === 'create'
                 ? 'Crear Cargo Tipo de Contrato'
                 : 'Editar Cargo Tipo de Contrato'
             }
-            description='Configura condiciones y cargos facturables del tipo de contrato.'
+            description="Configura condiciones y cargos facturables del tipo de contrato."
             actions={
               <>
-                <Button variant='ghost' onClick={() => globalThis.history.back()} className='gap-2'>
-                  <ArrowLeft className='h-4 w-4' />
+                <Button
+                  variant="ghost"
+                  onClick={() => globalThis.history.back()}
+                  className="gap-2"
+                >
+                  <ArrowLeft className="h-4 w-4" />
                   Volver
                 </Button>
-                <Button variant='outline' onClick={handleCancelar} disabled={isSaving}>
+                <Button
+                  variant="outline"
+                  onClick={handleCancelar}
+                  disabled={isSaving}
+                >
                   Cancelar
                 </Button>
-                <Button onClick={handleGuardar} className='gap-2' disabled={isSaving}>
-                  {isSaving ? <Spinner className='h-4 w-4' /> : <Save className='h-4 w-4' />}
+                <Button
+                  onClick={handleGuardar}
+                  className="gap-2"
+                  disabled={isSaving}
+                >
+                  {isSaving ? (
+                    <Spinner className="h-4 w-4" />
+                  ) : (
+                    <Save className="h-4 w-4" />
+                  )}
                   {isSaving ? 'Guardando...' : 'Guardar'}
                 </Button>
               </>
@@ -320,112 +372,142 @@ export default function CargoTipoContratoForm({
         </div>
       </div>
 
-      <div className='container mx-auto space-y-6 px-4 py-6'>
-        <Card className='border-0 shadow-sm'>
-          <CardHeader className='pb-4'>
-            <div className='flex items-center gap-2'>
-              <FileText className='h-5 w-5' />
-              <CardTitle className='text-lg font-medium'>Tipo de Contrato</CardTitle>
+      <div className="container mx-auto space-y-6 px-4 py-6">
+        <Card className="border-0 shadow-sm">
+          <CardHeader className="pb-4">
+            <div className="flex items-center gap-2">
+              <FileText className="h-5 w-5" />
+              <CardTitle className="text-lg font-medium">
+                Tipo de Contrato
+              </CardTitle>
             </div>
           </CardHeader>
           <CardContent>
             {mode === 'create' ? (
-              <div className='max-w-md space-y-2'>
-                <Label className='text-sm font-medium'>Tipo de Contrato</Label>
+              <div className="max-w-md space-y-2">
+                <Label className="text-sm font-medium">Tipo de Contrato</Label>
                 <Select
                   value={
-                    tipoContratoOptions.find(option => option.value === selectedTipoContrato) ?? null
+                    tipoContratoOptions.find(
+                      option => option.value === selectedTipoContrato
+                    ) ?? null
                   }
-                  onChange={option => setSelectedTipoContrato(option ? option.value : null)}
+                  onChange={option =>
+                    setSelectedTipoContrato(option ? option.value : null)
+                  }
                   options={tipoContratoOptions}
                   styles={selectStyles}
-                  placeholder='Seleccione un tipo de contrato'
+                  placeholder="Seleccione un tipo de contrato"
                   isClearable
                   isSearchable
-                  noOptionsMessage={() => 'No hay tipos de contrato disponibles'}
+                  noOptionsMessage={() =>
+                    'No hay tipos de contrato disponibles'
+                  }
                 />
               </div>
             ) : (
-              <div className='max-w-md space-y-2'>
-                <Label htmlFor='tipoContrato' className='text-sm font-medium'>
+              <div className="max-w-md space-y-2">
+                <Label htmlFor="tipoContrato" className="text-sm font-medium">
                   Tipo de Contrato
                 </Label>
                 <Input
-                  id='tipoContrato'
-                  value={tipoContratoLabel ?? `Tipo de contrato ${selectedTipoContrato ?? ''}`}
+                  id="tipoContrato"
+                  value={
+                    tipoContratoLabel ??
+                    `Tipo de contrato ${selectedTipoContrato ?? ''}`
+                  }
                   readOnly
-                  className='cursor-not-allowed bg-muted'
+                  className="cursor-not-allowed bg-muted"
                 />
               </div>
             )}
           </CardContent>
         </Card>
 
-        <Card className='border-0 shadow-sm'>
-          <CardHeader className='pb-4'>
-            <div className='flex items-center gap-2'>
-              <CheckCircle2 className='h-5 w-5' />
-              <CardTitle className='text-lg font-medium'>Condiciones de Contrato</CardTitle>
+        <Card className="border-0 shadow-sm">
+          <CardHeader className="pb-4">
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="h-5 w-5" />
+              <CardTitle className="text-lg font-medium">
+                Condiciones de Contrato
+              </CardTitle>
             </div>
-            <p className='text-sm text-muted-foreground'>
-              Conceptos disponibles: {conceptos.length}. La configuración vigente usa cargo, condición y descripción.
+            <p className="text-sm text-muted-foreground">
+              Conceptos disponibles: {conceptos.length}. La configuración
+              vigente usa cargo, condición y descripción.
             </p>
           </CardHeader>
-          <CardContent className='space-y-6'>
-            <div className='grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4'>
-              <div className='space-y-2 lg:col-span-2'>
-                <Label className='text-sm font-medium'>Cargo Facturable</Label>
+          <CardContent className="space-y-6">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4">
+              <div className="space-y-2 lg:col-span-2">
+                <Label className="text-sm font-medium">Cargo Facturable</Label>
                 <Select
-                  value={cargoOptions.find(option => option.value === selectedCargoCondicion) ?? null}
-                  onChange={option => setSelectedCargoCondicion(option ? option.value : null)}
+                  value={
+                    cargoOptions.find(
+                      option => option.value === selectedCargoCondicion
+                    ) ?? null
+                  }
+                  onChange={option =>
+                    setSelectedCargoCondicion(option ? option.value : null)
+                  }
                   options={cargoOptions}
                   styles={selectStyles}
-                  placeholder='Selecciona un cargo'
+                  placeholder="Selecciona un cargo"
                   isClearable
                   isSearchable
                   noOptionsMessage={() => 'No hay cargos disponibles'}
                 />
               </div>
 
-              <div className='space-y-2'>
-                <Label className='text-sm font-medium'>Condición</Label>
+              <div className="space-y-2">
+                <Label className="text-sm font-medium">Condición</Label>
                 <Select
-                  value={condicionOptions.find(option => option.value === selectedCondicion) ?? null}
-                  onChange={option => setSelectedCondicion(option ? option.value : null)}
+                  value={
+                    condicionOptions.find(
+                      option => option.value === selectedCondicion
+                    ) ?? null
+                  }
+                  onChange={option =>
+                    setSelectedCondicion(option ? option.value : null)
+                  }
                   options={condicionOptions}
                   styles={selectStyles}
-                  placeholder='Selecciona una condición'
+                  placeholder="Selecciona una condición"
                   isClearable
                   isSearchable
                   noOptionsMessage={() => 'No hay condiciones disponibles'}
                 />
               </div>
 
-              <div className='space-y-2'>
-                <Label className='text-sm font-medium'>Descripción</Label>
+              <div className="space-y-2">
+                <Label className="text-sm font-medium">Descripción</Label>
                 <Input
                   value={descripcion}
                   onChange={event => setDescripcion(event.target.value)}
-                  placeholder='Descripción de la condición'
+                  placeholder="Descripción de la condición"
                 />
               </div>
             </div>
 
             <Button
-              className='gap-2'
-              disabled={!selectedCargoCondicion || !selectedCondicion || !descripcion.trim()}
+              className="gap-2"
+              disabled={
+                !selectedCargoCondicion ||
+                !selectedCondicion ||
+                !descripcion.trim()
+              }
               onClick={agregarCondicion}
             >
-              <Plus className='h-4 w-4' />
+              <Plus className="h-4 w-4" />
               Agregar
             </Button>
 
             {configuracion.condiciones.length > 0 && (
-              <div className='rounded-xl border'>
+              <div className="rounded-xl border">
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead className='w-12'></TableHead>
+                      <TableHead className="w-12"></TableHead>
                       <TableHead>ID Cargo</TableHead>
                       <TableHead>ID Condición</TableHead>
                       <TableHead>Cargo</TableHead>
@@ -435,24 +517,36 @@ export default function CargoTipoContratoForm({
                   </TableHeader>
                   <TableBody>
                     {configuracion.condiciones.map((item, index) => (
-                      <TableRow key={`${item.idCargo}-${item.idCondicion}-${index}`}>
+                      <TableRow
+                        key={`${item.idCargo}-${item.idCondicion}-${index}`}
+                      >
                         <TableCell>
                           <Button
-                            variant='ghost'
-                            size='sm'
-                            className='h-8 w-8 p-0 text-red-600 hover:bg-red-50 hover:text-red-700 dark:hover:bg-red-900/20'
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 p-0 text-red-600 hover:bg-red-50 hover:text-red-700 dark:hover:bg-red-900/20"
                             onClick={() => quitarCondicion(index)}
                           >
-                            <Trash2 className='h-4 w-4' />
+                            <Trash2 className="h-4 w-4" />
                           </Button>
                         </TableCell>
-                        <TableCell className='font-mono text-sm'>{item.idCargo}</TableCell>
-                        <TableCell className='font-mono text-sm'>{item.idCondicion}</TableCell>
-                        <TableCell className='text-sm'>{cargoMap.get(item.idCargo) ?? `Cargo ${item.idCargo}`}</TableCell>
-                        <TableCell className='text-sm'>
-                          {condicionMap.get(item.idCondicion) ?? `Condición ${item.idCondicion}`}
+                        <TableCell className="font-mono text-sm">
+                          {item.idCargo}
                         </TableCell>
-                        <TableCell className='text-sm text-muted-foreground'>{item.descripcion}</TableCell>
+                        <TableCell className="font-mono text-sm">
+                          {item.idCondicion}
+                        </TableCell>
+                        <TableCell className="text-sm">
+                          {cargoMap.get(item.idCargo) ??
+                            `Cargo ${item.idCargo}`}
+                        </TableCell>
+                        <TableCell className="text-sm">
+                          {condicionMap.get(item.idCondicion) ??
+                            `Condición ${item.idCondicion}`}
+                        </TableCell>
+                        <TableCell className="text-sm text-muted-foreground">
+                          {item.descripcion}
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -462,15 +556,17 @@ export default function CargoTipoContratoForm({
           </CardContent>
         </Card>
 
-        <Card className='border-0 shadow-sm'>
-          <CardHeader className='pb-4'>
-            <div className='flex items-center gap-2'>
-              <Zap className='h-5 w-5' />
-              <CardTitle className='text-lg font-medium'>Cargos Facturables</CardTitle>
+        <Card className="border-0 shadow-sm">
+          <CardHeader className="pb-4">
+            <div className="flex items-center gap-2">
+              <Zap className="h-5 w-5" />
+              <CardTitle className="text-lg font-medium">
+                Cargos Facturables
+              </CardTitle>
             </div>
           </CardHeader>
           <CardContent>
-            <div className='grid grid-cols-1 gap-6 md:grid-cols-3'>
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
               {renderCargoList(
                 'Monofásico',
                 selectedCargoMonofasico,

@@ -1,36 +1,33 @@
 import {
+  flexRender,
+  getCoreRowModel,
+  getSortedRowModel,
+  type SortingState,
+  useReactTable
+} from '@tanstack/react-table';
+import { useVirtualizer } from '@tanstack/react-virtual';
+import {
+  Activity,
+  Calendar,
   ChevronDown,
   ChevronUp,
   DollarSign,
   FileText,
-  TrendingDown,
-  TrendingUp,
-  Activity,
   PieChart,
-  Calendar
+  TrendingDown,
+  TrendingUp
 } from 'lucide-react';
-
-import { memo, useMemo, useState, useRef } from 'react';
-
+import { memo, useMemo, useRef, useState } from 'react';
 import {
+  Area,
   Bar,
   BarChart,
-  XAxis,
-  YAxis,
-  Line,
   ComposedChart,
+  Line,
   ResponsiveContainer,
-  Area
+  XAxis,
+  YAxis
 } from 'recharts';
-
-import { useVirtualizer } from '@tanstack/react-virtual';
-import {
-  flexRender,
-  getCoreRowModel,
-  getSortedRowModel,
-  useReactTable,
-  type SortingState
-} from '@tanstack/react-table';
 
 import { ExportButton } from '~/components/shared/export-button';
 import { Badge } from '~/components/ui/badge';
@@ -38,11 +35,10 @@ import { Button } from '~/components/ui/button';
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
-  CardTitle,
-  CardDescription
+  CardTitle
 } from '~/components/ui/card';
-import { TooltipProvider } from '~/components/ui/tooltip';
 import {
   ChartContainer,
   ChartTooltip,
@@ -56,9 +52,10 @@ import {
   TableHeader,
   TableRow
 } from '~/components/ui/table';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '~/components/ui/tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
+import { TooltipProvider } from '~/components/ui/tooltip';
 import type { ExportColumn } from '~/hooks/shared/use-export-data';
-import { useExportPDF, type PDFSection } from '~/hooks/shared/use-export-pdf';
+import { type PDFSection, useExportPDF } from '~/hooks/shared/use-export-pdf';
 import type { DetalleFacturas } from '~/types/reportes';
 
 import { facturasTableColumns } from './columns-facturas';
@@ -106,7 +103,7 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
         header: 'Valor Total',
         formatter: (value: number) => `$${value?.toLocaleString('es-CL')}`
       },
-      { key: 'consumoPeriodo', header: 'Consumo Período (kWh)' }
+      { key: 'consumoPeriodo', header: 'Consumo Período (m³)' }
     ],
     []
   );
@@ -422,11 +419,11 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
       color: '#dc2626'
     },
     consumo: {
-      label: 'Consumo (kWh)',
+      label: 'Consumo (m³)',
       color: '#7c3aed'
     },
     precioKwh: {
-      label: 'Precio/kWh',
+      label: 'Precio/m³',
       color: '#f59e0b'
     }
   };
@@ -474,10 +471,10 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
           },
           {
             label: 'Consumo Total',
-            value: `${Math.round(analyticsData.totalConsumo).toLocaleString('es-CL')} kWh`
+            value: `${Math.round(analyticsData.totalConsumo).toLocaleString('es-CL')} m³`
           },
           {
-            label: 'Precio Promedio/kWh',
+            label: 'Precio Promedio/m³',
             value: `$${analyticsData.precioPromedioKwh.toFixed(2)}`
           },
           {
@@ -516,7 +513,7 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
             key: 'consumo',
             header: 'Consumo',
             align: 'right',
-            formatter: (val: number) => `${val.toLocaleString('es-CL')} kWh`
+            formatter: (val: number) => `${val.toLocaleString('es-CL')} m³`
           }
         ]
       }
@@ -537,9 +534,9 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
 
   if (detalleFacturas.length === 0) {
     return (
-      <Card className='border bg-background'>
-        <CardContent className='pt-6 text-center'>
-          <div className='text-slate-500'>
+      <Card className="border bg-background">
+        <CardContent className="pt-6 text-center">
+          <div className="text-slate-500">
             No hay datos de facturas disponibles
           </div>
         </CardContent>
@@ -549,43 +546,43 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
 
   return (
     <TooltipProvider>
-      <div className='space-y-6'>
+      <div className="space-y-6">
         {/* Filtros de tiempo y exportación */}
-        <Card className='border bg-background'>
-          <CardContent className='pt-4'>
-            <div className='flex flex-col sm:flex-row justify-between gap-4'>
-              <div className='flex flex-wrap gap-2'>
+        <Card className="border bg-background">
+          <CardContent className="pt-4">
+            <div className="flex flex-col sm:flex-row justify-between gap-4">
+              <div className="flex flex-wrap gap-2">
                 <Button
                   variant={timeRange === '6m' ? 'default' : 'outline'}
-                  size='sm'
+                  size="sm"
                   onClick={() => setTimeRange('6m')}
                 >
-                  <Calendar className='h-3 w-3 mr-1' />6 meses
+                  <Calendar className="h-3 w-3 mr-1" />6 meses
                 </Button>
                 <Button
                   variant={timeRange === '1a' ? 'default' : 'outline'}
-                  size='sm'
+                  size="sm"
                   onClick={() => setTimeRange('1a')}
                 >
                   1 año
                 </Button>
                 <Button
                   variant={timeRange === '2a' ? 'default' : 'outline'}
-                  size='sm'
+                  size="sm"
                   onClick={() => setTimeRange('2a')}
                 >
                   2 años
                 </Button>
                 <Button
                   variant={timeRange === '5a' ? 'default' : 'outline'}
-                  size='sm'
+                  size="sm"
                   onClick={() => setTimeRange('5a')}
                 >
                   5 años
                 </Button>
                 <Button
                   variant={timeRange === 'todo' ? 'default' : 'outline'}
-                  size='sm'
+                  size="sm"
                   onClick={() => setTimeRange('todo')}
                 >
                   Todo
@@ -595,7 +592,7 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
                 data={detalleFacturas}
                 columns={facturasColumns}
                 filename={`facturas_contrato_${contratoId}`}
-                size='sm'
+                size="sm"
                 enablePDF={true}
                 onPDFExport={handlePDFExport}
               />
@@ -604,118 +601,118 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
         </Card>
 
         {/* KPIs mejorados en grid */}
-        <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6'>
-          <Card className='border bg-linear-to-br from-emerald-50 to-emerald-100 dark:from-emerald-950 dark:to-emerald-900'>
-            <CardContent className='pt-4'>
-              <div className='flex items-center justify-between'>
-                <div className='flex-1'>
-                  <p className='text-xs font-medium text-emerald-700 dark:text-emerald-300'>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+          <Card className="border bg-linear-to-br from-emerald-50 to-emerald-100 dark:from-emerald-950 dark:to-emerald-900">
+            <CardContent className="pt-4">
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <p className="text-xs font-medium text-emerald-700 dark:text-emerald-300">
                     Total Facturado
                   </p>
-                  <p className='text-xl font-bold text-emerald-900 dark:text-emerald-100'>
+                  <p className="text-xl font-bold text-emerald-900 dark:text-emerald-100">
                     $
                     {Math.round(analyticsData.totalFacturado).toLocaleString(
                       'es-CL'
                     )}
                   </p>
-                  <p className='text-xs text-emerald-600 dark:text-emerald-400'>
+                  <p className="text-xs text-emerald-600 dark:text-emerald-400">
                     {analyticsData.filteredFacturas.length} facturas
                   </p>
                 </div>
-                <DollarSign className='h-8 w-8 text-emerald-600 dark:text-emerald-400 opacity-50' />
+                <DollarSign className="h-8 w-8 text-emerald-600 dark:text-emerald-400 opacity-50" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className='border bg-linear-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900'>
-            <CardContent className='pt-4'>
-              <div className='flex items-center justify-between'>
-                <div className='flex-1'>
-                  <p className='text-xs font-medium text-blue-700 dark:text-blue-300'>
+          <Card className="border bg-linear-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900">
+            <CardContent className="pt-4">
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <p className="text-xs font-medium text-blue-700 dark:text-blue-300">
                     Promedio Factura
                   </p>
-                  <p className='text-xl font-bold text-blue-900 dark:text-blue-100'>
+                  <p className="text-xl font-bold text-blue-900 dark:text-blue-100">
                     $
                     {Math.round(analyticsData.promedioFactura).toLocaleString(
                       'es-CL'
                     )}
                   </p>
-                  <p className='text-xs text-blue-600 dark:text-blue-400'>
+                  <p className="text-xs text-blue-600 dark:text-blue-400">
                     por período
                   </p>
                 </div>
-                <Activity className='h-8 w-8 text-blue-600 dark:text-blue-400 opacity-50' />
+                <Activity className="h-8 w-8 text-blue-600 dark:text-blue-400 opacity-50" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className='border bg-linear-to-br from-purple-50 to-purple-100 dark:from-purple-950 dark:to-purple-900'>
-            <CardContent className='pt-4'>
-              <div className='flex items-center justify-between'>
-                <div className='flex-1'>
-                  <p className='text-xs font-medium text-purple-700 dark:text-purple-300'>
+          <Card className="border bg-linear-to-br from-purple-50 to-purple-100 dark:from-purple-950 dark:to-purple-900">
+            <CardContent className="pt-4">
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <p className="text-xs font-medium text-purple-700 dark:text-purple-300">
                     Consumo Total
                   </p>
-                  <p className='text-xl font-bold text-purple-900 dark:text-purple-100'>
+                  <p className="text-xl font-bold text-purple-900 dark:text-purple-100">
                     {Math.round(analyticsData.totalConsumo).toLocaleString(
                       'es-CL'
                     )}
                   </p>
-                  <p className='text-xs text-purple-600 dark:text-purple-400'>
-                    kWh
+                  <p className="text-xs text-purple-600 dark:text-purple-400">
+                    m³
                   </p>
                 </div>
-                <Activity className='h-8 w-8 text-purple-600 dark:text-purple-400 opacity-50' />
+                <Activity className="h-8 w-8 text-purple-600 dark:text-purple-400 opacity-50" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className='border bg-linear-to-br from-amber-50 to-amber-100 dark:from-amber-950 dark:to-amber-900'>
-            <CardContent className='pt-4'>
-              <div className='flex items-center justify-between'>
-                <div className='flex-1'>
-                  <p className='text-xs font-medium text-amber-700 dark:text-amber-300'>
-                    Precio/kWh
+          <Card className="border bg-linear-to-br from-amber-50 to-amber-100 dark:from-amber-950 dark:to-amber-900">
+            <CardContent className="pt-4">
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <p className="text-xs font-medium text-amber-700 dark:text-amber-300">
+                    Precio/m³
                   </p>
-                  <p className='text-xl font-bold text-amber-900 dark:text-amber-100'>
+                  <p className="text-xl font-bold text-amber-900 dark:text-amber-100">
                     ${analyticsData.precioPromedioKwh.toFixed(2)}
                   </p>
-                  <p className='text-xs text-amber-600 dark:text-amber-400'>
+                  <p className="text-xs text-amber-600 dark:text-amber-400">
                     promedio
                   </p>
                 </div>
-                <PieChart className='h-8 w-8 text-amber-600 dark:text-amber-400 opacity-50' />
+                <PieChart className="h-8 w-8 text-amber-600 dark:text-amber-400 opacity-50" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className='border bg-linear-to-br from-rose-50 to-rose-100 dark:from-rose-950 dark:to-rose-900'>
-            <CardContent className='pt-4'>
-              <div className='flex items-center justify-between'>
-                <div className='flex-1'>
-                  <p className='text-xs font-medium text-rose-700 dark:text-rose-300'>
+          <Card className="border bg-linear-to-br from-rose-50 to-rose-100 dark:from-rose-950 dark:to-rose-900">
+            <CardContent className="pt-4">
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <p className="text-xs font-medium text-rose-700 dark:text-rose-300">
                     Factura Máxima
                   </p>
-                  <p className='text-xl font-bold text-rose-900 dark:text-rose-100'>
+                  <p className="text-xl font-bold text-rose-900 dark:text-rose-100">
                     $
                     {Math.round(analyticsData.maxFactura).toLocaleString(
                       'es-CL'
                     )}
                   </p>
-                  <p className='text-xs text-rose-600 dark:text-rose-400'>
+                  <p className="text-xs text-rose-600 dark:text-rose-400">
                     peak
                   </p>
                 </div>
-                <TrendingUp className='h-8 w-8 text-rose-600 dark:text-rose-400 opacity-50' />
+                <TrendingUp className="h-8 w-8 text-rose-600 dark:text-rose-400 opacity-50" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className='border bg-linear-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900'>
-            <CardContent className='pt-4'>
-              <div className='flex items-center justify-between'>
-                <div className='flex-1'>
-                  <p className='text-xs font-medium text-slate-700 dark:text-slate-300'>
+          <Card className="border bg-linear-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900">
+            <CardContent className="pt-4">
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <p className="text-xs font-medium text-slate-700 dark:text-slate-300">
                     Tendencia
                   </p>
                   <Badge
@@ -726,36 +723,36 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
                           ? 'default'
                           : 'secondary'
                     }
-                    className='mt-2'
+                    className="mt-2"
                   >
                     {analyticsData.tendenciaFacturacion === 'up' ? (
                       <>
-                        <TrendingUp className='h-3 w-3 mr-1' />
+                        <TrendingUp className="h-3 w-3 mr-1" />
                         Al alza
                       </>
                     ) : analyticsData.tendenciaFacturacion === 'down' ? (
                       <>
-                        <TrendingDown className='h-3 w-3 mr-1' />A la baja
+                        <TrendingDown className="h-3 w-3 mr-1" />A la baja
                       </>
                     ) : (
                       'Estable'
                     )}
                   </Badge>
-                  <p className='text-xs text-slate-600 dark:text-slate-400 mt-1'>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
                     {analyticsData.variacionPromedio > 0 ? '+' : ''}
                     {analyticsData.variacionPromedio.toFixed(1)}%
                   </p>
                 </div>
-                <FileText className='h-8 w-8 text-slate-600 dark:text-slate-400 opacity-50' />
+                <FileText className="h-8 w-8 text-slate-600 dark:text-slate-400 opacity-50" />
               </div>
             </CardContent>
           </Card>
         </div>
 
         {/* Gráficos con tabs */}
-        <Card className='border bg-background'>
+        <Card className="border bg-background">
           <CardHeader>
-            <CardTitle className='text-base'>
+            <CardTitle className="text-base">
               Análisis Visual de Facturación
             </CardTitle>
             <CardDescription>
@@ -767,21 +764,21 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
               value={activeChart}
               onValueChange={v => setActiveChart(v as any)}
             >
-              <TabsList className='grid w-full grid-cols-3 mb-4'>
-                <TabsTrigger value='composition'>Composición</TabsTrigger>
-                <TabsTrigger value='trends'>Evolución Temporal</TabsTrigger>
-                <TabsTrigger value='comparison'>Precio/kWh</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-3 mb-4">
+                <TabsTrigger value="composition">Composición</TabsTrigger>
+                <TabsTrigger value="trends">Evolución Temporal</TabsTrigger>
+                <TabsTrigger value="comparison">Precio/m³</TabsTrigger>
               </TabsList>
 
-              <TabsContent value='composition' className='mt-0'>
+              <TabsContent value="composition" className="mt-0">
                 <ChartContainer
                   config={chartConfig}
-                  className='h-[350px] w-full'
+                  className="h-[350px] w-full"
                 >
-                  <ResponsiveContainer width='100%' height='100%'>
+                  <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={analyticsData.filteredFacturas}>
                       <XAxis
-                        dataKey='fechaCorta'
+                        dataKey="fechaCorta"
                         tickLine={false}
                         axisLine={false}
                         tickMargin={8}
@@ -805,15 +802,15 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
                         ]}
                       />
                       <Bar
-                        dataKey='valorNeto'
-                        fill='#0891b2'
-                        stackId='factura'
+                        dataKey="valorNeto"
+                        fill="#0891b2"
+                        stackId="factura"
                         radius={[0, 0, 4, 4]}
                       />
                       <Bar
-                        dataKey='iva'
-                        fill='#dc2626'
-                        stackId='factura'
+                        dataKey="iva"
+                        fill="#dc2626"
+                        stackId="factura"
                         radius={[4, 4, 0, 0]}
                       />
                     </BarChart>
@@ -821,15 +818,15 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
                 </ChartContainer>
               </TabsContent>
 
-              <TabsContent value='trends' className='mt-0'>
+              <TabsContent value="trends" className="mt-0">
                 <ChartContainer
                   config={chartConfig}
-                  className='h-[350px] w-full'
+                  className="h-[350px] w-full"
                 >
-                  <ResponsiveContainer width='100%' height='100%'>
+                  <ResponsiveContainer width="100%" height="100%">
                     <ComposedChart data={analyticsData.filteredFacturas}>
                       <XAxis
-                        dataKey='fechaCorta'
+                        dataKey="fechaCorta"
                         tickLine={false}
                         axisLine={false}
                         tickMargin={8}
@@ -845,45 +842,45 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
                       />
                       <defs>
                         <linearGradient
-                          id='colorValor'
-                          x1='0'
-                          y1='0'
-                          x2='0'
-                          y2='1'
+                          id="colorValor"
+                          x1="0"
+                          y1="0"
+                          x2="0"
+                          y2="1"
                         >
                           <stop
-                            offset='5%'
-                            stopColor='#059669'
+                            offset="5%"
+                            stopColor="#059669"
                             stopOpacity={0.3}
                           />
                           <stop
-                            offset='95%'
-                            stopColor='#059669'
+                            offset="95%"
+                            stopColor="#059669"
                             stopOpacity={0}
                           />
                         </linearGradient>
                       </defs>
                       <Area
-                        type='monotone'
-                        dataKey='valorTotal'
-                        stroke='#059669'
+                        type="monotone"
+                        dataKey="valorTotal"
+                        stroke="#059669"
                         strokeWidth={2}
-                        fill='url(#colorValor)'
+                        fill="url(#colorValor)"
                       />
                     </ComposedChart>
                   </ResponsiveContainer>
                 </ChartContainer>
               </TabsContent>
 
-              <TabsContent value='comparison' className='mt-0'>
+              <TabsContent value="comparison" className="mt-0">
                 <ChartContainer
                   config={chartConfig}
-                  className='h-[350px] w-full'
+                  className="h-[350px] w-full"
                 >
-                  <ResponsiveContainer width='100%' height='100%'>
+                  <ResponsiveContainer width="100%" height="100%">
                     <ComposedChart data={analyticsData.filteredFacturas}>
                       <XAxis
-                        dataKey='fechaCorta'
+                        dataKey="fechaCorta"
                         tickLine={false}
                         axisLine={false}
                         tickMargin={8}
@@ -894,18 +891,18 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
                         content={<ChartTooltipContent />}
                         formatter={value => [
                           `$${Number(value).toFixed(2)}`,
-                          'Precio por kWh'
+                          'Precio por m³'
                         ]}
                       />
                       <Bar
-                        dataKey='precioKwh'
-                        fill='#f59e0b'
+                        dataKey="precioKwh"
+                        fill="#f59e0b"
                         radius={[4, 4, 0, 0]}
                       />
                       <Line
-                        type='monotone'
-                        dataKey='precioKwh'
-                        stroke='#dc2626'
+                        type="monotone"
+                        dataKey="precioKwh"
+                        stroke="#dc2626"
                         strokeWidth={2}
                         dot={{ fill: '#dc2626', r: 3 }}
                       />
@@ -920,17 +917,17 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
         <Separator />
 
         {/* Tabla de datos colapsable */}
-        <Card className='border bg-background'>
+        <Card className="border bg-background">
           <CardHeader
-            className='flex flex-row items-center justify-between space-y-0 pb-4 cursor-pointer'
+            className="flex flex-row items-center justify-between space-y-0 pb-4 cursor-pointer"
             onClick={() => setShowDataTable(!showDataTable)}
           >
-            <CardTitle className='text-base flex items-center gap-2'>
+            <CardTitle className="text-base flex items-center gap-2">
               Historial Detallado de Facturas ({detalleFacturas.length})
               {showDataTable ? (
-                <ChevronUp className='h-4 w-4' />
+                <ChevronUp className="h-4 w-4" />
               ) : (
-                <ChevronDown className='h-4 w-4' />
+                <ChevronDown className="h-4 w-4" />
               )}
             </CardTitle>
           </CardHeader>
@@ -938,15 +935,15 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
             <CardContent>
               <div
                 ref={tableContainerRef}
-                className='relative rounded-md border overflow-auto'
+                className="relative rounded-md border overflow-auto"
                 style={{ height: '500px' }}
               >
-                <table className='w-full table-fixed caption-bottom text-sm'>
-                  <TableHeader className='sticky top-0 z-20 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/70 shadow-xs'>
+                <table className="w-full table-fixed caption-bottom text-sm">
+                  <TableHeader className="sticky top-0 z-20 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/70 shadow-xs">
                     {table.getHeaderGroups().map(headerGroup => (
                       <TableRow
                         key={headerGroup.id}
-                        className='hover:bg-transparent'
+                        className="hover:bg-transparent"
                       >
                         {headerGroup.headers.map(header => {
                           const columnDef = header.column.columnDef;
@@ -954,7 +951,7 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
                           return (
                             <TableHead
                               key={header.id}
-                              className='h-[50px] px-3 text-xs font-medium border-b border-border'
+                              className="h-[50px] px-3 text-xs font-medium border-b border-border"
                               style={{
                                 width: `${width}px`,
                                 minWidth: `${width}px`,
@@ -994,7 +991,7 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
                             transform: `translateY(${virtualRow.start}px)`,
                             display: 'table'
                           }}
-                          className='border-b hover:bg-muted'
+                          className="border-b hover:bg-muted"
                         >
                           {row.getVisibleCells().map(cell => {
                             const columnDef = cell.column.columnDef;
@@ -1002,7 +999,7 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
                             return (
                               <TableCell
                                 key={cell.id}
-                                className='h-[50px] px-3 py-1 text-sm'
+                                className="h-[50px] px-3 py-1 text-sm"
                                 style={{
                                   width: `${width}px`,
                                   minWidth: `${width}px`,
@@ -1022,7 +1019,7 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
                   </TableBody>
                 </table>
                 {rows.length === 0 && (
-                  <div className='h-20 flex items-center justify-center text-sm text-muted-foreground'>
+                  <div className="h-20 flex items-center justify-center text-sm text-muted-foreground">
                     No se encontraron facturas.
                   </div>
                 )}

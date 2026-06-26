@@ -35,29 +35,29 @@ const formatDateForSorting = (fecha: string): string => {
 
 export const columns: ColumnDef<Periodos>[] = [
   {
-    accessorKey: 'pf_id',
+    accessorKey: 'codigo',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='ID' />
+      <DataTableColumnHeader column={column} title="ID" />
     ),
     cell: ({ row }) => {
       const periodo = row.original;
       return (
-        <Badge variant='outline' className='text-xs font-mono px-1 py-0'>
-          {periodo.pf_id}
+        <Badge variant="outline" className="text-xs font-mono px-1 py-0">
+          {periodo.codigo}
         </Badge>
       );
     },
     size: 60
   },
   {
-    accessorKey: 'pf_descripcion',
+    accessorKey: 'descripcion',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Descripción' />
+      <DataTableColumnHeader column={column} title="Descripción" />
     ),
     cell: ({ row }) => {
-      const descripcion = row.getValue('pf_descripcion') as string;
+      const descripcion = row.getValue('descripcion') as string;
       return (
-        <div className='max-w-[120px] sm:max-w-[200px] truncate font-medium text-xs sm:text-sm'>
+        <div className="max-w-[120px] sm:max-w-[200px] truncate font-medium text-xs sm:text-sm">
           {descripcion}
         </div>
       );
@@ -65,17 +65,17 @@ export const columns: ColumnDef<Periodos>[] = [
     size: 150
   },
   {
-    accessorKey: 'Column1', //Formato DD-MM-YYYY
+    accessorKey: 'fechaInicio',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Fecha Inicio' />
+      <DataTableColumnHeader column={column} title="Fecha Inicio" />
     ),
     cell: ({ row }) => {
       const periodo = row.original;
-      const fechaInicio = parseFecha(periodo.Column1);
+      const fechaInicio = parseFecha(periodo.fechaInicio);
       return (
-        <div className='flex items-center gap-1'>
-          <Calendar className='h-3 w-3 text-slate-400 hidden sm:block' />
-          <span className='text-xs sm:text-sm'>
+        <div className="flex items-center gap-1">
+          <Calendar className="h-3 w-3 text-slate-400 hidden sm:block" />
+          <span className="text-xs sm:text-sm">
             {fechaInicio
               ? fechaInicio.toLocaleDateString('es-CL', {
                   day: '2-digit',
@@ -88,24 +88,24 @@ export const columns: ColumnDef<Periodos>[] = [
       );
     },
     sortingFn: (rowA, rowB) => {
-      const fechaA = formatDateForSorting(rowA.original.Column1);
-      const fechaB = formatDateForSorting(rowB.original.Column1);
+      const fechaA = formatDateForSorting(rowA.original.fechaInicio);
+      const fechaB = formatDateForSorting(rowB.original.fechaInicio);
       return fechaA.localeCompare(fechaB);
     },
     size: 140
   },
   {
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Fecha Fin' />
+      <DataTableColumnHeader column={column} title="Fecha Fin" />
     ),
-    accessorKey: 'Column2', //Formato DD-MM-YYYY
+    accessorKey: 'fechaFin',
     cell: ({ row }) => {
       const periodo = row.original;
-      const fechaFin = parseFecha(periodo.Column2);
+      const fechaFin = parseFecha(periodo.fechaFin);
       return (
-        <div className='flex items-center gap-1'>
-          <Clock className='h-3 w-3 text-slate-400 hidden sm:block' />
-          <span className='text-xs sm:text-sm'>
+        <div className="flex items-center gap-1">
+          <Clock className="h-3 w-3 text-slate-400 hidden sm:block" />
+          <span className="text-xs sm:text-sm">
             {fechaFin
               ? fechaFin.toLocaleDateString('es-CL', {
                   day: '2-digit',
@@ -118,20 +118,20 @@ export const columns: ColumnDef<Periodos>[] = [
       );
     },
     sortingFn: (rowA, rowB) => {
-      const fechaA = formatDateForSorting(rowA.original.Column2);
-      const fechaB = formatDateForSorting(rowB.original.Column2);
+      const fechaA = formatDateForSorting(rowA.original.fechaFin);
+      const fechaB = formatDateForSorting(rowB.original.fechaFin);
       return fechaA.localeCompare(fechaB);
     },
     size: 140
   },
   {
-    accessorKey: 'epf_descripcion',
+    accessorKey: 'estado',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Estado' />
+      <DataTableColumnHeader column={column} title="Estado" />
     ),
     cell: ({ row }) => {
       const periodo = row.original;
-      const _isOpen = periodo.epf_descripcion === 'Abierto';
+      const _isOpen = periodo.estado === 'Abierto';
 
       const getEstadoConfig = (estado: string) => {
         switch (estado) {
@@ -156,16 +156,16 @@ export const columns: ColumnDef<Periodos>[] = [
         }
       };
 
-      const config = getEstadoConfig(periodo.epf_descripcion);
+      const config = getEstadoConfig(periodo.estado);
 
       return (
-        <div className='flex items-center gap-1'>
-          <Hash className='h-3 w-3 text-slate-400 hidden sm:block' />
+        <div className="flex items-center gap-1">
+          <Hash className="h-3 w-3 text-slate-400 hidden sm:block" />
           <Badge
             variant={config.variant}
             className={cn('text-xs font-medium px-1 py-0', config.className)}
           >
-            {periodo.epf_descripcion}
+            {periodo.estado}
           </Badge>
         </div>
       );

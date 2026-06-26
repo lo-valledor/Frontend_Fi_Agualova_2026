@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import RevisarCalculoFacturaComponent from './revisar-calculo-factura-component';
 
 // Mocks
@@ -82,15 +82,14 @@ describe('RevisarCalculoFacturaComponent', () => {
   const mockProps = {
     periodoAbierto: [
       {
-        mes: 1,
-        anio: 2024,
+        id: '012024',
         descripcion: 'Enero 2024'
       }
     ],
     ciclosFacturacionActivos: [
       {
-        descripcion: 'Ciclo día 15',
-        diaFacturacion: '15'
+        id: '15',
+        descripcion: 'Ciclo día 15'
       }
     ],
     estadoCierreLecturas: null
@@ -108,9 +107,7 @@ describe('RevisarCalculoFacturaComponent', () => {
       />
     );
 
-    expect(
-      screen.getByText('Revisar Cálculo de Factura')
-    ).toBeInTheDocument();
+    expect(screen.getByText('Revisar Cálculo de Factura')).toBeInTheDocument();
   });
 
   it('debería mostrar el título del componente', () => {
@@ -146,9 +143,7 @@ describe('RevisarCalculoFacturaComponent', () => {
       />
     );
 
-    expect(
-      screen.getByText('Configuración de Búsqueda')
-    ).toBeInTheDocument();
+    expect(screen.getByText('Configuración de Búsqueda')).toBeInTheDocument();
   });
 
   it('debería mostrar período cuando está disponible', () => {
@@ -170,9 +165,7 @@ describe('RevisarCalculoFacturaComponent', () => {
       />
     );
 
-    expect(
-      screen.getByText('Ciclo de Facturación')
-    ).toBeInTheDocument();
+    expect(screen.getByText('Ciclo de Facturación')).toBeInTheDocument();
   });
 
   it('debería mostrar panel de resultados', () => {
@@ -183,9 +176,7 @@ describe('RevisarCalculoFacturaComponent', () => {
       />
     );
 
-    expect(
-      screen.getByText('Resultados de Consulta')
-    ).toBeInTheDocument();
+    expect(screen.getByText('Resultados de Consulta')).toBeInTheDocument();
   });
 
   it('debería renderizar sin errores', () => {
@@ -257,15 +248,9 @@ describe('RevisarCalculoFacturaComponent', () => {
           {...mockProps}
           estadoCierreLecturas={[
             {
-              sectorId: 1,
-              nichoDescripcion: 'Sector 1',
-              cantidadSinLectura: 0,
-              cantidadLecturasOK: 10,
-              cantidadClaveRoja: 0,
-              cantidadClaveNaranja: 0,
-              cantidadCorregidas: 0,
-              cantidadTotal: 10,
-              nichoId: 1
+              id: '1',
+              descripcion: 'Sector 1',
+              cerrado: true
             }
           ]}
         />
