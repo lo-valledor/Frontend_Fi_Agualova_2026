@@ -1,0 +1,70 @@
+name: PR Validation
+
+on:
+  pull_request:
+    branches: [develop, main]
+    types: [opened, synchronize, reopened]
+
+concurrency:
+  group: pr-validation-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: '24'
+  PNPM_VERSION: '9'
+  IMAGE_NAME: agualova-frontend-pr
+
+jobs:
+  ci:
+    name: CI
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install pnpm ${{ env.PNPM_VERSION }}
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: ~/.local/share/pnpm/store
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run CI
+        env:
+          VITE_API_URL: ${{ secrets.STAGING_API_URL || 'http://localhost:8081/Agualova' }}
+          VITE_ENV_MODE: uat
+          VITE_APP_ENV: staging
+        run: pnpm run ci
+
+  docker-build:
+    name: Docker Build
+    runs-on: ubuntu-latest
+    needs: ci
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: |
+          docker build \
+            --build-arg VITE_API_URL="${{ secrets.STAGING_API_URL || 'http://localhost:8081/Agualova' }}" \
+            --build-arg VITE_ENV_MODE=uat \
+            --build-arg VITE_APP_ENV=staging \
+            -t "${{ env.IMAGE_NAME }}:pr-${{ github.event.pull_request.number }}" \
+            .
