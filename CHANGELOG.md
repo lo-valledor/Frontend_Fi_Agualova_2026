@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.2.1](https://github.com/lo-valledor/Frontend_Fi_Agualova_2026/compare/v1.2.0...v1.2.1) (2026-06-26)
+
+
+### Bug Fixes
+
+* ajustes de owasp 1/x ([ae8fbb3](https://github.com/lo-valledor/Frontend_Fi_Agualova_2026/commit/ae8fbb3e915dc72a36cf84a32ca2798137b67de2))
+* ajustes de owasp 1/x ([acbf57d](https://github.com/lo-valledor/Frontend_Fi_Agualova_2026/commit/acbf57d18b9476155636628608e66ccf2dd508be))
+* harden frontend security and fix roles-permisos typings ([a59b1eb](https://github.com/lo-valledor/Frontend_Fi_Agualova_2026/commit/a59b1ebc09840f535b2ee4b6e5d352c3e022d75e))
+
 ## [1.2.0](https://github.com/gbourguett-lv/Frontend_Fi_Agualova_2026/compare/v1.1.0...v1.2.0) (2026-06-26)
 
 
