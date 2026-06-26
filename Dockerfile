@@ -28,11 +28,15 @@ RUN pnpm run build
 
 FROM nginx:alpine
 
+ARG BACKEND_URL=http://localhost:7071/Agualova
+ENV BACKEND_URL=$BACKEND_URL
+
 # Instalar curl para healthchecks (opcional)
-RUN apk add --no-cache curl
+RUN apk add --no-cache curl gettext
 
 COPY --from=build-env /app/build/client /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/nginx.conf
+COPY nginx.conf.template /etc/nginx/nginx.conf.template
+RUN envsubst '$BACKEND_URL' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf
 
 # Crear directorios y dar permisos para usuario nginx
 RUN mkdir -p /var/cache/nginx /var/log/nginx /var/run && \
