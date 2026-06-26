@@ -21,9 +21,8 @@ import {
   TableHeader,
   TableRow
 } from '~/components/ui/table';
-import { rolesPermisosService } from '~/services/rolesPermisosService';
-import type { Usuarios } from '~/types/administracion';
-import type { Roles } from '~/types/roles-permisos';
+import { administracionService } from '~/services/administracionService';
+import type { GetUserById, Roles, Usuarios } from '~/types/administracion';
 
 interface UserRolesModalProps {
   isOpen: boolean;
@@ -39,8 +38,8 @@ export function UserRolesModal({
   user
 }: UserRolesModalProps) {
   const [availableRoles, setAvailableRoles] = useState<Roles[]>([]);
-  const [userRoles, setUserRoles] = useState<Roles[]>([]);
-  const [selectedRoleIds, setSelectedRoleIds] = useState<Set<number>>(
+  const [userDetail, setUserDetail] = useState<GetUserById | null>(null);
+  const [selectedRoleIds, setSelectedRoleIds] = useState<Set<string>>(
     new Set()
   );
   const [loading, setLoading] = useState(false);
@@ -57,28 +56,32 @@ export function UserRolesModal({
 
     setLoading(true);
     try {
-      // Obtener todos los roles disponibles
-      const rolesResponse = await rolesPermisosService.getRoles();
+      const [rolesResponse, userResponse] = await Promise.all([
+        administracionService.getAllRoles(),
+        administracionService.getUserById(user.id)
+      ]);
+
       if (rolesResponse.error) {
         throw new Error(rolesResponse.error);
       }
 
-      // Obtener roles actuales del usuario
-      const userRolesResponse = await rolesPermisosService.getRolesUsuario(
-        String(user.id)
-      );
-      if (userRolesResponse.error) {
-        throw new Error(userRolesResponse.error);
+      if (userResponse.error || !userResponse.data) {
+        throw new Error(
+          userResponse.error || 'No fue posible obtener el usuario'
+        );
       }
 
       const allRoles = rolesResponse.data || [];
-      const currentUserRoles = userRolesResponse.data || [];
+      const currentUserRole = userResponse.data.rol;
 
       setAvailableRoles(allRoles);
-      setUserRoles(currentUserRoles);
+      setUserDetail(userResponse.data);
 
-      // Pre-seleccionar los roles actuales del usuario
-      const currentRoleIds = new Set(currentUserRoles.map(role => role.idRol));
+      const currentRoleIds = new Set(
+        allRoles
+          .filter(role => role.name === currentUserRole)
+          .map(role => role.id)
+      );
       setSelectedRoleIds(currentRoleIds);
     } catch (error: any) {
       toast.error(error.message || 'Error al obtener la información de roles');
@@ -87,12 +90,13 @@ export function UserRolesModal({
     }
   };
 
-  const handleToggleRole = (roleId: number) => {
+  const handleToggleRole = (roleId: string) => {
     setSelectedRoleIds(prev => {
       const newSet = new Set(prev);
       if (newSet.has(roleId)) {
-        newSet.delete(roleId);
+        newSet.clear();
       } else {
+        newSet.clear();
         newSet.add(roleId);
       }
       return newSet;
@@ -104,40 +108,19 @@ export function UserRolesModal({
 
     setSaving(true);
     try {
-      const currentRoleIds = new Set(userRoles.map(role => role.idRol));
-      const newSelectedRoleIds = selectedRoleIds;
+      const selectedRoleId = Array.from(selectedRoleIds)[0];
 
-      // Roles a agregar
-      const rolesToAdd = Array.from(newSelectedRoleIds).filter(
-        id => !currentRoleIds.has(id)
-      );
-
-      // Roles a quitar
-      const rolesToRemove = Array.from(currentRoleIds).filter(
-        id => !newSelectedRoleIds.has(id)
-      );
-      // Asignar roles nuevos
-      if (rolesToAdd.length > 0) {
-        const response = await rolesPermisosService.asignarRolesUsuario(
-          String(user.id),
-          { roles: rolesToAdd }
-        );
-
-        if (response.error) {
-          throw new Error(response.error);
-        }
+      if (!selectedRoleId) {
+        throw new Error('Debe seleccionar un rol');
       }
 
-      // Quitar roles removidos
-      for (const roleId of rolesToRemove) {
-        const response = await rolesPermisosService.quitarRolUsuario(
-          String(user.id),
-          roleId
-        );
+      const result = await administracionService.putUpdateRole(
+        user.id,
+        selectedRoleId
+      );
 
-        if (response.error) {
-          throw new Error(response.error);
-        }
+      if (result.error) {
+        throw new Error(result.error);
       }
 
       toast.success('Roles actualizados exitosamente');
@@ -161,7 +144,12 @@ export function UserRolesModal({
   };
 
   const hasChanges = () => {
-    const currentRoleIds = new Set(userRoles.map(role => role.idRol));
+    const currentRoleIds = new Set(
+      availableRoles
+        .filter(role => role.name === userDetail?.rol)
+        .map(role => role.id)
+    );
+
     if (currentRoleIds.size !== selectedRoleIds.size) return true;
 
     for (const id of selectedRoleIds) {
@@ -171,9 +159,11 @@ export function UserRolesModal({
   };
 
   const getRoleStatus = (
-    roleId: number
+    roleId: string
   ): 'current' | 'new' | 'removed' | 'none' => {
-    const wasCurrent = userRoles.some(role => role.idRol === roleId);
+    const wasCurrent = availableRoles.some(
+      role => role.id === roleId && role.name === userDetail?.rol
+    );
     const isSelected = selectedRoleIds.has(roleId);
 
     if (wasCurrent && isSelected) return 'current';
@@ -231,57 +221,53 @@ export function UserRolesModal({
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {availableRoles
-                    .filter(role => role.estadoRol) // Solo mostrar roles activos
-                    .map(role => {
-                      const status = getRoleStatus(role.idRol);
-                      return (
-                        <TableRow
-                          key={role.idRol}
-                          className={
-                            status === 'removed'
-                              ? 'bg-red-50/50 dark:bg-red-950/20'
-                              : status === 'new'
-                                ? 'bg-green-50/50 dark:bg-green-950/20'
-                                : ''
-                          }
-                        >
-                          <TableCell>
-                            <Checkbox
-                              checked={selectedRoleIds.has(role.idRol)}
-                              onCheckedChange={() =>
-                                handleToggleRole(role.idRol)
-                              }
-                            />
-                          </TableCell>
-                          <TableCell className="font-medium">
-                            {role.nombreRol}
-                          </TableCell>
-                          <TableCell className="text-sm text-muted-foreground">
-                            {role.descripcion || 'Sin descripción'}
-                          </TableCell>
-                          <TableCell className="text-center">
-                            {status === 'current' && (
-                              <Badge className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
-                                <Check className="h-3 w-3 mr-1" />
-                                Asignado
-                              </Badge>
-                            )}
-                            {status === 'new' && (
-                              <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
-                                Nuevo
-                              </Badge>
-                            )}
-                            {status === 'removed' && (
-                              <Badge className="bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
-                                <X className="h-3 w-3 mr-1" />
-                                Se quitará
-                              </Badge>
-                            )}
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
+                  {availableRoles.map(role => {
+                    const status = getRoleStatus(role.id);
+                    return (
+                      <TableRow
+                        key={role.id}
+                        className={
+                          status === 'removed'
+                            ? 'bg-red-50/50 dark:bg-red-950/20'
+                            : status === 'new'
+                              ? 'bg-green-50/50 dark:bg-green-950/20'
+                              : ''
+                        }
+                      >
+                        <TableCell>
+                          <Checkbox
+                            checked={selectedRoleIds.has(role.id)}
+                            onCheckedChange={() => handleToggleRole(role.id)}
+                          />
+                        </TableCell>
+                        <TableCell className="font-medium">
+                          {role.name}
+                        </TableCell>
+                        <TableCell className="text-sm text-muted-foreground">
+                          {role.normalizedName || 'Sin descripción'}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          {status === 'current' && (
+                            <Badge className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                              <Check className="h-3 w-3 mr-1" />
+                              Asignado
+                            </Badge>
+                          )}
+                          {status === 'new' && (
+                            <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                              Nuevo
+                            </Badge>
+                          )}
+                          {status === 'removed' && (
+                            <Badge className="bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
+                              <X className="h-3 w-3 mr-1" />
+                              Se quitará
+                            </Badge>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
                 </TableBody>
               </Table>
             </div>
@@ -293,7 +279,7 @@ export function UserRolesModal({
             <div className="flex justify-between items-center">
               <span>
                 Roles seleccionados: {selectedRoleIds.size} de{' '}
-                {availableRoles.filter(r => r.estadoRol).length}
+                {availableRoles.length}
               </span>
               {hasChanges() && (
                 <Badge variant="outline" className="text-amber-600">

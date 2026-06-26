@@ -18,18 +18,8 @@ import {
   TableHeader,
   TableRow
 } from '~/components/ui/table';
-import { permisosService } from '~/services/roles-permisos/permisos.service';
-import type { Usuarios } from '~/types/administracion';
-
-type PermisoUsuario = {
-  idMenu: number;
-  nombreMenu: string;
-  ruta: string;
-  puedeVer: boolean;
-  puedeCrear: boolean;
-  puedeEditar: boolean;
-  puedeEliminar: boolean;
-};
+import { administracionService } from '~/services/administracionService';
+import type { GetUserById, Usuarios } from '~/types/administracion';
 
 interface UserPermissionsModalProps {
   isOpen: boolean;
@@ -42,7 +32,7 @@ export function UserPermissionsModal({
   onClose,
   user
 }: UserPermissionsModalProps) {
-  const [permisos, setPermisos] = useState<PermisoUsuario[]>([]);
+  const [userDetail, setUserDetail] = useState<GetUserById | null>(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -56,13 +46,13 @@ export function UserPermissionsModal({
 
     setLoading(true);
     try {
-      const result = await permisosService.getUsuarioPermisos(user.id);
-      if (result.error) {
-        throw new Error(result.error);
+      const result = await administracionService.getUserById(user.id);
+
+      if (result.error || !result.data) {
+        throw new Error(result.error || 'No fue posible obtener el usuario');
       }
-      if (result.data) {
-        setPermisos(result.data as unknown as PermisoUsuario[]);
-      }
+
+      setUserDetail(result.data);
     } catch (error) {
       const message =
         error instanceof Error
@@ -73,6 +63,8 @@ export function UserPermissionsModal({
       setLoading(false);
     }
   };
+
+  const permisos = userDetail?.permisos ?? [];
 
   const PermissionBadge = ({ hasPermission }: { hasPermission: boolean }) => {
     return hasPermission ? (
@@ -127,52 +119,28 @@ export function UserPermissionsModal({
                 <TableHeader>
                   <TableRow className="bg-muted/50">
                     <TableHead className="font-semibold">Menú</TableHead>
-                    <TableHead className="font-semibold">Ruta</TableHead>
+                    <TableHead className="font-semibold">Descripción</TableHead>
+                    <TableHead className="font-semibold">Módulo</TableHead>
                     <TableHead className="text-center font-semibold">
-                      Ver
-                    </TableHead>
-                    <TableHead className="text-center font-semibold">
-                      Crear
-                    </TableHead>
-                    <TableHead className="text-center font-semibold">
-                      Editar
-                    </TableHead>
-                    <TableHead className="text-center font-semibold">
-                      Eliminar
+                      Estado
                     </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {permisos.map(permiso => (
-                    <TableRow key={permiso.idMenu}>
+                    <TableRow key={permiso.id}>
                       <TableCell className="font-medium">
-                        {permiso.nombreMenu}
+                        {permiso.nombre}
                       </TableCell>
-                      <TableCell className="text-sm text-muted-foreground font-mono">
-                        {permiso.ruta}
+                      <TableCell className="text-sm text-muted-foreground">
+                        {permiso.descripcion}
                       </TableCell>
-                      <TableCell className="text-center">
-                        <div className="flex justify-center">
-                          <PermissionBadge hasPermission={permiso.puedeVer} />
-                        </div>
+                      <TableCell className="text-sm text-muted-foreground">
+                        {permiso.modulo}
                       </TableCell>
                       <TableCell className="text-center">
                         <div className="flex justify-center">
-                          <PermissionBadge hasPermission={permiso.puedeCrear} />
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-center">
-                        <div className="flex justify-center">
-                          <PermissionBadge
-                            hasPermission={permiso.puedeEditar}
-                          />
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-center">
-                        <div className="flex justify-center">
-                          <PermissionBadge
-                            hasPermission={permiso.puedeEliminar}
-                          />
+                          <PermissionBadge hasPermission={true} />
                         </div>
                       </TableCell>
                     </TableRow>

@@ -1,9 +1,7 @@
-import { jwtDecode } from 'jwt-decode';
-
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
 import { useNavigate } from 'react-router';
-
+import { getAuthenticatedUser } from '~/utils/auth-utils';
 import { authService } from '../services/authService';
 import {
   clearAuthToken,
@@ -16,7 +14,9 @@ export interface UserData {
   username: string;
   role: string;
   profileId: string;
+  email: string;
   fullName: string;
+  permisos: string[];
 }
 
 interface AuthContextType {
@@ -42,40 +42,33 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const isTokenValid = (token: string): boolean => {
-    try {
-      const decoded = jwtDecode<{ exp: number }>(token);
-      const currentTime = Date.now() / 1000;
-      const isValid = decoded.exp > currentTime;
-      return isValid;
-    } catch (error) {
-      console.error('Error al validar el token:', error);
-      return false;
-    }
-  };
+  const parseUserFromStoredToken = (): UserData => {
+    const decoded = getAuthenticatedUser();
 
-  const parseUserFromToken = (token: string): UserData => {
-    try {
-      const decoded = jwtDecode<{
-        sub: string;
-        name: string;
-        NombreUsuario: string;
-        role: string;
-        exp: number;
-        iss: string;
-        aud: string;
-      }>(token);
-
-      return {
-        id: decoded.sub,
-        username: decoded.name,
-        role: decoded.role,
-        profileId: decoded.sub,
-        fullName: decoded.NombreUsuario
-      };
-    } catch (error) {
-      throw new Error('Token inválido', { cause: error });
+    if (!decoded) {
+      throw new Error('Token inválido');
     }
+
+    const username =
+      decoded['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'] ||
+      '';
+    const email =
+      decoded[
+        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'
+      ] || '';
+    const role =
+      decoded['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] ||
+      '';
+
+    return {
+      id: decoded.uid || '',
+      username,
+      role,
+      profileId: decoded.uid || '',
+      email,
+      fullName: username,
+      permisos: decoded.Permiso || []
+    };
   };
 
   useEffect(() => {
@@ -85,10 +78,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         const token = getAuthToken();
 
         if (token) {
-          const isValid = isTokenValid(token);
-
-          if (isValid) {
-            const userData = parseUserFromToken(token);
+          if (getAuthenticatedUser()) {
+            const userData = parseUserFromStoredToken();
             setUser(userData);
           } else {
             clearAuthToken();
@@ -119,8 +110,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           navigate('/session-expired');
         } else if (event.newValue && event.newValue !== event.oldValue) {
           try {
-            if (isTokenValid(event.newValue)) {
-              const userData = parseUserFromToken(event.newValue);
+            if (getAuthenticatedUser()) {
+              const userData = parseUserFromStoredToken();
               setUser(userData);
             }
           } catch (error) {
@@ -154,8 +145,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
       // Intentar validar el token, pero no fallar si hay problemas menores
       try {
-        const isValid = isTokenValid(token);
-        if (!isValid && import.meta.env.DEV) {
+        const authenticatedUser = getAuthenticatedUser();
+        if (!authenticatedUser && import.meta.env.DEV) {
           console.warn(
             'Token posiblemente inválido, pero continuando con el login'
           );
@@ -171,7 +162,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
       // Guardar token y datos del usuario
       setAuthToken(token);
-      const userData = parseUserFromToken(token);
+      const userData = parseUserFromStoredToken();
       setUser(userData);
 
       // Redirigir al dashboard o a la página específica después del login

@@ -4,8 +4,21 @@ import { useRevalidator } from 'react-router';
 
 import { DataTableSkeleton } from '~/components/skeletons';
 import { rolesPermisosService } from '~/services/rolesPermisosService';
+import type { Permisos, Roles } from '~/types/roles-permisos';
 
 import type { Route } from './+types/roles-permisos';
+
+interface RolePermissionsEntry {
+  roleId: string;
+  permisos: Permisos[];
+}
+
+interface LoaderData {
+  roles: Roles[];
+  allPermissions: Permisos[];
+  rolePermissions: RolePermissionsEntry[];
+  error: Error | null;
+}
 
 // Lazy load del componente pesado (35 KB)
 const RolesPermisosComponent = lazy(
@@ -22,50 +35,67 @@ export function meta(_args: Route.MetaArgs) {
   ];
 }
 
-export async function clientLoader({}: Route.ClientLoaderArgs) {
+export async function clientLoader({}: Route.ClientLoaderArgs): Promise<LoaderData> {
   try {
-    // Cargar roles y menús en paralelo
-    const [rolesResponse, menusResponse] = await Promise.all([
-      rolesPermisosService.getRoles(),
-      rolesPermisosService.getMenus()
+    const [rolesResponse, permissionsResponse] = await Promise.all([
+      rolesPermisosService.getAllRoles(),
+      rolesPermisosService.getAllPermissions()
     ]);
 
-    if (rolesResponse.error || menusResponse.error) {
+    if (rolesResponse.error || permissionsResponse.error) {
       return {
         roles: [],
-        menus: [],
-        permisos: [],
+        allPermissions: [],
+        rolePermissions: [],
         error: new Error(
-          rolesResponse.error || menusResponse.error || 'Error al cargar datos'
+          rolesResponse.error ||
+            permissionsResponse.error ||
+            'Error al cargar datos'
         )
       };
     }
 
     const roles = rolesResponse.data || [];
-    const menus = menusResponse.data || [];
+    const allPermissions = permissionsResponse.data || [];
 
-    // Cargar permisos para todos los roles
-    let allPermisos: any[] = [];
-    if (roles.length > 0) {
-      const permisosPromises = roles.map(rol =>
-        rolesPermisosService.getMenusPorRol(rol.idRol)
-      );
+    const rolePermissions =
+      roles.length > 0
+        ? await Promise.all(
+            roles.map(async role => {
+              const result = await rolesPermisosService.getRolePermissions(
+                role.id
+              );
 
-      const permisosResponses = await Promise.all(permisosPromises);
-      allPermisos = permisosResponses.flatMap(response => response.data || []);
+              return {
+                roleId: role.id,
+                permisos: result.data || []
+              };
+            })
+          )
+        : [];
+
+    const failedRolePermissions = rolePermissions.length !== roles.length;
+
+    if (failedRolePermissions) {
+      return {
+        roles: [],
+        allPermissions: [],
+        rolePermissions: [],
+        error: new Error('Error al cargar permisos por rol')
+      };
     }
 
     return {
       roles,
-      menus,
-      permisos: allPermisos,
+      allPermissions,
+      rolePermissions,
       error: null
     };
   } catch (error) {
     return {
       roles: [],
-      menus: [],
-      permisos: [],
+      allPermissions: [],
+      rolePermissions: [],
       error: new Error(
         error instanceof Error ? error.message : 'Error desconocido'
       )
@@ -84,8 +114,8 @@ export default function RolesPermisos({ loaderData }: Route.ComponentProps) {
     <Suspense fallback={<DataTableSkeleton columns={4} rows={8} />}>
       <RolesPermisosComponent
         roles={loaderData?.roles || []}
-        menus={loaderData?.menus || []}
-        permisos={loaderData?.permisos || []}
+        allPermissions={loaderData?.allPermissions || []}
+        rolePermissions={loaderData?.rolePermissions || []}
         error={loaderData?.error || null}
         onDataChange={handleDataChange}
       />

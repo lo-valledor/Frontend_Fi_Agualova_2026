@@ -12,6 +12,13 @@ export interface UpdateRoleRequest extends CreateRoleRequest {
   idRol: number;
 }
 
+const mapRoleResponse = (role: any): Roles => ({
+  id: String(role.id ?? role.idRol ?? ''),
+  name: role.name ?? role.nombreRol ?? '',
+  normalizedName: role.normalizedName ?? role.descripcion ?? '',
+  concurrencyStamp: role.concurrencyStamp ?? null
+});
+
 export class RolesService extends BaseApiService {
   constructor(httpClient?: any) {
     super(httpClient);
@@ -19,117 +26,48 @@ export class RolesService extends BaseApiService {
 
   async getAll(): Promise<ServiceResponse<Roles[]>> {
     return this.executeDataOperation(async () => {
-      const response = await this.httpClient.get('listarRoles');
-      const roles = this.processResponseArray<Roles>(response);
-
-      // Mapear los datos del backend al formato esperado
-      // El backend devuelve id pero debería ser idRol
-      return roles.map((rol: any) => ({
-        idRol: rol.idRol || rol.id,
-        nombreRol: rol.nombreRol,
-        descripcion: rol.descripcion,
-        estadoRol: rol.estadoRol
-      })) as Roles[];
+      const response = await this.httpClient.get('/GetAllRoles');
+      const roles = this.processResponseArray<any>(response);
+      return roles.map(mapRoleResponse);
     }, 'Error al obtener roles');
   }
 
-  async getById(id: number): Promise<ServiceResponse<Roles | null>> {
-    if (!id) {
+  async getById(id: string): Promise<ServiceResponse<Roles | null>> {
+    if (!id?.trim()) {
       return this.handleError(
-        new Error('ID inválido'),
+        new Error('ID invalido'),
         'El ID del rol es requerido'
       );
     }
 
     return this.executeDataOperation(async () => {
-      const response = await this.httpClient.get(`ObtenerRolpor/${id}`);
-      return this.processResponseSingle<Roles>(response);
-    }, `Error al obtener el rol ${id}`) as Promise<ServiceResponse<Roles>>;
+      const response = await this.httpClient.get(`/roles/${id}`);
+      const data = this.processResponseSingle<any>(response);
+      return data ? mapRoleResponse(data) : null;
+    }, `Error al obtener el rol ${id}`) as Promise<
+      ServiceResponse<Roles | null>
+    >;
   }
 
-  async create(request: CreateRoleRequest): Promise<ServiceResponse<Roles>> {
-    if (!request.nombreRol?.trim()) {
-      return this.handleError(
-        new Error('Nombre vacío'),
-        'El nombre del rol es requerido'
-      );
-    }
-
-    return this.executeDataOperation(async () => {
-      const response = await this.httpClient.post('crearRol', request);
-
-      // Respuesta 204 significa éxito sin contenido
-      if (response.status === 204) {
-        return {
-          idRol: 0,
-          nombreRol: request.nombreRol,
-          descripcion: request.descripcion,
-          estadoRol: request.estadoRol
-        } as Roles;
-      }
-
-      return this.processResponseSingle<Roles>(response);
-    }, 'Error al crear el rol') as Promise<ServiceResponse<Roles>>;
+  async create(_request: CreateRoleRequest): Promise<ServiceResponse<Roles>> {
+    return this.handleError(
+      new Error('No soportado'),
+      'La creacion de roles no esta disponible en los endpoints nuevos'
+    );
   }
 
-  async update(request: UpdateRoleRequest): Promise<ServiceResponse<Roles>> {
-    if (!request.idRol) {
-      return this.handleError(
-        new Error('ID inválido'),
-        'El ID del rol es requerido'
-      );
-    }
-
-    if (!request.nombreRol?.trim()) {
-      return this.handleError(
-        new Error('Nombre vacío'),
-        'El nombre del rol es requerido'
-      );
-    }
-
-    return this.executeDataOperation(async () => {
-      const response = await this.httpClient.put('actualizarRol', request);
-
-      // Respuesta 204 significa éxito sin contenido
-      if (response.status === 204) {
-        return {
-          idRol: request.idRol,
-          nombreRol: request.nombreRol,
-          descripcion: request.descripcion,
-          estadoRol: request.estadoRol
-        } as Roles;
-      }
-
-      return this.processResponseSingle<Roles>(response);
-    }, 'Error al actualizar el rol') as Promise<ServiceResponse<Roles>>;
+  async update(_request: UpdateRoleRequest): Promise<ServiceResponse<Roles>> {
+    return this.handleError(
+      new Error('No soportado'),
+      'La actualizacion de roles no esta disponible en los endpoints nuevos'
+    );
   }
 
-  async delete(id: number): Promise<ServiceResponse<boolean>> {
-    if (!id) {
-      return this.handleError(
-        new Error('ID inválido'),
-        'El ID del rol es requerido'
-      );
-    }
-
-    return this.executeDataOperation(async () => {
-      await this.httpClient.delete(`eliminarRol/${id}`);
-      return true;
-    }, `Error al eliminar el rol ${id}`);
-  }
-
-  async getByUsuario(codigoUsuario: string): Promise<ServiceResponse<Roles[]>> {
-    if (!codigoUsuario?.trim()) {
-      return this.handleError(
-        new Error('Código inválido'),
-        'El código del usuario es requerido'
-      );
-    }
-
-    return this.executeDataOperation(async () => {
-      const response = await this.httpClient.get(`${codigoUsuario}/roles`);
-      return this.processResponseArray<Roles>(response);
-    }, `Error al obtener roles del usuario ${codigoUsuario}`);
+  async delete(_id: number): Promise<ServiceResponse<boolean>> {
+    return this.handleError(
+      new Error('No soportado'),
+      'La eliminacion de roles no esta disponible en los endpoints nuevos'
+    );
   }
 }
 
