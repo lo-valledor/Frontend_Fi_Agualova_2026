@@ -41,7 +41,7 @@ export function ResetForm({
   email,
   token,
   ...props
-}: ResetFormProps) {
+}: Readonly<ResetFormProps>) {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
