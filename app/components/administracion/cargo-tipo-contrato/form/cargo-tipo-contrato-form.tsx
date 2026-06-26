@@ -8,6 +8,7 @@ import {
   Zap
 } from 'lucide-react';
 import { useMemo, useState } from 'react';
+import { useNavigate } from 'react-router';
 import Select from 'react-select';
 import { toast } from 'sonner';
 
@@ -78,6 +79,7 @@ export default function CargoTipoContratoForm({
   const [selectedCargoAmbos, setSelectedCargoAmbos] = useState<number | null>(
     null
   );
+  const navigate = useNavigate();
   const [isSaving, setIsSaving] = useState(false);
   const [configuracion, setConfiguracion] =
     useState<GuardarConfiguracionPayload>(() => ({
@@ -209,7 +211,7 @@ export default function CargoTipoContratoForm({
   };
 
   const handleGuardar = async () => {
-    if (!selectedTipoContrato) {
+    if (selectedTipoContrato === null) {
       toast.error('Debes seleccionar un tipo de contrato.');
       return;
     }
@@ -248,13 +250,13 @@ export default function CargoTipoContratoForm({
     );
 
     setTimeout(() => {
-      globalThis.history.back();
+      navigate(-1);
     }, 1000);
   };
 
   const handleCancelar = () => {
     resetForm();
-    globalThis.history.back();
+    navigate(-1);
   };
 
   const renderCargoList = (
@@ -341,7 +343,7 @@ export default function CargoTipoContratoForm({
               <>
                 <Button
                   variant="ghost"
-                  onClick={() => globalThis.history.back()}
+                  onClick={() => navigate(-1)}
                   className="gap-2"
                 >
                   <ArrowLeft className="h-4 w-4" />
