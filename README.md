@@ -56,8 +56,8 @@ Configurar en GitHub Branch Protection Rules para `main`:
 
 Checks recomendados:
 
-- `CI`
 - `PR Validation / CI`
 - `PR Validation / Docker Build`
+- `CI`
 
 Si usan el PR de release generado por `release-please`, ese PR tambien debe pasar los mismos checks antes de mergearse.
