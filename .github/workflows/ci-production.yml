@@ -47,7 +47,7 @@ jobs:
 
       - name: Run CI
         env:
-          VITE_API_URL: ${{ secrets.PRODUCTION_API_URL || 'http://localhost:8080/Agualova' }}
+          VITE_API_URL: ${{ secrets.PRODUCTION_API_URL || 'http://localhost:7071/Agualova' }}
           VITE_ENV_MODE: production
           VITE_APP_ENV: production
           VITE_HTTPS_ENABLED: 'true'
