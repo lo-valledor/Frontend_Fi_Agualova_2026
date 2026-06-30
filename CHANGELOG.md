@@ -1,5 +1,27 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+
+- **administracion:** aligned consumers, forms, and table flows with the current
+  administration service/type contract across acometida, clientes, contratos,
+  medidores, and condiciones de contrato.
+- **condiciones de contrato:** synchronized the route, modal, details view, and
+  table behavior so they share the same contract assumptions.
+
+### Refactored
+
+- Simplified administration table column definitions and related consumers to
+  remove local drift from the shared contract.
+- Applied the same small column cleanup pattern across the touched mantención
+  tables.
+
+### Docs
+
+- Added a review note for the administracion + mantención slice in
+  `docs/review/feat-ajustes-administracion-slice.md`.
+
 ## [1.2.0](https://github.com/gbourguett-lv/Frontend_Fi_Agualova_2026/compare/v1.1.0...v1.2.0) (2026-06-26)
 
 

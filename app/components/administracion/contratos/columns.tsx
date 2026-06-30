@@ -216,7 +216,6 @@ export const columns = ({
         <div className="flex justify-center">
           <TableActions
             onEdit={() => onEdit(row.original)}
-            onDelete={() => onDelete(row.original)}
             onView={() => onViewDetails(row.original)}
             item={row.original}
             showView={true}

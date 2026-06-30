@@ -198,7 +198,6 @@ export const columns = ({
             onEdit={() => onEdit(row.original)}
             item={row.original}
             showView={false}
-            showDelete={false}
             loadingEdit={isEditing}
           />
         </div>

@@ -143,7 +143,6 @@ export const columns = ({
             item={row.original}
             showView={true}
             showEdit={false}
-            showDelete={false}
           />
         </div>
       );

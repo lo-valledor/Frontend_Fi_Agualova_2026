@@ -13,24 +13,18 @@ import {
   CardHeader,
   CardTitle
 } from '~/components/ui/card';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle
-} from '~/components/ui/dialog';
-import { ScrollArea } from '~/components/ui/scroll-area';
-import { Separator } from '~/components/ui/separator';
-import type { CondicionesContratoRow } from '~/types/administracion';
-import type { Concepto } from '~/types/mantencion';
+import { administracionService } from '~/services/administracionService';
+import type {
+  CondicionContrato,
+  CondicionContratoConcepto,
+  CondicionesContratoRow
+} from '~/types/administracion';
 import { columns } from './columns';
 import CondicionesContratoModalForm from './condiciones-contrato-modal-form';
-import DetallesCondicionesContrato from './detalles-condiciones-contrato';
 
 interface CondicionesContratoComponentProps {
   condicionesContrato: CondicionesContratoRow[];
-  conceptos: Concepto[];
+  conceptos: CondicionContratoConcepto[];
 }
 
 export default function CondicionesContratoComponent({
@@ -39,12 +33,8 @@ export default function CondicionesContratoComponent({
 }: Readonly<CondicionesContratoComponentProps>) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCondicionContrato, setSelectedCondicionContrato] =
-    useState<CondicionesContratoRow | null>(null);
+    useState<CondicionContrato | null>(null);
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
-  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
-  const [selectedCondicionId, setSelectedCondicionId] = useState<number | null>(
-    null
-  );
 
   const revalidator = useRevalidator();
 
@@ -55,18 +45,21 @@ export default function CondicionesContratoComponent({
   }, []);
 
   const handleEditCondicionContrato = useCallback(
-    (condicionContrato: CondicionesContratoRow) => {
-      setSelectedCondicionContrato(condicionContrato);
+    async (condicionContrato: CondicionesContratoRow) => {
+      const result = await administracionService.getCondicionContratoById(
+        condicionContrato.id
+      );
+
+      if (result.error || !result.data) {
+        toast.error(
+          result.error || 'No se pudo cargar la condición de contrato'
+        );
+        return;
+      }
+
+      setSelectedCondicionContrato(result.data);
       setModalMode('edit');
       setIsModalOpen(true);
-    },
-    []
-  );
-
-  const handleViewCondicionContrato = useCallback(
-    (condicionContrato: CondicionesContratoRow) => {
-      setSelectedCondicionId(condicionContrato.id);
-      setIsDetailsOpen(true);
     },
     []
   );
@@ -133,9 +126,7 @@ export default function CondicionesContratoComponent({
               <div className="overflow-x-auto -mx-1">
                 <DataTable
                   columns={columns({
-                    onEdit: handleEditCondicionContrato,
-                    onView: handleViewCondicionContrato,
-                    editingCondicionContrato: null
+                    onEdit: handleEditCondicionContrato
                   })}
                   data={condicionesContrato}
                   searchPlaceholder="Buscar condiciones..."
@@ -154,26 +145,6 @@ export default function CondicionesContratoComponent({
           mode={modalMode}
           conceptos={conceptos}
         />
-
-        {/* Details Dialog */}
-        <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
-          <DialogContent className="max-w-4xl max-h-[90vh] p-0">
-            <DialogHeader className="px-6 pt-6">
-              <DialogTitle>Detalles de la Condición de Contrato</DialogTitle>
-              <DialogDescription>
-                Información completa de la condición de contrato seleccionada.
-              </DialogDescription>
-            </DialogHeader>
-            <Separator />
-            <ScrollArea className="max-h-[calc(90vh-120px)] px-6">
-              {selectedCondicionId && (
-                <DetallesCondicionesContrato
-                  condicionId={selectedCondicionId}
-                />
-              )}
-            </ScrollArea>
-          </DialogContent>
-        </Dialog>
       </div>
     </div>
   );

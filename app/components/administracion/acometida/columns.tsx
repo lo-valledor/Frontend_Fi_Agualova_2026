@@ -222,12 +222,7 @@ export const columns = ({
     cell: ({ row }) => {
       return (
         <div className="flex justify-center">
-          <TableActions
-            onEdit={onEdit}
-            item={row.original}
-            showView={false}
-            showDelete={false}
-          />
+          <TableActions onEdit={onEdit} item={row.original} showView={false} />
         </div>
       );
     },

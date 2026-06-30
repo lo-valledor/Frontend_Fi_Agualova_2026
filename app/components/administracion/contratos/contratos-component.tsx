@@ -75,6 +75,11 @@ export default function ContratosComponent({
 
   // Dependencias
   const navigate = useNavigate();
+  const contratoCount = tableData.length;
+  const contratoLabel = contratoCount === 1 ? 'contrato' : 'contratos';
+  const tableDescription = tableLoading
+    ? 'Cargando…'
+    : `${contratoCount} ${contratoLabel} en esta página`;
 
   const fetchContratosPage = useCallback(
     async ({
@@ -263,9 +268,7 @@ export default function ContratosComponent({
                     Listado de Contratos
                   </CardTitle>
                   <CardDescription className="text-xs mt-0.5 text-muted-foreground">
-                    {tableLoading
-                      ? 'Cargando…'
-                      : `${tableData.length} contrato${tableData.length !== 1 ? 's' : ''} en esta página`}
+                    {tableDescription}
                   </CardDescription>
                 </div>
               </div>

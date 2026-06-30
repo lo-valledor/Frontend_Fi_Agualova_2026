@@ -17,10 +17,11 @@ import type {
   Cliente,
   ClienteFormValues,
   ClientesRow,
-  Concepto,
   Conceptos,
   CondicionContrato,
+  CondicionContratoConcepto,
   CondicionContratoFormValues,
+  CondicionContratoProps,
   Condiciones,
   CondicionesContratoRow,
   ContratoFormValues,
@@ -178,6 +179,51 @@ class AdministracionService {
       const response = await api.put('/acometidas/editar', data);
       return {
         data: response.data as AcometidaFormValues,
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  async getSectores(): Promise<AdministracionServiceResponse<Sectores[]>> {
+    try {
+      const response = await api.get('/acometidas/sectores');
+      return {
+        data: this.processApiResponse<Sectores>(response),
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  async getNichos(): Promise<AdministracionServiceResponse<Nichos[]>> {
+    try {
+      const response = await api.get('/acometidas/nichos');
+      return {
+        data: this.processApiResponse<Nichos>(response),
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  async getEmpalmes(): Promise<AdministracionServiceResponse<Empalmes[]>> {
+    try {
+      const response = await api.get('/acometidas/empalmes');
+      return {
+        data: this.processApiResponse<Empalmes>(response),
         error: null
       };
     } catch (error) {
@@ -608,17 +654,6 @@ class AdministracionService {
         api.get('/cargos-tipos-contrato/cargos-facturables')
       ]);
       const estructura = responseEditar.data as Record<string, unknown>;
-      // API returns condicionesGrilla; fallback to legacy field names
-      const detalle = Array.isArray(estructura.condicionesGrilla)
-        ? estructura.condicionesGrilla
-        : Array.isArray(estructura.detalle)
-          ? estructura.detalle
-          : Array.isArray(estructura.condiciones)
-            ? estructura.condiciones
-            : [];
-      const listbox = Array.isArray(estructura.listbox)
-        ? estructura.listbox
-        : [];
       const toNumber = (value: unknown): number | null => {
         if (typeof value === 'number' && Number.isFinite(value)) return value;
         if (typeof value === 'string' && value.trim() !== '') {
@@ -630,23 +665,16 @@ class AdministracionService {
       const toNumberArray = (value: unknown): number[] =>
         Array.isArray(value)
           ? value
-              .map(item =>
-                toNumber(
-                  typeof item === 'object' && item !== null && 'idCargo' in item
-                    ? (item as { idCargo?: unknown }).idCargo
-                    : item
-                )
-              )
+              .map(item => toNumber(item))
               .filter((item): item is number => item !== null)
           : [];
-      // API returns cargosMonofasicos/cargosTrifasicos/cargosAmbos as
-      // [{idCargo, nombreCargo}]; extract IDs from those arrays
-      const extractCargoIds = (field: unknown): number[] =>
-        Array.isArray(field)
-          ? field
-              .map(item => toNumber((item as { idCargo?: unknown }).idCargo))
-              .filter((id): id is number => id !== null)
-          : [];
+      const detalle = Array.isArray(estructura.condicionesGrilla)
+        ? estructura.condicionesGrilla
+        : Array.isArray(estructura.condiciones)
+          ? estructura.condiciones
+          : Array.isArray(estructura.detalle)
+            ? estructura.detalle
+            : [];
       const configuracion: GuardarConfiguracionPayload = {
         idTipoContrato:
           toNumber(estructura.idTipoContrato) ?? cargoTipoContratoId,
@@ -675,54 +703,9 @@ class AdministracionService {
             ): item is GuardarConfiguracionPayload['condiciones'][number] =>
               item !== null
           ),
-        idsCargosMonofasicos:
-          extractCargoIds(estructura.cargosMonofasicos).length > 0
-            ? extractCargoIds(estructura.cargosMonofasicos)
-            : toNumberArray(estructura.idsCargosMonofasicos).length > 0
-              ? toNumberArray(estructura.idsCargosMonofasicos)
-              : listbox
-                  .filter(item => {
-                    const tipoMedidor = toNumber(
-                      (item as { tipoMedidor?: unknown }).tipoMedidor
-                    );
-                    return tipoMedidor === 1;
-                  })
-                  .map(item =>
-                    toNumber((item as { cargoId?: unknown }).cargoId)
-                  )
-                  .filter((item): item is number => item !== null),
-        idsCargosTrifasicos:
-          extractCargoIds(estructura.cargosTrifasicos).length > 0
-            ? extractCargoIds(estructura.cargosTrifasicos)
-            : toNumberArray(estructura.idsCargosTrifasicos).length > 0
-              ? toNumberArray(estructura.idsCargosTrifasicos)
-              : listbox
-                  .filter(item => {
-                    const tipoMedidor = toNumber(
-                      (item as { tipoMedidor?: unknown }).tipoMedidor
-                    );
-                    return tipoMedidor === 2;
-                  })
-                  .map(item =>
-                    toNumber((item as { cargoId?: unknown }).cargoId)
-                  )
-                  .filter((item): item is number => item !== null),
-        idsCargosAmbos:
-          extractCargoIds(estructura.cargosAmbos).length > 0
-            ? extractCargoIds(estructura.cargosAmbos)
-            : toNumberArray(estructura.idsCargosAmbos).length > 0
-              ? toNumberArray(estructura.idsCargosAmbos)
-              : listbox
-                  .filter(item => {
-                    const tipoMedidor = toNumber(
-                      (item as { tipoMedidor?: unknown }).tipoMedidor
-                    );
-                    return tipoMedidor === 0;
-                  })
-                  .map(item =>
-                    toNumber((item as { cargoId?: unknown }).cargoId)
-                  )
-                  .filter((item): item is number => item !== null)
+        idsCargosMonofasicos: toNumberArray(estructura.cargosMonofasicos),
+        idsCargosTrifasicos: toNumberArray(estructura.cargosTrifasicos),
+        idsCargosAmbos: toNumberArray(estructura.cargosAmbos)
       };
 
       return {
@@ -829,7 +812,7 @@ class AdministracionService {
   async getCondicionesContratoData(): Promise<
     AdministracionServiceResponse<{
       condicionesContrato: CondicionesContratoRow[];
-      conceptos: Concepto[];
+      conceptos: CondicionContratoConcepto[];
     }>
   > {
     try {
@@ -843,7 +826,8 @@ class AdministracionService {
           condicionesContrato: this.processApiResponse<CondicionesContratoRow>(
             resCondicionesContrato
           ),
-          conceptos: this.processApiResponse<Concepto>(resConceptos)
+          conceptos:
+            this.processApiResponse<CondicionContratoConcepto>(resConceptos)
         },
         error: null
       };
@@ -855,13 +839,60 @@ class AdministracionService {
     }
   }
 
-  async getCondicionesContratoById(
+  async getCondicionContratoById(
     id: number
   ): Promise<AdministracionServiceResponse<CondicionContrato>> {
     try {
       const response = await api.get(`/condiciones-contrato/${id}`);
       return {
         data: response.data as CondicionContrato,
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  async createCondicionContrato(
+    data: CondicionContratoProps
+  ): Promise<AdministracionServiceResponse<any>> {
+    try {
+      const response = await api.post('/condiciones-contrato/crear', {
+        Descripcion: data.descripcion,
+        IdConcepto: data.idConcepto,
+        TipoCondicion: data.tipoCondicion,
+        Valor: data.valor,
+        Estado: data.estado
+      });
+      return {
+        data: response.data as CondicionContratoProps,
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  async updateCondicionContrato(
+    data: CondicionContratoFormValues
+  ): Promise<AdministracionServiceResponse<CondicionContratoFormValues>> {
+    try {
+      const response = await api.put('/condiciones-contrato/editar', {
+        Id: data.id,
+        Descripcion: data.descripcion,
+        IdConcepto: data.idConcepto,
+        TipoCondicion: data.tipoCondicion,
+        Valor: data.valor,
+        Estado: data.estado
+      });
+      return {
+        data: response.data as CondicionContratoFormValues,
         error: null
       };
     } catch (error) {
@@ -901,57 +932,6 @@ class AdministracionService {
               resTiposMedidor
             )
         },
-        error: null
-      };
-    } catch (error) {
-      return {
-        data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido'
-      };
-    }
-  }
-
-  async getCondicionContratoById(
-    id: number
-  ): Promise<AdministracionServiceResponse<CondicionContrato>> {
-    try {
-      const response = await api.get(`/condiciones-contrato/${id}`);
-      return {
-        data: response.data as CondicionContrato,
-        error: null
-      };
-    } catch (error) {
-      return {
-        data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido'
-      };
-    }
-  }
-
-  async createCondicionContrato(
-    data: CondicionContratoFormValues
-  ): Promise<AdministracionServiceResponse<CondicionContratoFormValues>> {
-    try {
-      const response = await api.post('/condiciones-contrato/crear', data);
-      return {
-        data: response.data as CondicionContratoFormValues,
-        error: null
-      };
-    } catch (error) {
-      return {
-        data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido'
-      };
-    }
-  }
-
-  async updateCondicionContrato(
-    data: CondicionContratoFormValues
-  ): Promise<AdministracionServiceResponse<CondicionContratoFormValues>> {
-    try {
-      const response = await api.put('/condiciones-contrato/editar', data);
-      return {
-        data: response.data as CondicionContratoFormValues,
         error: null
       };
     } catch (error) {
