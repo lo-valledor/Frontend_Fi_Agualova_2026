@@ -1,7 +1,6 @@
-/* eslint-disable no-empty-pattern */
 import DashboardComponent from '~/components/dashboard/dashboard-component';
 import HydrateFallback from '~/components/hydrate-fallback';
-
+import { monitorService } from '~/services';
 import type { Route } from './+types/dashboard';
 
 export function meta({}: Route.MetaArgs) {
@@ -12,11 +11,17 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export async function clientLoader() {
-  return null;
+  const result = await monitorService.getPeriodos();
+
+  if (!result.data || result.error) {
+    throw new Error('Failed to load periodos');
+  }
+
+  return { periodos: result.data };
 }
 
-export default function DashboardPage() {
-  return <DashboardComponent />;
+export default function DashboardPage({ loaderData }: Route.ComponentProps) {
+  return <DashboardComponent periodos={loaderData.periodos} />;
 }
 
 export function hydrateFallback() {

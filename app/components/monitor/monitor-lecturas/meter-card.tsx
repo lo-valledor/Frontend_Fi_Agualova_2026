@@ -116,56 +116,58 @@ export function MeterCard({ medidor, onRefresh }: MeterCardProps) {
               </Dialog>
 
               {/* Drawer lateral para ingreso de lectura */}
-              <Drawer
-                direction="right"
-                open={drawerOpen}
-                onOpenChange={setDrawerOpen}
-              >
-                <DrawerTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-6 w-6 p-0 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-950/30"
-                    title="Ingresar / registrar lectura"
-                  >
-                    <Pencil className="h-3 w-3" />
-                  </Button>
-                </DrawerTrigger>
-                <DrawerContent className="w-full sm:min-w-xl md:min-w-2xl lg:min-w-3xl p-0 flex flex-col">
-                  <DrawerHeader className="shrink-0 pb-3 sm:pb-4 border-b border-border/40 px-4 sm:px-6">
-                    <div className="flex items-center gap-2 sm:gap-3 pr-8">
-                      <div
-                        className={`p-1.5 sm:p-2 rounded-xl ${status.bgColor}`}
-                      >
-                        {status.icon}
+              {medidor.claveHtml !== 'LECIMP' && (
+                <Drawer
+                  direction="right"
+                  open={drawerOpen}
+                  onOpenChange={setDrawerOpen}
+                >
+                  <DrawerTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-6 w-6 p-0 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-950/30"
+                      title="Ingresar / registrar lectura"
+                    >
+                      <Pencil className="h-3 w-3" />
+                    </Button>
+                  </DrawerTrigger>
+                  <DrawerContent className="w-full sm:min-w-xl md:min-w-2xl lg:min-w-3xl p-0 flex flex-col">
+                    <DrawerHeader className="shrink-0 pb-3 sm:pb-4 border-b border-border/40 px-4 sm:px-6">
+                      <div className="flex items-center gap-2 sm:gap-3 pr-8">
+                        <div
+                          className={`p-1.5 sm:p-2 rounded-xl ${status.bgColor}`}
+                        >
+                          {status.icon}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <DrawerTitle className="text-lg sm:text-xl font-semibold tracking-tight">
+                            Ingresar Lectura
+                          </DrawerTitle>
+                          <DrawerDescription className="text-xs sm:text-sm text-muted-foreground mt-1">
+                            ID: {medidor.id} | Medidor: {medidor.nSerie}
+                          </DrawerDescription>
+                        </div>
+                        <Badge
+                          className={`${status.bgColor} text-xs sm:text-sm shrink-0`}
+                        >
+                          {status.label}
+                        </Badge>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <DrawerTitle className="text-lg sm:text-xl font-semibold tracking-tight">
-                          Ingresar Lectura
-                        </DrawerTitle>
-                        <DrawerDescription className="text-xs sm:text-sm text-muted-foreground mt-1">
-                          ID: {medidor.id} | Medidor: {medidor.nSerie}
-                        </DrawerDescription>
+                    </DrawerHeader>
+                    <div className="flex-1 overflow-y-auto">
+                      <div className="p-3 sm:p-6">
+                        <DetallesMedidor
+                          lecturaId={medidor.id}
+                          claveHtml={medidor.claveHtml}
+                          mode="full"
+                          onSuccess={onRefresh}
+                        />
                       </div>
-                      <Badge
-                        className={`${status.bgColor} text-xs sm:text-sm shrink-0`}
-                      >
-                        {status.label}
-                      </Badge>
                     </div>
-                  </DrawerHeader>
-                  <div className="flex-1 overflow-y-auto">
-                    <div className="p-3 sm:p-6">
-                      <DetallesMedidor
-                        lecturaId={medidor.id}
-                        claveHtml={medidor.claveHtml}
-                        mode="full"
-                        onSuccess={onRefresh}
-                      />
-                    </div>
-                  </div>
-                </DrawerContent>
-              </Drawer>
+                  </DrawerContent>
+                </Drawer>
+              )}
             </div>
           </div>
 
