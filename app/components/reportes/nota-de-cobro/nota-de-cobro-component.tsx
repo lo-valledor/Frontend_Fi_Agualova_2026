@@ -1,11 +1,11 @@
 import {
   AlertCircleIcon,
   ChevronDown,
-  FileTextIcon,
   Loader2,
   SearchIcon
 } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { animate, motion } from 'motion/react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 import { ModernHeader } from '~/components/shared/modern-header';
@@ -60,14 +60,74 @@ type ResumenNotadeCobroResponse =
   | ResumenNotadeCobro[]
   | null;
 
-const formatNumber = (value: string | number) => {
-  const numericValue = Number(value);
+const isNegativeValue = (value: string) => {
+  const normalized = value.replace(/\./g, '').replace(/,/g, '.');
+  const numericValue = Number(normalized.replace(/[^\d.-]/g, ''));
 
-  if (Number.isNaN(numericValue)) {
-    return String(value);
+  return !Number.isNaN(numericValue) && numericValue < 0;
+};
+
+const renderCellValue = (value: string) => {
+  if (value === undefined || value === null || value.trim() === '') {
+    return <span className="text-muted-foreground">—</span>;
   }
 
-  return new Intl.NumberFormat('es-CL').format(numericValue);
+  return value;
+};
+
+const parseFormattedValue = (
+  value: string
+): { numericValue: number; prefix: string } => {
+  const trimmed = value.trim();
+  const prefix = trimmed.startsWith('$') ? '$' : '';
+  const withoutPrefix = prefix ? trimmed.slice(1) : trimmed;
+  const normalized = withoutPrefix.replace(/\./g, '').replace(/,/g, '.');
+  const numericValue = Number(normalized);
+
+  return {
+    numericValue: Number.isNaN(numericValue) ? 0 : numericValue,
+    prefix
+  };
+};
+
+const formatAnimatedValue = (value: number, prefix: string) => {
+  const formatted = Math.round(value).toLocaleString('es-CL');
+  return prefix ? `${prefix}${formatted}` : formatted;
+};
+
+const AnimatedNumber = ({
+  value,
+  className
+}: Readonly<{
+  value: string;
+  className?: string;
+}>) => {
+  const ref = useRef<HTMLSpanElement>(null);
+  const [display, setDisplay] = useState(value);
+
+  useEffect(() => {
+    if (!value.trim()) {
+      setDisplay(value);
+      return;
+    }
+
+    const { numericValue, prefix } = parseFormattedValue(value);
+    const controls = animate(0, numericValue, {
+      duration: 0.8,
+      ease: 'easeOut',
+      onUpdate: latest => {
+        setDisplay(formatAnimatedValue(latest, prefix));
+      }
+    });
+
+    return () => controls.stop();
+  }, [value]);
+
+  return (
+    <span ref={ref} className={className}>
+      {display}
+    </span>
+  );
 };
 
 const normalizeResumenResponse = (
@@ -105,20 +165,6 @@ export default function NotaDeCobroComponent({
   const [isLoading, setIsLoading] = useState(false);
   const [fetchError, setFetchError] = useState<string | null>(error);
   const [resumen, setResumen] = useState<ResumenNotadeCobro>(emptyResumen);
-
-  const selectedPeriodoLabel = useMemo(
-    () =>
-      periodos.find(periodo => periodo.id === selectedPeriodo)?.descripcion ??
-      'Sin período seleccionado',
-    [periodos, selectedPeriodo]
-  );
-
-  const selectedEmpalmeLabel = useMemo(
-    () =>
-      empalmes.find(empalme => empalme.id === selectedEmpalme)?.descripcion ??
-      'Sin empalme seleccionado',
-    [empalmes, selectedEmpalme]
-  );
 
   const totalNotasEmitidas = useMemo(() => {
     return resumen.totalNotasCobroEmitidas;
@@ -189,7 +235,7 @@ export default function NotaDeCobroComponent({
           description="Consulta y revisión del resumen de notas de cobro por período y empalme"
         />
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid gap-4">
           <Card className="overflow-hidden border border-border bg-card shadow-sm">
             <Collapsible open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
               <CollapsibleTrigger asChild>
@@ -285,46 +331,6 @@ export default function NotaDeCobroComponent({
               </CollapsibleContent>
             </Collapsible>
           </Card>
-
-          <div className="grid gap-4">
-            <Card className="border-border bg-card">
-              <CardContent className="space-y-3 p-4">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-muted">
-                    <FileTextIcon className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">
-                      Total de notas emitidas
-                    </p>
-                    <p className="text-2xl font-semibold">
-                      {formatNumber(totalNotasEmitidas)}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="grid gap-3 pt-2 md:grid-cols-2">
-                  <div className="rounded-lg border border-border bg-background p-3">
-                    <p className="text-xs uppercase tracking-wide text-muted-foreground">
-                      Período
-                    </p>
-                    <p className="mt-1 text-sm font-medium">
-                      {selectedPeriodoLabel}
-                    </p>
-                  </div>
-
-                  <div className="rounded-lg border border-border bg-background p-3">
-                    <p className="text-xs uppercase tracking-wide text-muted-foreground">
-                      Empalme
-                    </p>
-                    <p className="mt-1 text-sm font-medium">
-                      {selectedEmpalmeLabel}
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
         </div>
         {fetchError ? (
           <Card className="border-destructive/30 bg-destructive/5">
@@ -338,6 +344,21 @@ export default function NotaDeCobroComponent({
               </div>
             </CardContent>
           </Card>
+        ) : null}
+
+        {detalle.length > 0 ? (
+          <div className="grid gap-4 md:grid-cols-3">
+            <Card className="border-border bg-card">
+              <CardContent className="p-4">
+                <p className="text-xs uppercase tracking-wide text-muted-foreground">
+                  Notas de cobro emitidas
+                </p>
+                <p className="mt-1 text-2xl font-semibold tabular-nums">
+                  <AnimatedNumber value={String(totalNotasEmitidas)} />
+                </p>
+              </CardContent>
+            </Card>
+          </div>
         ) : null}
 
         <Card className="border-border bg-card">
@@ -358,51 +379,142 @@ export default function NotaDeCobroComponent({
                 <Table>
                   <TableHeader className="bg-muted/40">
                     <TableRow>
-                      <TableHead className="px-4 py-3">Cargo</TableHead>
-                      <TableHead className="px-4 py-3">M3 Anterior</TableHead>
-                      <TableHead className="px-4 py-3">
-                        Notas Anterior
+                      <TableHead rowSpan={2} className="px-4 py-3 align-bottom">
+                        Cargo
                       </TableHead>
-                      <TableHead className="px-4 py-3">
-                        Cargos Anterior
+                      <TableHead
+                        colSpan={3}
+                        className="px-4 py-3 text-center border-b border-border"
+                      >
+                        Período anterior
                       </TableHead>
-                      <TableHead className="px-4 py-3">M3 Actual</TableHead>
-                      <TableHead className="px-4 py-3">Notas Actual</TableHead>
-                      <TableHead className="px-4 py-3">Cargos Actual</TableHead>
-                      <TableHead className="px-4 py-3">Diferencia</TableHead>
+                      <TableHead
+                        colSpan={3}
+                        className="px-4 py-3 text-center border-b border-border"
+                      >
+                        Período actual
+                      </TableHead>
+                      <TableHead
+                        rowSpan={2}
+                        className="px-4 py-3 text-right align-bottom"
+                      >
+                        Diferencia
+                      </TableHead>
+                    </TableRow>
+                    <TableRow>
+                      <TableHead className="px-4 py-3 text-right">M3</TableHead>
+                      <TableHead className="px-4 py-3 text-right">
+                        Notas
+                      </TableHead>
+                      <TableHead className="px-4 py-3 text-right">
+                        Cargos
+                      </TableHead>
+                      <TableHead className="px-4 py-3 text-right">M3</TableHead>
+                      <TableHead className="px-4 py-3 text-right">
+                        Notas
+                      </TableHead>
+                      <TableHead className="px-4 py-3 text-right">
+                        Cargos
+                      </TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {detalle.map(item => (
-                      <TableRow
-                        key={`${item.cargoDescripcion}-${item.cantNotaCobroPeriodoActual}`}
-                      >
-                        <TableCell className="px-4 py-3 font-medium">
-                          {item.cargoDescripcion}
-                        </TableCell>
-                        <TableCell className="px-4 py-3">
-                          {formatNumber(item.cantidadM3PeriodoAnterior)}
-                        </TableCell>
-                        <TableCell className="px-4 py-3">
-                          {formatNumber(item.cantNotaCobroPeriodoAnterior)}
-                        </TableCell>
-                        <TableCell className="px-4 py-3">
-                          {formatNumber(item.totalCargosPeriodoAnterior)}
-                        </TableCell>
-                        <TableCell className="px-4 py-3">
-                          {formatNumber(item.cantidadM3PeriodoActual)}
-                        </TableCell>
-                        <TableCell className="px-4 py-3">
-                          {formatNumber(item.cantNotaCobroPeriodoActual)}
-                        </TableCell>
-                        <TableCell className="px-4 py-3">
-                          {formatNumber(item.totalCargosPeriodoActual)}
-                        </TableCell>
-                        <TableCell className="px-4 py-3">
-                          {formatNumber(item.diferenciaRecuperacion)}
-                        </TableCell>
-                      </TableRow>
-                    ))}
+                    {detalle.map((item, index) => {
+                      const isTotalRow =
+                        item.cargoDescripcion.trim().toUpperCase() ===
+                        'TOTALES';
+
+                      return (
+                        <motion.tr
+                          key={`${item.cargoDescripcion}-${index}`}
+                          className={`border-b transition-colors ${
+                            isTotalRow
+                              ? 'bg-muted/50 font-semibold'
+                              : 'hover:bg-muted/30'
+                          }`}
+                          initial={{ opacity: 0, y: 8 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{
+                            duration: 0.25,
+                            delay: index * 0.05,
+                            ease: [0.25, 0.1, 0.25, 1]
+                          }}
+                        >
+                          <TableCell className="px-4 py-3 font-medium">
+                            {item.cargoDescripcion}
+                          </TableCell>
+                          <TableCell className="px-4 py-3 text-right tabular-nums">
+                            {item.cantidadM3PeriodoAnterior.trim() ? (
+                              <AnimatedNumber
+                                value={item.cantidadM3PeriodoAnterior}
+                              />
+                            ) : (
+                              renderCellValue(item.cantidadM3PeriodoAnterior)
+                            )}
+                          </TableCell>
+                          <TableCell className="px-4 py-3 text-right tabular-nums">
+                            {item.cantNotaCobroPeriodoAnterior.trim() ? (
+                              <AnimatedNumber
+                                value={item.cantNotaCobroPeriodoAnterior}
+                              />
+                            ) : (
+                              renderCellValue(item.cantNotaCobroPeriodoAnterior)
+                            )}
+                          </TableCell>
+                          <TableCell className="px-4 py-3 text-right tabular-nums">
+                            {item.totalCargosPeriodoAnterior.trim() ? (
+                              <AnimatedNumber
+                                value={item.totalCargosPeriodoAnterior}
+                              />
+                            ) : (
+                              renderCellValue(item.totalCargosPeriodoAnterior)
+                            )}
+                          </TableCell>
+                          <TableCell className="px-4 py-3 text-right tabular-nums">
+                            {item.cantidadM3PeriodoActual.trim() ? (
+                              <AnimatedNumber
+                                value={item.cantidadM3PeriodoActual}
+                              />
+                            ) : (
+                              renderCellValue(item.cantidadM3PeriodoActual)
+                            )}
+                          </TableCell>
+                          <TableCell className="px-4 py-3 text-right tabular-nums">
+                            {item.cantNotaCobroPeriodoActual.trim() ? (
+                              <AnimatedNumber
+                                value={item.cantNotaCobroPeriodoActual}
+                              />
+                            ) : (
+                              renderCellValue(item.cantNotaCobroPeriodoActual)
+                            )}
+                          </TableCell>
+                          <TableCell className="px-4 py-3 text-right tabular-nums">
+                            {item.totalCargosPeriodoActual.trim() ? (
+                              <AnimatedNumber
+                                value={item.totalCargosPeriodoActual}
+                              />
+                            ) : (
+                              renderCellValue(item.totalCargosPeriodoActual)
+                            )}
+                          </TableCell>
+                          <TableCell
+                            className={`px-4 py-3 text-right tabular-nums font-medium ${
+                              isNegativeValue(item.diferenciaRecuperacion)
+                                ? 'text-red-600'
+                                : 'text-green-600'
+                            }`}
+                          >
+                            {item.diferenciaRecuperacion.trim() ? (
+                              <AnimatedNumber
+                                value={item.diferenciaRecuperacion}
+                              />
+                            ) : (
+                              renderCellValue(item.diferenciaRecuperacion)
+                            )}
+                          </TableCell>
+                        </motion.tr>
+                      );
+                    })}
                   </TableBody>
                 </Table>
               </div>

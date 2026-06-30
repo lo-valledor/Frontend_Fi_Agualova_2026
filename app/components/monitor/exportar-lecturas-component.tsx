@@ -1,7 +1,6 @@
 import {
   AlertCircle,
   Calendar,
-  CheckSquare,
   ChevronDown,
   ChevronUp,
   Download,
@@ -12,10 +11,11 @@ import {
   MapPin,
   X
 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
+import { ModernHeader } from '~/components/shared/modern-header';
 import { Alert, AlertDescription } from '~/components/ui/alert';
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
@@ -25,114 +25,186 @@ import { Collapsible, CollapsibleContent } from '~/components/ui/collapsible';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
 import { ScrollArea } from '~/components/ui/scroll-area';
-import api from '~/lib/api';
-import { type MonitorPeriodos, type MonitorSectores } from '~/types/monitor';
-
-import { ModernHeader } from '../shared/modern-header';
+import { monitorService } from '~/services/monitorService';
+import type { Nicho, Sector } from '~/types/mantencion';
+import type { MonitorPeriodos } from '~/types/monitor';
+import type { PeriodosDisponibles } from '~/types/reportes';
 
 interface ExportarLecturasComponentProps {
-  periodos: MonitorPeriodos[];
-  sectores: MonitorSectores[];
-  activePeriodoId: number | null;
-  error: Error | null;
+  periodos: PeriodosDisponibles[];
+  sectores: Sector[];
+  nichos: Nicho[];
+  periodoActivo: MonitorPeriodos[];
+  error: Error | string | null;
 }
 
 export default function ExportarLecturasComponent({
   periodos,
   sectores,
-  activePeriodoId,
+  nichos,
+  periodoActivo,
   error
 }: ExportarLecturasComponentProps) {
-  const [selectedPeriodos, setSelectedPeriodos] = useState<MonitorPeriodos[]>(
-    []
-  );
-  const [isExporting, setIsExporting] = useState(false);
+  const [selectedPeriodos, setSelectedPeriodos] = useState<
+    PeriodosDisponibles[]
+  >([]);
   const [selectedSectores, setSelectedSectores] = useState<string[]>([]);
-  const [selectedNichos, _setSelectedNichos] = useState<string[]>([]);
-  const [selectedEstados, setSelectedEstados] = useState<number[]>([]);
+  const [selectedNichos, setSelectedNichos] = useState<string[]>([]);
   const [selectedMedidores, setSelectedMedidores] = useState<string[]>([]);
-  const [medidorInput, setMedidorInput] = useState<string>('');
+  const [medidorInput, setMedidorInput] = useState('');
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
-  const [estadoNormal, setEstadoNormal] = useState<boolean>(false);
-  const [estadoFacturado, setEstadoFacturado] = useState<boolean>(false);
+  const [isExporting, setIsExporting] = useState(false);
 
   const pageBreadcrumbs = [
     { label: 'Monitor' },
     { label: 'Exportar Lecturas' }
   ];
 
-  // Efecto para establecer el período activo por defecto
-  useEffect(() => {
-    if (periodos && periodos.length > 0 && selectedPeriodos.length === 0) {
-      const periodoActivo =
-        periodos.find(p => p.value === String(activePeriodoId)) || periodos[0];
+  const activePeriodoValue = periodoActivo[0]?.value ?? null;
 
-      if (periodoActivo) {
-        setSelectedPeriodos([periodoActivo]);
-      }
+  const sectorsById = useMemo(
+    () => new Map(sectores.map(sector => [String(sector.id), sector])),
+    [sectores]
+  );
+
+  const visibleNichos = useMemo(() => {
+    if (selectedSectores.length === 0) {
+      return nichos;
     }
-  }, [periodos, activePeriodoId, selectedPeriodos.length]);
 
-  // Función para manejar la selección de períodos
-  const handlePeriodoChange = (periodo: MonitorPeriodos, checked: boolean) => {
+    return nichos.filter(nicho => selectedSectores.includes(nicho.sector));
+  }, [nichos, selectedSectores]);
+
+  useEffect(() => {
+    if (periodos.length === 0 || selectedPeriodos.length > 0) {
+      return;
+    }
+
+    const defaultPeriodo =
+      periodos.find(periodo => periodo.id === activePeriodoValue) ??
+      periodos[0];
+
+    if (defaultPeriodo) {
+      setSelectedPeriodos([defaultPeriodo]);
+    }
+  }, [activePeriodoValue, periodos, selectedPeriodos.length]);
+
+  const handlePeriodoChange = (
+    periodo: PeriodosDisponibles,
+    checked: boolean
+  ) => {
     if (checked) {
-      setSelectedPeriodos([...selectedPeriodos, periodo]);
-    } else {
-      setSelectedPeriodos(
-        selectedPeriodos.filter(p => p.value !== periodo.value)
+      setSelectedPeriodos(prev =>
+        prev.some(item => item.id === periodo.id) ? prev : [...prev, periodo]
+      );
+      return;
+    }
+
+    setSelectedPeriodos(prev => prev.filter(item => item.id !== periodo.id));
+  };
+
+  const handleSectorChange = (sectorId: string, checked: boolean) => {
+    const sector = sectorsById.get(sectorId);
+
+    if (checked) {
+      setSelectedSectores(prev =>
+        prev.includes(sectorId) ? prev : [...prev, sectorId]
+      );
+      return;
+    }
+
+    setSelectedSectores(prev => prev.filter(id => id !== sectorId));
+
+    if (!sector) {
+      return;
+    }
+
+    setSelectedNichos(prev =>
+      prev.filter(nichoId => {
+        const nicho = nichos.find(item => String(item.id) === nichoId);
+        return nicho?.sector !== String(sector.id);
+      })
+    );
+  };
+
+  const handleNichoChange = (nichoId: string, checked: boolean) => {
+    const nicho = nichos.find(item => String(item.id) === nichoId);
+
+    if (checked) {
+      setSelectedNichos(prev =>
+        prev.includes(nichoId) ? prev : [...prev, nichoId]
+      );
+
+      if (nicho) {
+        const relatedSectorId = sectores.find(
+          sector => String(sector.id) === nicho.sector
+        )?.id;
+
+        if (relatedSectorId !== undefined) {
+          setSelectedSectores(prev =>
+            prev.includes(String(relatedSectorId))
+              ? prev
+              : [...prev, String(relatedSectorId)]
+          );
+        }
+      }
+      return;
+    }
+
+    setSelectedNichos(prev => prev.filter(id => id !== nichoId));
+
+    if (!nicho) {
+      return;
+    }
+
+    const relatedSectorId = sectores.find(
+      sector => String(sector.id) === nicho.sector
+    )?.id;
+
+    if (relatedSectorId === undefined) {
+      return;
+    }
+
+    const hasOtherNichosInSameSector = selectedNichos.some(selectedId => {
+      if (selectedId === nichoId) {
+        return false;
+      }
+
+      const selectedNicho = nichos.find(item => String(item.id) === selectedId);
+      return selectedNicho?.sector === nicho.sector;
+    });
+
+    if (!hasOtherNichosInSameSector) {
+      setSelectedSectores(prev =>
+        prev.filter(id => id !== String(relatedSectorId))
       );
     }
   };
 
-  // Función para manejar la selección de sectores
-  const handleSectorChange = (sectorId: string, checked: boolean) => {
-    if (checked) {
-      setSelectedSectores([...selectedSectores, sectorId]);
-    } else {
-      setSelectedSectores(selectedSectores.filter(id => id !== sectorId));
-    }
-  };
-
-  // Función para manejar la selección de estados
-  const handleEstadoChange = (estado: number, checked: boolean) => {
-    if (estado === 2) {
-      setEstadoNormal(checked);
-    } else if (estado === 5) {
-      setEstadoFacturado(checked);
-    }
-
-    // Actualizar la lista de estados seleccionados
-    if (checked) {
-      setSelectedEstados([...selectedEstados, estado]);
-    } else {
-      setSelectedEstados(selectedEstados.filter(e => e !== estado));
-    }
-  };
-
-  // Función para agregar un medidor a la lista
   const handleAddMedidor = () => {
-    if (medidorInput.trim()) {
-      setSelectedMedidores([...selectedMedidores, medidorInput.trim()]);
-      setMedidorInput('');
+    const medidor = medidorInput.trim();
+
+    if (!medidor) {
+      return;
     }
-  };
 
-  // Función para eliminar un medidor de la lista
-  const handleRemoveMedidor = (medidor: string) => {
-    setSelectedMedidores(selectedMedidores.filter(m => m !== medidor));
-  };
-
-  // Función para limpiar todos los filtros
-  const handleLimpiarFiltros = () => {
-    setSelectedSectores([]);
-    setSelectedEstados([]);
-    setSelectedMedidores([]);
-    setEstadoNormal(false);
-    setEstadoFacturado(false);
+    setSelectedMedidores(prev =>
+      prev.includes(medidor) ? prev : [...prev, medidor]
+    );
     setMedidorInput('');
   };
 
-  // Función para exportar las lecturas
+  const handleRemoveMedidor = (medidor: string) => {
+    setSelectedMedidores(prev => prev.filter(item => item !== medidor));
+  };
+
+  const handleLimpiarFiltros = () => {
+    setSelectedSectores([]);
+    setSelectedNichos([]);
+    setSelectedMedidores([]);
+    setMedidorInput('');
+  };
+
   const handleExportar = async () => {
     if (selectedPeriodos.length === 0) {
       toast.error('Debe seleccionar al menos un período');
@@ -142,91 +214,61 @@ export default function ExportarLecturasComponent({
     try {
       setIsExporting(true);
 
-      // Construir los parámetros de la consulta
-      const params = new URLSearchParams();
-
-      // Períodos (obligatorio) - separados por comas
-      const periodosIds = selectedPeriodos.map(p => p.value).join(',');
-      params.append('periodo', periodosIds);
-
-      // Sectores (opcional)
-      if (selectedSectores.length > 0) {
-        // Usar la descripción del sector directamente, sin codificación adicional
-        params.append('sectores', selectedSectores.join(','));
-      }
-
-      // Nichos (opcional)
-      if (selectedNichos.length > 0) {
-        params.append('nichos', selectedNichos.join(','));
-      }
-
-      // Estados (opcional)
-      if (selectedEstados.length > 0) {
-        params.append('estados', selectedEstados.join(','));
-      }
-
-      // Medidores (opcional)
-      if (selectedMedidores.length > 0) {
-        params.append('medidores', selectedMedidores.join(','));
-      }
-
-      // Realizar la petición
-      const response = await api.get('/exportar-lecturas-excel', {
-        params,
-        responseType: 'blob' // Importante para descargar archivos
-      });
-
-      // Crear un enlace para descargar el archivo
-      const url = globalThis.URL.createObjectURL(
-        new Blob([response.data as BlobPart])
+      const result = await monitorService.getExportarExcel(
+        selectedPeriodos.map(periodo => periodo.id).join(','),
+        selectedSectores.length > 0 ? selectedSectores.join(',') : undefined,
+        selectedNichos.length > 0 ? selectedNichos.join(',') : undefined,
+        selectedMedidores.length > 0 ? selectedMedidores.join(',') : undefined
       );
-      const link = document.createElement('a');
-      link.href = url;
 
-      // Obtener el nombre del archivo del header Content-Disposition
-      const contentDisposition = response.headers['content-disposition'];
-      const periodosDescripcion = selectedPeriodos.map(p => p.text).join('-');
-      let filename = `Lecturas_${
-        periodosDescripcion
-      }_${selectedSectores.join(',')}_${selectedNichos.join(
-        ','
-      )}_${selectedEstados.join(',')}_${selectedMedidores.join(
-        ','
-      )}_${new Date().toLocaleDateString('es-ES', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit'
-      })}.xlsx`;
-
-      if (contentDisposition) {
-        const filenameMatch = contentDisposition.match(/filename="(.+)"/);
-        if (filenameMatch && filenameMatch[1]) {
-          filename = filenameMatch[1];
-        }
+      if (result.error || !result.data) {
+        toast.error(result.error ?? 'Error al exportar lecturas');
+        return;
       }
 
+      const url = globalThis.URL.createObjectURL(
+        new Blob([result.data], {
+          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        })
+      );
+
+      const link = document.createElement('a');
+      const periodosDescripcion = selectedPeriodos
+        .map(periodo => periodo.descripcion)
+        .join('-');
+      const filename = `Lecturas_${periodosDescripcion}_${new Date().toLocaleDateString(
+        'es-ES',
+        {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit'
+        }
+      )}.xlsx`;
+
+      link.href = url;
       link.setAttribute('download', filename);
       document.body.appendChild(link);
       link.click();
       link.remove();
+      globalThis.URL.revokeObjectURL(url);
 
       toast.success('Archivo exportado correctamente');
-    } catch (error) {
-      console.error('Error al exportar lecturas:', error);
+    } catch (exportError) {
+      console.error('Error al exportar lecturas:', exportError);
       toast.error('Error al exportar lecturas');
     } finally {
       setIsExporting(false);
     }
   };
 
-  // Manejo de errores
   if (error) {
     return (
       <div className="container mx-auto p-6">
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
-            Error al cargar datos: {error.message}
+            Error al cargar datos:{' '}
+            {error instanceof Error ? error.message : error}
           </AlertDescription>
         </Alert>
       </div>
@@ -235,7 +277,7 @@ export default function ExportarLecturasComponent({
 
   const hasFilters =
     selectedSectores.length > 0 ||
-    selectedEstados.length > 0 ||
+    selectedNichos.length > 0 ||
     selectedMedidores.length > 0;
 
   return (
@@ -243,17 +285,13 @@ export default function ExportarLecturasComponent({
       <div className="container mx-auto p-3 space-y-4">
         <BreadcrumbSetter items={pageBreadcrumbs} />
 
-        {/* Header */}
         <ModernHeader
           title="Exportar Lecturas"
-          description="Exporta lecturas de medidores en formato Excel con filtros
-              personalizados"
+          description="Exporta lecturas de medidores en formato Excel con filtros personalizados"
         />
 
-        {/* Main Control Panel */}
         <Card className="border-border">
           <CardContent className="p-4 space-y-4">
-            {/* Períodos Selection - Required */}
             <div className="space-y-4">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 bg-background rounded-xl flex items-center justify-center">
@@ -271,16 +309,13 @@ export default function ExportarLecturasComponent({
               </div>
 
               <ScrollArea className="h-32 rounded-xl border-border bg-background p-3">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {periodos?.map(periodo => (
-                    <div
-                      key={periodo.value}
-                      className="flex items-center gap-2"
-                    >
+                <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                  {periodos.map(periodo => (
+                    <div key={periodo.id} className="flex items-center gap-2">
                       <Checkbox
-                        id={periodo.value}
+                        id={periodo.id}
                         checked={selectedPeriodos.some(
-                          p => p.value === periodo.value
+                          item => item.id === periodo.id
                         )}
                         onCheckedChange={checked =>
                           handlePeriodoChange(periodo, checked as boolean)
@@ -288,10 +323,10 @@ export default function ExportarLecturasComponent({
                         className="text-primary"
                       />
                       <Label
-                        htmlFor={periodo.value}
+                        htmlFor={periodo.id}
                         className="cursor-pointer text-xs font-medium"
                       >
-                        {periodo.text}
+                        {periodo.descripcion}
                       </Label>
                     </div>
                   ))}
@@ -306,17 +341,17 @@ export default function ExportarLecturasComponent({
                   <div className="flex flex-wrap gap-2">
                     {selectedPeriodos.map(periodo => (
                       <Badge
-                        key={periodo.value}
+                        key={periodo.id}
                         variant="default"
                         className="bg-primary"
                       >
-                        {periodo.text}
-                        <button
+                        {periodo.descripcion}
+                        <Button
                           className="ml-2"
                           onClick={() => handlePeriodoChange(periodo, false)}
                         >
                           <X className="w-3 h-3" />
-                        </button>
+                        </Button>
                       </Badge>
                     ))}
                   </div>
@@ -324,21 +359,20 @@ export default function ExportarLecturasComponent({
               )}
             </div>
 
-            {/* Export Action */}
-            <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between pt-4 border-t border-border">
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+            <div className="flex flex-col items-stretch justify-between gap-3 border-t border-border pt-4 sm:flex-row sm:items-center">
+              <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-center">
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => setIsFiltersOpen(!isFiltersOpen)}
                   className="text-muted-foreground"
                 >
-                  <Filter className="w-4 h-4 mr-2" />
+                  <Filter className="mr-2 h-4 w-4" />
                   Filtros Opcionales
                   {isFiltersOpen ? (
-                    <ChevronUp className="w-4 h-4 ml-2" />
+                    <ChevronUp className="ml-2 h-4 w-4" />
                   ) : (
-                    <ChevronDown className="w-4 h-4 ml-2" />
+                    <ChevronDown className="ml-2 h-4 w-4" />
                   )}
                 </Button>
 
@@ -348,7 +382,7 @@ export default function ExportarLecturasComponent({
                     size="sm"
                     onClick={handleLimpiarFiltros}
                   >
-                    <Eraser className="w-4 h-4 mr-2" />
+                    <Eraser className="mr-2 h-4 w-4" />
                     Limpiar Filtros
                   </Button>
                 )}
@@ -357,31 +391,29 @@ export default function ExportarLecturasComponent({
               <Button
                 onClick={handleExportar}
                 disabled={selectedPeriodos.length === 0 || isExporting}
-                className="bg-primary hover:bg-primary/90 text-primary-foreground"
+                className="bg-primary text-primary-foreground hover:bg-primary/90"
               >
                 {isExporting ? (
                   <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Exportando...
                   </>
                 ) : (
                   <>
-                    <Download className="w-4 h-4 mr-2" />
+                    <Download className="mr-2 h-4 w-4" />
                     Exportar a Excel
                   </>
                 )}
               </Button>
             </div>
 
-            {/* Optional Filters - Collapsible */}
             <Collapsible open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
               <CollapsibleContent>
-                <div className="border-t border-border pt-4 space-y-4">
-                  {/* Sectores Filter */}
+                <div className="space-y-4 border-t border-border pt-4">
                   <div className="space-y-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-primary/10 rounded-xl flex items-center justify-center">
-                        <MapPin className="w-4 h-4 text-primary" />
+                      <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary/10">
+                        <MapPin className="h-4 w-4 text-primary" />
                       </div>
                       <div>
                         <h4 className="font-medium">Sectores</h4>
@@ -392,30 +424,30 @@ export default function ExportarLecturasComponent({
                     </div>
 
                     <ScrollArea className="h-28 rounded-xl border border-border bg-background p-3">
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                        {sectores?.map(sector => (
+                      <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+                        {sectores.map(sector => (
                           <div
-                            key={sector.secId}
+                            key={sector.id}
                             className="flex items-center gap-2"
                           >
                             <Checkbox
-                              id={String(sector.secId)}
+                              id={String(sector.id)}
                               checked={selectedSectores.includes(
-                                sector.descripcion
+                                String(sector.id)
                               )}
                               onCheckedChange={checked =>
                                 handleSectorChange(
-                                  sector.descripcion,
+                                  String(sector.id),
                                   checked as boolean
                                 )
                               }
                               className="text-primary"
                             />
                             <Label
-                              htmlFor={String(sector.secId)}
+                              htmlFor={String(sector.id)}
                               className="cursor-pointer text-xs font-medium"
                             >
-                              {sector.descripcion}
+                              {sector.nombre}
                             </Label>
                           </div>
                         ))}
@@ -425,24 +457,23 @@ export default function ExportarLecturasComponent({
                     {selectedSectores.length > 0 && (
                       <div className="flex flex-wrap gap-2">
                         {selectedSectores.map(sectorId => {
-                          const sector = sectores?.find(
-                            s => s.descripcion === sectorId
-                          );
+                          const sector = sectorsById.get(sectorId);
+
                           return (
                             <Badge
                               key={sectorId}
                               variant="outline"
                               className="bg-accent border-border"
                             >
-                              {sector?.descripcion || sectorId}
-                              <button
-                                className="ml-20"
+                              {sector?.nombre || sectorId}
+                              <Button
+                                className="ml-2"
                                 onClick={() =>
                                   handleSectorChange(sectorId, false)
                                 }
                               >
                                 <X className="w-3 h-3" />
-                              </button>
+                              </Button>
                             </Badge>
                           );
                         })}
@@ -450,81 +481,85 @@ export default function ExportarLecturasComponent({
                     )}
                   </div>
 
-                  {/* Estados Filter */}
                   <div className="space-y-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-primary/10 rounded-xl flex items-center justify-center">
-                        <CheckSquare className="w-4 h-4 text-primary" />
+                      <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary/10">
+                        <MapPin className="h-4 w-4 text-primary" />
                       </div>
                       <div>
-                        <h4 className="font-medium">Estados de Lectura</h4>
+                        <h4 className="font-medium">Nichos</h4>
                         <p className="text-sm text-muted-foreground">
-                          Filtra por estado de procesamiento
+                          {selectedSectores.length > 0
+                            ? 'Se muestran los nichos de los sectores seleccionados'
+                            : 'Filtra por nichos específicos'}
                         </p>
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-background rounded-xl border border-border ">
-                      <div className="flex items-center space-x-3">
-                        <Checkbox
-                          id="estado-normal"
-                          checked={estadoNormal}
-                          onCheckedChange={checked =>
-                            handleEstadoChange(2, checked as boolean)
-                          }
-                          className="text-primary"
-                        />
-                        <Label
-                          htmlFor="estado-normal"
-                          className="cursor-pointer font-medium text-sm"
-                        >
-                          Lectura Normal
-                        </Label>
-                      </div>
-                      <div className="flex items-center space-x-3">
-                        <Checkbox
-                          id="estado-facturado"
-                          checked={estadoFacturado}
-                          onCheckedChange={checked =>
-                            handleEstadoChange(5, checked as boolean)
-                          }
-                          className="text-primary"
-                        />
-                        <Label
-                          htmlFor="estado-facturado"
-                          className="cursor-pointer font-medium text-sm"
-                        >
-                          Facturado
-                        </Label>
-                      </div>
-                    </div>
-
-                    {selectedEstados.length > 0 && (
-                      <div className="flex flex-wrap gap-2">
-                        {selectedEstados.map(estado => (
-                          <Badge
-                            key={estado}
-                            variant="outline"
-                            className="bg-background border-border text-xs"
+                    <ScrollArea className="h-28 rounded-xl border border-border bg-background p-3">
+                      <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+                        {visibleNichos.map(nicho => (
+                          <div
+                            key={nicho.id}
+                            className="flex items-center gap-2"
                           >
-                            {estado === 2 ? 'Lectura Normal' : 'Facturado'}
-                            <button
-                              className="ml-2 text-primary"
-                              onClick={() => handleEstadoChange(estado, false)}
+                            <Checkbox
+                              id={String(nicho.id)}
+                              checked={selectedNichos.includes(
+                                String(nicho.id)
+                              )}
+                              onCheckedChange={checked =>
+                                handleNichoChange(
+                                  String(nicho.id),
+                                  checked as boolean
+                                )
+                              }
+                              className="text-primary"
+                            />
+                            <Label
+                              htmlFor={String(nicho.id)}
+                              className="cursor-pointer text-xs font-medium"
                             >
-                              <X className="w-3 h-3" />
-                            </button>
-                          </Badge>
+                              {nicho.nombre}
+                            </Label>
+                          </div>
                         ))}
+                      </div>
+                    </ScrollArea>
+
+                    {selectedNichos.length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {selectedNichos.map(nichoId => {
+                          const nicho = nichos.find(
+                            item => String(item.id) === nichoId
+                          );
+
+                          return (
+                            <Badge
+                              key={nichoId}
+                              variant="outline"
+                              className="bg-accent border-border"
+                            >
+                              {nicho?.nombre || nichoId}
+                              <Button
+                                className="ml-2"
+                                onClick={() =>
+                                  handleNichoChange(nichoId, false)
+                                }
+                              >
+                                <X className="w-3 h-3" />
+                              </Button>
+                            </Badge>
+                          );
+                        })}
                       </div>
                     )}
                   </div>
 
-                  {/* Medidores Filter */}
                   <div className="space-y-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-primary/10 rounded-xl flex items-center justify-center">
-                        <Hash className="w-4 h-4 text-primary" />
+                      <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary/10">
+                        <Hash className="h-4 w-4 text-primary" />
                       </div>
                       <div>
                         <h4 className="font-medium">Medidores Específicos</h4>
@@ -540,8 +575,9 @@ export default function ExportarLecturasComponent({
                         placeholder="Número de serie del medidor..."
                         value={medidorInput}
                         onChange={e => setMedidorInput(e.target.value)}
-                        onKeyPress={e => {
+                        onKeyDown={e => {
                           if (e.key === 'Enter') {
+                            e.preventDefault();
                             handleAddMedidor();
                           }
                         }}
@@ -558,15 +594,15 @@ export default function ExportarLecturasComponent({
                     </div>
 
                     {selectedMedidores.length > 0 && (
-                      <div className="mt-4 p-4 bg-background  rounded-xl border border-border">
-                        <h5 className="font-medium mb-3">
+                      <div className="mt-4 rounded-xl border border-border bg-background p-4">
+                        <h5 className="mb-3 font-medium">
                           Medidores agregados ({selectedMedidores.length}):
                         </h5>
                         <div className="flex flex-wrap gap-2">
-                          {selectedMedidores.map((medidor, index) => (
+                          {selectedMedidores.map(medidor => (
                             <div
-                              key={index}
-                              className="flex items-center gap-2 bg-bacvkground border border-border rounded-xl px-3 py-2"
+                              key={medidor}
+                              className="flex items-center gap-2 rounded-xl border border-border px-3 py-2"
                             >
                               <span className="text-sm font-mono">
                                 {medidor}
@@ -576,7 +612,7 @@ export default function ExportarLecturasComponent({
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => handleRemoveMedidor(medidor)}
-                                className="h-5 w-5 p-0 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/20"
+                                className="h-5 w-5 p-0 text-red-500 hover:bg-red-50 hover:text-red-700 dark:hover:bg-red-950/20"
                               >
                                 <X className="h-3 w-3" />
                               </Button>

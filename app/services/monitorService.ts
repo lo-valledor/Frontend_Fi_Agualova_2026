@@ -14,6 +14,7 @@ import type {
 } from '~/types/monitor';
 
 export interface MonitorServiceResponse<T> {
+  headers?: any;
   data: T | null;
   error: string | null;
 }
@@ -328,6 +329,7 @@ class MonitorService {
         responseType: 'blob'
       });
       return {
+        headers: response.headers,
         data: response.data as Blob,
         error: null
       };

@@ -21,6 +21,22 @@
 
 - Added a review note for the administracion + mantención slice in
   `docs/review/feat-ajustes-administracion-slice.md`.
+- **monitor / exportar lecturas:** aligned the export flow with the current
+  period, period catalog, and the maintained sector → nicho relationship so the
+  UI can filter both ways without breaking the active-period selection.
+- **operaciones / periodo facturación:** restored the close-period action so it
+  only appears for the active billing period and respects the backend close
+  rules.
+- **reportes / monitor support:** aligned the period source used by export and
+  reporting flows with the available billing periods returned by backend
+  summaries.
+
+### Fixed
+
+- Corrected the sector/nicho relation in monitor export using
+  `nicho.sector === String(sector.id)` instead of comparing by display name.
+- Prevented billing periods from being closed from rows that are not the active
+  period.
 
 ## [1.2.0](https://github.com/gbourguett-lv/Frontend_Fi_Agualova_2026/compare/v1.1.0...v1.2.0) (2026-06-26)
 
