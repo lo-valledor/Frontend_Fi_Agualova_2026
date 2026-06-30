@@ -310,11 +310,7 @@ class ReportesService {
           : null;
 
       const blob = response.data as Blob;
-      const errorMessage =
-        contentType?.includes('application/json') ||
-        contentType?.includes('text/plain')
-          ? await this.extractErrorMessageFromBlob(blob)
-          : null;
+      const errorMessage = await this.extractErrorMessageFromBlob(blob);
 
       if (errorMessage) {
         return {

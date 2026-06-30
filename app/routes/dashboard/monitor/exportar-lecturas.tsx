@@ -1,8 +1,9 @@
 /* eslint-disable no-empty-pattern */
 import ExportarLecturasComponent from '~/components/monitor/exportar-lecturas-component';
 import { MonitorHydrateFallback } from '~/components/monitor/monitor-hydrate-fallback';
+import { mantencionService } from '~/services/mantencionService';
 import { monitorService } from '~/services/monitorService';
-
+import { reportesService } from '~/services/reportesService';
 import type { Route } from './+types/exportar-lecturas';
 
 export function hydrateFallback() {
@@ -17,24 +18,37 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export async function clientLoader({}: Route.ClientLoaderArgs) {
-  const result = await monitorService.getBasicData();
-  const resSectores = await monitorService.getSectores();
+  const resPeriodoActivo = await monitorService.getPeriodos();
+  const resPeriodos = await reportesService.getListadoPeriodos();
+  const resSectores = await mantencionService.getSectores();
+  const resNichos = await mantencionService.getNichos();
 
-  if (result.error || !result.data) {
+  if (
+    resPeriodos.error ||
+    !resPeriodos.data ||
+    resSectores.error ||
+    !resSectores.data ||
+    resNichos.error ||
+    !resNichos.data
+  ) {
     return {
-      periodos: [],
-      sectores: [],
-      activePeriodoId: null,
-      error: new Error(result.error || 'Error al cargar datos')
+      periodos: resPeriodos.data || [],
+      sectores: resSectores.data || [],
+      nichos: resNichos.data || [],
+      periodoActivo: resPeriodoActivo.data || [],
+      error:
+        resPeriodos.error ||
+        resSectores.error ||
+        resNichos.error ||
+        'Error al obtener los datos del monitor'
     };
   }
 
   return {
-    periodos: result.data.periodos,
-    activePeriodoId: result.data.activePeriodoId
-      ? Number(result.data.activePeriodoId)
-      : null,
+    periodos: resPeriodos.data || [],
     sectores: resSectores.data || [],
+    nichos: resNichos.data || [],
+    periodoActivo: resPeriodoActivo.data || [],
     error: null
   };
 }

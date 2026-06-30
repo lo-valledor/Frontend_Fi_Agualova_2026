@@ -6,6 +6,8 @@ import { Badge } from '~/components/ui/badge';
 import { cn } from '~/lib/utils';
 import { type Periodos } from '~/types/operaciones';
 
+import CerrarPeriodo from './cerrar-periodo';
+
 const parseFecha = (fecha: string): Date | null => {
   const [day, month, year] = fecha.split('-').map(Number);
 
@@ -29,11 +31,26 @@ const parseFecha = (fecha: string): Date | null => {
 // Función para formatear la fecha en formato ISO para ordenamiento
 const formatDateForSorting = (fecha: string): string => {
   const parsedDate = parseFecha(fecha);
-  if (!parsedDate) return '0000-00-00'; // Valor por defecto para fechas inválidas
-  return parsedDate.toISOString().split('T')[0]; // Formato YYYY-MM-DD para ordenamiento correcto
+  if (!parsedDate) return '0000-00-00';
+  return parsedDate.toISOString().split('T')[0];
 };
 
-export const columns: ColumnDef<Periodos>[] = [
+const isPeriodoAbierto = (estado: string) =>
+  estado.trim().toLowerCase() === 'abierto';
+
+const canClosePeriodo = (periodo: Periodos, activePeriodoId?: string | null) =>
+  isPeriodoAbierto(periodo.estado) &&
+  (periodo.puedeCerrar || periodo.codigo === activePeriodoId);
+
+interface GetColumnsOptions {
+  activePeriodoId?: string | null;
+  onCloseSuccess?: () => void;
+}
+
+export const getColumns = ({
+  activePeriodoId,
+  onCloseSuccess
+}: GetColumnsOptions = {}): ColumnDef<Periodos>[] => [
   {
     accessorKey: 'codigo',
     header: ({ column }) => (
@@ -57,7 +74,7 @@ export const columns: ColumnDef<Periodos>[] = [
     cell: ({ row }) => {
       const descripcion = row.getValue('descripcion') as string;
       return (
-        <div className="max-w-[120px] sm:max-w-[200px] truncate font-medium text-xs sm:text-sm">
+        <div className="max-w-30 sm:max-w-50 truncate font-medium text-xs sm:text-sm">
           {descripcion}
         </div>
       );
@@ -131,7 +148,6 @@ export const columns: ColumnDef<Periodos>[] = [
     ),
     cell: ({ row }) => {
       const periodo = row.original;
-      const _isOpen = periodo.estado === 'Abierto';
 
       const getEstadoConfig = (estado: string) => {
         switch (estado) {
@@ -171,5 +187,35 @@ export const columns: ColumnDef<Periodos>[] = [
       );
     },
     size: 100
+  },
+  {
+    id: 'acciones',
+    header: () => <div className="text-right">Acciones</div>,
+    cell: ({ row }) => {
+      const periodo = row.original;
+      const isClosable = canClosePeriodo(periodo, activePeriodoId);
+
+      if (!isClosable) {
+        return (
+          <div className="flex justify-end">
+            <Badge variant="outline" className="text-xs">
+              No activo
+            </Badge>
+          </div>
+        );
+      }
+
+      return (
+        <div className="flex justify-end">
+          <CerrarPeriodo
+            periodoId={periodo.codigo}
+            onSuccess={onCloseSuccess}
+            className="w-auto min-w-24"
+          />
+        </div>
+      );
+    },
+    enableSorting: false,
+    size: 140
   }
 ];

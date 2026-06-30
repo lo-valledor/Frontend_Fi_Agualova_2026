@@ -41,7 +41,7 @@ import { operacionesService } from '~/services/operacionesService';
 import type { MonitorPeriodos } from '~/types/monitor';
 import type { Anio, Periodos } from '~/types/operaciones';
 import CerrarPeriodo from './cerrar-periodo';
-import { columns } from './columns';
+import { getColumns } from './columns';
 import DialogNuevoPeriodo from './dialog-nuevo-periodo';
 
 const MESES = [
@@ -240,6 +240,15 @@ export default function AbrirPeriodoFacturacion({
     refetchPeriodos();
     fetchMonitorPeriodo();
   }, [refetchPeriodos, fetchMonitorPeriodo]);
+
+  const tableColumns = useMemo(
+    () =>
+      getColumns({
+        activePeriodoId: monitorPeriodo?.value,
+        onCloseSuccess: refetchAll
+      }),
+    [monitorPeriodo?.value, refetchAll]
+  );
 
   // Early return para error state
   if (error) {
@@ -484,7 +493,7 @@ export default function AbrirPeriodoFacturacion({
             ) : (
               <div className="rounded-xl border border-border overflow-hidden">
                 <DataTable
-                  columns={columns}
+                  columns={tableColumns}
                   data={visiblePeriodos}
                   searchPlaceholder="Buscar por descripción o ID..."
                   manualPagination
