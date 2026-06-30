@@ -110,7 +110,6 @@ export const columns = ({
     cell: ({ row }) => (
       <TableActions
         onEdit={() => onEdit(row.original)}
-        onDelete={() => onDelete(row.original)}
         showView={false}
         item={row.original}
       />

@@ -82,6 +82,11 @@ export default function ClientesComponent({
   const { getClienteByRut } = useClientes();
 
   const { clientColumns } = useExportClientes();
+  const clienteCount = tableData.length;
+  const clienteLabel = clienteCount === 1 ? 'cliente' : 'clientes';
+  const tableDescription = tableLoading
+    ? 'Cargando…'
+    : `${clienteCount} ${clienteLabel} en esta página`;
 
   const fetchClientesPage = useCallback(
     async ({
@@ -251,9 +256,7 @@ export default function ClientesComponent({
                     Listado de Clientes
                   </CardTitle>
                   <CardDescription className="text-xs mt-0.5 text-muted-foreground">
-                    {tableLoading
-                      ? 'Cargando…'
-                      : `${tableData.length} cliente${tableData.length !== 1 ? 's' : ''} en esta página`}
+                    {tableDescription}
                   </CardDescription>
                 </div>
               </div>

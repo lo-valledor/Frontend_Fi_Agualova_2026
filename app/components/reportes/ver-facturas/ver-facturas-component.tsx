@@ -156,7 +156,9 @@ export default function VerFacturasComponent({
         setFetchError(
           response.error || 'No fue posible consultar las facturas.'
         );
-        toast.error('No fue posible generar el lote de facturas.');
+        toast.error(
+          response.error || 'No fue posible generar el lote de facturas.'
+        );
         return;
       }
 

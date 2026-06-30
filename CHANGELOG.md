@@ -4,20 +4,39 @@
 
 ### Changed
 
-- **dashboard shell:** aligned dashboard composition, navigation wiring, and
-  route-level consumers so the dashboard entry points share the same structure.
-- **monitor detail cards:** updated monitor meter/detail cards together with the
-  dashboard shell changes that consume them.
+- **administracion:** aligned consumers, forms, and table flows with the current
+  administration service/type contract across acometida, clientes, contratos,
+  medidores, and condiciones de contrato.
+- **condiciones de contrato:** synchronized the route, modal, details view, and
+  table behavior so they share the same contract assumptions.
 
 ### Refactored
 
-- Simplified shared dashboard and sidebar consumers plus related table helper
-  usage in the touched routes/components.
+- Simplified administration table column definitions and related consumers to
+  remove local drift from the shared contract.
+- Applied the same small column cleanup pattern across the touched mantención
+  tables.
 
 ### Docs
 
-- Added a review note for the dashboard + navigation slice in
-  `docs/review/feat-ajustes-dashboard-slice.md`.
+- Added a review note for the administracion + mantención slice in
+  `docs/review/feat-ajustes-administracion-slice.md`.
+- **monitor / exportar lecturas:** aligned the export flow with the current
+  period, period catalog, and the maintained sector → nicho relationship so the
+  UI can filter both ways without breaking the active-period selection.
+- **operaciones / periodo facturación:** restored the close-period action so it
+  only appears for the active billing period and respects the backend close
+  rules.
+- **reportes / monitor support:** aligned the period source used by export and
+  reporting flows with the available billing periods returned by backend
+  summaries.
+
+### Fixed
+
+- Corrected the sector/nicho relation in monitor export using
+  `nicho.sector === String(sector.id)` instead of comparing by display name.
+- Prevented billing periods from being closed from rows that are not the active
+  period.
 
 ## [1.2.0](https://github.com/gbourguett-lv/Frontend_Fi_Agualova_2026/compare/v1.1.0...v1.2.0) (2026-06-26)
 
