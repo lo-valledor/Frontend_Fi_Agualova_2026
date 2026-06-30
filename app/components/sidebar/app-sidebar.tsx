@@ -46,6 +46,10 @@ const data = {
         {
           title: 'Monitor de Lecturas',
           url: '/dashboard/monitor/monitor-lecturas'
+        },
+        {
+          title: 'Exportar Lecturas',
+          url: '/dashboard/monitor/exportar-lecturas'
         }
       ]
     },

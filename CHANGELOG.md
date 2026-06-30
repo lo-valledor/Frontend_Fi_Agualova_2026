@@ -1,5 +1,24 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+
+- **dashboard shell:** aligned dashboard composition, navigation wiring, and
+  route-level consumers so the dashboard entry points share the same structure.
+- **monitor detail cards:** updated monitor meter/detail cards together with the
+  dashboard shell changes that consume them.
+
+### Refactored
+
+- Simplified shared dashboard and sidebar consumers plus related table helper
+  usage in the touched routes/components.
+
+### Docs
+
+- Added a review note for the dashboard + navigation slice in
+  `docs/review/feat-ajustes-dashboard-slice.md`.
+
 ## [1.2.0](https://github.com/gbourguett-lv/Frontend_Fi_Agualova_2026/compare/v1.1.0...v1.2.0) (2026-06-26)
 
 

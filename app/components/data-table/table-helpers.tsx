@@ -1,5 +1,5 @@
 /* eslint-disable unused-imports/no-unused-vars */
-import { Edit, Eye } from 'lucide-react';
+import { Edit, Eye, Trash2 } from 'lucide-react';
 
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
@@ -12,10 +12,9 @@ export function TableActions({
   item,
   showView = false,
   showEdit = true,
-  showDelete = true,
+  showDelete = false,
   loadingEdit = false,
-  loadingView = false,
-  loadingDelete = false
+  loadingView = false
 }: {
   onView?: (item: any) => void;
   onEdit?: (item: any) => void;
@@ -26,7 +25,6 @@ export function TableActions({
   showDelete?: boolean;
   loadingEdit?: boolean;
   loadingView?: boolean;
-  loadingDelete?: boolean;
 }) {
   return (
     <div className="flex gap-1">
@@ -52,6 +50,17 @@ export function TableActions({
           className="h-8 w-8 p-0"
         >
           <Edit className="h-4 w-4" />
+        </Button>
+      )}
+      {showDelete && (
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => onDelete?.(item)}
+          title="Eliminar"
+          className="h-8 w-8 p-0 text-red-600 hover:bg-red-50 hover:text-red-700 dark:hover:bg-red-900/20"
+        >
+          <Trash2 className="h-4 w-4" />
         </Button>
       )}
     </div>
