@@ -12,7 +12,7 @@ import type {
   CargoTipoContrato,
   Cliente,
   ClientesRow,
-  Concepto,
+  CondicionContratoConcepto,
   CondicionesContratoRow,
   ContratosRow,
   Empalmes,
@@ -186,7 +186,7 @@ export function useCargoTipoContrato() {
 export function useCondicionesContrato() {
   const [data, setData] = useState<{
     condicionesContrato: CondicionesContratoRow[];
-    conceptos: Concepto[];
+    conceptos: CondicionContratoConcepto[];
   } | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

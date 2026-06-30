@@ -148,6 +148,22 @@ export type CargosFacturables = {
   descripcion: string;
 };
 
+export type CondicionesGrilla = {
+  idCargo: number;
+  nombreCargo: string;
+  idCondicion: number;
+  nombreCondicion: string;
+  descripcion: string;
+};
+
+export type CargoTipoContratoById = {
+  idTipoContrato: number;
+  condicionesGrilla: CondicionesGrilla[];
+  cargosMonofasicos: number[];
+  cargosTrifasicos: number[];
+  cargosAmbos: number[];
+};
+
 export type GuardarConfiguracionPayload = {
   idTipoContrato: number;
   condiciones: {
@@ -239,6 +255,14 @@ export type CondicionContrato = {
   estado: boolean;
 };
 
+export type CondicionContratoProps = {
+  descripcion: string;
+  idConcepto: number;
+  tipoCondicion: number;
+  valor: number;
+  estado: boolean;
+};
+
 export type CondicionContratoFormValues = {
   descripcion: string;
   idConcepto: number;
@@ -248,7 +272,7 @@ export type CondicionContratoFormValues = {
   id: number;
 };
 
-export type Concepto = {
+export type CondicionContratoConcepto = {
   id: number;
   descripcion: string;
 };

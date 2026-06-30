@@ -33,10 +33,10 @@ import { Input } from '~/components/ui/input';
 import { Switch } from '~/components/ui/switch';
 import { administracionService } from '~/services/administracionService';
 import type {
-  CondicionContratoFormValues,
-  CondicionesContratoRow
+  CondicionContrato,
+  CondicionContratoConcepto,
+  CondicionContratoFormValues
 } from '~/types/administracion';
-import type { Concepto } from '~/types/mantencion';
 
 const condicionContratoFormSchema = z.object({
   id: z.number().optional(),
@@ -56,9 +56,9 @@ interface CondicionesContratoModalFormProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
-  condicionContrato: CondicionesContratoRow | null;
+  condicionContrato: CondicionContrato | null;
   mode: 'add' | 'edit';
-  conceptos: Concepto[];
+  conceptos: CondicionContratoConcepto[];
 }
 
 export default function CondicionesContratoModalForm({
@@ -91,31 +91,16 @@ export default function CondicionesContratoModalForm({
     if (!isOpen) return;
 
     if (mode === 'edit' && condicionContrato) {
-      const tipoCondicion = condicionContrato.factorPorcentual ? 1 : 0;
-
-      let valor = 0;
-      if (tipoCondicion === 1 && condicionContrato.factorPorcentual) {
-        const factorStr = String(condicionContrato.factorPorcentual).replace(
-          ',',
-          '.'
-        );
-        valor = parseFloat(factorStr) * 100;
-      } else if (condicionContrato.valorFijo) {
-        valor =
-          typeof condicionContrato.valorFijo === 'string'
-            ? parseFloat(String(condicionContrato.valorFijo).replace(',', '.'))
-            : condicionContrato.valorFijo;
-      }
-
-      const conceptoEncontrado = conceptos.find(
-        c => c.descripcion === condicionContrato.concepto
-      );
-      const idConcepto = conceptoEncontrado?.id ?? 0;
+      const tipoCondicion = condicionContrato.tipoCondicion;
+      const valor =
+        tipoCondicion === 1
+          ? condicionContrato.valor * 100
+          : condicionContrato.valor;
 
       form.reset({
         id: condicionContrato.id,
         descripcion: condicionContrato.descripcion,
-        idConcepto,
+        idConcepto: condicionContrato.idConcepto,
         tipoCondicion,
         valor,
         estado: condicionContrato.estado
@@ -130,13 +115,12 @@ export default function CondicionesContratoModalForm({
         estado: true
       });
     }
-  }, [isOpen, mode, condicionContrato, conceptos, form]);
+  }, [isOpen, mode, condicionContrato, form]);
 
   const onSubmit = async (data: CondicionContratoFormData) => {
     setIsLoading(true);
     try {
-      const valorParaAPI =
-        data.tipoCondicion === 1 ? data.valor / 100 : data.valor;
+      const valorParaAPI = Math.round(data.valor);
 
       const payload: CondicionContratoFormValues = {
         id: mode === 'edit' && condicionContrato ? condicionContrato.id : 0,
@@ -206,34 +190,34 @@ export default function CondicionesContratoModalForm({
             <Controller
               name="idConcepto"
               control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Concepto</FormLabel>
-                  <Select
-                    options={conceptos.map(concepto => ({
-                      value: concepto.id,
-                      label: concepto.descripcion
-                    }))}
-                    value={
-                      field.value
-                        ? {
-                            value: field.value,
-                            label:
-                              conceptos.find(c => c.id === field.value)
-                                ?.descripcion || ''
-                          }
-                        : null
-                    }
-                    onChange={(option: SingleValue<OptionType>) =>
-                      field.onChange(option ? Number(option.value) : 0)
-                    }
-                    placeholder="Seleccione un concepto"
-                    styles={selectStyles}
-                    isClearable
-                  />
-                  <FormMessage />
-                </FormItem>
-              )}
+              render={({ field }) => {
+                const numericValue = Number(field.value) || 0;
+                const conceptoOptions = conceptos.map(concepto => ({
+                  value: Number(concepto.id),
+                  label: concepto.descripcion
+                }));
+                const selectedOption =
+                  conceptoOptions.find(
+                    option => option.value === numericValue
+                  ) ?? null;
+
+                return (
+                  <FormItem>
+                    <FormLabel>Concepto</FormLabel>
+                    <Select
+                      options={conceptoOptions}
+                      value={selectedOption}
+                      onChange={(option: SingleValue<OptionType>) =>
+                        field.onChange(option ? Number(option.value) : 0)
+                      }
+                      placeholder="Seleccione un concepto"
+                      styles={selectStyles}
+                      isClearable
+                    />
+                    <FormMessage />
+                  </FormItem>
+                );
+              }}
             />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -252,7 +236,7 @@ export default function CondicionesContratoModalForm({
                       <Switch
                         checked={field.value === 1}
                         onCheckedChange={checked =>
-                          field.onChange(checked ? 1 : 0)
+                          field.onChange(checked ? 1 : 2)
                         }
                       />
                     </FormControl>

@@ -187,12 +187,7 @@ export const columns = ({
       const medidor = row.original;
       return (
         <div className="flex items-center justify-center gap-1">
-          <TableActions
-            onEdit={onEdit}
-            onDelete={onDelete}
-            item={medidor}
-            showView={false}
-          />
+          <TableActions onEdit={onEdit} item={medidor} showView={false} />
         </div>
       );
     },

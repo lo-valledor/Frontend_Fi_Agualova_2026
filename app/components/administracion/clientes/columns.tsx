@@ -181,7 +181,6 @@ export const columns = ({
             onEdit={onEdit}
             item={row.original}
             showView={true}
-            showDelete={false}
             loadingEdit={editingClienteRut === row.original.rut}
             loadingView={detailingClienteRut === row.original.rut}
           />

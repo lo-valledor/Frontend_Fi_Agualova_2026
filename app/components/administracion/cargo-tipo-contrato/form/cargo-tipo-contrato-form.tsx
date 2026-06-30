@@ -4,8 +4,7 @@ import {
   FileText,
   Plus,
   Save,
-  Trash2,
-  Zap
+  Trash2
 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
@@ -70,15 +69,6 @@ export default function CargoTipoContratoForm({
     number | null
   >(null);
   const [descripcion, setDescripcion] = useState('');
-  const [selectedCargoMonofasico, setSelectedCargoMonofasico] = useState<
-    number | null
-  >(null);
-  const [selectedCargoTrifasico, setSelectedCargoTrifasico] = useState<
-    number | null
-  >(null);
-  const [selectedCargoAmbos, setSelectedCargoAmbos] = useState<number | null>(
-    null
-  );
   const navigate = useNavigate();
   const [isSaving, setIsSaving] = useState(false);
   const [configuracion, setConfiguracion] =
@@ -147,9 +137,6 @@ export default function CargoTipoContratoForm({
     setSelectedCondicion(null);
     setSelectedCargoCondicion(null);
     setDescripcion('');
-    setSelectedCargoMonofasico(null);
-    setSelectedCargoTrifasico(null);
-    setSelectedCargoAmbos(null);
   };
 
   const agregarCondicion = () => {
@@ -184,52 +171,24 @@ export default function CargoTipoContratoForm({
     }));
   };
 
-  const agregarCargo = (
-    key: 'idsCargosMonofasicos' | 'idsCargosTrifasicos' | 'idsCargosAmbos',
-    cargoId: number | null,
-    clear: () => void
-  ) => {
-    if (!cargoId) {
-      return;
-    }
-
-    setConfiguracion(prev => ({
-      ...prev,
-      [key]: prev[key].includes(cargoId) ? prev[key] : [...prev[key], cargoId]
-    }));
-    clear();
-  };
-
-  const quitarCargo = (
-    key: 'idsCargosMonofasicos' | 'idsCargosTrifasicos' | 'idsCargosAmbos',
-    cargoId: number
-  ) => {
-    setConfiguracion(prev => ({
-      ...prev,
-      [key]: prev[key].filter(id => id !== cargoId)
-    }));
-  };
-
   const handleGuardar = async () => {
     if (selectedTipoContrato === null) {
       toast.error('Debes seleccionar un tipo de contrato.');
       return;
     }
 
-    const payload: GuardarConfiguracionPayload = {
-      ...configuracion,
-      idTipoContrato: selectedTipoContrato
-    };
-
-    if (
-      payload.condiciones.length === 0 &&
-      payload.idsCargosMonofasicos.length === 0 &&
-      payload.idsCargosTrifasicos.length === 0 &&
-      payload.idsCargosAmbos.length === 0
-    ) {
-      toast.error('Debes agregar al menos una configuración.');
+    if (configuracion.condiciones.length === 0) {
+      toast.error('Debes agregar al menos una condición de contrato.');
       return;
     }
+
+    const payload: GuardarConfiguracionPayload = {
+      idTipoContrato: selectedTipoContrato,
+      condiciones: configuracion.condiciones,
+      idsCargosMonofasicos: [],
+      idsCargosTrifasicos: [],
+      idsCargosAmbos: []
+    };
 
     setIsSaving(true);
 
@@ -258,75 +217,6 @@ export default function CargoTipoContratoForm({
     resetForm();
     navigate(-1);
   };
-
-  const renderCargoList = (
-    title: string,
-    selectedValue: number | null,
-    onChange: (value: number | null) => void,
-    values: number[],
-    key: 'idsCargosMonofasicos' | 'idsCargosTrifasicos' | 'idsCargosAmbos'
-  ) => (
-    <div className="space-y-4">
-      <h3 className="text-lg font-semibold">{title}</h3>
-      <div className="space-y-3">
-        <div className="space-y-2">
-          <Label className="text-sm font-medium">Selecciona un cargo</Label>
-          <Select
-            value={
-              cargoOptions.find(option => option.value === selectedValue) ??
-              null
-            }
-            onChange={option => onChange(option ? option.value : null)}
-            options={cargoOptions}
-            styles={selectStyles}
-            placeholder="Selecciona un cargo"
-            isClearable
-            isSearchable
-            noOptionsMessage={() => 'No hay cargos disponibles'}
-          />
-        </div>
-        <Button
-          size="sm"
-          variant="default"
-          className="w-full"
-          disabled={!selectedValue}
-          onClick={() => agregarCargo(key, selectedValue, () => onChange(null))}
-        >
-          <Plus className="mr-2 h-4 w-4" />
-          Agregar
-        </Button>
-        <div className="space-y-2">
-          <Label className="text-sm font-medium">Agregadas</Label>
-          <div className="h-32 overflow-y-auto rounded-md border p-2">
-            <div className="space-y-1">
-              {values.length > 0 ? (
-                values.map(cargoId => (
-                  <div
-                    key={`${key}-${cargoId}`}
-                    className="flex items-center justify-between rounded bg-muted p-2 text-sm"
-                  >
-                    <span>{cargoMap.get(cargoId) ?? `Cargo ${cargoId}`}</span>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-6 w-6 p-0 text-red-600 hover:bg-red-50 hover:text-red-700 dark:hover:bg-red-900/20"
-                      onClick={() => quitarCargo(key, cargoId)}
-                    >
-                      <Trash2 className="h-3 w-3" />
-                    </Button>
-                  </div>
-                ))
-              ) : (
-                <div className="p-2 text-center text-sm text-muted-foreground">
-                  No hay cargos agregados
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
 
   return (
     <div className="min-h-screen bg-background">
@@ -555,42 +445,6 @@ export default function CargoTipoContratoForm({
                 </Table>
               </div>
             )}
-          </CardContent>
-        </Card>
-
-        <Card className="border-0 shadow-sm">
-          <CardHeader className="pb-4">
-            <div className="flex items-center gap-2">
-              <Zap className="h-5 w-5" />
-              <CardTitle className="text-lg font-medium">
-                Cargos Facturables
-              </CardTitle>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-              {renderCargoList(
-                'Monofásico',
-                selectedCargoMonofasico,
-                setSelectedCargoMonofasico,
-                configuracion.idsCargosMonofasicos,
-                'idsCargosMonofasicos'
-              )}
-              {renderCargoList(
-                'Trifásico',
-                selectedCargoTrifasico,
-                setSelectedCargoTrifasico,
-                configuracion.idsCargosTrifasicos,
-                'idsCargosTrifasicos'
-              )}
-              {renderCargoList(
-                'Ambos',
-                selectedCargoAmbos,
-                setSelectedCargoAmbos,
-                configuracion.idsCargosAmbos,
-                'idsCargosAmbos'
-              )}
-            </div>
           </CardContent>
         </Card>
       </div>

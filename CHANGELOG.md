@@ -4,6 +4,23 @@
 
 ### Changed
 
+- **administracion:** aligned consumers, forms, and table flows with the current
+  administration service/type contract across acometida, clientes, contratos,
+  medidores, and condiciones de contrato.
+- **condiciones de contrato:** synchronized the route, modal, details view, and
+  table behavior so they share the same contract assumptions.
+
+### Refactored
+
+- Simplified administration table column definitions and related consumers to
+  remove local drift from the shared contract.
+- Applied the same small column cleanup pattern across the touched mantención
+  tables.
+
+### Docs
+
+- Added a review note for the administracion + mantención slice in
+  `docs/review/feat-ajustes-administracion-slice.md`.
 - **monitor / exportar lecturas:** aligned the export flow with the current
   period, period catalog, and the maintained sector → nicho relationship so the
   UI can filter both ways without breaking the active-period selection.
@@ -20,11 +37,6 @@
   `nicho.sector === String(sector.id)` instead of comparing by display name.
 - Prevented billing periods from being closed from rows that are not the active
   period.
-
-### Docs
-
-- Added a review note with the staged scope, candidate PR split, and validation
-  path for the current `feat/ajustes` work in `docs/review/feat-ajustes-split-plan.md`.
 
 ## [1.2.0](https://github.com/gbourguett-lv/Frontend_Fi_Agualova_2026/compare/v1.1.0...v1.2.0) (2026-06-26)
 

@@ -163,7 +163,6 @@ export const columns = ({
             item={row.original}
             showView={true}
             showEdit={false}
-            showDelete={false}
             loadingView={detailingContratanteRut === row.original.rut}
           />
         </div>

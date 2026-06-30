@@ -9,14 +9,10 @@ import { TableActions } from '../../data-table/table-helpers';
 
 interface TableColumnsProps {
   onEdit: (condicionContrato: CondicionesContratoRow) => void;
-  onView: (condicionContrato: CondicionesContratoRow) => void;
-  editingCondicionContrato: number | null;
 }
 
 export const columns = ({
-  onEdit,
-  onView,
-  editingCondicionContrato
+  onEdit
 }: TableColumnsProps): ColumnDef<CondicionesContratoRow>[] => [
   {
     id: 'id',
@@ -126,8 +122,7 @@ export const columns = ({
     cell: ({ row }) => (
       <TableActions
         onEdit={() => onEdit(row.original)}
-        onView={() => onView(row.original)}
-        showView={true}
+        showView={false}
         item={row.original}
       />
     ),

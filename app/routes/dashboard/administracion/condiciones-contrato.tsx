@@ -3,8 +3,10 @@ import { AdministracionHydrateFallback } from '~/components/administracion/admin
 import CondicionesContratoComponent from '~/components/administracion/condiciones-contrato/condiciones-contrato-component';
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import { administracionService } from '~/services/administracionService';
-import type { CondicionesContratoRow } from '~/types/administracion';
-import type { Concepto as ConceptoMantencion } from '~/types/mantencion';
+import type {
+  CondicionContratoConcepto,
+  CondicionesContratoRow
+} from '~/types/administracion';
 
 import type { Route } from './+types/condiciones-contrato';
 
@@ -17,7 +19,7 @@ export function meta({}: Route.MetaArgs) {
 
 type CondicionesContratoLoaderData = {
   condicionesContrato: CondicionesContratoRow[];
-  conceptos: ConceptoMantencion[];
+  conceptos: CondicionContratoConcepto[];
 };
 
 export async function clientLoader({}: Route.ClientActionArgs) {
@@ -32,7 +34,7 @@ export async function clientLoader({}: Route.ClientActionArgs) {
 
   const data: CondicionesContratoLoaderData = {
     condicionesContrato: result.data.condicionesContrato,
-    conceptos: result.data.conceptos as unknown as ConceptoMantencion[]
+    conceptos: result.data.conceptos
   };
 
   return data;

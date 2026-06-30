@@ -71,6 +71,11 @@ export default function AcometidaComponent({
 
   const revalidator = useRevalidator();
   const { acometidaColumns } = useExportAcometidas();
+  const acometidaCount = tableData.length;
+  const acometidaLabel = acometidaCount === 1 ? 'acometida' : 'acometidas';
+  const tableDescription = tableLoading
+    ? 'Cargando…'
+    : `${acometidaCount} ${acometidaLabel} en esta página`;
 
   const fetchAcometidasPage = useCallback(
     async ({
@@ -243,9 +248,7 @@ export default function AcometidaComponent({
                     Listado de Acometidas
                   </CardTitle>
                   <CardDescription className="text-xs mt-0.5 text-muted-foreground">
-                    {tableLoading
-                      ? 'Cargando…'
-                      : `${tableData.length} acometida${tableData.length !== 1 ? 's' : ''} en esta página`}
+                    {tableDescription}
                   </CardDescription>
                 </div>
               </div>
