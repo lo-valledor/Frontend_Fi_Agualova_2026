@@ -24,10 +24,12 @@ import type {
   CondicionContratoProps,
   Condiciones,
   CondicionesContratoRow,
+  ContratanteFormValues,
   ContratoFormValues,
   ContratosRow,
   Empalmes,
   Estado,
+  GetContratante,
   GetUserById,
   GuardarConfiguracionPayload,
   Marca,
@@ -646,12 +648,14 @@ class AdministracionService {
         responseEditar,
         responseConceptos,
         responseCondicionesContrato,
-        responseCargos
+        responseCargos,
+        responseTiposContrato
       ] = await Promise.all([
         api.get(`/cargos-tipos-contrato/${cargoTipoContratoId}`),
         api.get('/cargos-tipos-contrato/conceptos'),
         api.get('/cargos-tipos-contrato/condiciones'),
-        api.get('/cargos-tipos-contrato/cargos-facturables')
+        api.get('/cargos-tipos-contrato/cargos-facturables'),
+        api.get('/cargos-tipos-contrato/tipos-contrato')
       ]);
       const estructura = responseEditar.data as Record<string, unknown>;
       const toNumber = (value: unknown): number | null => {
@@ -662,39 +666,68 @@ class AdministracionService {
         }
         return null;
       };
-      const toNumberArray = (value: unknown): number[] =>
+      const toNumberArray = (
+        value: unknown,
+        keys: string[] = ['idCargo', 'id']
+      ): number[] =>
         Array.isArray(value)
           ? value
-              .map(item => toNumber(item))
+              .map(item => {
+                if (typeof item === 'number') {
+                  return item;
+                }
+                if (typeof item === 'string') {
+                  return toNumber(item);
+                }
+                if (typeof item === 'object' && item !== null) {
+                  const record = item as Record<string, unknown>;
+                  for (const key of keys) {
+                    const candidate = toNumber(record[key]);
+                    if (candidate !== null) {
+                      return candidate;
+                    }
+                  }
+                }
+                return null;
+              })
               .filter((item): item is number => item !== null)
           : [];
-      const detalle = Array.isArray(estructura.condicionesGrilla)
-        ? estructura.condicionesGrilla
-        : Array.isArray(estructura.condiciones)
-          ? estructura.condiciones
-          : Array.isArray(estructura.detalle)
-            ? estructura.detalle
-            : [];
-      const configuracion: GuardarConfiguracionPayload = {
-        idTipoContrato:
-          toNumber(estructura.idTipoContrato) ?? cargoTipoContratoId,
-        condiciones: detalle
+      const mapDetalle = (
+        value: unknown
+      ): GuardarConfiguracionPayload['condiciones'] => {
+        if (!Array.isArray(value)) {
+          return [];
+        }
+
+        return value
           .map(item => {
+            if (typeof item !== 'object' || item === null) {
+              return null;
+            }
+
             const current = item as Record<string, unknown>;
             const idCargo =
-              toNumber(current.idCargo) ?? toNumber(current.cargoId);
+              toNumber(current.idCargo) ??
+              toNumber(current.id) ??
+              toNumber(current.idCargoMonofasico);
             const idCondicion =
-              toNumber(current.idCondicion) ?? toNumber(current.condicionId);
+              toNumber(current.idCondicion) ??
+              toNumber(current.condicionId) ??
+              toNumber(current.idCondicionCargo);
+
             if (idCargo === null || idCondicion === null) {
               return null;
             }
+
             return {
               idCargo,
               idCondicion,
               descripcion:
                 typeof current.descripcion === 'string'
                   ? current.descripcion
-                  : ''
+                  : typeof current.nombreCondicion === 'string'
+                    ? current.nombreCondicion
+                    : ''
             };
           })
           .filter(
@@ -702,7 +735,37 @@ class AdministracionService {
               item
             ): item is GuardarConfiguracionPayload['condiciones'][number] =>
               item !== null
-          ),
+          );
+      };
+      const condicionesGrillaDetalle = mapDetalle(estructura.condicionesGrilla);
+      const condicionesContratoDetalle = mapDetalle(estructura.condiciones);
+      const condicionesDetalle = mapDetalle(estructura.detalle);
+      const condicionesCargosMonofasicos = mapDetalle(
+        estructura.cargosMonofasicos
+      );
+      const detalle =
+        condicionesGrillaDetalle.length > 0
+          ? condicionesGrillaDetalle
+          : condicionesContratoDetalle.length > 0
+            ? condicionesContratoDetalle
+            : condicionesDetalle.length > 0
+              ? condicionesDetalle
+              : condicionesCargosMonofasicos;
+      const idTipoContrato =
+        toNumber(estructura.idTipoContrato) ?? cargoTipoContratoId;
+      const tiposContrato = this.processApiResponse<TiposContrato>(
+        responseTiposContrato
+      );
+      const tipoContratoFromCatalog = tiposContrato.find(
+        tipo => toNumber(tipo.id) === idTipoContrato
+      )?.descripcion;
+      const tipoContratoLabel =
+        typeof estructura.tipoContrato === 'string'
+          ? estructura.tipoContrato
+          : (tipoContratoFromCatalog ?? `Tipo de contrato ${idTipoContrato}`);
+      const configuracion: GuardarConfiguracionPayload = {
+        idTipoContrato,
+        condiciones: detalle,
         idsCargosMonofasicos: toNumberArray(estructura.cargosMonofasicos),
         idsCargosTrifasicos: toNumberArray(estructura.cargosTrifasicos),
         idsCargosAmbos: toNumberArray(estructura.cargosAmbos)
@@ -711,10 +774,7 @@ class AdministracionService {
       return {
         data: {
           tipoContratoId: configuracion.idTipoContrato,
-          tipoContrato:
-            typeof estructura.tipoContrato === 'string'
-              ? estructura.tipoContrato
-              : `Tipo de contrato ${configuracion.idTipoContrato}`,
+          tipoContrato: tipoContratoLabel,
           configuracion,
           conceptos: this.processApiResponse<Conceptos>(responseConceptos),
           condiciones: this.processApiResponse<Condiciones>(
@@ -781,17 +841,20 @@ class AdministracionService {
   ): Promise<AdministracionServiceResponse<unknown>> {
     try {
       const p = payload as GuardarConfiguracionPayload;
-      // Transform to the API's expected format, which mirrors the GET response
+      const normalizeCondiciones = (
+        condiciones: GuardarConfiguracionPayload['condiciones'] | undefined
+      ): GuardarConfiguracionPayload['condiciones'] =>
+        (condiciones ?? []).map(condicion => ({
+          idCargo: condicion.idCargo,
+          idCondicion: condicion.idCondicion,
+          descripcion: condicion.descripcion ?? ''
+        }));
       const apiPayload = {
         idTipoContrato: p.idTipoContrato,
-        condicionesGrilla: p.condiciones ?? [],
-        cargosMonofasicos: (p.idsCargosMonofasicos ?? []).map(id => ({
-          idCargo: id
-        })),
-        cargosTrifasicos: (p.idsCargosTrifasicos ?? []).map(id => ({
-          idCargo: id
-        })),
-        cargosAmbos: (p.idsCargosAmbos ?? []).map(id => ({ idCargo: id }))
+        condiciones: normalizeCondiciones(p.condiciones),
+        idsCargosMonofasicos: p.idsCargosMonofasicos ?? [],
+        idsCargosTrifasicos: p.idsCargosTrifasicos ?? [],
+        idsCargosAmbos: p.idsCargosAmbos ?? []
       };
       const response = await api.post(
         '/cargos-tipos-contrato/guardar-configuracion',
@@ -1252,13 +1315,58 @@ class AdministracionService {
     }
   }
 
-  async crearContratante(
-    contratanteData: any
-  ): Promise<AdministracionServiceResponse<any>> {
+  /**
+   *
+   * @param contratanteData
+   * @returns
+   */
+
+  async getContratantesByLimitAndOffset(params: {
+    nombre?: string;
+    rut?: string;
+    offset?: number;
+    limit?: number;
+  }): Promise<AdministracionServiceResponse<GetContratante[]>> {
     try {
-      const response = await api.post('/contratante/crear', contratanteData);
+      const response = await api.get('/contratos/buscar-contratantes', {
+        params
+      });
       return {
-        data: response.data,
+        data: this.processApiResponse<GetContratante>(response),
+        error: null
+      };
+    } catch (error: any) {
+      return {
+        data: null,
+        error:
+          error.response?.data?.message ||
+          error.message ||
+          'Error al obtener los contratantes'
+      };
+    }
+  }
+
+  async crearContratante(
+    contratanteData:
+      | ContratanteFormValues
+      | (Record<string, unknown> & { id?: string })
+  ): Promise<AdministracionServiceResponse<GetContratante>> {
+    const rawPayload = contratanteData as {
+      codigoComuna?: string;
+      codComuna?: string;
+      email?: string;
+      correo?: string;
+      [key: string]: unknown;
+    };
+    const payload = {
+      ...contratanteData,
+      codigoComuna: rawPayload.codigoComuna ?? rawPayload.codComuna,
+      email: rawPayload.email ?? rawPayload.correo
+    } as Record<string, unknown>;
+    try {
+      const response = await api.post('/contratos/crear-contratantes', payload);
+      return {
+        data: response.data as GetContratante,
         error: null
       };
     } catch (error: any) {
@@ -1273,12 +1381,30 @@ class AdministracionService {
   }
 
   async modificarContratante(
-    contratanteData: any
-  ): Promise<AdministracionServiceResponse<any>> {
+    contratanteData:
+      | (ContratanteFormValues & { id?: string })
+      | (Record<string, unknown> & { id?: string })
+  ): Promise<AdministracionServiceResponse<GetContratante>> {
+    const rawPayload = contratanteData as {
+      codigoComuna?: string;
+      codComuna?: string;
+      email?: string;
+      correo?: string;
+      [key: string]: unknown;
+    };
+    const payload = {
+      ...contratanteData,
+      codigoComuna: rawPayload.codigoComuna ?? rawPayload.codComuna,
+      email: rawPayload.email ?? rawPayload.correo,
+      id: (contratanteData as { id?: string }).id
+    } as Record<string, unknown>;
     try {
-      const response = await api.put('/contratante/modificar', contratanteData);
+      const response = await api.put(
+        '/contratos/actualizar-contratante',
+        payload
+      );
       return {
-        data: response.data,
+        data: response.data as GetContratante,
         error: null
       };
     } catch (error: any) {
@@ -1288,21 +1414,6 @@ class AdministracionService {
           error.response?.data?.message ||
           error.message ||
           'Error al modificar el contratante'
-      };
-    }
-  }
-
-  async getMedidorSubempalmes(): Promise<AdministracionServiceResponse<any[]>> {
-    try {
-      const response = await api.get('/MedidorSubempalmes');
-      return {
-        data: response.data as any[],
-        error: null
-      };
-    } catch (error) {
-      return {
-        data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -1348,7 +1459,7 @@ class AdministracionService {
     }>
   > {
     try {
-      const response = await api.post('/contrato/sincronizar-propietarios');
+      const response = await api.post('/contratos/sincronizar-propietarios');
       return {
         data: response.data as { registrosAfectados: number; mensaje: string },
         error: null

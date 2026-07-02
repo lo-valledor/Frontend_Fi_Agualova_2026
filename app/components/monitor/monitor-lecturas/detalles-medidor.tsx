@@ -1,4 +1,3 @@
-import { IconArrowsMaximize } from '@tabler/icons-react';
 import {
   AlertTriangle,
   CheckCircle2,
@@ -65,6 +64,20 @@ interface DetallesMedidorProps {
 
 type PendingAction = 'copiar' | 'registrar' | 'aceptar' | 'habilitar' | null;
 
+const hasLowerReadingThanPrevious = (
+  previousReading: string,
+  currentReading: string
+): boolean => {
+  const previous = Number.parseFloat(previousReading);
+  const current = Number.parseFloat(currentReading);
+
+  if (Number.isNaN(previous) || Number.isNaN(current)) {
+    return false;
+  }
+
+  return current < previous;
+};
+
 export default function DetallesMedidor({
   lecturaId,
   claveHtml,
@@ -79,10 +92,6 @@ export default function DetallesMedidor({
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [pendingAction, setPendingAction] = useState<PendingAction>(null);
-
-  // Estado derivado de la clave HTML del medidor
-  const isLecturaCerrada = claveHtml === 'LECCER';
-  const _isLecturaFacturada = claveHtml === 'LECIMP';
 
   const [fecha, setFecha] = useState<string>(() => {
     const today = new Date();
@@ -180,6 +189,25 @@ export default function DetallesMedidor({
     const anteriorNum = Number.parseFloat(lecturaAnterior || '0');
     const actualAdNum = Number.parseFloat(lecturaActualAd || '0');
     const anteriorAdNum = Number.parseFloat(lecturaAnteriorAd || '0');
+
+    if (!Number.isNaN(anteriorNum) && actualNum < anteriorNum) {
+      toast.error(
+        'La lectura actual debe ser igual o mayor al valor actual registrado'
+      );
+      return null;
+    }
+
+    if (
+      tieneAdicional &&
+      !Number.isNaN(actualAdNum) &&
+      !Number.isNaN(anteriorAdNum) &&
+      actualAdNum < anteriorAdNum
+    ) {
+      toast.error(
+        'La lectura adicional debe ser igual o mayor al valor actual registrado'
+      );
+      return null;
+    }
 
     return {
       idLectura: lecturaId,
@@ -319,14 +347,6 @@ export default function DetallesMedidor({
     setPendingAction('registrar');
   };
 
-  const puedeRegistrar = useMemo(
-    () =>
-      Boolean(historial?.permiteIngresar) &&
-      lecturaActual.trim() !== '' &&
-      !Number.isNaN(Number.parseFloat(lecturaActual)),
-    [historial?.permiteIngresar, lecturaActual]
-  );
-
   const puedeAceptar = Boolean(historial?.permiteAceptar) && !isSubmitting;
 
   const anomaliaPrincipal = useMemo(
@@ -339,10 +359,33 @@ export default function DetallesMedidor({
     [lecturaAnteriorAd, lecturaActualAd]
   );
 
+  const puedeRegistrar = useMemo(
+    () =>
+      Boolean(historial?.permiteIngresar) &&
+      lecturaActual.trim() !== '' &&
+      !Number.isNaN(Number.parseFloat(lecturaActual)) &&
+      !hasLowerReadingThanPrevious(lecturaAnterior, lecturaActual) &&
+      (!tieneAdicional ||
+        !hasLowerReadingThanPrevious(lecturaAnteriorAd, lecturaActualAd)),
+    [
+      historial?.permiteIngresar,
+      lecturaActual,
+      lecturaAnterior,
+      tieneAdicional,
+      lecturaAnteriorAd,
+      lecturaActualAd
+    ]
+  );
+
   const claveActual = useMemo(() => {
     if (claveHtml) return claveHtml;
     return historial?.claves?.[0]?.codigo ?? null;
   }, [claveHtml, historial?.claves]);
+
+  const isLecturaSinLectura = claveActual === 'SINLEC';
+  const isLecturaCerrada = claveActual === 'LECCER';
+  const puedeCopiarUltimaLectura =
+    isLecturaSinLectura && !isLecturaCerrada && !isSubmitting;
 
   const claveIdMemo = useMemo<number | null>(() => {
     if (!claveActual) return null;
@@ -395,40 +438,6 @@ export default function DetallesMedidor({
   }
 
   if (!historial) return null;
-
-  // ---- Proyección de próxima lectura basada en historial ----
-  // Se calcula usando lecturas de períodos anteriores,
-  // independientemente de si el período actual ya tiene lectura.
-  const leerNumero = (v: unknown): number | null => {
-    if (v == null || v === '' || v === '-') return null;
-    const n = Number(String(v).replace(/,/g, '.'));
-    return Number.isFinite(n) ? n : null;
-  };
-
-  // Usar lecturas anteriores del historial (períodos previos).
-  // Si el período actual aún no tiene lectura, el historial
-  // debería contener los períodos anteriores para calcular
-  // la proyección de todas formas.
-  const ultimasLecturas = (historial.lecturasAnteriores ?? []).slice(0, 6);
-  const consumos = ultimasLecturas
-    .map(l => leerNumero(l.consumoPeriodo))
-    .filter((v): v is number => v !== null);
-
-  let proyeccion = null;
-  if (consumos.length > 0) {
-    const promedio = consumos.reduce((a, b) => a + b, 0) / consumos.length;
-    const ultimaLecturaNum = leerNumero(
-      ultimasLecturas[0]?.lecturaActual ?? ultimasLecturas[0]?.ultimaLectura
-    );
-    const estimado =
-      ultimaLecturaNum != null ? ultimaLecturaNum + promedio : null;
-    proyeccion = {
-      promedioConsumo: Math.round(promedio * 100) / 100,
-      cantidadPeriodos: consumos.length,
-      ultimaLectura: ultimaLecturaNum,
-      estimado: estimado != null ? Math.round(estimado * 100) / 100 : null
-    };
-  }
   // ----------------------------------------------------------------
 
   const serieAdicional = detalle?.serieAdicional ?? null;
@@ -483,54 +492,6 @@ export default function DetallesMedidor({
         onSubmit={handleSubmitOnEnter}
         className={isCompact ? 'space-y-3' : 'space-y-4'}
       >
-        {/* Proyección basada en lecturas anteriores */}
-        {proyeccion && !isCompact && (
-          <Card className="border-dashed border-blue-300 bg-blue-50/50 dark:border-blue-800 dark:bg-blue-950/30">
-            <CardHeader className="pb-2">
-              <CardTitle className="flex items-center gap-2 text-sm font-medium text-blue-700 dark:text-blue-300">
-                <IconArrowsMaximize className="h-4 w-4" />
-                Proyección de próxima lectura
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2 text-xs">
-              <div className="flex justify-between gap-3">
-                <span className="text-muted-foreground">Consumo promedio:</span>
-                <span className="font-mono font-semibold">
-                  {proyeccion.promedioConsumo.toLocaleString()}
-                  <span className="ml-1 text-muted-foreground">m³</span>
-                </span>
-              </div>
-              <div className="flex justify-between gap-3">
-                <span className="text-muted-foreground">Basado en:</span>
-                <span className="font-medium">
-                  {proyeccion.cantidadPeriodos}{' '}
-                  {proyeccion.cantidadPeriodos === 1 ? 'período' : 'períodos'}
-                </span>
-              </div>
-              {proyeccion.ultimaLectura != null && (
-                <div className="flex justify-between gap-3">
-                  <span className="text-muted-foreground">Última lectura:</span>
-                  <span className="font-mono">
-                    {proyeccion.ultimaLectura.toLocaleString()}
-                    <span className="ml-1 text-muted-foreground">m³</span>
-                  </span>
-                </div>
-              )}
-              {proyeccion.estimado != null && (
-                <div className="mt-1 rounded-md bg-blue-100/70 px-3 py-2 dark:bg-blue-900/40">
-                  <div className="flex justify-between gap-3 font-medium text-blue-800 dark:text-blue-200">
-                    <span>Estimado próximo:</span>
-                    <span className="font-mono font-semibold text-base">
-                      ~{Math.round(proyeccion.estimado).toLocaleString()}
-                      <span className="ml-1 text-sm">m³</span>
-                    </span>
-                  </div>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        )}
-
         {/* Formulario de lectura principal */}
         <Card>
           <CardHeader className={isCompact ? 'pb-2 p-3' : 'pb-2'}>
@@ -778,7 +739,7 @@ export default function DetallesMedidor({
                     variant="outline"
                     size="sm"
                     onClick={() => setPendingAction('copiar')}
-                    disabled={isSubmitting || isLecturaCerrada}
+                    disabled={!puedeCopiarUltimaLectura}
                   >
                     <Copy className="h-3 w-3 mr-1" />
                     Copiar última
@@ -932,15 +893,13 @@ interface ReadingAnomalyAlertProps {
   delta: number;
 }
 
-function ReadingAnomalyAlert({ kind, scope, delta }: ReadingAnomalyAlertProps) {
+function ReadingAnomalyAlert({ kind, scope }: ReadingAnomalyAlertProps) {
   const isWraparound = kind === 'wraparound';
-  const scopeLabel =
-    scope === 'principal' ? 'de la lectura principal' : 'del adicional';
   const title = isWraparound
-    ? 'Posible vuelta de medidor'
+    ? 'Lectura menor al valor actual'
     : 'Consumo igual a cero';
   const message = isWraparound
-    ? `La lectura actual es menor que la anterior (Δ = ${delta}). El medidor probablemente superó su capacidad de dígitos.`
+    ? `La lectura ingresada es menor que el valor actual registrado. Solo se deben ingresar valores iguales o mayores al consumo actual.`
     : `La lectura actual es igual a la anterior. El consumo del período será 0.`;
 
   return (
@@ -956,7 +915,6 @@ function ReadingAnomalyAlert({ kind, scope, delta }: ReadingAnomalyAlertProps) {
       <AlertTitle>{title}</AlertTitle>
       <AlertDescription>
         <span>{message}</span>
-        <span className="block text-xs opacity-80 mt-1">{scopeLabel}</span>
       </AlertDescription>
     </Alert>
   );

@@ -58,10 +58,10 @@ const createContratanteSchema = (existingContratantes: string[]) =>
     apellido: z.string().optional(),
     esEmpresa: z.boolean(),
     direccion: z.string().min(1, 'La dirección es requerida'),
-    codComuna: z.string().min(1, 'La comuna es requerida'),
+    codigoComuna: z.string().min(1, 'La comuna es requerida'),
     contacto: z.string().min(1, 'El contacto es requerido'),
     telefono: z.string().optional(),
-    correo: z
+    email: z
       .string()
       .email('Debe ser un correo válido')
       .optional()
@@ -94,10 +94,10 @@ export default function CrearContratanteComponent() {
       apellido: '',
       esEmpresa: false,
       direccion: '',
-      codComuna: '',
+      codigoComuna: '',
       contacto: '',
       telefono: '',
-      correo: ''
+      email: ''
     }
   });
 
@@ -395,7 +395,7 @@ export default function CrearContratanteComponent() {
 
                   <Controller
                     control={form.control}
-                    name="codComuna"
+                    name="codigoComuna"
                     render={({ field }) => {
                       const comunaOptions = comunas.map(c => {
                         if (typeof c === 'string') {
@@ -493,7 +493,7 @@ export default function CrearContratanteComponent() {
 
                   <FormField
                     control={form.control}
-                    name="correo"
+                    name="email"
                     render={({ field }) => (
                       <FormItem className="md:col-span-2">
                         <FormLabel className="flex items-center gap-2">

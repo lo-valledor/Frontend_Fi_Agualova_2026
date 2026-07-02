@@ -1,9 +1,9 @@
 import { reactRouter } from '@react-router/dev/vite';
+import babel from '@rolldown/plugin-babel';
 import tailwindcss from '@tailwindcss/vite';
 import path from 'path';
 import type { Plugin } from 'vite';
 import { defineConfig } from 'vite';
-import tsconfigPaths from 'vite-tsconfig-paths';
 
 // Plugin para cargar el CSS correcto según el entorno
 function envCssPlugin(): Plugin {
@@ -27,8 +27,27 @@ function envCssPlugin(): Plugin {
   };
 }
 
+function decoratorPreset(options: Record<string, unknown>) {
+  return {
+    preset: () => ({
+      plugins: [['@babel/plugin-proposal-decorators', options]]
+    }),
+    rolldown: {
+      // Ejecuta esta transformación solo si el archivo contiene un decorador.
+      filter: {
+        code: '@'
+      }
+    }
+  };
+}
+
 export default defineConfig({
-  plugins: [envCssPlugin(), tailwindcss(), reactRouter(), tsconfigPaths()],
+  plugins: [
+    babel({ presets: [decoratorPreset({ version: 'legacy' })] }),
+    envCssPlugin(),
+    tailwindcss(),
+    reactRouter()
+  ],
   resolve: {
     alias: {
       '~': path.resolve(__dirname, './app')

@@ -48,7 +48,9 @@ export default function ContratantesComponent({
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [detailedContratante, setDetailedContratante] =
     useState<GetContratante | null>(null);
-  const [detailingContratanteRut] = useState<string | null>(null);
+  const [editingContratanteRut, setEditingContratanteRut] = useState<
+    string | null
+  >(null);
   const [filters, setFilters] = useState<ContratanteFilters>({
     esEmpresa: 'all',
     comuna: 'all',
@@ -95,8 +97,8 @@ export default function ContratantesComponent({
       if (
         filters.tieneContacto &&
         filters.tieneContacto !== 'all' &&
-        ((filters.tieneContacto === 'true' && !contratante.contacto) ||
-          (filters.tieneContacto === 'false' && contratante.contacto))
+        ((filters.tieneContacto === 'true' && !contratante.telefono) ||
+          (filters.tieneContacto === 'false' && contratante.telefono))
       ) {
         return false;
       }
@@ -145,11 +147,9 @@ export default function ContratantesComponent({
   const contratanteColumns = [
     { header: 'RUT', key: 'rut' },
     { header: 'Nombre', key: 'nombre' },
-    { header: 'Apellido', key: 'apellido' },
     { header: 'Es Empresa', key: 'esEmpresa' },
     { header: 'Dirección', key: 'direccion' },
     { header: 'Comuna', key: 'comuna' },
-    { header: 'Contacto', key: 'contacto' },
     { header: 'Teléfono', key: 'telefono' },
     { header: 'Email', key: 'email' }
   ];
@@ -161,6 +161,11 @@ export default function ContratantesComponent({
   const handleDetailsContratante = (contratante: GetContratante) => {
     setDetailedContratante(contratante);
     setIsDetailsOpen(true);
+  };
+
+  const handleEditContratante = (item: GetContratante) => {
+    setEditingContratanteRut(item.rut);
+    router(`/dashboard/administracion/contratantes/${item.rut}`);
   };
 
   const handleFiltersChange = (newFilters: ContratanteFilters) => {
@@ -250,7 +255,8 @@ export default function ContratantesComponent({
                 <VirtualDataTable
                   columns={columns({
                     onDetails: handleDetailsContratante,
-                    detailingContratanteRut,
+                    onEdit: handleEditContratante,
+                    detailingContratanteRut: editingContratanteRut,
                     comunas
                   })}
                   data={filteredContratantes}

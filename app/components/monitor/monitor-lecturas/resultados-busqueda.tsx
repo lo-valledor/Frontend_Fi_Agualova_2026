@@ -5,7 +5,6 @@ import {
   BarChart3,
   ChevronDown,
   ChevronUp,
-  FileUp,
   Grid3X3,
   History,
   Info,
@@ -666,52 +665,6 @@ export default function ResultadosBusqueda({
                                     }}
                                     transition={{ duration: 0.5, delay: 0.4 }}
                                     className="h-full bg-emerald-500 rounded-full"
-                                  />
-                                </div>
-                              </motion.div>
-
-                              {/* Lecturas Importadas */}
-                              <motion.div
-                                initial={{ opacity: 0, x: -20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ duration: 0.3, delay: 0.35 }}
-                                className="group bg-linear-to-r from-pink-50 to-transparent dark:from-pink-950/20 dark:to-transparent border-l-4 border-pink-400 rounded-lg p-3 sm:p-4 hover:shadow-md transition-all"
-                              >
-                                <div className="flex items-center justify-between gap-2">
-                                  <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
-                                    <div className="p-1.5 sm:p-2 bg-pink-100 dark:bg-pink-900/30 rounded-lg shrink-0">
-                                      <FileUp className="h-4 w-4 sm:h-5 sm:w-5 text-pink-500" />
-                                    </div>
-                                    <div className="min-w-0">
-                                      <p className="font-semibold text-sm sm:text-base text-pink-700 dark:text-pink-400 truncate">
-                                        Lecturas Importadas
-                                      </p>
-                                      <p className="text-[10px] sm:text-xs text-pink-600/70 dark:text-pink-400/70 line-clamp-1">
-                                        Requieren confirmación semiautomática
-                                      </p>
-                                    </div>
-                                  </div>
-                                  <div className="text-right shrink-0">
-                                    <p className="text-xl sm:text-2xl md:text-3xl font-bold text-pink-600 dark:text-pink-400">
-                                      <NumberFlow value={stats.imported} />
-                                    </p>
-                                    <p className="text-xs sm:text-sm text-pink-600/70 dark:text-pink-400/70">
-                                      {calculatePercentage(
-                                        stats.imported,
-                                        stats.total
-                                      )}
-                                      %
-                                    </p>
-                                  </div>
-                                </div>
-                                <div className="mt-2 sm:mt-3 h-1.5 sm:h-2 bg-pink-100 dark:bg-pink-900/20 rounded-full overflow-hidden">
-                                  <motion.div
-                                    initial={{ width: 0 }}
-                                    animate={{
-                                      width: `${calculatePercentage(stats.imported, stats.total)}%`
-                                    }}
-                                    transition={{ duration: 0.5, delay: 0.45 }}
-                                    className="h-full bg-pink-500 rounded-full"
                                   />
                                 </div>
                               </motion.div>

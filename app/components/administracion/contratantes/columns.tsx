@@ -7,12 +7,14 @@ import type { GetContratante, NombreComuna } from '~/types/administracion';
 
 interface ContratantesColumnsProps {
   onDetails: (contratante: GetContratante) => void;
+  onEdit?: (contratante: GetContratante) => void;
   detailingContratanteRut: string | null;
   comunas: NombreComuna[];
 }
 
 export const columns = ({
   onDetails,
+  onEdit,
   detailingContratanteRut,
   comunas
 }: ContratantesColumnsProps): ColumnDef<GetContratante>[] => [
@@ -22,18 +24,14 @@ export const columns = ({
       <DataTableColumnHeader column={column} title="RUT" />
     ),
     cell: ({ row }) => {
-      const nombreCompleto = row.original.esEmpresa
-        ? row.original.nombre
-        : `${row.original.nombre} ${row.original.apellido || ''}`.trim();
-
       return (
         <div className="flex items-center gap-2 sm:gap-3 min-w-0">
           <div className="min-w-0 flex-1">
             <div
               className="font-medium truncate text-xs sm:text-sm "
-              title={nombreCompleto}
+              title={row.getValue('nombre')}
             >
-              {nombreCompleto}
+              {row.getValue('nombre')}
             </div>
             <div className="text-xs font-mono truncate">
               {format(row.getValue('rut'))}
@@ -102,7 +100,7 @@ export const columns = ({
     maxSize: 200
   },
   {
-    accessorKey: 'contacto',
+    accessorKey: 'telefono',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Contacto" />
     ),
@@ -110,12 +108,6 @@ export const columns = ({
       return (
         <div className="flex items-center gap-2 sm:gap-3 min-w-0">
           <div className="min-w-0 flex-1">
-            <div
-              className="font-medium truncate text-xs sm:text-sm"
-              title={row.original.contacto || 'No especificado'}
-            >
-              {row.original.contacto || 'No especificado'}
-            </div>
             <div className="text-xs truncate">
               {row.original.telefono || 'Sin teléfono'}
             </div>
@@ -160,10 +152,12 @@ export const columns = ({
         <div className="flex items-center justify-center">
           <TableActions
             onView={onDetails}
+            onEdit={onEdit}
             item={row.original}
-            showView={true}
-            showEdit={false}
-            loadingView={detailingContratanteRut === row.original.rut}
+            showView={false}
+            showEdit={true}
+            loadingEdit={detailingContratanteRut === row.original.rut}
+            loadingView={false}
           />
         </div>
       );

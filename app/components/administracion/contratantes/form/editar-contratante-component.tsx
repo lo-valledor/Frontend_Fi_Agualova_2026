@@ -1,20 +1,42 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ArrowLeft, Save, User } from 'lucide-react';
+import {
+  ArrowLeft,
+  Building2,
+  CheckCircle2,
+  FileText,
+  Info,
+  Mail,
+  MapPin,
+  Phone,
+  Save,
+  User,
+  XCircle
+} from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router';
+import Select, { type SingleValue } from 'react-select';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
 import { ModernHeader } from '~/components/shared/modern-header';
+import type { OptionType } from '~/components/shared/react-select-styles';
+import { getReactSelectStyles } from '~/components/shared/react-select-styles';
+import { useTheme } from '~/components/theme-provider';
+import { Alert, AlertDescription } from '~/components/ui/alert';
 import { Button } from '~/components/ui/button';
-import { Form } from '~/components/ui/form';
+import { Checkbox } from '~/components/ui/checkbox';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage
+} from '~/components/ui/form';
+import { Input } from '~/components/ui/input';
 import { administracionService } from '~/services/administracionService';
-import type {
-  GetContratante,
-  NombreComuna,
-  NombreGiro
-} from '~/types/administracion';
+import type { GetContratante, NombreComuna } from '~/types/administracion';
 import { formatRut, isValidRutFormat } from '~/utils/rut-utils';
 
 const createContratanteSchema = (
@@ -38,30 +60,36 @@ const createContratanteSchema = (
         }
       ),
     nombre: z.string().min(1, 'El nombre es requerido'),
-    apellido: z.string(),
+    apellido: z.string().optional(),
     esEmpresa: z.boolean(),
     direccion: z.string().min(1, 'La dirección es requerida'),
-    codComuna: z.string().min(1, 'La comuna es requerida'),
+    codigoComuna: z.string().min(1, 'La comuna es requerida'),
     contacto: z.string().min(1, 'El contacto es requerido'),
     telefono: z.string().optional(),
-    correo: z.string().optional()
+    email: z
+      .string()
+      .email('Debe ser un correo válido')
+      .optional()
+      .or(z.literal(''))
   });
 
 type ContratanteFormData = z.infer<ReturnType<typeof createContratanteSchema>>;
 
+type ContratanteApiData = Record<string, unknown>;
+
 export default function EditarContratanteComponent() {
   const navigate = useNavigate();
   const { id: rut } = useParams<{ id: string }>();
+  const { theme } = useTheme();
 
   const [contratante, setContratante] = useState<GetContratante | null>(null);
-  const [, setGiros] = useState<NombreGiro[]>([]);
-  const [, setComunas] = useState<NombreComuna[]>([]);
+  const [comunas, setComunas] = useState<NombreComuna[]>([]);
   const [existingContratantes, _setExistingContratantes] = useState<string[]>(
     []
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [, setRutValidationStatus] = useState<
+  const [rutValidationStatus, setRutValidationStatus] = useState<
     'idle' | 'checking' | 'valid' | 'invalid'
   >('idle');
 
@@ -69,6 +97,51 @@ export default function EditarContratanteComponent() {
     existingContratantes,
     contratante?.rut
   );
+
+  const parseBoolean = (
+    value: boolean | string | null | undefined
+  ): boolean => {
+    if (typeof value === 'boolean') return value;
+    if (typeof value === 'string') {
+      const normalized = value.toLowerCase().trim();
+      return (
+        normalized === 'true' ||
+        normalized === '1' ||
+        normalized === 'si' ||
+        normalized === 'sí' ||
+        normalized === 's'
+      );
+    }
+    return false;
+  };
+
+  const getRawValue = (value: ContratanteApiData, key: string): string => {
+    if (typeof value[key] === 'string') return String(value[key]);
+    return '';
+  };
+
+  const mapContratantePayloadToForm = (
+    value: ContratanteApiData
+  ): ContratanteFormData => {
+    const comuna =
+      getRawValue(value, 'codigoComuna') ||
+      getRawValue(value, 'comuna') ||
+      getRawValue(value, 'comunaNombre');
+
+    return {
+      rut: formatRut(getRawValue(value, 'rut')),
+      nombre: getRawValue(value, 'nombre'),
+      apellido: getRawValue(value, 'apellido'),
+      esEmpresa: parseBoolean(
+        value.esEmpresa as boolean | string | null | undefined
+      ),
+      direccion: getRawValue(value, 'direccion'),
+      codigoComuna: comuna,
+      contacto: getRawValue(value, 'contacto'),
+      telefono: getRawValue(value, 'telefono'),
+      email: getRawValue(value, 'email') || getRawValue(value, 'correo')
+    };
+  };
 
   const form = useForm<ContratanteFormData>({
     resolver: zodResolver(contratanteSchema),
@@ -78,12 +151,14 @@ export default function EditarContratanteComponent() {
       apellido: '',
       esEmpresa: false,
       direccion: '',
-      codComuna: '',
+      codigoComuna: '',
       contacto: '',
       telefono: '',
-      correo: ''
+      email: ''
     }
   });
+
+  const selectStyles = getReactSelectStyles(theme);
 
   useEffect(() => {
     const loadData = async () => {
@@ -94,15 +169,23 @@ export default function EditarContratanteComponent() {
       }
 
       try {
-        const [girosResult, comunasResult, contratanteResult] =
+        const [contratantesResult, comunasResult, contratanteResult] =
           await Promise.all([
-            administracionService.getGiros(),
+            administracionService.getContratantesByLimitAndOffset({
+              limit: 500,
+              offset: 0
+            }),
             administracionService.getComunas(),
             administracionService.getContratanteByRut(rut)
           ]);
 
-        if (girosResult.data) setGiros(girosResult.data);
-        if (comunasResult.data) setComunas(comunasResult.data);
+        if (contratantesResult.data) {
+          _setExistingContratantes(contratantesResult.data.map(c => c.rut));
+        }
+
+        if (comunasResult.data) {
+          setComunas(comunasResult.data);
+        }
 
         if (contratanteResult.error) {
           toast.error(contratanteResult.error);
@@ -111,20 +194,14 @@ export default function EditarContratanteComponent() {
         }
 
         if (contratanteResult.data) {
-          const data = contratanteResult.data as Partial<GetContratante>;
-          const formattedRut = formatRut(data.rut || '');
-          setContratante({ ...(data as GetContratante), rut: formattedRut });
-          form.reset({
-            rut: formattedRut,
-            nombre: data.nombre || '',
-            apellido: data.apellido || '',
-            esEmpresa: data.esEmpresa || false,
-            direccion: data.direccion || '',
-            codComuna: data.comuna || '',
-            contacto: data.contacto || '',
-            telefono: data.telefono || '',
-            correo: data.email || ''
+          const parsedData = mapContratantePayloadToForm(
+            contratanteResult.data as ContratanteApiData
+          );
+          setContratante({
+            ...(contratanteResult.data as GetContratante),
+            rut: parsedData.rut
           });
+          form.reset(parsedData);
         }
       } catch (error) {
         toast.error('Error al cargar datos del contratante', error as any);
@@ -171,16 +248,21 @@ export default function EditarContratanteComponent() {
   const onSubmit = async (data: ContratanteFormData) => {
     setIsSubmitting(true);
     try {
-      // Asegurar que el RUT esté correctamente formateado antes de enviar
       const formattedData = {
         ...data,
         rut: formatRut(data.rut)
       };
 
-      await administracionService.modificarContratante({
+      const result = await administracionService.modificarContratante({
         ...formattedData,
         id: contratante?.rut
       });
+
+      if (result.error) {
+        toast.error(result.error);
+        return;
+      }
+
       toast.success('Contratante actualizado exitosamente');
       navigate('/dashboard/administracion/contratantes');
     } catch (error) {
@@ -263,22 +345,306 @@ export default function EditarContratanteComponent() {
       </div>
 
       <div className="container mx-auto px-4 py-6 space-y-6">
+        <Alert className="border-blue-200 bg-blue-50 dark:bg-blue-950/20 dark:border-blue-800">
+          <Info className="h-4 w-4 " />
+          <AlertDescription className="text-blue-800 dark:text-blue-200">
+            <strong>Información:</strong> Al editar el contratante, los campos
+            se cargan desde la base y puedes actualizar sus datos de contacto,
+            ubicación y estado.
+          </AlertDescription>
+        </Alert>
+
         <div className="bg-background rounded-xl shadow-sm border border-border">
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
               className="p-6 space-y-8"
             >
-              {/* Resto del formulario idéntico al de crear, solo cambiando el título y botones */}
-              {/* Por brevedad, copio la estructura pero es idéntica */}
               <div className="space-y-6">
                 <div className="flex items-center gap-2 pb-2 border-b">
                   <User className="h-5 w-5 text-orange-600" />
                   <h3 className="text-lg font-medium">Información Básica</h3>
                 </div>
 
-                {/* Campos de formulario idénticos al componente crear */}
-                {/* ... resto del JSX del formulario ... */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                  <FormField
+                    control={form.control}
+                    name="rut"
+                    render={({ field }) => {
+                      const getRutInputClassName = () => {
+                        if (rutValidationStatus === 'valid') {
+                          return 'border-green-500 focus:border-green-500';
+                        }
+                        if (rutValidationStatus === 'invalid') {
+                          return 'border-red-500 focus:border-red-500';
+                        }
+                        return '';
+                      };
+
+                      return (
+                        <FormItem>
+                          <FormLabel className="flex items-center gap-2">
+                            <FileText className="h-4 w-4" />
+                            RUT <span className="text-red-500">*</span>
+                          </FormLabel>
+                          <FormControl>
+                            <div className="relative">
+                              <Input
+                                placeholder="12345678-9"
+                                {...field}
+                                onBlur={e => {
+                                  const formatted = formatRut(e.target.value);
+                                  field.onChange(formatted);
+                                }}
+                                className={`h-11 pr-10 ${getRutInputClassName()}`}
+                              />
+                              {rutValidationStatus === 'valid' && (
+                                <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+                                  <CheckCircle2 className="h-5 w-5 text-green-500" />
+                                </div>
+                              )}
+                              {rutValidationStatus === 'invalid' && (
+                                <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+                                  <XCircle className="h-5 w-5 text-red-500" />
+                                </div>
+                              )}
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                          {rutValidationStatus === 'invalid' && (
+                            <p className="text-sm text-red-600 dark:text-red-400 mt-1">
+                              {isValidRutFormat(form.watch('rut'))
+                                ? 'Este RUT ya está registrado en el sistema'
+                                : 'El RUT debe tener el formato 12345678-9'}
+                            </p>
+                          )}
+                        </FormItem>
+                      );
+                    }}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="esEmpresa"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-xl border p-4 bg-muted/30">
+                        <FormControl>
+                          <Checkbox
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                          />
+                        </FormControl>
+                        <div className="space-y-1 leading-none">
+                          <FormLabel className="flex items-center gap-2">
+                            <Building2 className="h-4 w-4" />
+                            ¿Es Empresa?
+                          </FormLabel>
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="nombre"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="flex items-center gap-2">
+                          <User className="h-4 w-4" />
+                          {form.watch('esEmpresa') ? 'Razón Social' : 'Nombre'}{' '}
+                          <span className="text-red-500">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            className="h-11"
+                            placeholder={
+                              form.watch('esEmpresa')
+                                ? 'Nombre de la empresa'
+                                : 'Nombre completo'
+                            }
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  {!form.watch('esEmpresa') && (
+                    <FormField
+                      control={form.control}
+                      name="apellido"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="flex items-center gap-2">
+                            <User className="h-4 w-4" />
+                            Apellido
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              {...field}
+                              className="h-11"
+                              placeholder="Apellido"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  )}
+                </div>
+              </div>
+
+              <div className="space-y-6">
+                <div className="flex items-center gap-2 pb-2 border-b">
+                  <MapPin className="h-5 w-5 text-green-600" />
+                  <h3 className="text-lg font-medium">
+                    Información de Ubicación
+                  </h3>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                  <FormField
+                    control={form.control}
+                    name="direccion"
+                    render={({ field }) => (
+                      <FormItem className="md:col-span-2">
+                        <FormLabel className="flex items-center gap-2">
+                          <MapPin className="h-4 w-4" />
+                          Dirección <span className="text-red-500">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            className="h-11"
+                            placeholder="Dirección completa"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <Controller
+                    control={form.control}
+                    name="codigoComuna"
+                    render={({ field }) => {
+                      const comunaOptions = comunas.map((c: NombreComuna) => {
+                        if (typeof c === 'string') {
+                          return { value: c, label: c };
+                        }
+                        return {
+                          value: c.codigo,
+                          label: `${c.nombre} (${c.codigo})`
+                        };
+                      });
+                      const comunaActual = comunaOptions.find(
+                        option => option.value === field.value
+                      );
+
+                      return (
+                        <FormItem className="md:col-span-2">
+                          <FormLabel className="flex items-center gap-2">
+                            <MapPin className="h-4 w-4" />
+                            Comuna <span className="text-red-500">*</span>
+                          </FormLabel>
+                          <FormControl>
+                            <Select
+                              instanceId="comuna-select"
+                              options={comunaOptions}
+                              value={comunaActual ?? null}
+                              onChange={(option: SingleValue<OptionType>) =>
+                                field.onChange(
+                                  option ? String(option.value) : ''
+                                )
+                              }
+                              placeholder="Seleccione la comuna"
+                              isClearable
+                              styles={selectStyles}
+                              classNamePrefix="react-select"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      );
+                    }}
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-6">
+                <div className="flex items-center gap-2 pb-2 border-b">
+                  <Phone className="h-5 w-5 text-purple-600" />
+                  <h3 className="text-lg font-medium">
+                    Información de Contacto
+                  </h3>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                  <FormField
+                    control={form.control}
+                    name="contacto"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="flex items-center gap-2">
+                          <User className="h-4 w-4" />
+                          Contacto <span className="text-red-500">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            className="h-11"
+                            placeholder="Nombre del contacto"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="telefono"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="flex items-center gap-2">
+                          <Phone className="h-4 w-4" />
+                          Teléfono
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            className="h-11"
+                            placeholder="+56 9 1234 5678"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem className="md:col-span-2">
+                        <FormLabel className="flex items-center gap-2">
+                          <Mail className="h-4 w-4" />
+                          Correo Electrónico
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="email"
+                            {...field}
+                            className="h-11"
+                            placeholder="correo@ejemplo.com"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
               </div>
             </form>
           </Form>
