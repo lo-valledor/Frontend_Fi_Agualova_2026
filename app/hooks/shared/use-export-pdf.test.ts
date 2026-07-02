@@ -54,7 +54,9 @@ const mockJsPDFInstance = {
   }
 };
 
-const mockJsPDFConstructor = vi.fn(() => mockJsPDFInstance);
+const mockJsPDFConstructor = vi.fn(function MockJsPDF() {
+  return mockJsPDFInstance;
+});
 
 // Mock para imports dinámicos
 vi.mock('jspdf', () => ({
@@ -95,7 +97,9 @@ describe('useExportPDF', () => {
         { type: 'text', text: 'Contenido de prueba' }
       ];
 
-      await result.current.exportToPDF(sections);
+      await act(async () => {
+        await result.current.exportToPDF(sections);
+      });
 
       await waitFor(() => {
         expect(result.current.isExporting).toBe(false);
@@ -119,7 +123,9 @@ describe('useExportPDF', () => {
         filename: 'mi-reporte-custom'
       };
 
-      await result.current.exportToPDF(sections, options);
+      await act(async () => {
+        await result.current.exportToPDF(sections, options);
+      });
 
       await waitFor(() => {
         expect(result.current.isExporting).toBe(false);
@@ -192,7 +198,9 @@ describe('useExportPDF', () => {
         }
       ];
 
-      await result.current.exportToPDF(sections);
+      await act(async () => {
+        await result.current.exportToPDF(sections);
+      });
 
       await waitFor(() => {
         expect(result.current.isExporting).toBe(false);
@@ -262,7 +270,9 @@ describe('useExportPDF', () => {
         orientation: 'landscape'
       };
 
-      await result.current.exportToPDF(sections, options);
+      await act(async () => {
+        await result.current.exportToPDF(sections, options);
+      });
 
       await waitFor(() => {
         expect(result.current.isExporting).toBe(false);
@@ -284,7 +294,9 @@ describe('useExportPDF', () => {
         }
       };
 
-      await result.current.exportToPDF(sections, options);
+      await act(async () => {
+        await result.current.exportToPDF(sections, options);
+      });
 
       await waitFor(() => {
         expect(result.current.isExporting).toBe(false);
@@ -303,7 +315,9 @@ describe('useExportPDF', () => {
 
       expect(result.current.isExporting).toBe(false);
 
-      await result.current.exportToPDF(sections);
+      await act(async () => {
+        await result.current.exportToPDF(sections);
+      });
 
       // Después de completar debe volver a false
       await waitFor(() => {
@@ -383,7 +397,9 @@ describe('useExportPDF', () => {
         }
       ];
 
-      await result.current.exportToPDF(sections);
+      await act(async () => {
+        await result.current.exportToPDF(sections);
+      });
 
       await waitFor(() => {
         expect(result.current.isExporting).toBe(false);
@@ -403,7 +419,9 @@ describe('useExportPDF', () => {
         }
       ];
 
-      await result.current.exportToPDF(sections);
+      await act(async () => {
+        await result.current.exportToPDF(sections);
+      });
 
       await waitFor(() => {
         expect(result.current.isExporting).toBe(false);
@@ -423,7 +441,9 @@ describe('useExportPDF', () => {
         }
       ];
 
-      await result.current.exportToPDF(sections);
+      await act(async () => {
+        await result.current.exportToPDF(sections);
+      });
 
       await waitFor(() => {
         expect(result.current.isExporting).toBe(false);

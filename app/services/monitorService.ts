@@ -347,7 +347,7 @@ class MonitorService {
   ): Promise<MonitorServiceResponse<unknown>> {
     try {
       const endpoint = this.buildEndpointWithQuery(
-        '/monitor-lecturas/compara-consumo-anual',
+        '/monitor-lecturas/comparar-consumo-anual',
         {
           numeroSerie,
           periodoactual

@@ -1,3 +1,4 @@
+import { useLocation } from 'react-router';
 import EditarTipoContrato from '~/components/administracion/cargo-tipo-contrato/form/editar-tipo-contrato';
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import { administracionService } from '~/services/administracionService';
@@ -19,12 +20,15 @@ export async function clientLoader({ params }: Route.ClientActionArgs) {
   if (result.error || !result.data) {
     return { cargoTipoContrato: null };
   }
-
   return { cargoTipoContrato: result.data };
 }
 
 export default function Edit({ loaderData }: Route.ComponentProps) {
   const { cargoTipoContrato } = loaderData;
+  const location = useLocation();
+  const tipoContratoFromState = (
+    location.state as { tipoContrato?: string } | undefined
+  )?.tipoContrato;
   const pageBreadcrumbs = [
     { label: 'Administracion' },
     { label: 'Cargo Tipo Contrato' }
@@ -48,7 +52,9 @@ export default function Edit({ loaderData }: Route.ComponentProps) {
       <BreadcrumbSetter items={pageBreadcrumbs} />
       <EditarTipoContrato
         tipoContratoId={cargoTipoContrato.tipoContratoId}
-        tipoContrato={cargoTipoContrato.tipoContrato}
+        tipoContrato={
+          tipoContratoFromState ?? cargoTipoContrato.tipoContrato ?? 'N/A'
+        }
         configuracion={cargoTipoContrato.configuracion}
         conceptos={cargoTipoContrato.conceptos}
         condiciones={cargoTipoContrato.condiciones}

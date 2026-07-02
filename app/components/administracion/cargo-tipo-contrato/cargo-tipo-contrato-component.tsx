@@ -3,8 +3,7 @@ import { motion } from 'motion/react';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { toast } from 'sonner';
-
-import { VirtualDataTable } from '~/components/data-table/virtual-data-table';
+import { DataTable } from '~/components/data-table/data-table';
 import { LoadingSpinner } from '~/components/loading-spinner';
 import { ModernHeader } from '~/components/shared/modern-header';
 import { Button } from '~/components/ui/button';
@@ -25,7 +24,6 @@ import {
 } from '~/components/ui/select';
 import { administracionService } from '~/services/administracionService';
 import type { CargoTipoContrato } from '~/types/administracion';
-
 import { columns } from './columns';
 
 export default function CargoTipoContratoComponent({
@@ -77,8 +75,12 @@ export default function CargoTipoContratoComponent({
   };
 
   const handleEdit = (item: CargoTipoContrato) => {
+    console.log('handleEdit item', item);
     router(
-      `/dashboard/administracion/cargo-tipo-contrato/edit/${item.idTipoContrato}`
+      `/dashboard/administracion/cargo-tipo-contrato/edit/${item.idTipoContrato}`,
+      {
+        state: { tipoContrato: item.tipoContrato }
+      }
     );
   };
 
@@ -179,12 +181,10 @@ export default function CargoTipoContratoComponent({
                 </div>
               </div>
 
-              <VirtualDataTable
+              <DataTable
                 columns={columns({ onEdit: handleEdit })}
                 data={filteredData}
                 searchPlaceholder="Buscar configuración..."
-                estimateRowHeight={60}
-                maxHeight="600px"
               />
             </CardContent>
           </Card>

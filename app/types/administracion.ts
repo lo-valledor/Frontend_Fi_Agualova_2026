@@ -545,14 +545,23 @@ export type CreateRolUser = {
 export type GetContratante = {
   rut: string;
   nombre: string;
+  esEmpresa: boolean;
+  direccion: string;
+  comuna: string;
+  telefono: string;
+  email: string;
+};
+
+export type ContratanteFormValues = {
+  rut: string;
+  nombre: string;
   apellido: string;
   esEmpresa: boolean;
   direccion: string;
+  codigoComuna: string;
   contacto: string;
   telefono: string;
   email: string;
-  comuna: string;
-  comunaNombre: string;
 };
 
 export type ContratoErrorInfo = {

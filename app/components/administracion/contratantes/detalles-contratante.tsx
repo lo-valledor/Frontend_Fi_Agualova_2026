@@ -80,14 +80,10 @@ export function ContratanteDetailsModal({
     }
   }, [isOpen, contratante]);
 
-  const nombreCompleto = detailsData?.esEmpresa
-    ? detailsData.nombre
-    : `${detailsData?.nombre || ''} ${detailsData?.apellido || ''}`.trim();
-
-  const comunaMatch = detailsData?.comunaNombre
+  const comunaMatch = detailsData?.comuna
     ? comunas.find(c => {
-        if (typeof c === 'string') return c === detailsData.comunaNombre;
-        return c.nombre === detailsData.comunaNombre;
+        if (typeof c === 'string') return c === detailsData.comuna;
+        return c.nombre === detailsData.comuna;
       })
     : undefined;
   const comunaNombre =
@@ -114,7 +110,10 @@ export function ContratanteDetailsModal({
                 Detalles del Contratante
               </DialogTitle>
               <DialogDescription className="text-base text-muted-foreground mt-1">
-                Información completa de {nombreCompleto || '...'}
+                Información completa de{' '}
+                {detailsData?.esEmpresa
+                  ? detailsData.nombre
+                  : `${detailsData?.nombre || ''}`.trim() || '...'}
               </DialogDescription>
             </div>
           </div>
@@ -205,17 +204,6 @@ export function ContratanteDetailsModal({
                     </div>
                   }
                 />
-                {!detailsData.esEmpresa && (
-                  <InfoItem
-                    label="Apellido"
-                    value={detailsData.apellido}
-                    icon={
-                      <div className="p-2 bg-background rounded-xl">
-                        <User className="h-4 w-4" />
-                      </div>
-                    }
-                  />
-                )}
               </CardContent>
             </Card>
 
@@ -231,7 +219,7 @@ export function ContratanteDetailsModal({
               <CardContent className="pt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
                 <InfoItem
                   label="Persona de Contacto"
-                  value={detailsData.contacto}
+                  value={detailsData.telefono}
                   icon={
                     <div className="p-2 bg-background rounded-xl">
                       <User className="h-4 w-4" />

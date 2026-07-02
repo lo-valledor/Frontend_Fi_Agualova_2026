@@ -104,6 +104,10 @@ export default [
             'routes/dashboard/administracion/contratantes.tsx'
           ),
           route(
+            'contratantes/:id',
+            'routes/dashboard/administracion/contratantes/editar-contratante.tsx'
+          ),
+          route(
             'contratantes/crear',
             'routes/dashboard/administracion/contratantes/crear-contratante.tsx'
           ),
